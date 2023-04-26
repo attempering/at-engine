@@ -12,17 +12,17 @@
 
 
 /* to dump debugging details, set it to 1 */
-int langevin_move__debug__ = 0;
+int at_langevin_move__debug__ = 0;
 
 
 
 /* check if the minimum stay requirement has been met */
-int langevin_move__check_min_visits(
-    langevin_t *langevin,
-    mb_t *mb,
+int at_langevin_move__check_min_visits(
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     double beta_old)
 {
-  int ib = mb__beta_to_index(mb, beta_old, 0);
+  int ib = at_mb__beta_to_index(mb, beta_old, 0);
 
   if (ib >= 0 && ib < mb->n) {
     //fprintf(stderr, "%d %g %g\n", ib, mb->visits[ib], langevin->bin_min_visits);
@@ -36,10 +36,10 @@ int langevin_move__check_min_visits(
 
 
 
-int langevin_move__propose(
+int at_langevin_move__propose(
     langevin_move_proposal_t *proposal,
-    langevin_t *langevin,
-    mb_t *mb,
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     double current_energy,
     double beta_old,
     int ib,
@@ -47,7 +47,7 @@ int langevin_move__propose(
     double neg_dlnwf_dbeta,
     int cheap_av_energy,
     int apply_dkt_max,
-    mtrng_t *rng,
+    zcom_mtrng_t *rng,
     double *bin_av_energy)
 {
   double rand_mag, noise;
@@ -64,9 +64,9 @@ int langevin_move__propose(
 
   rand_mag = proposal->kt_old * sqrt(2.0 * proposal->time_step);
 
-  noise = mtrng_randgaus(rng);
+  noise = zcom_mtrng__randgaus(rng);
 
-  proposal->dkt_deterministic = langevin_move__calc_dkt_deterministic(
+  proposal->dkt_deterministic = at_langevin_move__calc_dkt_deterministic(
       langevin,
       mb,
       ib,
@@ -98,10 +98,10 @@ int langevin_move__propose(
 
 
 
-int langevin_move__moderate_stride(
+int at_langevin_move__moderate_stride(
     langevin_move_proposal_t *proposal,
-    langevin_t *langevin,
-    mb_t *mb)
+    at_langevin_t *langevin,
+    at_mb_t *mb)
 {
   int ib_old, ib_new, ib;
   int moderated = 0;
@@ -110,9 +110,9 @@ int langevin_move__moderate_stride(
     return moderated;
   }
 
-  ib_old = mb__beta_to_index(mb, proposal->beta_old, 0);
+  ib_old = at_mb__beta_to_index(mb, proposal->beta_old, 0);
 
-  ib_new = mb__beta_to_index(mb, proposal->beta_new, 0);
+  ib_new = at_mb__beta_to_index(mb, proposal->beta_new, 0);
 
   if (ib_new > ib_old) {
 

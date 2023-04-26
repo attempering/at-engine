@@ -12,7 +12,7 @@ enum {
  * Note on the window division convention.
  *
  * The window division convention applies to
- * the routine mb_iie_et__calc_et() only.
+ * the routine at_mb_iie_et__calc_et() only.
  * Basically, there are two alternative ways of
  * defining the auxiliary function phi(beta).
  * The convention concerns the dividing point
@@ -112,14 +112,14 @@ enum {
 #define MB_IIE_LR__DEFAULT_MIN_SIZE 1e-3
 
 
-typedef struct mb_t_ mb_t;
-typedef struct sm_t_ sm_t;
-typedef struct mb_iie_zerofiller_t_ mb_iie_zerofiller_t;
+typedef struct at_mb_t_ at_mb_t;
+typedef struct at_mb_sm_t_ at_mb_sm_t;
+typedef struct at_mb_iie_zerofiller_t_ at_mb_iie_zerofiller_t;
 
 
 
 /* left-right integral-identity estimator */
-typedef struct mb_iie_lr_t_ {
+typedef struct at_mb_iie_lr_t_ {
 
   /* global input parameters */
   double frac_min; /* minimum acceptable coefficient during left/right combination */
@@ -139,14 +139,14 @@ typedef struct mb_iie_lr_t_ {
   int js; /* index of the window left boundary */
   int jt; /* index of the window central boundary */
 
-  sm_t *sm0; /* origin of the moment accumulators
+  at_mb_sm_t *sm0; /* origin of the moment accumulators
               * which is either mb->accum->sums for plain accumulators
               * or mb->accum->winaccum->items[ib].sums - .js
               * for window accumulators */
 
   /* reference to the window accumulator item
    * or NULL if the plain accumulators are used */
-  mb_accum_winaccum_item_t *winaccum_item;
+  at_mb_accum_winaccum_item_t *winaccum_item;
 
   /* temporary data */
   double s0[2];  /* zeroth-order moments
@@ -173,10 +173,10 @@ typedef struct mb_iie_lr_t_ {
   int quality; /* the result is good */
   int success; /* the function returns */
 
-  mb_t *mb;
-  mb_iie_zerofiller_t *zerofiller;
+  at_mb_t *mb;
+  at_mb_iie_zerofiller_t *zerofiller;
 
-} mb_iie_lr_t;
+} at_mb_iie_lr_t;
 
 
 

@@ -1,11 +1,11 @@
 #ifndef AT__MB_IIE_ET__DEF_H__
 #define AT__MB_IIE_ET__DEF_H__
 
-typedef struct mb_t_ mb_t;
+typedef struct at_mb_t_ at_mb_t;
 
 
 
-typedef struct mb_iie_et_item_cache_t_ {
+typedef struct at_mb_iie_et_item_cache_t_ {
 
   double value;
 
@@ -19,10 +19,10 @@ typedef struct mb_iie_et_item_cache_t_ {
 
   double expires;
 
-} mb_iie_et_item_cache_t;
+} at_mb_iie_et_item_cache_t;
 
 
-typedef struct mb_iie_et_item_t_ {
+typedef struct at_mb_iie_et_item_t_ {
 
   double value; /* the value of et */
 
@@ -30,22 +30,22 @@ typedef struct mb_iie_et_item_t_ {
 
   int quality; /* the current value is of good quality */
 
-  mb_iie_et_item_cache_t cache[1];
+  at_mb_iie_et_item_cache_t cache[1];
 
-} mb_iie_et_item_t;
+} at_mb_iie_et_item_t;
 
 
-typedef struct mb_iie_et_cache_params_t_ {
+typedef struct at_mb_iie_et_cache_params_t_ {
   int enabled;
   double lifespan;
-} mb_iie_et_cache_params_t;
+} at_mb_iie_et_cache_params_t;
 
 
-typedef struct mb_iie_et_t_ {
+typedef struct at_mb_iie_et_t_ {
   int n; /* same as mb->n */
-  mb_iie_et_item_t *items;
-  mb_iie_et_cache_params_t cache_params[1];
-} mb_iie_et_t;
+  at_mb_iie_et_item_t *items;
+  at_mb_iie_et_cache_params_t cache_params[1];
+} at_mb_iie_et_t;
 
 
 

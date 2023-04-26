@@ -5,9 +5,9 @@
 #include "mb_iie_zerofiller__def.h"
 
 
-void mb_iie_zerofiller__init(mb_iie_zerofiller_t *zf, mb_t *mb);
+void at_mb_iie_zerofiller__init(at_mb_iie_zerofiller_t *zf, at_mb_t *mb);
 
-void mb_iie_zerofiller__finish(mb_iie_zerofiller_t *zf);
+void at_mb_iie_zerofiller__finish(at_mb_iie_zerofiller_t *zf);
 
 /**
  * Given zf->vals[] and zf->has_vals[],
@@ -23,6 +23,6 @@ void mb_iie_zerofiller__finish(mb_iie_zerofiller_t *zf);
  * in the specified range, or the number of bins in the range
  * on an empty range.
  */
-int mb_iie_zerofiller__fill_missing(mb_iie_zerofiller_t *zf, int ib_begin, int ib_end);
+int at_mb_iie_zerofiller__fill_missing(at_mb_iie_zerofiller_t *zf, int ib_begin, int ib_end);
 
 #endif

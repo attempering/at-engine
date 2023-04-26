@@ -9,35 +9,35 @@
 
 
 
-int langevin_cfg_init(langevin_t *langevin, cfg_t *cfg, int silent)
+int at_langevin__cfg_init(at_langevin_t *langevin, zcom_cfg_t *cfg, int silent)
 {
   /* dt: time step for the temperature Langevin eq */
   langevin->dt = 1e-5;
-  if (0 != cfg_get(cfg, &langevin->dt, "Tdt", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &langevin->dt, "Tdt", "%lf")) {
     if (!silent) fprintf(stderr, "assuming default: langevin->dt = 1e-5, key: Tdt\n");
   }
 
   /* dTmax: maximal amount of temperature change in a step */
   langevin->dTmax = 25.0;
-  if (0 != cfg_get(cfg, &langevin->dTmax, "dTmax", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &langevin->dTmax, "dTmax", "%lf")) {
     if (!silent) fprintf(stderr, "assuming default: langevin->dTmax = 25.0, key: dTmax\n");
   }
 
   /* whether to apply the Metropolisation correction */
   langevin->corrected = 1;
-  if (0 != cfg_get(cfg, &langevin->corrected, "langevin_corrected", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin_corrected", "%d")) {
     if (!silent) fprintf(stderr, "assuming default: langevin->corrected = 1, key: langevin_corrected\n");
   }
 
   /* whether to avoid crossing over unvisited bins */
   langevin->no_skip = 1;
-  if (0 != cfg_get(cfg, &langevin->corrected, "langevin_no_skip", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin_no_skip", "%d")) {
     if (!silent) fprintf(stderr, "assuming default: langevin->no_skip = 1, key: langevin_no_skip\n");
   }
 
   /* minimum number of visits before moving out of a bin */
   langevin->bin_min_visits = 1;
-  if (0 != cfg_get(cfg, &langevin->bin_min_visits, "langevin_bin_min_visits", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &langevin->bin_min_visits, "langevin_bin_min_visits", "%lf")) {
     if (!silent) fprintf(stderr, "assuming default: langevin->bin_min_visits = 1, key: langevin_bin_min_visits\n");
   }
 
@@ -52,14 +52,14 @@ int langevin_cfg_init(langevin_t *langevin, cfg_t *cfg, int silent)
 }
 
 
-void langevin_clear(langevin_t *langevin)
+void at_langevin__clear(at_langevin_t *langevin)
 {
   langevin->rejects = 0.0;
   langevin->total = 0.0;
 }
 
 
-void langevin_finish(langevin_t *langevin)
+void at_langevin__finish(at_langevin_t *langevin)
 {
   memset(langevin, 0, sizeof(*langevin));
 }

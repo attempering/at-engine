@@ -4,10 +4,10 @@
 #include "langevin__def.h"
 #include <stdio.h>
 
-void langevin_manifest(const langevin_t *langevin, FILE *fp, int arrcnt);
+void at_langevin__manifest(const at_langevin_t *langevin, FILE *fp, int arrcnt);
 
-int langevin_read_binary(langevin_t *langevin, FILE *fp, int endn);
+int at_langevin__read_binary(at_langevin_t *langevin, FILE *fp, int endn);
 
-int langevin_write_binary(langevin_t *langevin, FILE *fp);
+int at_langevin__write_binary(at_langevin_t *langevin, FILE *fp);
 
 #endif

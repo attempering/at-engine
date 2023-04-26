@@ -1,7 +1,7 @@
 #ifndef AT__LANGEVIN__DEF_H__
 #define AT__LANGEVIN__DEF_H__
 
-typedef struct mb_t_ mb_t;
+typedef struct at_mb_t_ at_mb_t;
 
 /* custom integration function for the following integral
  *
@@ -21,10 +21,10 @@ typedef struct mb_t_ mb_t;
  * that returns the exact difference of the partition function.
  *
  */
-typedef double (*mb_integrate_func_t)(mb_t *mb, double beta_old, double beta_new);
+typedef double (*at_mb_integrate_func_t)(at_mb_t *mb, double beta_old, double beta_new);
 
 /* parameters related to the Langevin equation */
-typedef struct langevin_t_
+typedef struct at_langevin_t_
 {
   double  dt;           /* time step for the temperature Langevin equation (without the Boltzmann factor) */
   double  dTmax;        /* maximum amount of temperature change in a step */
@@ -40,9 +40,9 @@ typedef struct langevin_t_
   int     no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
 
-  mb_integrate_func_t integrate_func;
+  at_mb_integrate_func_t integrate_func;
 
-} langevin_t;
+} at_langevin_t;
 
 
 #endif

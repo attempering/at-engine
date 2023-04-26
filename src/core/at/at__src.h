@@ -27,7 +27,6 @@
 
 
 /* include the source code of sub-modules */
-#include "sm/sm__src.h"
 #include "mb/mb__src.h"
 #include "eh/eh__src.h"
 #include "langevin/langevin__src.h"

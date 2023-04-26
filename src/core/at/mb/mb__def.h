@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "sm/mb_sm__def.h"
 #include "betadist/mb_betadist__def.h"
 #include "shk/mb_shk__def.h"
 #include "win/mb_win__def.h"
@@ -14,12 +15,10 @@
 #include "integrator/mb_integrator__def.h"
 #include "iie/mb_iie__def.h"
 
-#include "../sm/sm.h"
-
-typedef struct ssm_t_ ssm_t;
+typedef struct zcom_ssm_t_ zcom_ssm_t;
 
 /* multiple-bin estimator parameters */
-typedef struct mb_t_ {
+typedef struct at_mb_t_ {
   double    boltz;    /* Boltzmann constant */
 
   double    bmin;     /* minimal beta (highest temperature) */
@@ -40,31 +39,31 @@ typedef struct mb_t_ {
   double    total_visits; /* total number of visits, number of tempering */
 
   /* overall beta distribution */
-  mb_betadist_t betadist[1];
+  at_mb_betadist_t betadist[1];
 
   /* adaptive averaging related parameters */
-  mb_shk_t  shk[1];
+  at_mb_shk_t  shk[1];
 
   /* window settings */
-  mb_win_t win[1];
+  at_mb_win_t win[1];
 
   /* accumulators */
-  mb_accum_t accum[1];
+  at_mb_accum_t accum[1];
 
   /* zero filler */
-  mb_zerofiller_t zerofiller[1];
+  at_mb_zerofiller_t zerofiller[1];
 
   /* integrator */
-  mb_integrator_t integrator[1];
+  at_mb_integrator_t integrator[1];
 
-  mb_iie_t  iie[1];
+  at_mb_iie_t  iie[1];
 
-  ssm_t     *ssm;     /* string allocator */
+  zcom_ssm_t     *ssm;     /* string allocator */
 
   int       cnt_int;  /* number of additional integer variables to be written to binary file */
   int       cnt_dbl;  /* number of additional double variables to be written to binary file */
 
-} mb_t;
+} at_mb_t;
 
 #define   MB_USE_WIN_ACCUM       0x00000001    /* use adaptive averaging */
 #define   MB_CV         0x00000002    /* compute heat capacity */

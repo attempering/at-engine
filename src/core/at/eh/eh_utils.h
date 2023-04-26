@@ -2,11 +2,11 @@
 #define AT__EH_UTILS_H__
 
 
-#include "eh_def.h"
+#include "eh__def.h"
 
-void eh__add(eh_t *eh, int ib, double e);
+void at_eh__add(at_eh_t *eh, int ib, double e);
 
 /* use the integral identity to reconstruct an unbiased histogram (robust method) */
-int eh__reconstruct(eh_t *eh, const char *fname);
+int at_eh__reconstruct(at_eh_t *eh, const char *fname);
 
 #endif

@@ -17,29 +17,29 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(mb_t *mb)
+void init_mb_object(at_mb_t *mb)
 {
-  cfg_t *cfg = cfg_open("at.cfg");
+  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
-  mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
 
-  cfg_close(cfg);
+  zcom_cfg__close(cfg);
 }
 
 
 
-void mb_mock_exact_moments(mb_t *mb, double fill_prob)
+void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
-  mtrng_t rng[1];
+  zcom_mtrng_t rng[1];
 
-  mtrng_init_from_seed(rng, time(NULL));
+  zcom_mtrng__init_from_seed(rng, time(NULL));
 
   for (i = 0; i < mb->n; i++) {
-    sm_t *sm = mb_accum__get_proper_sums(mb->accum, i, i);
+    at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
 
-    if (mtrng_rand01(rng) < fill_prob) {
+    if (zcom_mtrng__rand01(rng) < fill_prob) {
       double beta = mb->bmin + (i + 0.5) * mb->bdel;
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
@@ -61,22 +61,22 @@ void mb_mock_exact_moments(mb_t *mb, double fill_prob)
 
 
 
-void mb_mock_sampling(mb_t *mb, long ntimes)
+void mb_mock_sampling(at_mb_t *mb, long ntimes)
 {
   long t;
-  mtrng_t *rng = mtrng_open(time(NULL));
+  zcom_mtrng_t *rng = zcom_mtrng__open(time(NULL));
 
   for (t = 1; t <= ntimes; t++) {
-    double beta = mb->bmin + mtrng_rand01(rng) * (mb->bmax - mb->bmin);
+    double beta = mb->bmin + zcom_mtrng__rand01(rng) * (mb->bmax - mb->bmin);
 
     /* for the Gaussian energy model
      * Ec = - sigma^2 beta
      * and the energy fluctuation is sigma
      */
     double epot_c = -gaussian_sigma*gaussian_sigma * beta;
-    double epot = epot_c + gaussian_sigma * mtrng_randgaus(rng);
+    double epot = epot_c + gaussian_sigma * zcom_mtrng__randgaus(rng);
     int ib;
-    mb__add(mb, epot, beta, &ib, NULL, NULL);
+    at_mb__add(mb, epot, beta, &ib, NULL, NULL);
 
     if (t % 10000 == 0) {
       printf("%g%%%20s\r", 100.*t/ntimes, "");  
@@ -85,11 +85,11 @@ void mb_mock_sampling(mb_t *mb, long ntimes)
 
   printf("%30s\n", "");
 
-  mtrng_close(rng);
+  zcom_mtrng__close(rng);
 }
 
 
-static int test_iie(mb_t *mb, double tol)
+static int test_iie(at_mb_t *mb, double tol)
 {
   int ib;
   int stride = (int) (mb->n / 5);
@@ -111,8 +111,8 @@ static int test_iie(mb_t *mb, double tol)
 
     // testing the left-right estimator with different
     // window-division conventions
-    double et_legacy = mb_iie_et__calc_et_iie_lr(mb->iie, ib, MB_IIE_LR__WIN_DIV_LEGACY);
-    double et_paper = mb_iie_et__calc_et_iie_lr(mb->iie, ib, MB_IIE_LR__WIN_DIV_PAPER);
+    double et_legacy = at_mb_iie_et__calc_et_iie_lr(mb->iie, ib, MB_IIE_LR__WIN_DIV_LEGACY);
+    double et_paper = at_mb_iie_et__calc_et_iie_lr(mb->iie, ib, MB_IIE_LR__WIN_DIV_PAPER);
 
     fprintf(stderr, "Et  %g (legacy convention)\n    %g (paper convention)\nRef %g\n\n",
       et_legacy, et_paper, et_ref);
@@ -130,7 +130,7 @@ static int test_iie(mb_t *mb, double tol)
 
 int main(int argc, char **argv)
 {
-  mb_t mb[1];
+  at_mb_t mb[1];
 
   int test_exact = 0;
 
@@ -194,7 +194,7 @@ int main(int argc, char **argv)
   // test integral-identity estimators with different window-division conventions
   passed = test_iie(mb, tol);
 
-  mb__finish(mb);
+  at_mb__finish(mb);
 
   if (passed) {
     printf("Passed.\n");

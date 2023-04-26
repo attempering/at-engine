@@ -8,11 +8,11 @@
 #include "../../shk/mb_shk.h"
 #include <stdio.h>
 
-void mb_accum_winaccum__manifest(const mb_accum_winaccum_t *winaccum, FILE *fp, int arrmax);
+void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum, FILE *fp, int arrmax);
 
-int mb_accum_winaccum__read_binary(mb_accum_winaccum_t *winaccum, FILE *fp, int endn);
+int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp, int endn);
 
-int mb_accum_winaccum__write_binary(mb_accum_winaccum_t *winaccum, FILE *fp);
+int at_mb_accum_winaccum__write_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp);
 
 
 #endif

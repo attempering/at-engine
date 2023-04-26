@@ -12,7 +12,7 @@
 #include "../../zcom/cfg/cfg.h"
 
 
-int mb_shk__cfg_init(mb_shk_t *shk, cfg_t *cfg, mb_t *mb, int m, int silent)
+int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, int silent)
 {
   int i;
 
@@ -22,13 +22,13 @@ int mb_shk__cfg_init(mb_shk_t *shk, cfg_t *cfg, mb_t *mb, int m, int silent)
   shk->base = 0.0;
   /* shk_window_adjusted: adjust shrink according to temperature window width */
   shk->window_adjusted = 1;
-  if (0 != cfg_get(cfg, &shk->window_adjusted, "shrink_mbin_adjust", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &shk->window_adjusted, "shrink_mbin_adjust", "%d")) {
     if (!silent) fprintf(stderr, "assuming default: mb->shk->window_adjusted = 1, key: shrink_mbin_adjust\n");
   }
 
   /* shk_max: initial and maximal shrink (adjusted) */
   shk->max = 0.01;
-  if (0 != cfg_get(cfg, &shk->max, "shrink0", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &shk->max, "shrink0", "%lf")) {
     if (!silent) fprintf(stderr, "assuming default: mb->shk->max = 0.01, key: shrink0\n");
   }
   if ( !(shk->max < 0.9 && shk->max >= 0.0) ) {
@@ -46,14 +46,14 @@ int mb_shk__cfg_init(mb_shk_t *shk, cfg_t *cfg, mb_t *mb, int m, int silent)
 
   for (i = 0; i < shk->n; i++) {
     double beta_midpoint = 0.5*(mb->barr[i] + mb->barr[i+1]);
-    double invwf = mb_betadist__calc_inv_weight(mb->betadist, beta_midpoint, NULL, NULL, NULL);
+    double invwf = at_mb_betadist__calc_inv_weight(mb->betadist, beta_midpoint, NULL, NULL, NULL);
     int window_width = mb->win->jt_bin[i] - mb->win->js_bin[i];
     shk->window_multiplier[i] = invwf * mb->accum->m / window_width;
   }
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   shk->mode = 1;
-  if (0 != cfg_get(cfg, &shk->mode, "shrink_mode", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &shk->mode, "shrink_mode", "%d")) {
     if (!silent) fprintf(stderr, "assuming default: mb->shk->mode = 1, key: shrink_mode\n");
   }
   if ( !(shk->mode >= 0 && shk->mode <= 2) ) {
@@ -64,20 +64,20 @@ int mb_shk__cfg_init(mb_shk_t *shk, cfg_t *cfg, mb_t *mb, int m, int silent)
 
   /* shk_min: minimal value for enforcing acc. sampling */
   shk->min = 0.0;
-  if (0 != cfg_get(cfg, &shk->min, "shrinkmin", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &shk->min, "shrinkmin", "%lf")) {
     if (!silent) fprintf(stderr, "assuming default: mb->shk->min = 0.0, key: shrinkmin\n");
   }
 
   /* shk_stop: stop shrinking after this number of steps */
   shk->stop = -1;
-  if (0 != cfg_get(cfg, &shk->stop, "shrinkstop", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &shk->stop, "shrinkstop", "%d")) {
     if (!silent) fprintf(stderr, "assuming default: mb->shk->stop = -1, key: shrinkstop\n");
   }
 
   /* shk_amp: amp t^(-exp) */
   shk->amp = 0.1;
   if (shk->mode >= 1) {
-    if (0 != cfg_get(cfg, &shk->amp, "shrinkamp", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &shk->amp, "shrinkamp", "%lf")) {
       if (!silent) fprintf(stderr, "assuming default: mb->shk->amp = 0.1, key: shrinkamp\n");
     }
   }
@@ -85,7 +85,7 @@ int mb_shk__cfg_init(mb_shk_t *shk, cfg_t *cfg, mb_t *mb, int m, int silent)
   /* shk_exp: amp t^(-exp) */
   shk->exp = 1.0;
   if (shk->mode >= 2) {
-    if (0 != cfg_get(cfg, &shk->exp, "shrinkexp", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &shk->exp, "shrinkexp", "%lf")) {
       if (!silent) fprintf(stderr, "assuming default: mb->shk->exp = 1.0, key: shrinkexp\n");
     }
   }
@@ -99,7 +99,7 @@ ERR:
 
 
 
-void mb_shk__finish(mb_shk_t *shk) {
+void at_mb_shk__finish(at_mb_shk_t *shk) {
   if (shk->window_multiplier != NULL) {
     free(shk->window_multiplier);
   }
@@ -107,7 +107,7 @@ void mb_shk__finish(mb_shk_t *shk) {
 
 
 
-void mb_shk__manifest(const mb_shk_t *shk, FILE *fp, int arrmax)
+void at_mb_shk__manifest(const at_mb_shk_t *shk, FILE *fp, int arrmax)
 {
   int i, pacnt;
 
@@ -178,7 +178,7 @@ void mb_shk__manifest(const mb_shk_t *shk, FILE *fp, int arrmax)
 
 
 /* compute the temperature-independent shrinking factor */
-double mb_shk__calc_shk_base(mb_shk_t *shk, double total_visits)
+double at_mb_shk__calc_shk_base(at_mb_shk_t *shk, double total_visits)
 {
   double x, shk_val;
 
@@ -211,7 +211,7 @@ double mb_shk__calc_shk_base(mb_shk_t *shk, double total_visits)
     }
     else
     {
-      exit_if(1, "invalid shk_mode: %d\n", shk->mode);
+      zcom_util__exit_if(1, "invalid shk_mode: %d\n", shk->mode);
     }
 
     if (x < shk_val) {
@@ -229,15 +229,15 @@ double mb_shk__calc_shk_base(mb_shk_t *shk, double total_visits)
 
 
 /* compute the window-adjusted shrinking factor */
-double mb_shk__calc_inverse_gamma(mb_shk_t *shk, double total_visits, int ib)
+double at_mb_shk__calc_inverse_gamma(at_mb_shk_t *shk, double total_visits, int ib)
 {
   double shk_val;
 
-  shk_val = mb_shk__calc_shk_base(shk, total_visits); /* compute the unadjusted */
+  shk_val = at_mb_shk__calc_shk_base(shk, total_visits); /* compute the unadjusted */
 
   if (shk->window_adjusted) { /* multiply the gauge */
-    exit_if (shk->window_multiplier == NULL, "window multiplier is null\n");
-    exit_if (ib < 0 || ib >= shk->n, "index %d out of range\n", ib);
+    zcom_util__exit_if (shk->window_multiplier == NULL, "window multiplier is null\n");
+    zcom_util__exit_if (ib < 0 || ib >= shk->n, "index %d out of range\n", ib);
 
     shk_val *= shk->window_multiplier[ib];
 

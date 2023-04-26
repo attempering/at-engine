@@ -13,14 +13,14 @@
 
 
 /* initialization for a special case */
-void mb_iie_lr__init_instance(mb_iie_lr_t *lr,
+void at_mb_iie_lr__init_instance(at_mb_iie_lr_t *lr,
     int type, int win_div,
     int ib, int js, int jt)
 {
   lr->type = type;
   lr->win_div = win_div;
 
-  exit_if (0 > js || js >= jt || jt > lr->mb->n,
+  zcom_util__exit_if (0 > js || js >= jt || jt > lr->mb->n,
     "bad window [%d, %d)", js, jt);
 
   lr->ib = ib;
@@ -47,7 +47,7 @@ void mb_iie_lr__init_instance(mb_iie_lr_t *lr,
   //   mb->accum->winaccum->items[ib].sums - .js
   // for windowed averages
   //
-  lr->sm0 = mb_accum__get_proper_sums0_and_winaccum_item(
+  lr->sm0 = at_mb_accum__get_proper_sums0_and_winaccum_item(
       lr->mb->accum, ib, &lr->winaccum_item);
 
   lr->s0[0] = lr->s0[1] = 0.0;
@@ -63,13 +63,13 @@ void mb_iie_lr__init_instance(mb_iie_lr_t *lr,
 
 // filling zf->vals[] and zf->has_vals[]
 // from lr->sm0[lr->js .. lr->jt]
-static void mb_iie_lr__collect_raw_array(mb_iie_lr_t *lr, mb_iie_zerofiller_t *zf)
+static void at_mb_iie_lr__collect_raw_array(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf)
 {
   double el, var;
   int j;
 
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
-    sm_t *sm = lr->sm0 + j;
+    at_mb_sm_t *sm = lr->sm0 + j;
 
     /* skip an empty bin */
     if (sm->s < MB_ACCUM_MIN_SIZE) {
@@ -106,15 +106,15 @@ static void mb_iie_lr__collect_raw_array(mb_iie_lr_t *lr, mb_iie_zerofiller_t *z
  * jb = ib + 1 in the paper convention.
  * 
  **/
-void mb_iie_lr__collect_moments(mb_iie_lr_t *lr)
+void at_mb_iie_lr__collect_moments(at_mb_iie_lr_t *lr)
 {
   double el, var;
   int j, jx, lr_id;
-  mb_iie_zerofiller_t *zf = lr->zerofiller;
+  at_mb_iie_zerofiller_t *zf = lr->zerofiller;
 
-  mb_iie_lr__collect_raw_array(lr, zf);
+  at_mb_iie_lr__collect_raw_array(lr, zf);
 
-  mb_iie_zerofiller__fill_missing(zf, lr->js, lr->jt - 1);
+  at_mb_iie_zerofiller__fill_missing(zf, lr->js, lr->jt - 1);
 
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
 
@@ -201,7 +201,7 @@ void mb_iie_lr__collect_moments(mb_iie_lr_t *lr)
  *  * the bin-boundary energy fluctuation <dE^2>
  *
  */
-double mb_iie_lr__balance_moments(mb_iie_lr_t *lr)
+double at_mb_iie_lr__balance_moments(at_mb_iie_lr_t *lr)
 {
   double cm, cp; /* combination coefficients, cm for the left window, cp for the right */
   double num, den, del;

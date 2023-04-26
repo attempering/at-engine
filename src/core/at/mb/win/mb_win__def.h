@@ -4,11 +4,11 @@
 
 
 /* struct for mb->bin2wins */
-typedef struct mb_win_ids_t_ {
+typedef struct at_mb_win_ids_t_ {
   int count;
   int curr_id_;
   int *ids;
-} mb_win_ids_t;
+} at_mb_win_ids_t;
 
 
 /* Three types of windows for different quantities 
@@ -37,7 +37,7 @@ typedef struct mb_win_ids_t_ {
  *
  */
 
-typedef struct mb_win_t_ {
+typedef struct at_mb_win_t_ {
   int n;
   int bwmod;
   double bwdel;
@@ -52,9 +52,9 @@ typedef struct mb_win_t_ {
   int *jt_grid_res;
 
   /* mapping from bin to affected windows */
-  mb_win_ids_t *bin2wins;
+  at_mb_win_ids_t *bin2wins;
 
-} mb_win_t;
+} at_mb_win_t;
 
 
 #endif

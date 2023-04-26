@@ -19,14 +19,14 @@
 
 /* compute the estimated energy et of the given ib
  * using the single-bin estimator */
-static double mb_iie_et__calc_et_single_bin(mb_iie_t *iie, int ib)
+static double at_mb_iie_et__calc_et_single_bin(at_mb_iie_t *iie, int ib)
 {
-  sm_t *sm;
+  at_mb_sm_t *sm;
 
   /* choose windowed accumulator sums or plain sums */
-  sm = mb_accum__get_proper_sums(iie->accum, ib, ib);
+  sm = at_mb_accum__get_proper_sums(iie->accum, ib, ib);
 
-  return sm__get_mean(sm, MB_ACCUM_MIN_SIZE);
+  return at_mb_sm__get_mean(sm, MB_ACCUM_MIN_SIZE);
 }
 
 
@@ -34,29 +34,29 @@ static double mb_iie_et__calc_et_single_bin(mb_iie_t *iie, int ib)
 /* update the estimated energy et of the given ib
  * using a linear combination of data from the left and right windows
  * */
-static double mb_iie_et__calc_et_iie_lr(mb_iie_t *iie, int ib, int win_div)
+static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div)
 {
   int js, jt;
-  mb_iie_lr_t *lr = iie->lr;
+  at_mb_iie_lr_t *lr = iie->lr;
 
   js = iie->win->js_bin[ib];
   jt = iie->win->jt_bin[ib];
 
-  exit_if (js < 0 || js >= jt || jt > iie->n,
+  zcom_util__exit_if (js < 0 || js >= jt || jt > iie->n,
       "invalid indices: js %d, jt %d, ib = %d/%d", js, jt, ib, iie->n);
 
   // handle the degenerative cases:
   // window contains a single bin only,
   // or the caller explicitly requests the single-bin version
   if ((iie->flags & MB_SINGLE_BIN) || jt == js + 1) {
-    return mb_iie_et__calc_et_single_bin(iie, ib);
+    return at_mb_iie_et__calc_et_single_bin(iie, ib);
   }
 
-  mb_iie_lr__init_instance(lr, MB_IIE_LR__TYPE_BIN, win_div,
+  at_mb_iie_lr__init_instance(lr, MB_IIE_LR__TYPE_BIN, win_div,
       ib, js, jt);
 
   /* collect moments from the left & right windows */
-  mb_iie_lr__collect_moments(lr);
+  at_mb_iie_lr__collect_moments(lr);
 
 #ifdef MB_DBG__
   fprintf(stderr, "ib %d, jb %d, js %d, jt %d; t1 %g %g, tb %g\n", ib, jb, js, jt, t1[0], t1[1], tb);
@@ -64,22 +64,22 @@ static double mb_iie_et__calc_et_iie_lr(mb_iie_t *iie, int ib, int win_div)
 #endif
 
   /* compute the coefficients of linear combination and Et */
-  return mb_iie_lr__balance_moments(lr);
+  return at_mb_iie_lr__balance_moments(lr);
 }
 
 
 
-double mb_iie_et__calc_et(mb_iie_t *iie, int ib)
+double at_mb_iie_et__calc_et(at_mb_iie_t *iie, int ib)
 {
   double et_val;
-  mb_iie_lr_t *lr = iie->lr;
-  mb_iie_et_t *et = iie->et;
-  mb_iie_et_item_t *item = et->items + ib;
+  at_mb_iie_lr_t *lr = iie->lr;
+  at_mb_iie_et_t *et = iie->et;
+  at_mb_iie_et_item_t *item = et->items + ib;
 
-  exit_if (ib < 0 || ib >= iie->n,
+  zcom_util__exit_if (ib < 0 || ib >= iie->n,
       "bad ib %d [0, %d).\n", ib, iie->n);
 
-  et_val = mb_iie_et__calc_et_iie_lr(iie, ib, MB_IIE_LR__WIN_DIV_DEFAULT);
+  et_val = at_mb_iie_et__calc_et_iie_lr(iie, ib, MB_IIE_LR__WIN_DIV_DEFAULT);
 
   item->value = et_val;
   item->imbalance = lr->imbalance;

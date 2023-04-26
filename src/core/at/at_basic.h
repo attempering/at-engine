@@ -16,7 +16,7 @@ void at_output(at_t *at, llong_t step,
 
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values */
-int at_cfg_init(at_t *at, cfg_t *cfg, double boltz, double tmstep);
+int at_cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double tmstep);
 
 void at_finish(at_t *at);
 

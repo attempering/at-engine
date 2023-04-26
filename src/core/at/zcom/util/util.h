@@ -12,8 +12,8 @@
 
 #include "../def/def.h"
 
-#ifndef xnew
-#define xnew(x, n) \
+#ifndef zcom_util__xnew
+#define zcom_util__xnew(x, n) \
   if (#n[0] != '1' && (n) <= 0) { \
     fprintf(stderr, "cannot allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
@@ -22,8 +22,8 @@
     exit(1); }
 #endif
 
-#ifndef xrenew
-#define xrenew(x, n) \
+#ifndef zcom_util__xrenew
+#define zcom_util__xrenew(x, n) \
   if ((n) <= 0) { \
     fprintf(stderr, "cannot allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
@@ -33,74 +33,74 @@
 #endif
 
 
-ZCOM_INLINE void perrmsg__(const char *file, int line, const char *why,
+ZCOM_INLINE void zcom_util__perrmsg__(const char *file, int line, const char *why,
     const char *fmt, va_list args);
 
 
 #ifdef ZCOM_HAVE_VAM
 
-ZCOM_INLINE void perrmsg_(const char *file, int line, const char *why,
+ZCOM_INLINE void zcom_util__perrmsg_(const char *file, int line, const char *why,
     int cond, const char *fmt, ...)
 {
   if (cond) {
     va_list args;
     va_start(args, fmt);
-    perrmsg__(file, line, why, fmt, args);
+    zcom_util__perrmsg__(file, line, why, fmt, args);
     va_end(args);
     exit(1);
   }
 }
 
-#define exit_if(cond, fmt, ...) \
-  perrmsg_(__FILE__, __LINE__, #cond, cond, fmt, ## __VA_ARGS__)
+#define zcom_util__exit_if(cond, fmt, ...) \
+  zcom_util__perrmsg_(__FILE__, __LINE__, #cond, cond, fmt, ## __VA_ARGS__)
 
-#define fatal(fmt, ...)  exit_if(1, fmt, ## __VA_ARGS__)
+#define zcom_util__fatal(fmt, ...)  zcom_util__exit_if(1, fmt, ## __VA_ARGS__)
 
 #else /* !ZCOM_HAVE_VAM */
 
-#define PERRMSG__(c) {                        \
+#define ZCOM_UTIL__PERRMSG__(c) {                        \
   if ((#c[0] == '1' && #c[1] == '\0') || c) { \
     va_list args;                             \
     va_start(args, fmt);                      \
-    perrmsg__(NULL, -1, NULL, fmt, args);     \
+    zcom_util__perrmsg__(NULL, -1, NULL, fmt, args);     \
     va_end(args);                             \
     exit(1);                                  \
   } }
-ZCOM_INLINE void exit_if(int cond, const char *fmt, ...) PERRMSG__(cond)
-ZCOM_INLINE void fatal(const char *fmt, ...) PERRMSG__(1)
-#undef PERRMSG__
+ZCOM_INLINE void zcom_util__exit_if(int cond, const char *fmt, ...) PERRMSG__(cond)
+ZCOM_INLINE void zcom_util__fatal(const char *fmt, ...) ZCOM_UTIL__PERRMSG__(1)
+#undef ZCOM_UTIL__PERRMSG__
 
 #endif /* ZCOM_HAVE_VAM */
 
-#define xfopen(fp, fn, fmt, err) \
+#define zcom_util__xfopen(fp, fn, fmt, err) \
   if ((fp = fopen(fn, fmt)) == NULL) { \
     fprintf(stderr, "cannot open file %s\n", fn); err; }
 
 
 /* swap two variables */
-#ifndef xtpswap
-#define xtpswap(tp, x, y) { tp dum_; dum_ = (x); (x) = (y); (y) = dum_; }
+#ifndef zcom_util__xtpswap
+#define zcom_util__xtpswap(tp, x, y) { tp dum_; dum_ = (x); (x) = (y); (y) = dum_; }
 #endif
 
-#ifndef intswap
-#define intswap(x, y) xtpswap(int, x, y)
+#ifndef zcom_util__intswap
+#define zcom_util__intswap(x, y) zcom_util__xtpswap(int, x, y)
 #endif
 
-#ifndef dblswap
-#define dblswap(x, y) xtpswap(double, x, y)
+#ifndef zcom_util__dblswap
+#define zcom_util__dblswap(x, y) zcom_util__xtpswap(double, x, y)
 #endif
 
 
-#define cisalnum(c)   isalnum((unsigned char)(c))
-#define cisalpha(c)   isalpha((unsigned char)(c))
-#define cisdigit(c)   isdigit((unsigned char)(c))
-#define cisxdigit(c)  isxdigit((unsigned char)(c))
-#define cisprint(c)   isprint((unsigned char)(c))
-#define cisspace(c)   isspace((unsigned char)(c))
-#define cislower(c)   islower((unsigned char)(c))
-#define cisupper(c)   isupper((unsigned char)(c))
-#define ctolower(c)   (char) tolower((unsigned char)(c))
-#define ctoupper(c)   (char) toupper((unsigned char)(c))
+#define zcom_util__cisalnum(c)   isalnum((unsigned char)(c))
+#define zcom_util__cisalpha(c)   isalpha((unsigned char)(c))
+#define zcom_util__cisdigit(c)   isdigit((unsigned char)(c))
+#define zcom_util__cisxdigit(c)  isxdigit((unsigned char)(c))
+#define zcom_util__cisprint(c)   isprint((unsigned char)(c))
+#define zcom_util__cisspace(c)   isspace((unsigned char)(c))
+#define zcom_util__cislower(c)   islower((unsigned char)(c))
+#define zcom_util__cisupper(c)   isupper((unsigned char)(c))
+#define zcom_util__ctolower(c)   (char) tolower((unsigned char)(c))
+#define zcom_util__ctoupper(c)   (char) toupper((unsigned char)(c))
 
 /* string manipulation */
 #define ZSTR_XSPACEL  0x0001
@@ -114,20 +114,20 @@ ZCOM_INLINE void fatal(const char *fmt, ...) PERRMSG__(1)
 #define ZSTR_LOWER    ZSTR_CASE
 
 /* remove leading and trailing spaces */
-#define strip(s)  stripx(s, ZSTR_XSPACE)
-#define lstrip(s) stripx(s, ZSTR_XSPACEL)
-#define rstrip(s) stripx(s, ZSTR_XSPACER)
+#define zcom_util__strip(s)  zcom_util__stripx(s, ZSTR_XSPACE)
+#define zcom_util__lstrip(s) zcom_util__stripx(s, ZSTR_XSPACEL)
+#define zcom_util__rstrip(s) zcom_util__stripx(s, ZSTR_XSPACER)
 
 
 /* in the follows, size_s means the buffer size of s, i.e., sizeof(s) for static strings */
 /* copy the string and convert it to upper/lower case */
-#define strcpy2u(s, t, size_s) strcnv(s, t, size_s - 1, ZSTR_COPY|ZSTR_UPPER)
-#define strcpy2l(s, t, size_s) strcnv(s, t, size_s - 1, ZSTR_COPY|ZSTR_LOWER)
-#define strcpy_sf(s, t, size_s) strcnv(s, t, size_s - 1, ZSTR_COPY)
-#define substr(s, t, start, len) strcnv(s, t+start, len, ZSTR_COPY)
+#define zcom_util__strcpy2u(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_COPY|ZSTR_UPPER)
+#define zcom_util__strcpy2l(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_COPY|ZSTR_LOWER)
+#define zcom_util__strcpy_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_COPY)
+#define zcom_util__substr(s, t, start, len) zcom_util__strcnv(s, t+start, len, ZSTR_COPY)
 /* concatenate strings, the last parameter is the buffer size of s,
  * unlike strncat(), in which it's the number of characters from *t* to be copied.  */
-#define strcat_sf(s, t, size_s) strcnv(s, t, size_s - 1, ZSTR_CAT)
+#define zcom_util__strcat_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_CAT)
 
 
 #endif

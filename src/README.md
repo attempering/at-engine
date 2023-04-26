@@ -2,7 +2,7 @@
 
 ## Modules
 
-* [core](core) core PCST code for adaptive tempering.
+* [core](core) kernel code for adaptive tempering.
 
 * [external](external) veritools.
 

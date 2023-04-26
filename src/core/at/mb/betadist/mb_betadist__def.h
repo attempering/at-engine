@@ -2,7 +2,7 @@
 #define AT__MB_BETADIST__DEF_H__
 
 /* parameters for the overall beta disribution */
-typedef struct mb_betadist_t_ {
+typedef struct at_mb_betadist_t_ {
   int       mode;         /* mode 0: disable 1: Gaussian 2:exponential */
   double    ens_exp;      /* ensemble exponent of beta */
   double    beta0;        /* beta0 in Gaussian distribution */
@@ -12,6 +12,6 @@ typedef struct mb_betadist_t_ {
   int       n;            /* number of beta bins == mb->n */
   double    beta_min;     /* minimal beta == mb->bmin */
   double    beta_max;     /* maximal beta == mb->bmax */
-} mb_betadist_t;
+} at_mb_betadist_t;
 
 #endif

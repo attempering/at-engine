@@ -5,14 +5,14 @@
 
 #include "mb_betadist__def.h"
 
-typedef struct mb_t_ mb_t;
-typedef struct cfg_t_ cfg_t;
+typedef struct at_mb_t_ at_mb_t;
+typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-int mb_betadist__cfg_init(mb_betadist_t *betadist, cfg_t *cfg, mb_t *mb);
+int at_mb_betadist__cfg_init(at_mb_betadist_t *betadist, zcom_cfg_t *cfg, at_mb_t *mb);
 
-void mb_betadist__finish(mb_betadist_t *betadist);
+void at_mb_betadist__finish(at_mb_betadist_t *betadist);
 
-void mb_betadist__manifest(const mb_betadist_t *betadist, FILE *fp, int arrmax);
+void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, FILE *fp, int arrmax);
 
 /* return the inverse of overall temperature weight
  *
@@ -29,7 +29,7 @@ void mb_betadist__manifest(const mb_betadist_t *betadist, FILE *fp, int arrmax);
  * are saved in *p_f and *p_neg_df_dbeta, respectively,
  * if the two pointers are not NULL.
  */
-double mb_betadist__calc_inv_weight(mb_betadist_t *betadist, double beta,
+double at_mb_betadist__calc_inv_weight(at_mb_betadist_t *betadist, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
 
 #endif

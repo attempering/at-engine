@@ -2,8 +2,8 @@
 #define AT__EH_H__
 
 
-/* definition of eh_t */
-#include "eh_def.h"
+/* definition of at_eh_t */
+#include "eh__def.h"
 
 /* basic routines: open()/close()/clear() */
 #include "eh_basic.h"

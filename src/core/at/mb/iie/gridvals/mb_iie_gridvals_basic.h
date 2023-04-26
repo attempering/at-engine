@@ -4,16 +4,16 @@
 
 #include "mb_iie_gridvals__def.h"
 
-typedef struct mb_t_ mb_t;
-typedef struct cfg_t_ cfg_t;
+typedef struct at_mb_t_ at_mb_t;
+typedef struct zcom_cfg_t_ zcom_cfg_t;
 
 
-void mb_iie_gridvals__cfg_init(mb_iie_gridvals_t *gridvals, mb_t *mb,
-    cfg_t *cfg, int silent);
+void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
+    zcom_cfg_t *cfg, int silent);
 
-void mb_iie_gridvals__clear(mb_iie_gridvals_t *gridvals);
+void at_mb_iie_gridvals__clear(at_mb_iie_gridvals_t *gridvals);
 
-void mb_iie_gridvals__finish(mb_iie_gridvals_t *gridvals);
+void at_mb_iie_gridvals__finish(at_mb_iie_gridvals_t *gridvals);
 
 
 #endif

@@ -4,7 +4,7 @@
 
 #include "cfg.h"
 
-#define cfg_set(cfg, var) opt_isset(cfg->opts, cfg->nopt, &var, #var)
+#define zcom_cfg__set(cfg, var) zcom_opt__isset(cfg->opts, cfg->nopt, &var, #var)
 
 /* Read the value of a given variable from the current configuration file,
  * the name of variable is given by `key`,
@@ -14,8 +14,8 @@
  * If the function succeeds, it returns 0.
  *
  * In case fmt is "%s", (*var) is a string, or a pointer to char.
- *   The space for (*var) will be managed through ssm_copy(). */
-int cfg_get(cfg_t *cfg, void *var, const char *key, const char *fmt)
+ *   The space for (*var) will be managed through zcom_ssm__copy(). */
+int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
 {
   int i;
 
@@ -24,7 +24,7 @@ int cfg_get(cfg_t *cfg, void *var, const char *key, const char *fmt)
   }
 
   for (i = 0; i < cfg->nent; i++) {
-    cfgent_t *ent = cfg->ents + i;
+    zcom_cfgent_t *ent = cfg->ents + i;
 
     if (ent->key != NULL && strcmp(ent->key, key) == 0) {
       //fprintf(stderr, "found a matched key [%s] vs [%s]\n", key, ent->key);
@@ -33,7 +33,7 @@ int cfg_get(cfg_t *cfg, void *var, const char *key, const char *fmt)
         //fprintf(stderr, "trying to get a string value [%s] : %s\n", key, (var ? *(char**)var : NULL));
 
         /* make a copy and return */
-        char *val_str = ssm_dup(cfg->ssm, ent->val);
+        char *val_str = zcom_ssm__dup(cfg->ssm, ent->val);
         if (var != NULL) {
           *(char **) var = val_str;
         }
@@ -50,27 +50,27 @@ int cfg_get(cfg_t *cfg, void *var, const char *key, const char *fmt)
 }
 
 /* load the whole configuration file into memory, parse it to entries */
-cfg_t *cfg_open(const char *fn)
+zcom_cfg_t *zcom_cfg__open(const char *fn)
 {
-  cfg_t *cfg;
-  cfgent_t *ent;
+  zcom_cfg_t *cfg;
+  zcom_cfgent_t *ent;
   FILE *fp;
   size_t i, j, n, size = 0;
   char *p, *q;
 
-  if ((cfg = (cfg_t *) calloc(1, sizeof(cfg_t))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for a new cfg_t object\n");
+  if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL) {
+    fprintf(stderr, "Fatal: no memory for a new zcom_cfg_t object\n");
     return NULL;
   }
 
-  cfg->ssm = ssm_open();
+  cfg->ssm = zcom_ssm__open();
 
-  xfopen(fp, fn, "r", return NULL);
-  if (ssm_fget_all(cfg->ssm, &(cfg->buf), &size, fp) == NULL) {
+  zcom_util__xfopen(fp, fn, "r", return NULL);
+  if (zcom_ssm__fget_all(cfg->ssm, &(cfg->buf), &size, fp) == NULL) {
     fprintf(stderr, "error reading file %s\n", fn);
     return NULL;
   }
-  ssm_concat(cfg->ssm, &(cfg->buf), "\n"); /* in case the file is not ended by a new line, we add one */
+  zcom_ssm__concat(cfg->ssm, &(cfg->buf), "\n"); /* in case the file is not ended by a new line, we add one */
   fclose(fp);
 
   /* count the number of lines (before allocating the key-table) */
@@ -87,15 +87,15 @@ cfg_t *cfg_open(const char *fn)
 
       /* replace following CR LF by spaces for efficiency
          as the size of the key table == the number of blank lines */
-      for (j = i+1; j < size && cisspace(p[j]); j++) {
+      for (j = i+1; j < size && zcom_util__cisspace(p[j]); j++) {
         p[j] = ' ';
       }
     }
   }
   n++; /* for the last line */
 
-  if ((cfg->ents = (cfgent_t *) calloc(n, sizeof(*cfg->ents))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for %lu objects of cfgent_t\n", (unsigned long) n);
+  if ((cfg->ents = (zcom_cfgent_t *) calloc(n, sizeof(*cfg->ents))) == NULL) {
+    fprintf(stderr, "Fatal: no memory for %lu objects of zcom_cfgent_t\n", (unsigned long) n);
     exit(1);
   }
 
@@ -119,7 +119,7 @@ cfg_t *cfg_open(const char *fn)
   for (j = 0; j < n; j++) {
     ent = cfg->ents + j;
     p = ent->key;
-    strip(p);
+    zcom_util__strip(p);
 
     /* skip a blank or comment line */
     if (p[0] == '\0' || strchr("#%!;", p[0]) != NULL) {
@@ -128,7 +128,7 @@ cfg_t *cfg_open(const char *fn)
     }
 
     /* remove trailing space and ';' */
-    for (q = p + strlen(p) - 1; q >= p && (cisspace(*q) || *q == ';'); q--) {
+    for (q = p + strlen(p) - 1; q >= p && (zcom_util__cisspace(*q) || *q == ';'); q--) {
       *q = '\0';
     }
 
@@ -138,13 +138,13 @@ cfg_t *cfg_open(const char *fn)
     }
     *q = '\0';
     ent->val = q + 1;
-    strip(ent->key);
-    strip(ent->val);
+    zcom_util__strip(ent->key);
+    zcom_util__strip(ent->val);
   }
   cfg->nent = (int) n;
   cfg->nopt = 0;
   cfg->nopt_cap = CFG_OPT__BLOCK_SIZE_;
-  if ((cfg->opts = (opt_t *) calloc(cfg->nopt_cap, sizeof(opt_t))) == NULL) {
+  if ((cfg->opts = (zcom_opt_t *) calloc(cfg->nopt_cap, sizeof(zcom_opt_t))) == NULL) {
     fprintf(stderr, "Fatal no memory for %d objects of op_t", cfg->nopt_cap);
     exit(1);
   }
@@ -152,42 +152,42 @@ cfg_t *cfg_open(const char *fn)
   return cfg;
 }
 
-void cfg_close(cfg_t *cfg)
+void zcom_cfg__close(zcom_cfg_t *cfg)
 {
   free(cfg->ents);
   free(cfg->opts);
-  ssm_close(cfg->ssm);
+  zcom_ssm__close(cfg->ssm);
   memset(cfg, 0, sizeof(*cfg));
   free(cfg);
 }
 
 /* register an option request, return the index */
-int cfg_add(cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
+int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
 {
   int n = cfg->nopt++;
-  opt_t *o;
+  zcom_opt_t *o;
 
   if (cfg->nopt > cfg->nopt_cap) {
     cfg->nopt_cap += CFG_OPT__BLOCK_SIZE_;
-    if ((cfg->opts = (opt_t *) realloc(cfg->opts, cfg->nopt_cap * sizeof(opt_t))) == NULL) {
-      fprintf(stderr, "Fatal: no memory for %d objects of opt_t\n", cfg->nopt_cap);
+    if ((cfg->opts = (zcom_opt_t *) realloc(cfg->opts, cfg->nopt_cap * sizeof(zcom_opt_t))) == NULL) {
+      fprintf(stderr, "Fatal: no memory for %d objects of zcom_opt_t\n", cfg->nopt_cap);
       exit(1);
     }
   }
 
   o = cfg->opts + n;
-  opt_set(o, NULL, key, fmt, ptr, desc);
+  zcom_opt__set(o, NULL, key, fmt, ptr, desc);
 
   return n;
 }
 
 /* match requested options with entries in cfg file
  * returns 0 if successful */
-int cfg_match(cfg_t *cfg, unsigned flags)
+int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
 {
-  int i, j, ret = 0, verbose = flags & CFG_VERBOSE, must = flags & OPT_MUST;
-  opt_t *o;
-  cfgent_t *ent;
+  int i, j, ret = 0, verbose = flags & CFG_VERBOSE, must = flags & ZCOM_OPT_MUST;
+  zcom_opt_t *o;
+  zcom_cfgent_t *ent;
 
   for (i = 0; i < cfg->nopt; i++) {
     o = cfg->opts + i;
@@ -195,15 +195,15 @@ int cfg_match(cfg_t *cfg, unsigned flags)
       ent = cfg->ents + j;
       if (ent->key != NULL && strcmp(ent->key, o->key) == 0) {
         ent->used = 1;
-        o->flags |= OPT_SET;
+        o->flags |= ZCOM_OPT_SET;
         o->val = ent->val;
-        opt_getval(o, cfg->ssm);
+        zcom_opt__getval(o, cfg->ssm);
         break;
       }
     }
-    if (!(o->flags & OPT_SET) && (must || verbose)) {
+    if (!(o->flags & ZCOM_OPT_SET) && (must || verbose)) {
       printf("cfg: %s not set, default: ", o->key);
-      opt_printptr(o);
+      zcom_opt__print_ptr(o);
       printf("\n");
       if (must) ret = 1;
     }

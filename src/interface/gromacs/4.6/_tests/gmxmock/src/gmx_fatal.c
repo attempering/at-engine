@@ -4,7 +4,7 @@
 
 FILE    *debug;
 
-void gmx_fatal(int fatal_errno, const char *file, int line, const char *fmt, ...)
+void gmx_fatal(int zcom_util__fatal_errno, const char *file, int line, const char *fmt, ...)
 {
   exit(1);
 }

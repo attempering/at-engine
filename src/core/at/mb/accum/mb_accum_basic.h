@@ -9,21 +9,21 @@
 #include <stdio.h>
 
 
-sm_t *mb_accum__get_sums(mb_accum_t *accum, int j);
+at_mb_sm_t *at_mb_accum__get_sums(at_mb_accum_t *accum, int j);
 
-sm_t *mb_accum__get_proper_sums(mb_accum_t *accum, int win_id, int ib);
+at_mb_sm_t *at_mb_accum__get_proper_sums(at_mb_accum_t *accum, int win_id, int ib);
 
-double mb_accum__get_window_visits(mb_accum_t *accum, int win_id);
+double at_mb_accum__get_window_visits(at_mb_accum_t *accum, int win_id);
 
-void mb_accum__add(mb_accum_t *accum, int j, double invwf, double e, int do_2nd,
-    mb_shk_t *shk, double total_visits);
+void at_mb_accum__add(at_mb_accum_t *accum, int j, double invwf, double e, int do_2nd,
+    at_mb_shk_t *shk, double total_visits);
 
-void mb_accum__calc_win_total(mb_accum_t *accum);
+void at_mb_accum__calc_win_total(at_mb_accum_t *accum);
 
-void mb_accum__init(mb_accum_t *accum, int n, mb_win_t *win, unsigned flags);
+void at_mb_accum__init(at_mb_accum_t *accum, int n, at_mb_win_t *win, unsigned flags);
 
-void mb_accum__clear(mb_accum_t *accum);
+void at_mb_accum__clear(at_mb_accum_t *accum);
 
-void mb_accum__finish(mb_accum_t *accum);
+void at_mb_accum__finish(at_mb_accum_t *accum);
 
 #endif

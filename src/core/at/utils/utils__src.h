@@ -8,20 +8,20 @@
 
 
 
-char *utils_make_output_filename(ssm_t *ssm, const char *data_dir, const char *fn)
+char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, const char *fn)
 {
   char *buf;
 
   if (data_dir != NULL) {
-    create_dir_if_not_exists(data_dir);
+    at_utils__create_dir_if_not_exists(data_dir);
 
     /* buf = data_dir + "/" + fn */
-    buf = ssm_dup(ssm, data_dir);
-    ssm_concat(ssm, &buf, "/");
-    ssm_concat(ssm, &buf, fn);
+    buf = zcom_ssm__dup(ssm, data_dir);
+    zcom_ssm__concat(ssm, &buf, "/");
+    zcom_ssm__concat(ssm, &buf, fn);
 
   } else {
-    buf = ssm_dup(ssm, fn);
+    buf = zcom_ssm__dup(ssm, fn);
   }
 
   return buf;

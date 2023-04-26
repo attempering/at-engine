@@ -7,7 +7,7 @@
 
 
 /* return the system endian, 1: big endian, 0: little endian */
-int endn_system(void)
+int zcom_endn__system(void)
 {
   unsigned feff = 0xFEFF; /* assume unsigned is at least 16-bit */
   unsigned char *p;
@@ -35,13 +35,13 @@ ZCOM_INLINE void endn_flip(void *ptr, size_t size, size_t n)
 
 /* write data in ptr to file with a specific endian 'endn'
  * `ptr` is not const, because it needs to change its endian */
-size_t endn_fwrite(void *ptr, size_t size, size_t n, FILE *fp, int endn)
+size_t zcom_endn__fwrite(void *ptr, size_t size, size_t n, FILE *fp, int endn)
 {
   static int endn_sys = -1;
 
   /* initial determine the machine's endianess */
   if (endn_sys < 0) {
-    endn_sys = endn_system();
+    endn_sys = zcom_endn__system();
   }
   if (endn == endn_sys) {
     return fwrite(ptr, size, n, fp);
@@ -57,7 +57,7 @@ size_t endn_fwrite(void *ptr, size_t size, size_t n, FILE *fp, int endn)
  * return 0 if they are identical without endian change
  * return 1 if changing the endianness of *src matches *ref
  * otherwise return -1 */
-int endn_rmatch(void *src, const void *ref, size_t size, FILE *fp)
+int zcom_endn__rmatch(void *src, const void *ref, size_t size, FILE *fp)
 {
   if (1 != fread(src, size, 1, fp))
     return -1;
@@ -80,16 +80,16 @@ int endn_rmatch(void *src, const void *ref, size_t size, FILE *fp)
   return (memcmp(src, ref, size) == 0) ? 1 : -1;
 }
 
-/* special case of endn_rmatchi for integer, convenient because
+/* special case of zcom_endn__rmatchi for integer, convenient because
  * iref could be e.g. sizeof(int), which has no address */
-int endn_rmatchi(int *src, int iref, FILE *fp)
+int zcom_endn__rmatchi(int *src, int iref, FILE *fp)
 {
-  return endn_rmatch(src, &iref, sizeof(int), fp);
+  return zcom_endn__rmatch(src, &iref, sizeof(int), fp);
 }
 
 /* read data from file to ptr with endianness changed if 'flip' is 1
- * flip can be initialized by calling endn_rmatch() for a test object */
-size_t endn_fread(void *ptr, size_t size, size_t n, FILE *fp, int flip)
+ * flip can be initialized by calling zcom_endn__rmatch() for a test object */
+size_t zcom_endn__fread(void *ptr, size_t size, size_t n, FILE *fp, int flip)
 {
   n = fread(ptr, size, n, fp);
   if (flip) endn_flip(ptr, size, n);

@@ -6,18 +6,18 @@
 #define MB_IIE_GRIDVALS__QUALITY_BIT_CV    0x00000004
 #define MB_IIE_GRIDVALS__QUALITY_BIT_LNZ   0x00000008
 
-typedef struct mb_iie_gridvals_item_t_ {
+typedef struct at_mb_iie_gridvals_item_t_ {
   double lnz;
   double e;
   double cv;
   unsigned quality_bits;
-} mb_iie_gridvals_item_t;
+} at_mb_iie_gridvals_item_t;
 
 
-typedef struct mb_iie_gridvals_t_ {
+typedef struct at_mb_iie_gridvals_t_ {
   int n;
-  mb_iie_gridvals_item_t *items;
-} mb_iie_gridvals_t;
+  at_mb_iie_gridvals_item_t *items;
+} at_mb_iie_gridvals_t;
 
 
 

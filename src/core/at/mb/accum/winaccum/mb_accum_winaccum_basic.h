@@ -9,18 +9,18 @@
 #include <stdio.h>
 
 
-void mb_accum_winaccum__calc_win_total(mb_accum_winaccum_t *winaccum, double *win_total);
+void at_mb_accum_winaccum__calc_win_total(at_mb_accum_winaccum_t *winaccum, double *win_total);
 
-void mb_accum_winaccum__init(mb_accum_winaccum_t *winaccum, int n, mb_win_t *win, unsigned flags);
+void at_mb_accum_winaccum__init(at_mb_accum_winaccum_t *winaccum, int n, at_mb_win_t *win, unsigned flags);
 
-void mb_accum_winaccum__clear(mb_accum_winaccum_t *winaccum);
+void at_mb_accum_winaccum__clear(at_mb_accum_winaccum_t *winaccum);
 
-void mb_accum_winaccum__finish(mb_accum_winaccum_t *winaccum);
+void at_mb_accum_winaccum__finish(at_mb_accum_winaccum_t *winaccum);
 
-void mb_accum_winaccum__add(
-    mb_accum_winaccum_t *winaccum,
+void at_mb_accum_winaccum__add(
+    at_mb_accum_winaccum_t *winaccum,
     int j,
     double invwf, double e, int do_2nd,
-    mb_shk_t *shk, double total_visits);
+    at_mb_shk_t *shk, double total_visits);
 
 #endif

@@ -1,19 +1,19 @@
-#ifndef AT__SM__SRC_H__
-#define AT__SM__SRC_H__
+#ifndef AT__MB_SM__SRC_H__
+#define AT__MB_SM__SRC_H__
 
 
 /* simple accumulator */
 
 
-#include "sm.h"
+#include "mb_sm.h"
 
 
-#include "../zcom/endn/endn.h"
+#include "../../zcom/endn/endn.h"
 #include <math.h>
 
 
 /* scale data points in accumulator by a factor of `f` */
-void sm__scale(sm_t *sm, double f)
+void at_mb_sm__scale(at_mb_sm_t *sm, double f)
 {
   sm->s *= f;
   sm->se *= f;
@@ -23,7 +23,7 @@ void sm__scale(sm_t *sm, double f)
 
 
 /* add a new data point of weight `w` into the accumulator */
-void sm__add(sm_t *sm, double w, double e, int do_third_order)
+void at_mb_sm__add(at_mb_sm_t *sm, double w, double e, int do_third_order)
 {
   double s, sp, se, sep, see, seep, de, dep, de2;
 
@@ -44,15 +44,15 @@ void sm__add(sm_t *sm, double w, double e, int do_third_order)
 }
 
 
-int sm__init(sm_t* sm)
+int at_mb_sm__init(at_mb_sm_t* sm)
 {
   if (sm == NULL) {
-    fprintf(stderr, "null pointer to sm_t\n");
+    fprintf(stderr, "null pointer to at_mb_sm_t\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
-  sm__clear(sm);
+  at_mb_sm__clear(sm);
 
   return 0;
 
@@ -61,7 +61,7 @@ ERR:
 }
 
 
-void sm__clear(sm_t *sm)
+void at_mb_sm__clear(at_mb_sm_t *sm)
 {
   sm->s = 0.0;
   sm->se = 0.0;
@@ -70,7 +70,7 @@ void sm__clear(sm_t *sm)
 }
 
 
-double sm__get_mean(sm_t *sm, double min_size)
+double at_mb_sm__get_mean(at_mb_sm_t *sm, double min_size)
 {
   if (sm->s > min_size) {
     return sm->se / sm->s;
@@ -80,7 +80,7 @@ double sm__get_mean(sm_t *sm, double min_size)
 }
 
 
-double sm__get_var(sm_t *sm, double min_size)
+double at_mb_sm__get_var(at_mb_sm_t *sm, double min_size)
 {
   if (sm->s > min_size) {
     return sm->se2 / sm->s;
@@ -91,75 +91,75 @@ double sm__get_var(sm_t *sm, double min_size)
 
 
 
-double sm__get_std(sm_t *sm, double min_size)
+double at_mb_sm__get_std(at_mb_sm_t *sm, double min_size)
 {
-  return sqrt(sm__get_var(sm, min_size));
+  return sqrt(at_mb_sm__get_var(sm, min_size));
 }
 
 
 
-int sm__read_binary(sm_t *sm, FILE *fp, int endn)
+int at_mb_sm__read_binary(at_mb_sm_t *sm, FILE *fp, int endn)
 {
   if (sm == NULL) {
-    fprintf(stderr, "passing null pointer to sm__read_binary\n");
+    fprintf(stderr, "passing null pointer to at_mb_sm__read_binary\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* clear data before reading */
-  sm__clear(sm);
+  at_mb_sm__clear(sm);
 
   /* s */
-  if (endn_fread(&sm->s, sizeof(sm->s), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&sm->s, sizeof(sm->s), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading sm->s\n");
     goto ERR;
   }
   /* se */
-  if (endn_fread(&sm->se, sizeof(sm->se), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&sm->se, sizeof(sm->se), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading sm->se\n");
     goto ERR;
   }
   /* se2 */
-  if (endn_fread(&sm->se2, sizeof(sm->se2), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&sm->se2, sizeof(sm->se2), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading sm->se2\n");
     goto ERR;
   }
   /* se3 */
-  if (endn_fread(&sm->se3, sizeof(sm->se3), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&sm->se3, sizeof(sm->se3), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading sm->se3\n");
     goto ERR;
   }
   return 0;
 ERR:
-  sm__clear(sm);
+  at_mb_sm__clear(sm);
   return -1;
 }
 
 
 
-int sm__write_binary(sm_t *sm, FILE *fp)
+int at_mb_sm__write_binary(at_mb_sm_t *sm, FILE *fp)
 {
   if (sm == NULL) {
-    fprintf(stderr, "passing null pointer to sm__write_binary\n");
+    fprintf(stderr, "passing null pointer to at_mb_sm__write_binary\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* s */
-  if (endn_fwrite(&sm->s, sizeof(sm->s), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&sm->s, sizeof(sm->s), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing sm->s\n");
     goto ERR;
   }
   /* se */
-  if (endn_fwrite(&sm->se, sizeof(sm->se), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&sm->se, sizeof(sm->se), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing sm->se\n");
     goto ERR;
   }
   /* se2 */
-  if (endn_fwrite(&sm->se2, sizeof(sm->se2), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&sm->se2, sizeof(sm->se2), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing sm->se2\n");
     goto ERR;
   }
   /* se3 */
-  if (endn_fwrite(&sm->se3, sizeof(sm->se3), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&sm->se3, sizeof(sm->se3), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing sm->se3\n");
     goto ERR;
   }
@@ -170,7 +170,7 @@ ERR:
 
 
 
-void sm__manifest(sm_t *sm, FILE *fp, int arrmax)
+void at_mb_sm__manifest(at_mb_sm_t *sm, FILE *fp, int arrmax)
 {
   /* s */
   fprintf(fp, "sm->s: double, %g\n", sm->s);

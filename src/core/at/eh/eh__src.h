@@ -8,7 +8,6 @@
 #include "../zcom/ssm/ssm__src.h"
 #include "../zcom/opt/opt__src.h"
 #include "../zcom/cfg/cfg__src.h"
-#include "../sm/sm__src.h"
 
 
 

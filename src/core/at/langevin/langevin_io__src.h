@@ -5,7 +5,7 @@
 
 #include "../zcom/endn/endn.h"
 
-void langevin_manifest(const langevin_t *langevin, FILE *fp, int arrcnt)
+void at_langevin__manifest(const at_langevin_t *langevin, FILE *fp, int arrcnt)
 {
   fprintf(fp, "langevin->dt: double, %g\n", langevin->dt);
 
@@ -26,17 +26,17 @@ void langevin_manifest(const langevin_t *langevin, FILE *fp, int arrcnt)
 
 
 
-int langevin_read_binary(langevin_t *langevin, FILE *fp, int endn)
+int at_langevin__read_binary(at_langevin_t *langevin, FILE *fp, int endn)
 {
   /* rate */
   double rate = 0.0;
-  if (endn_fread(&rate, sizeof(rate), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&rate, sizeof(rate), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading rate\n");
     goto ERR;
   }
 
   /* total: total number of attempts of using langevin equation */
-  if (endn_fread(&langevin->total, sizeof(langevin->total), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&langevin->total, sizeof(langevin->total), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading langevin->total\n");
     goto ERR;
   }
@@ -54,17 +54,17 @@ ERR:
 
 
 
-int langevin_write_binary(langevin_t *langevin, FILE *fp)
+int at_langevin__write_binary(at_langevin_t *langevin, FILE *fp)
 {
   /* rate */
   double rate = (langevin->total > 1.0) ? (langevin->rejects/langevin->total) : 0.0;
-  if (endn_fwrite(&rate, sizeof(rate), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&rate, sizeof(rate), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing langevin->rate\n");
     goto ERR;
   }
 
   /* total: total number of attempts of using langevin equation */
-  if (endn_fwrite(&langevin->total, sizeof(langevin->total), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&langevin->total, sizeof(langevin->total), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing langevin->total\n");
     goto ERR;
   }

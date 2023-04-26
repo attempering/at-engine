@@ -10,31 +10,31 @@
 
 
 
-sm_t *mb_accum_winaccum_item__get_sums(mb_accum_winaccum_item_t *item, int j);
+at_mb_sm_t *at_mb_accum_winaccum_item__get_sums(at_mb_accum_winaccum_item_t *item, int j);
 
-void mb_accum_winaccum_item__normalize(mb_accum_winaccum_item_t *item);
+void at_mb_accum_winaccum_item__normalize(at_mb_accum_winaccum_item_t *item);
 
-double mb_accum_winaccum_item__calc_total(mb_accum_winaccum_item_t *item);
+double at_mb_accum_winaccum_item__calc_total(at_mb_accum_winaccum_item_t *item);
 
-void mb_accum_winaccum_item__add(
-    mb_accum_winaccum_item_t *item,
+void at_mb_accum_winaccum_item__add(
+    at_mb_accum_winaccum_item_t *item,
     int ib,
     double invwf, double e, int do_2nd,
-    mb_shk_t *shk,
+    at_mb_shk_t *shk,
     double total_visits);
 
 
 
-void mb_accum_winaccum_item__init(mb_accum_winaccum_item_t *item,
-    int i, mb_win_t *win);
+void at_mb_accum_winaccum_item__init(at_mb_accum_winaccum_item_t *item,
+    int i, at_mb_win_t *win);
 
-void mb_accum_winaccum_item__clear(mb_accum_winaccum_item_t *item);
+void at_mb_accum_winaccum_item__clear(at_mb_accum_winaccum_item_t *item);
 
-void mb_accum_winaccum_item__finish(mb_accum_winaccum_item_t *item);
+void at_mb_accum_winaccum_item__finish(at_mb_accum_winaccum_item_t *item);
 
-int mb_accum_winaccum_item__read_binary(mb_accum_winaccum_item_t *item, FILE *fp, int endn);
+int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FILE *fp, int endn);
 
-int mb_accum_winaccum_item__write_binary(mb_accum_winaccum_item_t *item, FILE *fp);
+int at_mb_accum_winaccum_item__write_binary(at_mb_accum_winaccum_item_t *item, FILE *fp);
 
 
 

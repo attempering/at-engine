@@ -7,15 +7,15 @@
 
 
 /* write various averages to ze_file */
-int mb__write_ze_file(mb_t *mb, const char *fname);
+int at_mb__write_ze_file(at_mb_t *mb, const char *fname);
 
-int mb__beta_to_index(mb_t *mb, double bet, int check);
+int at_mb__beta_to_index(at_mb_t *mb, double bet, int check);
 
 /* add energy and bet */
-void mb__add(mb_t *mb, double e, double bet,
+void at_mb__add(at_mb_t *mb, double e, double bet,
       int *pib, double *pinvwf, double *ndlnwfdbeta);
 
 /* recompute all average energy */
-void mb__refresh_et(mb_t *mb, int reps);
+void at_mb__refresh_et(at_mb_t *mb, int reps);
 
 #endif

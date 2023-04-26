@@ -9,18 +9,18 @@
 
 
 
-double langevin_move__calc_et(
-    langevin_t *langevin,
-    mb_t *mb,
+double at_langevin_move__calc_et(
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     int ib,
     double def_val,
     int check_av_energy);
 
 
 /* deterministic part of the kT-based Langevin equation */
-double langevin_move__calc_dkt_deterministic(
-    langevin_t *langevin,
-    mb_t *mb, 
+double at_langevin_move__calc_dkt_deterministic(
+    at_langevin_t *langevin,
+    at_mb_t *mb, 
     int ib,
     double time_step,
     double neg_dlnwf_dbeta,

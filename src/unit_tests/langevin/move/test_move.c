@@ -32,31 +32,31 @@ double gaussian_sigma = 100.0;
 int nsteps = 100000;
 
 
-void init_mb_langevin_objects(mb_t *mb, langevin_t *langevin)
+void init_mb_langevin_objects(at_mb_t *mb, at_langevin_t *langevin)
 {
-  cfg_t *cfg = cfg_open("at.cfg");
+  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
   int silent = 1;
 
-  mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
+  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
 
   langevin_cfg_init(langevin, cfg, silent);
 
-  cfg_close(cfg);
+  zcom_cfg__close(cfg);
 }
 
 
 
-void mb_mock_exact_moments(mb_t *mb)
+void mb_mock_exact_moments(at_mb_t *mb)
 {
   int i;
-  sm_t *sm;
+  at_mb_sm_t *sm;
 
   // use the plain sums for simplicity
   mb->flags &= ~MB_USE_WIN_ACCUM;
   mb->accum->use_winaccum = 0;
 
   for (i = 0; i < mb->n; i++) {
-    sm = mb_accum__get_proper_sums(mb->accum, i, i);
+    sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
     double beta = mb->bmin + (i + 0.5) * mb->bdel;
     double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
@@ -70,7 +70,7 @@ void mb_mock_exact_moments(mb_t *mb)
 
 
 
-int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
+int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_langevin_t *langevin,
     int corrected, int nsteps)
 {
   int step;
@@ -83,14 +83,14 @@ int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
   double neg_dlnwf_dbeta = 0.0;
   double ergt;
   double invwf;
-  mtrng_t mtrng[1];
+  zcom_mtrng_t mtrng[1];
   histogram_t hist[1];
   char fn_hist[FILENAME_MAX];
-  sm_t sm_beta[1];
+  at_mb_sm_t sm_beta[1];
 
   int passed = 0;
 
-  mtrng_init_from_seed(mtrng, 12345*time(NULL));
+  zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
 
   hist_beta_min = fmax(mb->bmin, beta - 5*beta_sigma);
   hist_beta_max = fmin(mb->bmax, beta + 5*beta_sigma);
@@ -101,7 +101,7 @@ int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
 
   fprintf(stderr, "beta %g (%g, %g)\n", beta, mb->bmin, mb->bmax);
 
-  sm__init(sm_beta);
+  at_mb_sm__init(sm_beta);
 
   // disabling restriction on minimum visits
   // and stride moderation
@@ -109,16 +109,16 @@ int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
   langevin->bin_min_visits = 0;
   langevin->no_skip = 0;
 
-  //langevin_move__debug__ = 2;
+  //at_langevin_move__debug__ = 2;
 
   // mimic the MD simulation loop
   // with a floating beta and fixed energy
   for (step = 0; step < nsteps; step++) {
 
     // calculate ib and invwf
-    ib = mb__beta_to_index(mb, beta, 1);
+    ib = at_mb__beta_to_index(mb, beta, 1);
 
-    invwf = mb_betadist__calc_inv_weight(mb->betadist,
+    invwf = at_mb_betadist__calc_inv_weight(mb->betadist,
         beta, &neg_dlnwf_dbeta, NULL, NULL);
 
     // The pure beta distribution of the Gaussian model
@@ -133,14 +133,14 @@ int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
     // in order to recover the native Gaussian.
     //
     histogram_wadd(hist, beta, invwf);
-    sm__add(sm_beta, invwf, beta, 0);
+    at_mb_sm__add(sm_beta, invwf, beta, 0);
 
     // use the Langevin equation to update the temperature
     if (corrected) {
-      beta = langevin__move_corrected(langevin, mb, erg,
+      beta = at_langevin__move_corrected(langevin, mb, erg,
           beta, ib, invwf, neg_dlnwf_dbeta, mtrng, &ergt);
     } else {
-      beta = langevin__move_simple(langevin, mb, erg,
+      beta = at_langevin__move_simple(langevin, mb, erg,
           beta, ib, invwf, neg_dlnwf_dbeta, mtrng, &ergt);
     }
 
@@ -152,8 +152,8 @@ int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
 
 
   {
-    double beta_mean = sm__get_mean(sm_beta, 0);
-    double beta_std = sm__get_std(sm_beta, 0);
+    double beta_mean = at_mb_sm__get_mean(sm_beta, 0);
+    double beta_std = at_mb_sm__get_std(sm_beta, 0);
 
     fprintf(stderr, "corrected [%d], beta: %g (%g, %g%%) +/- %g (%g, %g%%)\n",
         corrected, beta_mean, beta_c, (beta_mean/beta_c-1)*100,
@@ -186,8 +186,8 @@ int test_langevin_move_no_cfg_sampling(mb_t *mb, langevin_t *langevin,
 
 int main(int argc, char **argv)
 {
-  mb_t mb[1];
-  langevin_t langevin[1];
+  at_mb_t mb[1];
+  at_langevin_t langevin[1];
   int langevin_corrected;
   int passed;
 
@@ -212,7 +212,7 @@ int main(int argc, char **argv)
   fprintf(stderr, "Testing Langevin move dt=%g with correction:\n", langevin->dt);
   passed = test_langevin_move_no_cfg_sampling(mb, langevin, langevin_corrected, nsteps);
 
-  mb__finish(mb);
+  at_mb__finish(mb);
 
   if (passed) {
     printf("Passed.\n");

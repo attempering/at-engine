@@ -12,7 +12,7 @@
 
 
 
-int mb_betadist__cfg_init(mb_betadist_t *betadist, cfg_t *cfg, mb_t *mb)
+int at_mb_betadist__cfg_init(at_mb_betadist_t *betadist, zcom_cfg_t *cfg, at_mb_t *mb)
 {
   int i;
 
@@ -22,13 +22,13 @@ int mb_betadist__cfg_init(mb_betadist_t *betadist, cfg_t *cfg, mb_t *mb)
 
   /* ens_exp: ensemble exponent of beta */
   betadist->ens_exp = 1.0;
-  if (0 != cfg_get(cfg, &betadist->ens_exp, "ensemble_factor", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &betadist->ens_exp, "ensemble_factor", "%lf")) {
     fprintf(stderr, "assuming default: betadist->ens_exp = 1.0, key: ensemble_factor\n");
   }
 
   /* flat ensemble mode */
   betadist->mode = 0;
-  if (0 != cfg_get(cfg, &betadist->mode, "ensemble_mode", "%d"))
+  if (0 != zcom_cfg__get(cfg, &betadist->mode, "ensemble_mode", "%d"))
     fprintf(stderr, "assuming default: betadist->mode = 0, key: ensemble_mode\n");
 
   /* default values */
@@ -39,14 +39,14 @@ int mb_betadist__cfg_init(mb_betadist_t *betadist, cfg_t *cfg, mb_t *mb)
   if(betadist->mode == 1)
   {
     /* beta0 */
-    if (0 != cfg_get(cfg, &betadist->beta0, "ensemble_beta0", "%lf"))
+    if (0 != zcom_cfg__get(cfg, &betadist->beta0, "ensemble_beta0", "%lf"))
       fprintf(stderr, "assuming default: betadist->beta0 = 0.5 * (mb->bmax + mb->bmin), key: ensemble_beta0\n");
     if (betadist->beta0 >= mb->bmax || betadist->beta0 <= mb->bmin)
       fprintf(stderr, "WARNING: beta0 is not in the temperature range!\n");
 
     /* sigma */
     double sigma = 1.0;
-    if (0 != cfg_get(cfg, &sigma, "ensemble_sigma", "%lf"))
+    if (0 != zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf"))
       fprintf(stderr, "assuming default: mb->sigma = 1.0, key: ensemble_sigma\n");
     if (sigma == 0)
     {
@@ -59,7 +59,7 @@ int mb_betadist__cfg_init(mb_betadist_t *betadist, cfg_t *cfg, mb_t *mb)
   {
     /* c */
     betadist->c = 0.0;
-    if (0 != cfg_get(cfg, &betadist->c, "ensemble_c", "%lf"))
+    if (0 != zcom_cfg__get(cfg, &betadist->c, "ensemble_c", "%lf"))
       fprintf(stderr, "assuming default: betadist->c = 0.0, key: ensemble_c\n");
   }
   else if(betadist->mode != 0)
@@ -76,7 +76,7 @@ int mb_betadist__cfg_init(mb_betadist_t *betadist, cfg_t *cfg, mb_t *mb)
   }
 
   for (i = 0; i < betadist->n+1; i++) {
-    double invw = mb_betadist__calc_inv_weight(mb->betadist, mb->barr[i], NULL, NULL, NULL);
+    double invw = at_mb_betadist__calc_inv_weight(mb->betadist, mb->barr[i], NULL, NULL, NULL);
     betadist->ens_w[i] = 1.0/invw;
   }
 
@@ -87,7 +87,7 @@ ERR:
 }
 
 
-void mb_betadist__manifest(const mb_betadist_t *betadist, FILE *fp, int arrmax)
+void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, FILE *fp, int arrmax)
 {
   int i, pacnt;
 
@@ -141,7 +141,7 @@ void mb_betadist__manifest(const mb_betadist_t *betadist, FILE *fp, int arrmax)
 
 
 
-void mb_betadist__finish(mb_betadist_t *betadist)
+void at_mb_betadist__finish(at_mb_betadist_t *betadist)
 {
   if (betadist->ens_w != NULL) {
     free(betadist->ens_w);
@@ -154,7 +154,7 @@ void mb_betadist__finish(mb_betadist_t *betadist)
  * f: f(beta);
  * *pndfdbeta: -df(beta)/dbeta;
  */
-static double mb_betadist_calc_f_factor(mb_betadist_t *betadist, double beta, double *pndfdbeta)
+static double at_mb_betadist__calc_f_factor(at_mb_betadist_t *betadist, double beta, double *pndfdbeta)
 {
   double f, ndfdbeta;
 
@@ -188,7 +188,7 @@ static double mb_betadist_calc_f_factor(mb_betadist_t *betadist, double beta, do
 }
 
 
-static double mb_betadist_calc_invw_factor(mb_betadist_t *betadist, double beta)
+static double at_mb_betadist__calc_invw_factor(at_mb_betadist_t *betadist, double beta)
 {
   const double eps = 1e-5;
   double beta_r = beta / betadist->beta_max; /* to relative beta */
@@ -209,7 +209,7 @@ static double mb_betadist_calc_invw_factor(mb_betadist_t *betadist, double beta)
 }
 
 
-double mb_betadist__calc_inv_weight(mb_betadist_t *betadist, double beta,
+double at_mb_betadist__calc_inv_weight(at_mb_betadist_t *betadist, double beta,
     double *neg_dlnwf_dbeta, double *pf, double *neg_df_dbeta)
 {
   double f, invw, invwf, neg_df_dbeta_ = 0.0;
@@ -218,18 +218,18 @@ double mb_betadist__calc_inv_weight(mb_betadist_t *betadist, double beta,
     neg_df_dbeta = &neg_df_dbeta_;
   }
 
-  f = mb_betadist_calc_f_factor(betadist, beta, neg_df_dbeta);
+  f = at_mb_betadist__calc_f_factor(betadist, beta, neg_df_dbeta);
 
   if (pf != NULL) {
     *pf = f;
   }
 
   // beta^{-ens_exp}
-  invw = mb_betadist_calc_invw_factor(betadist, beta);
+  invw = at_mb_betadist__calc_invw_factor(betadist, beta);
 
   invwf = invw / f;
 
-  exit_if (invwf > 1e6 || invwf < 1e-6, "bad invwf=%g, beta=%g\n", invwf, beta);
+  zcom_util__exit_if (invwf > 1e6 || invwf < 1e-6, "bad invwf=%g, beta=%g\n", invwf, beta);
 
   if (neg_dlnwf_dbeta != NULL) {
     *neg_dlnwf_dbeta = (betadist->ens_exp / beta)

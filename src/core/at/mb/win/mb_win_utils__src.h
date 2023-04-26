@@ -9,7 +9,7 @@
 
 
 
-void mb_win__make_unres_windows_for_grid_estimators(
+void at_mb_win__make_unres_windows_for_grid_estimators(
     int n, const double *barr, double bdel,
     int bwmod, double bwdel,
     int *js_grid_unres, int *jt_grid_unres)
@@ -17,7 +17,7 @@ void mb_win__make_unres_windows_for_grid_estimators(
   int i, js, jt, idel;
   double bet, dbeta = 0.0;
 
-  exit_if (js_grid_unres == NULL || jt_grid_unres == NULL,
+  zcom_util__exit_if (js_grid_unres == NULL || jt_grid_unres == NULL,
       "null pointer, js: %p, jt: %p",
       js_grid_unres, jt_grid_unres);
 
@@ -28,7 +28,7 @@ void mb_win__make_unres_windows_for_grid_estimators(
       case 1: dbeta = bwdel * bet; break;
       case 2: dbeta = bwdel * (bet * bet); break;
       default:
-        exit_if(1, "bad bwmod=%d\n", bwmod);
+        zcom_util__exit_if(1, "bad bwmod=%d\n", bwmod);
         break;
     }
 
@@ -47,7 +47,7 @@ void mb_win__make_unres_windows_for_grid_estimators(
       jt = n;
     }
 
-    exit_if (i < js || i > jt,
+    zcom_util__exit_if (i < js || i > jt,
       "bad window %d (%d,%d)\n", i, js, jt);
 
     js_grid_unres[i] = js;
@@ -56,7 +56,7 @@ void mb_win__make_unres_windows_for_grid_estimators(
 }
 
 
-void mb_win__make_windows_for_bin_estimators(int n, int symmetric,
+void at_mb_win__make_windows_for_bin_estimators(int n, int symmetric,
     const int *js_grid_unres, const int *jt_grid_unres,
     int *js_bin, int *jt_bin)
 {
@@ -92,7 +92,7 @@ void mb_win__make_windows_for_bin_estimators(int n, int symmetric,
 
 
 /* make a restricted window for grid point i */
-static void mb_win__make_res_window_for_grid_estimators(int n, int i,
+static void at_mb_win__make_res_window_for_grid_estimators(int n, int i,
     int *js_bin, int *jt_bin, int *js, int *jt)
 {
   int win_id = (i < n) ? i : (i - 1);
@@ -142,18 +142,18 @@ static void mb_win__make_res_window_for_grid_estimators(int n, int i,
 
   }
 
-  exit_if (*jt - *js <= 0, "empty window (%d,%d) for %d\n", *js, *jt, i);
+  zcom_util__exit_if (*jt - *js <= 0, "empty window (%d,%d) for %d\n", *js, *jt, i);
 }
 
 
-void mb_win__make_res_windows_for_grid_estimators(int n,
+void at_mb_win__make_res_windows_for_grid_estimators(int n,
     int *js_bin, int *jt_bin,
     int *js_grid_res, int *jt_grid_res)
 {
   int i;
 
   for (i = 0; i <= n; i++) {
-    mb_win__make_res_window_for_grid_estimators(
+    at_mb_win__make_res_window_for_grid_estimators(
         n, i,
         js_bin, jt_bin,
         &js_grid_res[i], &jt_grid_res[i]);
@@ -167,7 +167,7 @@ void mb_win__make_res_windows_for_grid_estimators(int n,
  *
  * The array `affected_win_count` needs to be allocated before
  * calling this function */
-static void mb_win__calc_window_counts(mb_win_t *win)
+static void at_mb_win__calc_window_counts(at_mb_win_t *win)
 {
   int i, j;
   int n = win->n;
@@ -188,23 +188,23 @@ static void mb_win__calc_window_counts(mb_win_t *win)
 
 
 
-int mb_win__init_bin2wins(mb_win_t *win)
+int at_mb_win__init_bin2wins(at_mb_win_t *win)
 {
   int n = win->n;
   int i, j;
-  mb_win_ids_t *wj;
+  at_mb_win_ids_t *wj;
 
-  exit_if ((win->bin2wins = calloc(n, sizeof(*win->bin2wins))) == NULL,
+  zcom_util__exit_if ((win->bin2wins = calloc(n, sizeof(*win->bin2wins))) == NULL,
       "no memory for win->bin2wins of size %d", n);
 
-  mb_win__calc_window_counts(win);
+  at_mb_win__calc_window_counts(win);
 
   for (j = 0; j < n; j++) {
     wj = win->bin2wins + j;
     
     wj->curr_id_ = 0;
 
-    exit_if ((wj->ids = (int *) calloc(wj->count, sizeof(int))) == NULL,
+    zcom_util__exit_if ((wj->ids = (int *) calloc(wj->count, sizeof(int))) == NULL,
         "no memory for win->bin2wins[%d].ids count %d\n", j, wj->count);
   }
 
@@ -215,7 +215,7 @@ int mb_win__init_bin2wins(mb_win_t *win)
     for (j = js; j < jt; j++) {
       wj = win->bin2wins + j;
 
-      exit_if (wj->curr_id_ >= wj->count,
+      zcom_util__exit_if (wj->curr_id_ >= wj->count,
           "win->bin2wins[%d].curr_id: %d >= %d, m: %d, win: %d, bin: %d, (js, jt) = [%d, %d).\n",
           j, wj->curr_id_, wj->count, i, j, js, jt);
 

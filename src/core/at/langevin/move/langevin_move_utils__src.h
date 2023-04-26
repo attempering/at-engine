@@ -7,7 +7,7 @@
 
 
 
-double langevin_move__get_acceptance_ratio(langevin_t *langevin)
+double at_langevin_move__get_acceptance_ratio(at_langevin_t *langevin)
 {
   if (langevin->total > 0) {
     return 1 - langevin->rejects/langevin->total; 

@@ -14,7 +14,7 @@
  *
  * Such windows are not designed to work with the window-accumulator module.
  */
-void mb_win__make_unres_windows_for_grid_estimators(
+void at_mb_win__make_unres_windows_for_grid_estimators(
     int n, const double *barr, double bdel,
     int bw_mod, double bw_del,
     int *js_grid_raw, int *jt_grid_raw);
@@ -25,7 +25,7 @@ void mb_win__make_unres_windows_for_grid_estimators(
  *
  * Such windows are designed to work with window-accumulator module.
  * They are usually symmetric. */
-void mb_win__make_windows_for_bin_estimators(
+void at_mb_win__make_windows_for_bin_estimators(
     int n,
     int symmetric,
     const int *js_grid_raw, const int *jt_grid_raw,
@@ -37,19 +37,19 @@ void mb_win__make_windows_for_bin_estimators(
  *
  * Such windows are designed to work with window-accumulator module.
  * They are contained in the bin estimators */
-void mb_win__make_res_windows_for_grid_estimators(int n,
+void at_mb_win__make_res_windows_for_grid_estimators(int n,
     int *js_bin, int *jt_bin,
     int *js_grid_res, int *jt_grid_res);
 
 
-typedef struct cfg_t_ cfg_t;
-typedef struct mb_t_ mb_t;
+typedef struct zcom_cfg_t_ zcom_cfg_t;
+typedef struct at_mb_t_ at_mb_t;
 
-int mb_win__cfg_init(mb_win_t *win, cfg_t *cfg, mb_t *mb);
+int at_mb_win__cfg_init(at_mb_win_t *win, zcom_cfg_t *cfg, at_mb_t *mb);
 
-void mb_win__finish(mb_win_t *win);
+void at_mb_win__finish(at_mb_win_t *win);
 
-void mb_win__manifest(const mb_win_t *win, FILE *fp, int arrmax);
+void at_mb_win__manifest(const at_mb_win_t *win, FILE *fp, int arrmax);
 
 
 #endif

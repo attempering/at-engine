@@ -7,7 +7,7 @@
 #include "../../mb_basic.h"
 
 
-static void mb_iie_zerofiller_item__set_zero(mb_iie_zerofiller_item_t *p)
+static void at_mb_iie_zerofiller_item__set_zero(at_mb_iie_zerofiller_item_t *p)
 {
   p->w = 0;
   p->mean = 0;
@@ -15,15 +15,15 @@ static void mb_iie_zerofiller_item__set_zero(mb_iie_zerofiller_item_t *p)
 }
 
 
-static void mb_iie_zerofiller_item__copy(mb_iie_zerofiller_item_t *dest, const mb_iie_zerofiller_item_t *src)
+static void at_mb_iie_zerofiller_item__copy(at_mb_iie_zerofiller_item_t *dest, const at_mb_iie_zerofiller_item_t *src)
 {
   *dest = *src;
 }
 
-static void mb_iie_zerofiller_item__set_equal(
-    mb_iie_zerofiller_item_t *c,
-    const mb_iie_zerofiller_item_t *a,
-    const mb_iie_zerofiller_item_t *b)
+static void at_mb_iie_zerofiller_item__set_equal(
+    at_mb_iie_zerofiller_item_t *c,
+    const at_mb_iie_zerofiller_item_t *a,
+    const at_mb_iie_zerofiller_item_t *b)
 {
   /*
     // this implementation is abandoned.
@@ -38,9 +38,9 @@ static void mb_iie_zerofiller_item__set_equal(
   */
 
   if (a->w > b->w) {
-    mb_iie_zerofiller_item__copy(c, a);
+    at_mb_iie_zerofiller_item__copy(c, a);
   } else if (a->w < b->w) {
-    mb_iie_zerofiller_item__copy(c, b);
+    at_mb_iie_zerofiller_item__copy(c, b);
   } else {
     c->mean = (a->mean + b->mean) / 2;
     c->var = (a->var + b->var) / 2;
@@ -49,19 +49,19 @@ static void mb_iie_zerofiller_item__set_equal(
 
 
 
-void mb_iie_zerofiller__init(mb_iie_zerofiller_t *zf, mb_t *mb)
+void at_mb_iie_zerofiller__init(at_mb_iie_zerofiller_t *zf, at_mb_t *mb)
 {
   int n = mb->n, i;
 
-  if ((zf->vals = (mb_iie_zerofiller_item_t *) calloc((n + 1),
-                  sizeof(mb_iie_zerofiller_item_t))) == NULL) {
+  if ((zf->vals = (at_mb_iie_zerofiller_item_t *) calloc((n + 1),
+                  sizeof(at_mb_iie_zerofiller_item_t))) == NULL) {
     fprintf(stderr, "no memory! var: zf->vals, type: double\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
   for (i = 0; i < n+1; i++) {
-    mb_iie_zerofiller_item__set_zero(&zf->vals[i]);
+    at_mb_iie_zerofiller_item__set_zero(&zf->vals[i]);
   }
 
   if ((zf->has_vals = (int *) calloc((n + 1), sizeof(int))) == NULL) {
@@ -107,7 +107,7 @@ void mb_iie_zerofiller__init(mb_iie_zerofiller_t *zf, mb_t *mb)
 
 
 
-void mb_iie_zerofiller__finish(mb_iie_zerofiller_t *zf)
+void at_mb_iie_zerofiller__finish(at_mb_iie_zerofiller_t *zf)
 {
   free(zf->vals);
   free(zf->has_vals);
@@ -117,7 +117,7 @@ void mb_iie_zerofiller__finish(mb_iie_zerofiller_t *zf)
 
 
 
-int mb_iie_zerofiller__fill_missing(mb_iie_zerofiller_t *zf, int ib_begin, int ib_end)
+int at_mb_iie_zerofiller__fill_missing(at_mb_iie_zerofiller_t *zf, int ib_begin, int ib_end)
 {
   int ib;
   int n = zf->n;
@@ -191,20 +191,20 @@ int mb_iie_zerofiller__fill_missing(mb_iie_zerofiller_t *zf, int ib_begin, int i
       if (dist_from_left < dist_from_right) {
 
         // use the left value
-        mb_iie_zerofiller_item__copy(&zf->vals[ib],
+        at_mb_iie_zerofiller_item__copy(&zf->vals[ib],
           &zf->vals[ib_from_left]);
 
       } else if (dist_from_left > dist_from_right) {
 
         // use the right value
-        mb_iie_zerofiller_item__copy(&zf->vals[ib],
+        at_mb_iie_zerofiller_item__copy(&zf->vals[ib],
           &zf->vals[ib_from_right]);
 
       } else { // dist_from_left == dist_from_right
 
         // use the mean of the values from the left and right
         if (ib_from_left >= 0 && ib_from_right >= 0) {
-          mb_iie_zerofiller_item__set_equal(&zf->vals[ib],
+          at_mb_iie_zerofiller_item__set_equal(&zf->vals[ib],
             &zf->vals[ib_from_left],
             &zf->vals[ib_from_right]);
         } else {

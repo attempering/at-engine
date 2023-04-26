@@ -16,7 +16,7 @@ The reader is warned of the fact that the existence of possible
 inaccuracies and errors in this document may lead the user to
 improperly use the program.
 
-Several issues for both the PCST code and the GROMACS code
+Several issues for both the adaptive tempering code and the GROMACS code
 it is based on have been discovered, and some have been documented.
 It is the obligation of the end user of the program to research
 and  apply these fixes before running a valid MD simulation.
@@ -700,7 +700,7 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_EH_ADDAHALF`
+  Variable: `mb->flags & MB_AT_EH_ADDAHALF`
 
   Default: 1.
 
@@ -709,7 +709,7 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_EH_KEEPEDGE`
+  Variable: `mb->flags & MB_AT_EH_KEEPEDGE`
 
   Default: 0.
 
@@ -719,7 +719,7 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_EH_NOZEROES`
+  Variable: `mb->flags & MB_AT_EH_NOZEROES`
 
   Default: 0.
 

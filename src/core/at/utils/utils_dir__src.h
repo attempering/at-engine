@@ -5,12 +5,12 @@
 
 #include <sys/stat.h>
 
-int create_dir(const char* path)
+int at_utils__create_dir(const char* path)
 {
   return mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IWOTH);
 }
 
-int dir_exists(const char *path)
+int at_utils__dir_exists(const char *path)
 {
   struct stat info;
   if (stat(path, &info) != 0) {
@@ -20,10 +20,10 @@ int dir_exists(const char *path)
 }
 
 
-int create_dir_if_not_exists(const char *path)
+int at_utils__create_dir_if_not_exists(const char *path)
 {
-  if (!dir_exists(path)) {
-    return create_dir(path);
+  if (!at_utils__dir_exists(path)) {
+    return at_utils__create_dir(path);
   }
 
   return 0;

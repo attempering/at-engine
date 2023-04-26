@@ -12,7 +12,7 @@
 
 
 
-int mb__write_ze_file(mb_t *mb, const char *fname)
+int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 {
   int i, ip;
   FILE *fp;
@@ -21,11 +21,11 @@ int mb__write_ze_file(mb_t *mb, const char *fname)
     fname = mb->ze_file;
   }
 
-  exit_if (fname == NULL, "file name is NULL");
+  zcom_util__exit_if (fname == NULL, "file name is NULL");
 
-  mb_accum__calc_win_total(mb->accum);
+  at_mb_accum__calc_win_total(mb->accum);
 
-  mb_iie_gridvals__calc(mb);
+  at_mb_iie_gridvals__calc(mb);
 
   if ((fp = fopen(fname, "w")) == NULL) {
     fprintf(stderr, "cannot open %s.\n", fname);
@@ -43,7 +43,7 @@ int mb__write_ze_file(mb_t *mb, const char *fname)
 
     fprintf(fp, " %22.10f %s %+10.6f %22.10e %22.10e %22.10e %22.10e",
       mb->iie->et->items[ip].value, // 5
-      mb_iie_gridvals_item__quality_bits_to_string(&mb->iie->gridvals->items[i]), // 6 
+      at_mb_iie_gridvals_item__quality_bits_to_string(&mb->iie->gridvals->items[i]), // 6 
       0.0, // mb->iie->imbal[ip], // 7
       mb->accum->sums[ip].s, // 8
       mb->visits[ip], // 9
@@ -59,7 +59,7 @@ int mb__write_ze_file(mb_t *mb, const char *fname)
 }
 
 
-int mb__beta_to_index(mb_t *mb, double beta, int check)
+int at_mb__beta_to_index(at_mb_t *mb, double beta, int check)
 {
   int j;
 
@@ -70,7 +70,7 @@ int mb__beta_to_index(mb_t *mb, double beta, int check)
   }
 
   if (check) {
-    exit_if (j < 0 || j >= mb->n, "beta = %d, %g, range = (%g, %g, %g)\n",
+    zcom_util__exit_if (j < 0 || j >= mb->n, "beta = %d, %g, range = (%g, %g, %g)\n",
         j, beta, mb->bmin, mb->bdel, mb->bmax);
   }
 
@@ -78,13 +78,13 @@ int mb__beta_to_index(mb_t *mb, double beta, int check)
 }
 
 
-void mb__add(mb_t *mb, double e, double beta,
+void at_mb__add(at_mb_t *mb, double e, double beta,
     int *pib, double *pinvwf, double *neg_dlnwf_dbeta)
 {
   double invwf, f = 1.0, neg_df_dbeta = 0.0;
   int bCv = mb->flags & MB_CV;
 
-  int j = mb__beta_to_index(mb, beta, 1);
+  int j = at_mb__beta_to_index(mb, beta, 1);
 
   *pib = j;
 
@@ -99,25 +99,25 @@ void mb__add(mb_t *mb, double e, double beta,
    * neg_dlnwf_dbeta: -dln(w(beta)f(beta))/dbeta;
    * ginvwf: adaptive weight = ampf * invwf;
    */
-  invwf = mb_betadist__calc_inv_weight(mb->betadist, beta, neg_dlnwf_dbeta, &f, &neg_df_dbeta);
+  invwf = at_mb_betadist__calc_inv_weight(mb->betadist, beta, neg_dlnwf_dbeta, &f, &neg_df_dbeta);
 
   if (pinvwf != NULL) {
     *pinvwf = invwf;
   }
 
-  mb_accum__add(mb->accum, j, invwf, e, bCv, mb->shk, mb->total_visits);
+  at_mb_accum__add(mb->accum, j, invwf, e, bCv, mb->shk, mb->total_visits);
 
 }
 
 
 
-void mb__refresh_et(mb_t *mb, int reps)
+void at_mb__refresh_et(at_mb_t *mb, int reps)
 {
   int i, rep;
 
   for (rep = 0; rep < reps; rep++) {
     for (i = 0; i < mb->n; i++)
-      mb_iie_et__calc_et(mb->iie, i);
+      at_mb_iie_et__calc_et(mb->iie, i);
   }
 }
 

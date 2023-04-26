@@ -27,34 +27,34 @@ int exact_beta_sampling = 0;
 
 // using the exact partition function
 // for the correction of the Langevin equation
-double custom_integrate_func(mb_t *mb, double beta_old, double beta_new)
+double custom_integrate_func(at_mb_t *mb, double beta_old, double beta_new)
 {
   return -0.5 * gaussian_sigma * gaussian_sigma * (beta_new * beta_new - beta_old * beta_old);
 }
 
 
 
-void init_mb_langevin_objects(mb_t *mb, langevin_t *langevin)
+void init_mb_langevin_objects(at_mb_t *mb, at_langevin_t *langevin)
 {
-  cfg_t *cfg = cfg_open("at.cfg");
+  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
   int silent = 1;
 
-  mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
+  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
 
   langevin_cfg_init(langevin, cfg, silent);
 
-  cfg_close(cfg);
+  zcom_cfg__close(cfg);
 }
 
 
 
-void mb_mock_exact_moments(mb_t *mb)
+void mb_mock_exact_moments(at_mb_t *mb)
 {
   int i;
-  sm_t *sm;
+  at_mb_sm_t *sm;
 
   for (i = 0; i < mb->n; i++) {
-    sm = mb_accum__get_proper_sums(mb->accum, i, i);
+    sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
     double beta = mb->bmin + (i + 0.5) * mb->bdel;
     double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
@@ -69,7 +69,7 @@ void mb_mock_exact_moments(mb_t *mb)
 
 
 
-int test_langevin_move(mb_t *mb, langevin_t *langevin,
+int test_langevin_move(at_mb_t *mb, at_langevin_t *langevin,
     int nsteps)
 {
   int step;
@@ -80,12 +80,12 @@ int test_langevin_move(mb_t *mb, langevin_t *langevin,
   double neg_dlnwf_dbeta = 0.0;
   double ergt;
   double invwf;
-  mtrng_t mtrng[1];
+  zcom_mtrng_t mtrng[1];
   double vis_min = 1e10, vis_max = 0, flatness;
 
   int passed = 0;
 
-  mtrng_init_from_seed(mtrng, 12345*time(NULL));
+  zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
 
   mb->beta = beta;
 
@@ -95,19 +95,19 @@ int test_langevin_move(mb_t *mb, langevin_t *langevin,
 
     // exact configuration sampling at the current temperature
     energy = -beta * (gaussian_sigma * gaussian_sigma)
-           + gaussian_sigma * mtrng_randgaus(mtrng);
+           + gaussian_sigma * zcom_mtrng__randgaus(mtrng);
 
-    mb__add(mb, energy, beta, &ib, &invwf, &neg_dlnwf_dbeta);
+    at_mb__add(mb, energy, beta, &ib, &invwf, &neg_dlnwf_dbeta);
 
     // use the Langevin equation to update the temperature
-    beta = langevin__move(langevin, mb, energy,
+    beta = at_langevin__move(langevin, mb, energy,
         beta, ib, invwf, neg_dlnwf_dbeta, mtrng, &ergt);
 
     //fprintf(stderr, "step %d: beta %g, energy %g, invwf %g\n", step, beta, energy, invwf);
   }
 
   // histogram flatness u 1:9
-  mb__write_ze_file(mb, "ze.dat");
+  at_mb__write_ze_file(mb, "ze.dat");
 
   for (ib = 0; ib < mb->n; ib++) {
     if (mb->visits[ib] < vis_min) {
@@ -129,8 +129,8 @@ int test_langevin_move(mb_t *mb, langevin_t *langevin,
 
 int main(int argc, char **argv)
 {
-  mb_t mb[1];
-  langevin_t langevin[1];
+  at_mb_t mb[1];
+  at_langevin_t langevin[1];
   int passed;
 
   init_mb_langevin_objects(mb, langevin);
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 
   passed = test_langevin_move(mb, langevin, nsteps);
 
-  mb__finish(mb);
+  at_mb__finish(mb);
 
   if (passed) {
     printf("Passed.\n");

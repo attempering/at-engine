@@ -1,15 +1,15 @@
 #ifndef AT__MB_IIE_ZEROFILLER__DEF_H__
 #define AT__MB_IIE_ZEROFILLER__DEF_H__
 
-typedef struct mb_t_ mb_t;
+typedef struct at_mb_t_ at_mb_t;
 
-typedef struct mb_iie_zerofiller_item_t_ {
+typedef struct at_mb_iie_zerofiller_item_t_ {
   double w;
   double mean;
   double var;
-} mb_iie_zerofiller_item_t;
+} at_mb_iie_zerofiller_item_t;
 
-typedef struct mb_iie_zerofiller_t_ {
+typedef struct at_mb_iie_zerofiller_t_ {
   int n; /* same as mb->n */
   double    beta_min; /* same as mb->bmin */
   double    beta_max; /* same as mb->bmax */
@@ -23,14 +23,14 @@ typedef struct mb_iie_zerofiller_t_ {
    * as possible to achieve the best performance.
    * Copying values from raw_vals to vals would be
    * too time-consuming in a case. */
-  mb_iie_zerofiller_item_t   *vals;     /* filled values */
+  at_mb_iie_zerofiller_item_t   *vals;     /* filled values */
   int      *has_vals;
 
   int      *ib_from_left;
   int      *ib_from_right;
 
-  mb_t *mb;
-} mb_iie_zerofiller_t;
+  at_mb_t *mb;
+} at_mb_iie_zerofiller_t;
 
 
 #endif

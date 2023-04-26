@@ -9,7 +9,7 @@
 #include "../zcom/endn/endn.h"
 
 
-static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
+static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
 {
   int i;
   int itmp;
@@ -24,10 +24,10 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
     return -1;
   }
   /* clear data before reading */
-  eh__clear(eh);
+  at_eh__clear(eh);
 
   /* n: number of temperature bins */
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -38,7 +38,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
     goto ERR;
   }
   /* eh_cnt: number of energy bins */
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -49,7 +49,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
     goto ERR;
   }
   /* eh_min: minimal energy */
-  if (endn_fread(&dtmp, sizeof(dtmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&dtmp, sizeof(dtmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading dtmp\n");
     goto ERR;
   }
@@ -60,7 +60,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
     goto ERR;
   }
   /* eh_del: energy bin size */
-  if (endn_fread(&dtmp, sizeof(dtmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&dtmp, sizeof(dtmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading dtmp\n");
     goto ERR;
   }
@@ -77,7 +77,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
   }
   /* eh_his: energy histogram data */
   for (i = 0; i < eh->n; i++) {
-    if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+    if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
       fprintf(stderr, "error in reading itmp\n");
       if (feof(fp)) break;
     }
@@ -88,7 +88,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
       goto ERR;
     }
     pd = eh->his + i * eh->cnt;
-    if (endn_fread(&jmin, sizeof(jmin), 1, fp, endn) != 1) {
+    if (zcom_endn__fread(&jmin, sizeof(jmin), 1, fp, endn) != 1) {
       fprintf(stderr, "error in reading jmin\n");
       goto ERR;
     }
@@ -98,7 +98,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if (endn_fread(&size, sizeof(size), 1, fp, endn) != 1) {
+    if (zcom_endn__fread(&size, sizeof(size), 1, fp, endn) != 1) {
       fprintf(stderr, "error in reading size\n");
       goto ERR;
     }
@@ -109,7 +109,7 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
       goto ERR;
     }
     if ((size > 0)
-      && (endn_fread(pd+jmin, sizeof(*(pd+jmin)), size, fp, endn) != (size_t) (size))) {
+      && (zcom_endn__fread(pd+jmin, sizeof(*(pd+jmin)), size, fp, endn) != (size_t) (size))) {
       fprintf(stderr, "error in reading pd+jmin, n = size(%d)\n", size);
       goto ERR;
     }
@@ -117,11 +117,11 @@ static int eh_read_binary_low(eh_t *eh, FILE *fp, int ver, int endn)
   (void) ver;
   return 0;
 ERR:
-  eh__clear(eh);
+  at_eh__clear(eh);
   return -1;
 }
 
-int eh__read_binary(eh_t *eh, const char *fname, int *pver)
+int at_eh__read_binary(at_eh_t *eh, const char *fname, int *pver)
 {
   FILE *fp;
   int ver;
@@ -131,7 +131,7 @@ int eh__read_binary(eh_t *eh, const char *fname, int *pver)
 
   if ( !(eh->mode > 0) ) return 0;
   if ( !(eh->mode == 1) ) {
-    fprintf(stderr, "eh__read_binary: failed validation: eh->mode == 1\n");
+    fprintf(stderr, "at_eh__read_binary: failed validation: eh->mode == 1\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -142,13 +142,13 @@ int eh__read_binary(eh_t *eh, const char *fname, int *pver)
   }
 
   /* determine file endian */
-  if ((endn = endn_rmatchi(&itmp, sizeof(int), fp)) < 0) {
+  if ((endn = zcom_endn__rmatchi(&itmp, sizeof(int), fp)) < 0) {
     fprintf(stderr, "itmp 0x%X cannot match sizeof(int) 0x%X\n",
         (unsigned) itmp, (unsigned) sizeof(int));
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -158,7 +158,7 @@ int eh__read_binary(eh_t *eh, const char *fname, int *pver)
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
-  if (endn_fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading ver\n");
     goto ERR;
   }
@@ -173,7 +173,7 @@ ERR:
   return -1;
 }
 
-static int eh_write_binary_low(eh_t *eh, FILE *fp, int ver)
+static int eh_write_binary_low(at_eh_t *eh, FILE *fp, int ver)
 {
   int i;
   int jmin;
@@ -188,23 +188,23 @@ static int eh_write_binary_low(eh_t *eh, FILE *fp, int ver)
   }
 
   /* n: number of temperature bins */
-  if (endn_fwrite(&eh->n, sizeof(eh->n), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&eh->n, sizeof(eh->n), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing eh->n\n");
     goto ERR;
   }
 
   /* eh_cnt: number of energy bins */
-  if (endn_fwrite(&eh->cnt, sizeof(eh->cnt), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&eh->cnt, sizeof(eh->cnt), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing eh->cnt\n");
     goto ERR;
   }
   /* eh_min: minimal energy */
-  if (endn_fwrite(&eh->min, sizeof(eh->min), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&eh->min, sizeof(eh->min), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing eh->min\n");
     goto ERR;
   }
   /* eh_del: energy bin size */
-  if (endn_fwrite(&eh->del, sizeof(eh->del), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&eh->del, sizeof(eh->del), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing eh->del\n");
     goto ERR;
   }
@@ -214,20 +214,20 @@ static int eh_write_binary_low(eh_t *eh, FILE *fp, int ver)
     for (jmax = eh->cnt; jmax > 0 && pd[jmax-1] <= 0.0; jmax--) ;
     for (jmin = 0; jmin < jmax && pd[jmin] <= 0.0; jmin++) ;
     if ((size = jmax - jmin) <= 0) continue;
-    if (endn_fwrite(&i, sizeof(i), 1, fp, 1) != 1) {
+    if (zcom_endn__fwrite(&i, sizeof(i), 1, fp, 1) != 1) {
       fprintf(stderr, "error in writing i\n");
       goto ERR;
     }
-    if (endn_fwrite(&jmin, sizeof(jmin), 1, fp, 1) != 1) {
+    if (zcom_endn__fwrite(&jmin, sizeof(jmin), 1, fp, 1) != 1) {
       fprintf(stderr, "error in writing jmin\n");
       goto ERR;
     }
-    if (endn_fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
+    if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
       fprintf(stderr, "error in writing size\n");
       goto ERR;
     }
     if ((size > 0)
-      && (endn_fwrite(pd+jmin, sizeof(*(pd+jmin)), size, fp, 1) != (size_t) (size))) {
+      && (zcom_endn__fwrite(pd+jmin, sizeof(*(pd+jmin)), size, fp, 1) != (size_t) (size))) {
       fprintf(stderr, "error in writing pd+jmin, n = size(%d)\n", size);
       goto ERR;
     }
@@ -238,7 +238,7 @@ ERR:
   return -1;
 }
 
-int eh__write_binary(eh_t *eh, const char *fname, int ver)
+int at_eh__write_binary(at_eh_t *eh, const char *fname, int ver)
 {
   FILE *fp;
   int i;
@@ -246,7 +246,7 @@ int eh__write_binary(eh_t *eh, const char *fname, int ver)
 
   if ( !(eh->mode > 0) ) return 0;
   if ( !(eh->mode == 1) ) {
-    fprintf(stderr, "eh__write_binary: failed validation: eh->mode == 1\n");
+    fprintf(stderr, "at_eh__write_binary: failed validation: eh->mode == 1\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -257,16 +257,16 @@ int eh__write_binary(eh_t *eh, const char *fname, int ver)
   }
 
   size = (int) sizeof(int);
-  if (endn_fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing size\n");
     goto ERR;
   }
   size = (int) sizeof(double);
-  if (endn_fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing size\n");
     goto ERR;
   }
-  if (endn_fwrite(&ver, sizeof(ver), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&ver, sizeof(ver), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing ver\n");
     goto ERR;
   }

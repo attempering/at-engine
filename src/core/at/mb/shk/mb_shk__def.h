@@ -13,7 +13,7 @@
   This scheme helps reducing the current data weight
   in the accumulator. 
 
-  The data members in mb_shk_t help provide a consistent way
+  The data members in at_mb_shk_t help provide a consistent way
   of computing gamma for windows of different widths.
   The key quantity is the shrinking factor, which is
   represented by the variable name `shk` in the code.
@@ -74,7 +74,7 @@
 
  */
 
-typedef struct mb_shk_t_ {
+typedef struct at_mb_shk_t_ {
   int       mode;     /* 0: const, 1: amp/t, 2: amp/t^exp */
 
   double    base;     /* current generic shrink amplitude */
@@ -94,6 +94,6 @@ typedef struct mb_shk_t_ {
   double    exp;      /* amp t^(-exp) */
 
   int n;
-} mb_shk_t;
+} at_mb_shk_t;
 
 #endif

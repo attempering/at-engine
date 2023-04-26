@@ -5,11 +5,11 @@
 
 #include "mb_iie_gridvals__def.h"
 
-typedef struct mb_t_ mb_t;
+typedef struct at_mb_t_ at_mb_t;
 
 /* calculate the estimated average energy Et, Cv and partition function
  * at all grid points */
-void mb_iie_gridvals__calc(mb_t *mb);
+void at_mb_iie_gridvals__calc(at_mb_t *mb);
 
 
 #endif

@@ -3,12 +3,12 @@
 
 #include "rng.h"
 
-#define MT_M 397
-#define MT_UMASK 0x80000000UL /* most significant w-r bits */
-#define MT_LMASK 0x7fffffffUL /* least significant r bits */
+#define ZCOM_MT__M 397
+#define ZCOM_MT__UMASK 0x80000000UL /* most significant w-r bits */
+#define ZCOM_MT__LMASK 0x7fffffffUL /* least significant r bits */
 
 /* save the current mt state to file */
-ZCOM_INLINE int mtrng_save(mtrng_t *mtrng, const char *fname)
+ZCOM_INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname)
 {
   FILE *fp;
   int k;
@@ -22,7 +22,7 @@ ZCOM_INLINE int mtrng_save(mtrng_t *mtrng, const char *fname)
     return 1;
   }
   fprintf(fp, "MTSEED\n%d\n", mtrng->index);
-  for (k = 0; k < MT_N; k++) {
+  for (k = 0; k < ZCOM_MT_N; k++) {
     fprintf(fp, "%"PRIu32"\n", mtrng->arr[k]);
   }
   fclose(fp);
@@ -32,7 +32,7 @@ ZCOM_INLINE int mtrng_save(mtrng_t *mtrng, const char *fname)
 
 
 
-ZCOM_INLINE void mtrng_init_from_seed(mtrng_t *mtrng, uint32_t seed)
+ZCOM_INLINE void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed)
 {
   int k;
 
@@ -41,9 +41,9 @@ ZCOM_INLINE void mtrng_init_from_seed(mtrng_t *mtrng, uint32_t seed)
   }
 
   mtrng->arr[0] = seed & 0xffffffffUL;
-  for (k = 1; k < MT_N; k++) /* the final mask is for 64-bit machines */
+  for (k = 1; k < ZCOM_MT_N; k++) /* the final mask is for 64-bit machines */
     mtrng->arr[k] = (1812433253UL * (mtrng->arr[k-1] ^ (mtrng->arr[k-1]>>30)) + k) & 0xffffffffUL;
-  mtrng->index = MT_N; /* request for update */
+  mtrng->index = ZCOM_MT_N; /* request for update */
 }
 
 
@@ -55,7 +55,7 @@ ZCOM_INLINE void mtrng_init_from_seed(mtrng_t *mtrng, uint32_t seed)
  * will be a mess.
  * This is why we need another wrapper function to recover from
  * the failure case. */
-ZCOM_INLINE int mtrng_load_from_file_(mtrng_t *mtrng, const char *fname)
+ZCOM_INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fname)
 {
   int err = 1;
   FILE *fp;
@@ -73,9 +73,9 @@ ZCOM_INLINE int mtrng_load_from_file_(mtrng_t *mtrng, const char *fname)
       int k, z;
 
       if (mtrng->index < 0) {
-        mtrng->index = MT_N; /* request updating */
+        mtrng->index = ZCOM_MT_N; /* request updating */
       }
-      for (z = 1, k = 0; k < MT_N; k++) {
+      for (z = 1, k = 0; k < ZCOM_MT_N; k++) {
         if (fscanf(fp, "%"PRIu32, &mtrng->arr[k]) != 1) {
           break;
         }
@@ -84,8 +84,8 @@ ZCOM_INLINE int mtrng_load_from_file_(mtrng_t *mtrng, const char *fname)
         }
       }
 
-      if (k != MT_N) {
-        fprintf(stderr, "%s incomplete %d/%d\n", fname, k, MT_N);
+      if (k != ZCOM_MT_N) {
+        fprintf(stderr, "%s incomplete %d/%d\n", fname, k, ZCOM_MT_N);
       } else {
         err = z; /* clear error, if array is nonzero */
       }
@@ -105,14 +105,14 @@ ZCOM_INLINE int mtrng_load_from_file_(mtrng_t *mtrng, const char *fname)
  * In the latter case, if `seed == 0` then
  * the integer from time(NULL) will be used as the seed
  * */
-ZCOM_INLINE int mtrng_load_or_init_from_seed(mtrng_t *mtrng, const char *fname, uint32_t seed)
+ZCOM_INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng, const char *fname, uint32_t seed)
 {
-  int err = mtrng_load_from_file_(mtrng, fname);
+  int err = zcom_mtrng__load_from_file_(mtrng, fname);
 
   if (err) { /* fallback: to initialize from the seed */
-    fprintf(stderr, "mtrng_load: cannot init from file: \"%s\". Will init from seed: %d directly.\n", fname, seed);
+    fprintf(stderr, "zcom_mtrng__load: cannot init from file: \"%s\". Will init from seed: %d directly.\n", fname, seed);
 
-    mtrng_init_from_seed(mtrng, seed);
+    zcom_mtrng__init_from_seed(mtrng, seed);
   } else {
     fprintf(stderr, "Successfully loaded \"%s\"!\n", fname);
   }
@@ -122,22 +122,22 @@ ZCOM_INLINE int mtrng_load_or_init_from_seed(mtrng_t *mtrng, const char *fname, 
 
 
 
-ZCOM_INLINE mtrng_t *mtrng_open(uint32_t seed)
+ZCOM_INLINE zcom_mtrng_t *zcom_mtrng__open(uint32_t seed)
 {
-  mtrng_t *mtrng = (mtrng_t *) calloc(1, sizeof(mtrng_t));
+  zcom_mtrng_t *mtrng = (zcom_mtrng_t *) calloc(1, sizeof(zcom_mtrng_t));
   if (mtrng == NULL) {
     exit(1);
   }
 
   mtrng->index = -1;
-  mtrng_init_from_seed(mtrng, seed);
+  zcom_mtrng__init_from_seed(mtrng, seed);
 
   return mtrng;
 }
 
 
 
-ZCOM_INLINE void mtrng_close(mtrng_t *mtrng)
+ZCOM_INLINE void zcom_mtrng__close(zcom_mtrng_t *mtrng)
 {
   free(mtrng);
 }
@@ -145,27 +145,27 @@ ZCOM_INLINE void mtrng_close(mtrng_t *mtrng)
 
 
 /* return an unsigned random number */
-ZCOM_INLINE uint32_t mtrng_randuint32(mtrng_t *mtrng)
+ZCOM_INLINE uint32_t zcom_mtrng__randuint32(zcom_mtrng_t *mtrng)
 {
   uint32_t x;
   static const uint32_t mag01[2] = {0, 0x9908b0dfUL}; /* MATRIX_A */
   int k;
 
   if (mtrng->index < 0) {
-    mtrng_init_from_seed(mtrng, 0);
+    zcom_mtrng__init_from_seed(mtrng, 0);
   }
 
-  if (mtrng->index >= MT_N) { /* generate MT_N words at one time */
-    for (k = 0; k < MT_N - MT_M; k++) {
-      x = (mtrng->arr[k] & MT_UMASK) | (mtrng->arr[k+1] & MT_LMASK);
-      mtrng->arr[k] = mtrng->arr[k+MT_M] ^ (x>>1) ^ mag01[x&1UL];
+  if (mtrng->index >= ZCOM_MT_N) { /* generate ZCOM_MT_N words at one time */
+    for (k = 0; k < ZCOM_MT_N - ZCOM_MT__M; k++) {
+      x = (mtrng->arr[k] & ZCOM_MT__UMASK) | (mtrng->arr[k+1] & ZCOM_MT__LMASK);
+      mtrng->arr[k] = mtrng->arr[k+ZCOM_MT__M] ^ (x>>1) ^ mag01[x&1UL];
     }
-    for (; k < MT_N-1; k++) {
-      x = (mtrng->arr[k] & MT_UMASK) | (mtrng->arr[k+1] & MT_LMASK);
-      mtrng->arr[k] = mtrng->arr[k+(MT_M-MT_N)] ^ (x>>1) ^ mag01[x&1UL];
+    for (; k < ZCOM_MT_N-1; k++) {
+      x = (mtrng->arr[k] & ZCOM_MT__UMASK) | (mtrng->arr[k+1] & ZCOM_MT__LMASK);
+      mtrng->arr[k] = mtrng->arr[k+(ZCOM_MT__M-ZCOM_MT_N)] ^ (x>>1) ^ mag01[x&1UL];
     }
-    x = (mtrng->arr[MT_N-1] & MT_UMASK) | (mtrng->arr[0] & MT_LMASK);
-    mtrng->arr[MT_N-1] = mtrng->arr[MT_M-1] ^ (x>>1) ^ mag01[x&1UL];
+    x = (mtrng->arr[ZCOM_MT_N-1] & ZCOM_MT__UMASK) | (mtrng->arr[0] & ZCOM_MT__LMASK);
+    mtrng->arr[ZCOM_MT_N-1] = mtrng->arr[ZCOM_MT__M-1] ^ (x>>1) ^ mag01[x&1UL];
     mtrng->index = 0;
   }
 
@@ -180,27 +180,27 @@ ZCOM_INLINE uint32_t mtrng_randuint32(mtrng_t *mtrng)
 
 
 
-#undef MT_N
-#undef MT_M
-#undef MT_UMASK
-#undef MT_LMASK
+#undef ZCOM_MT_N
+#undef ZCOM_MT__M
+#undef ZCOM_MT__UMASK
+#undef ZCOM_MT__LMASK
 
-ZCOM_INLINE double mtrng_rand01(mtrng_t *mtrng)
+ZCOM_INLINE double zcom_mtrng__rand01(zcom_mtrng_t *mtrng)
 {
-  return mtrng_randuint32(mtrng) * (1.0/4294967296.0);
+  return zcom_mtrng__randuint32(mtrng) * (1.0/4294967296.0);
 }
 
 
 
 /* Gaussian distribution with zero mean and unit variance
  * using ratio method */
-ZCOM_INLINE double mtrng_randgaus(mtrng_t *mtrng)
+ZCOM_INLINE double zcom_mtrng__randgaus(zcom_mtrng_t *mtrng)
 {
   double x, y, u, v, q;
 
   do {
-    u = 1 - mtrng_rand01(mtrng);
-    v = 1.7156*(mtrng_rand01(mtrng) - .5);  /* >= 2*sqrt(2/e) */
+    u = 1 - zcom_mtrng__rand01(mtrng);
+    v = 1.7156*(zcom_mtrng__rand01(mtrng) - .5);  /* >= 2*sqrt(2/e) */
     x = u - 0.449871;
     y = fabs(v) + 0.386595;
     q = x*x  + y*(0.196*y - 0.25472*x);
@@ -210,9 +210,9 @@ ZCOM_INLINE double mtrng_randgaus(mtrng_t *mtrng)
   return v/u;
 }
 
-#undef MT_M
-#undef MT_UMASK
-#undef MT_LMASK
+#undef ZCOM_MT__M
+#undef ZCOM_MT__UMASK
+#undef ZCOM_MT__LMASK
 
 
 #endif

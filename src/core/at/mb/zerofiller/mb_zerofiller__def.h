@@ -1,10 +1,10 @@
 #ifndef AT__MB_ZEROFILLER__DEF_H__
 #define AT__MB_ZEROFILLER__DEF_H__
 
-typedef struct mb_t_ mb_t;
+typedef struct at_mb_t_ at_mb_t;
 
 /* parameters for the zerofiller */
-typedef struct mb_zerofiller_t_ {
+typedef struct at_mb_zerofiller_t_ {
   int n; /* same as mb->n */
   double    beta_min; /* same as mb->bmin */
   double    beta_max; /* same as mb->bmax */
@@ -17,10 +17,10 @@ typedef struct mb_zerofiller_t_ {
   int      *ib_from_left;
   int      *ib_from_right;
 
-  mb_t *mb;
-} mb_zerofiller_t;
+  at_mb_t *mb;
+} at_mb_zerofiller_t;
 
-typedef double (*bin_value_get_func_t)(mb_t *mb, int ib, int *has_val, double *w);
+typedef double (*bin_value_get_func_t)(at_mb_t *mb, int ib, int *has_val, double *w);
 
 
 #endif

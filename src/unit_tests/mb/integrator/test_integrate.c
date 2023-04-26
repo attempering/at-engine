@@ -17,34 +17,34 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(mb_t *mb)
+void init_mb_object(at_mb_t *mb)
 {
-  cfg_t *cfg = cfg_open("at.cfg");
+  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
-  mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
 
-  cfg_close(cfg);
+  zcom_cfg__close(cfg);
 }
 
 
 
-double *mb_mock_sm_moments(mb_t *mb, double fill_prob)
+double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
-  sm_t *sm;
-  mtrng_t rng[1];
+  at_mb_sm_t *sm;
+  zcom_mtrng_t rng[1];
   double *data;
 
-  mtrng_init_from_seed(rng, 12345);
+  zcom_mtrng__init_from_seed(rng, 12345);
 
   data = (double *) calloc(mb->n, sizeof(double));
 
   for (i = 0; i < mb->n; i++) {
 
-    if (mtrng_rand01(rng) < fill_prob) {
+    if (zcom_mtrng__rand01(rng) < fill_prob) {
 
-      sm = mb_accum__get_proper_sums(mb->accum, i, i);
+      sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
       double beta = mb->bmin + (i + 0.5) * mb->bdel;
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
@@ -74,19 +74,19 @@ static double get_exact_integral(double beta1, double beta2)
 
 
 
-static int test_integrate(mb_t *mb, double fill_prob)
+static int test_integrate(at_mb_t *mb, double fill_prob)
 {
   double *raw_data = mb_mock_sm_moments(mb, fill_prob);
   int passed;
 
-  mb_integrator_t *intgr = mb->integrator;
-  mb_zerofiller_t *zf = mb->zerofiller;
+  at_mb_integrator_t *intgr = mb->integrator;
+  at_mb_zerofiller_t *zf = mb->zerofiller;
 
   double beta1 = mb->bmin * 0.7 + mb->bmax * 0.3;
   double beta2 = mb->bmin * 0.2 + mb->bmax * 0.8;
   int i, ib1, ib2;
 
-  double integral = mb_integrator__integrate(intgr, beta1, beta2);
+  double integral = at_mb_integrator__integrate(intgr, beta1, beta2);
   double exact_integral = get_exact_integral(beta1, beta2);
 
   ib1 = intgr->ib_begin;
@@ -112,7 +112,7 @@ static int test_integrate(mb_t *mb, double fill_prob)
 
 int main(int argc, char **argv)
 {
-  mb_t mb[1];
+  at_mb_t mb[1];
   double fill_prob = 0.5;
   int passed;
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 
   passed = test_integrate(mb, fill_prob);
 
-  mb__finish(mb);
+  at_mb__finish(mb);
 
   if (passed) {
     printf("Passed.\n");

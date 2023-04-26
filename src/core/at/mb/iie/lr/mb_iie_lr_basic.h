@@ -5,13 +5,13 @@
 #include "mb_iie_lr__def.h"
 
 
-typedef struct cfg_t_ cfg_t;
+typedef struct zcom_cfg_t_ zcom_cfg_t;
 
 /* global initialization */
-void mb_iie_lr__cfg_init(mb_iie_lr_t *lr, mb_iie_zerofiller_t *zf,
-    mb_t *mb, cfg_t *cfg, int silent);
+void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf,
+    at_mb_t *mb, zcom_cfg_t *cfg, int silent);
 
-void mb_iie_lr__finish(mb_iie_lr_t *lr);
+void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr);
 
 #endif
 

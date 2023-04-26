@@ -25,7 +25,7 @@ void run_cst_md(at_t* at, llong_t nsteps)
 {
   llong_t step = 0;
 
-  mtrng_init_from_seed(at->mtrng, langevin_seed);
+  zcom_mtrng__init_from_seed(at->mtrng, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 #ifdef ENABLE_MINICST
     run_minicst_md(at, nsteps);
 #else
-    fatal("Please define ENABLE_MINICST and recompile the program\n");
+    zcom_util__fatal("Please define ENABLE_MINICST and recompile the program\n");
 #endif
 
   } else {

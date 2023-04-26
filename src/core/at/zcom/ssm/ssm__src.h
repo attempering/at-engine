@@ -8,12 +8,12 @@
 #include "ssm.h"
 
 
-ZCOM_STRCLS ssm_t *ssm_openx(int hash_bits, size_t block_size)
+ZCOM_STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size)
 {
-  ssm_t *m;
+  zcom_ssm_t *m;
 
-  if ((m = (ssm_t *) calloc(1, sizeof(ssm_t))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for a new ssm_t object\n");
+  if ((m = (zcom_ssm_t *) calloc(1, sizeof(zcom_ssm_t))) == NULL) {
+    fprintf(stderr, "Fatal: no memory for a new zcom_ssm_t object\n");
     return NULL;
   }
 
@@ -30,15 +30,15 @@ ZCOM_STRCLS ssm_t *ssm_openx(int hash_bits, size_t block_size)
 
   m->block_size = block_size;
 
-  if ((m->base_ = (ss_llist_node_t *) calloc(m->hash_size, sizeof(ss_llist_node_t))) == NULL) {
-    fprintf(stderr, "ssm_t failed to allocate the initial hash table of size %u\n", (unsigned) m->hash_size);
+  if ((m->base_ = (zcom_ssm__ss_llist_node_t *) calloc(m->hash_size, sizeof(zcom_ssm__ss_llist_node_t))) == NULL) {
+    fprintf(stderr, "zcom_ssm_t failed to allocate the initial hash table of size %u\n", (unsigned) m->hash_size);
     free(m);
     return NULL;
   }
 
   {
     size_t i;
-    ss_llist_node_t *head;
+    zcom_ssm__ss_llist_node_t *head;
 
     for (i = 0; i < m->hash_size; i++) {
       head = m->base_ + i;
@@ -57,14 +57,14 @@ ZCOM_STRCLS ssm_t *ssm_openx(int hash_bits, size_t block_size)
 }
 
 
-ZCOM_STRCLS ssm_t *ssm_open(void)
+ZCOM_STRCLS zcom_ssm_t *zcom_ssm__open(void)
 {
-  return ssm_openx(-1, 0);
+  return zcom_ssm__openx(-1, 0);
 }
 
 
 /* return the hash value from the string's pointer address */
-static size_t ssm_calc_hash_value_(ssm_t *m, const char *p)
+static size_t zcom_ssm_calc_hash_value_(zcom_ssm_t *m, const char *p)
 {
   size_t val = (size_t) p * 1664525u + 1013904223u;
   size_t val2 = (val >> (32 - m->hash_bits));
@@ -83,15 +83,15 @@ static size_t ssm_calc_hash_value_(ssm_t *m, const char *p)
  * return the *previous* header to the one that associates with s
  * first locate the list from the Hash value, then enumerate the linked list.
  * */
-static ss_llist_node_t *ssm_llist_find_(ssm_t *m, const char *s)
+static zcom_ssm__ss_llist_node_t *zcom_ssm_llist_find_(zcom_ssm_t *m, const char *s)
 {
-  ss_llist_node_t *hp, *head;
+  zcom_ssm__ss_llist_node_t *hp, *head;
 
   if (s == NULL) {
     return NULL;
   }
 
-  head = m->base_ + ssm_calc_hash_value_(m, s);
+  head = m->base_ + zcom_ssm_calc_hash_value_(m, s);
 
   for (hp = head; hp->next != NULL; hp = hp->next) {
     if (hp->next->s == s) {
@@ -104,10 +104,10 @@ static ss_llist_node_t *ssm_llist_find_(ssm_t *m, const char *s)
 
 
 
-ZCOM_INLINE void ssm_llist_print_(ssm_t *m, size_t hash_id, const char* tag)
+ZCOM_INLINE void zcom_ssm_llist_print_(zcom_ssm_t *m, size_t hash_id, const char* tag)
 {
-  ss_llist_node_t *head = m->base_ + hash_id;
-  ss_llist_node_t *hp = head;
+  zcom_ssm__ss_llist_node_t *head = m->base_ + hash_id;
+  zcom_ssm__ss_llist_node_t *hp = head;
   fprintf(stderr, "list[%lu, %p] %s:\n", (unsigned long) hash_id, head, tag);
 
   while (hp->next != NULL) {
@@ -125,17 +125,17 @@ ZCOM_INLINE void ssm_llist_print_(ssm_t *m, size_t hash_id, const char* tag)
  * we do not accept a recalculated hash value,
  * since realloc might have changed it
  * */
-static ss_llist_node_t *ssm_llist_add_node_(ssm_t *m, ss_llist_node_t *h)
+static zcom_ssm__ss_llist_node_t *zcom_ssm_llist_add_node_(zcom_ssm_t *m, zcom_ssm__ss_llist_node_t *h)
 {
-  size_t hash = ssm_calc_hash_value_(m, h->s);
-  ss_llist_node_t *head = m->base_ + hash;
+  size_t hash = zcom_ssm_calc_hash_value_(m, h->s);
+  zcom_ssm__ss_llist_node_t *head = m->base_ + hash;
 
 #ifdef SSM_DBG__
 
   fprintf(stderr, "ssm to add node %p for string %p to list[@hash=%lu] for string of size %lu\n",
       h, h->s, (unsigned long) hash, (unsigned long) h->size);
     
-  ssm_llist_print_(m, hash, "ssm_add BEFORE");
+  zcom_ssm_llist_print_(m, hash, "zcom_ssm_add BEFORE");
 #endif
 
   /*
@@ -156,7 +156,7 @@ static ss_llist_node_t *ssm_llist_add_node_(ssm_t *m, ss_llist_node_t *h)
   head->next = h;
 
 #ifdef SSM_DBG__
-  ssm_llist_print_(m, hash, "ssm_add AFTER");
+  zcom_ssm_llist_print_(m, hash, "zcom_ssm_add AFTER");
   getchar();
 #endif
 
@@ -165,9 +165,9 @@ static ss_llist_node_t *ssm_llist_add_node_(ssm_t *m, ss_llist_node_t *h)
 
 
 /* remove hp->next */
-static void ssm_llist_remove_node_(ss_llist_node_t *hp, int free_node)
+static void zcom_ssm_llist_remove_node_(zcom_ssm__ss_llist_node_t *hp, int free_node)
 {
-  ss_llist_node_t *h = hp->next;
+  zcom_ssm__ss_llist_node_t *h = hp->next;
 
   hp->next = h->next;
   if (free_node) {
@@ -183,13 +183,13 @@ static void ssm_llist_remove_node_(ss_llist_node_t *hp, int free_node)
  * create a new header if *php is NULL, in this case, the first character
  * of the string is '\0'
  * */
-static char *ssm_resize_string_(ssm_t *m, ss_llist_node_t **php, size_t new_size)
+static char *zcom_ssm_resize_string_(zcom_ssm_t *m, zcom_ssm__ss_llist_node_t **php, size_t new_size)
 {
-  ss_llist_node_t *h = NULL, *hn, *hp;
+  zcom_ssm__ss_llist_node_t *h = NULL, *hn, *hp;
   size_t size;
 
   if (php == NULL) {
-    fprintf(stderr, "ssm_resize_string_: php is NULL, n = %u", (unsigned) new_size);
+    fprintf(stderr, "zcom_ssm_resize_string_: php is NULL, n = %u", (unsigned) new_size);
     return NULL;
   }
 
@@ -205,14 +205,14 @@ static char *ssm_resize_string_(ssm_t *m, ss_llist_node_t **php, size_t new_size
       if (h == NULL) {
 
         /* to allocate a new node */
-        if ((hn = (ss_llist_node_t *) calloc(1, sizeof(ss_llist_node_t))) == NULL) {
-          fprintf(stderr, "ssm_resize_string_: no memory for a list node\n");
+        if ((hn = (zcom_ssm__ss_llist_node_t *) calloc(1, sizeof(zcom_ssm__ss_llist_node_t))) == NULL) {
+          fprintf(stderr, "zcom_ssm_resize_string_: no memory for a list node\n");
           return NULL;
         }
   
         /* to allocate space for the string */
         if ((hn->s = (char *) calloc(size, 1)) == NULL) {
-          fprintf(stderr, "ssm_resize_string_: no memory for string of size %lu\n", (long unsigned) size);
+          fprintf(stderr, "zcom_ssm_resize_string_: no memory for string of size %lu\n", (long unsigned) size);
         }
 
 #ifdef SSM_DBG__
@@ -224,21 +224,21 @@ static char *ssm_resize_string_(ssm_t *m, ss_llist_node_t **php, size_t new_size
         /* since realloc h->s will change the hash value of h
          * hence its index in m->head
          * we have to first remove the old node h from the linked list */
-        ssm_llist_remove_node_(hp, 0);
+        zcom_ssm_llist_remove_node_(hp, 0);
 
         /* to reuse an old node */
         hn = h;
 
         /* to reallocate space for the string */
         if ((hn->s = (char *) realloc(hn->s, size)) == NULL) {
-          fprintf(stderr, "ssm_resize_string_: no memory for string of size %lu\n", (long unsigned) size);
+          fprintf(stderr, "zcom_ssm_resize_string_: no memory for string of size %lu\n", (long unsigned) size);
         }
 
       }
 
       hn->size = size;
 
-      *php = hp = ssm_llist_add_node_(m, hn);
+      *php = hp = zcom_ssm_llist_add_node_(m, hn);
     }
 
   }
@@ -249,18 +249,18 @@ static char *ssm_resize_string_(ssm_t *m, ss_llist_node_t **php, size_t new_size
 
 
 /* delete a string, etc ... */
-ZCOM_STRCLS int ssm_del(ssm_t *m, char *s)
+ZCOM_STRCLS int zcom_ssm__del(zcom_ssm_t *m, char *s)
 {
-  ss_llist_node_t *hp;
+  zcom_ssm__ss_llist_node_t *hp;
 
-  if (s == NULL || (hp = ssm_llist_find_(m, s)) == NULL) {
+  if (s == NULL || (hp = zcom_ssm_llist_find_(m, s)) == NULL) {
     if (s) {
-      fprintf(stderr, "ssm_manage: unknown address %p (%s)\n",  s, s);
+      fprintf(stderr, "zcom_ssm_manage: unknown address %p (%s)\n",  s, s);
     }
     return -1;
   }
 
-  ssm_llist_remove_node_(hp, 1);
+  zcom_ssm_llist_remove_node_(hp, 1);
 
   return 0;
 }
@@ -268,9 +268,9 @@ ZCOM_STRCLS int ssm_del(ssm_t *m, char *s)
 
 
 /* delete all strings, shrink memory, etc ... */
-ZCOM_STRCLS int ssm_del_all(ssm_t *m)
+ZCOM_STRCLS int zcom_ssm__del_all(zcom_ssm_t *m)
 {
-  ss_llist_node_t *hp, *head;
+  zcom_ssm__ss_llist_node_t *hp, *head;
   size_t i;
 
   for (i = 0; i < m->hash_size; i++)
@@ -282,7 +282,7 @@ ZCOM_STRCLS int ssm_del_all(ssm_t *m)
     }
 
 #ifdef SSM_DBG__
-    ssm_llist_print_(m, i, "ssm_delete_all: BEFORE");
+    zcom_ssm_llist_print_(m, i, "zcom_ssm__delete_all: BEFORE");
 #endif
 
     while (hp->next != NULL)
@@ -291,11 +291,11 @@ ZCOM_STRCLS int ssm_del_all(ssm_t *m)
       fprintf(stderr, "%lu: hp %p, hp->next %p\n", (unsigned long) i, hp, hp->next);
 #endif
 
-      ssm_llist_remove_node_(hp, 1);
+      zcom_ssm_llist_remove_node_(hp, 1);
     }
 
 #ifdef SSM_DBG__
-    ssm_llist_print_(m, i, "ssm_delete_all: AFTER");
+    zcom_ssm_llist_print_(m, i, "zcom_ssm__delete_all: AFTER");
 #endif
 
   }
@@ -304,9 +304,9 @@ ZCOM_STRCLS int ssm_del_all(ssm_t *m)
 }
 
 
-ZCOM_STRCLS void ssm_close(ssm_t *m)
+ZCOM_STRCLS void zcom_ssm__close(zcom_ssm_t *m)
 {
-  ssm_del_all(m);
+  zcom_ssm__del_all(m);
   free(m->base_);
   free(m);
 }
@@ -326,15 +326,15 @@ ZCOM_STRCLS void ssm_close(ssm_t *m)
  * If flags & SSM_TASK_CONCAT:
  * append t after *ps. Equivalent to cpy if ps or *ps is NULL.
  * */
-ZCOM_STRCLS char *ssm_copy_or_concat(ssm_t *m, char **ps, const char *t, size_t min_size, unsigned flags)
+ZCOM_STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char *t, size_t min_size, unsigned flags)
 {
-  ss_llist_node_t *hp = NULL;
+  zcom_ssm__ss_llist_node_t *hp = NULL;
   size_t t_size = 0u, s_size = 0u;
   char *s = NULL, *p;
 
   /* both ps and *ps can be NULL, in which cases we leave hp as NULL */
-  if (ps != NULL && (s = *ps) != NULL && (hp = ssm_llist_find_(m, s)) == NULL) {
-    fprintf(stderr, "ssm_copy_or_concat: unknown address %p (%s)\n", s, s);
+  if (ps != NULL && (s = *ps) != NULL && (hp = zcom_ssm_llist_find_(m, s)) == NULL) {
+    fprintf(stderr, "zcom_ssm__copy_or_concat: unknown address %p (%s)\n", s, s);
     return NULL;
   }
 
@@ -357,7 +357,7 @@ ZCOM_STRCLS char *ssm_copy_or_concat(ssm_t *m, char **ps, const char *t, size_t 
     t_size = min_size;
   }
 
-  if ((s = ssm_resize_string_(m, &hp, t_size)) == NULL) { /* change size */
+  if ((s = zcom_ssm_resize_string_(m, &hp, t_size)) == NULL) { /* change size */
     return NULL;
   }
 
@@ -375,27 +375,27 @@ ZCOM_STRCLS char *ssm_copy_or_concat(ssm_t *m, char **ps, const char *t, size_t 
 }
 
 
-ZCOM_STRCLS char *ssm_copy(ssm_t *m, char **ps, const char *t)
+ZCOM_STRCLS char *zcom_ssm__copy(zcom_ssm_t *m, char **ps, const char *t)
 {
-  return ssm_copy_or_concat(m, ps, t, 0, 0);
+  return zcom_ssm__copy_or_concat(m, ps, t, 0, 0);
 }
 
 
-ZCOM_STRCLS char *ssm_concat(ssm_t *m, char **ps, const char *t)
+ZCOM_STRCLS char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t)
 {
-  return ssm_copy_or_concat(m, ps, t, 0, SSM_TASK_CONCAT);
+  return zcom_ssm__copy_or_concat(m, ps, t, 0, SSM_TASK_CONCAT);
 }
 
 
-ZCOM_STRCLS char *ssm_dup(ssm_t *m, const char *t)
+ZCOM_STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t)
 {
-  return ssm_copy(m, NULL, t);
+  return zcom_ssm__copy(m, NULL, t);
 }
 
 
-ZCOM_STRCLS char *ssm_new(ssm_t *m)
+ZCOM_STRCLS char *zcom_ssm__new(zcom_ssm_t *m)
 {
-  return ssm_dup(m, NULL);
+  return zcom_ssm__dup(m, NULL);
 }
 
 
@@ -405,23 +405,23 @@ ZCOM_STRCLS char *ssm_new(ssm_t *m)
  * *pn is number of characters read (including '\n', but not the terminal null)
  * delim is the '\n' for reading a singe line
  * */
-ZCOM_STRCLS char *ssm_fgetx(ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp)
+ZCOM_STRCLS char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp)
 {
   size_t n, max;
   int c;
   char *s;
-  ss_llist_node_t *hp;
+  zcom_ssm__ss_llist_node_t *hp;
 
   if (ps == NULL || fp == NULL) {
     return NULL;
   }
 
   if ((s = *ps) == NULL) { /* allocate an initial buffer if *ps is NULL */
-    if ((s = ssm_copy(m, ps, NULL)) == NULL)
+    if ((s = zcom_ssm__copy(m, ps, NULL)) == NULL)
       return NULL;
   }
 
-  if ((hp = ssm_llist_find_(m, s)) == NULL) {
+  if ((hp = zcom_ssm_llist_find_(m, s)) == NULL) {
     fprintf(stderr, "ssfgetx: unknown address %p (%s)\n", s, s);
     return NULL;
   }
@@ -431,7 +431,7 @@ ZCOM_STRCLS char *ssm_fgetx(ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp
   for (n = 0; (c = fgetc(fp)) != EOF; ) {
 
     if (n+1 > max) { /* request space for n+1 non-blank characters */
-      if ((*ps = s = ssm_resize_string_(m, &hp, n+1)) == NULL) {
+      if ((*ps = s = zcom_ssm_resize_string_(m, &hp, n+1)) == NULL) {
         return NULL;
       }
 
@@ -456,15 +456,15 @@ ZCOM_STRCLS char *ssm_fgetx(ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp
 }
 
 
-ZCOM_STRCLS char *ssm_fgets(ssm_t *m, char **ps, size_t *pn, FILE *fp)
+ZCOM_STRCLS char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
 {
-  return ssm_fgetx(m, ps, pn, '\n', fp);
+  return zcom_ssm__fgetx(m, ps, pn, '\n', fp);
 }
 
 
-ZCOM_STRCLS char *ssm_fget_all(ssm_t *m, char **ps, size_t *pn, FILE *fp)
+ZCOM_STRCLS char *zcom_ssm__fget_all(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
 {
-  return ssm_fgetx(m, ps, pn, EOF, fp);
+  return zcom_ssm__fgetx(m, ps, pn, EOF, fp);
 }
 
 

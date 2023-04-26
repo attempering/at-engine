@@ -28,8 +28,8 @@ typedef long llong_t;
 
 
 
-typedef struct logfile_t_ logfile_t;
-typedef struct mtrng_t_ mtrng_t;
+typedef struct at_logfile_t_ at_logfile_t;
+typedef struct zcom_mtrng_t_ zcom_mtrng_t;
 
 
 
@@ -59,20 +59,20 @@ typedef struct at_t_ {
   double    *kappa, *epsilon;
   double    kappa0, epsilon0;
 
-  mb_t      mb[1];      /* multiple-bin estimator */
+  at_mb_t      mb[1];      /* multiple-bin estimator */
 
-  langevin_t langevin[1]; /* Langevin equation */
+  at_langevin_t langevin[1]; /* Langevin equation */
 
-  eh_t      eh[1];  /* energy histogram */
+  at_eh_t      eh[1];  /* energy histogram */
 
-  ssm_t     *ssm; /* string allocator */
+  zcom_ssm_t     *ssm; /* string allocator */
 
-  mtrng_t   *mtrng; /* random number generator */
+  zcom_mtrng_t   *mtrng; /* random number generator */
 
   /*------Files------------------------------------*/
   char      *rng_file;    // random number file name
   char      *log_file;    // log/trace file name
-  logfile_t *log;         // log file
+  at_logfile_t *log;         // log file
   char      ch_suffix;    // file suffix as a single-digit character
   char      data_dir[32];
 

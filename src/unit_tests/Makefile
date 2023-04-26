@@ -1,7 +1,8 @@
 zip::
-	zip -r ../pcst-core-unit-tests_`date +'%Y-%m-%d-%H%M'`.zip \
+	zip -r ../at-engine-unit-tests_`date +'%Y-%m-%d-%H%M'`.zip \
 	    --exclude="*.zip" \
 	    --exclude="*.vscode*" \
+	    --exclude="*.git*" \
 	    *
 
 clean::

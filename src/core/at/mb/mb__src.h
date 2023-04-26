@@ -9,8 +9,10 @@
 #include "../zcom/ssm/ssm__src.h"
 #include "../zcom/opt/opt__src.h"
 #include "../zcom/cfg/cfg__src.h"
-#include "../sm/sm__src.h"
 
+
+/* simple accumulator */
+#include "sm/mb_sm__src.h"
 
 /* beta distribution functions */
 #include "betadist/mb_betadist__src.h"

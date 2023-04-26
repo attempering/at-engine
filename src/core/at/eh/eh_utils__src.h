@@ -7,7 +7,7 @@
 #include <math.h>
 
 
-void eh__add(eh_t *eh, int ib, double e)
+void at_eh__add(at_eh_t *eh, int ib, double e)
 {
   if (eh->mode > 0) { /* add to energy histogram */
 
@@ -18,15 +18,15 @@ void eh__add(eh_t *eh, int ib, double e)
 }
 
 
-int eh__reconstruct(eh_t *eh, const char *fname)
+int at_eh__reconstruct(at_eh_t *eh, const char *fname)
 {
   FILE *fp;
   int ib, j, js, jt, ie, imin, imax, cols, full, keep0;
   double eav, db, x;
   double num, den;
   double del, base, inc;
-  mb_t *mb;
-  mb_iie_t *iie;
+  at_mb_t *mb;
+  at_mb_iie_t *iie;
 
   if (eh == NULL || eh->mode == 0) {
     return 0;
@@ -45,9 +45,9 @@ int eh__reconstruct(eh_t *eh, const char *fname)
         eh->rfile);
     return 1;
   }
-  full = mb->flags & EH_KEEPEDGE;
-  keep0 = !(mb->flags & EH_NOZEROES);
-  del = (mb->flags & EH_ADDAHALF) ? 0.5 : 0; /* for continuous system */
+  full = mb->flags & AT_EH_KEEPEDGE;
+  keep0 = !(mb->flags & AT_EH_NOZEROES);
+  del = (mb->flags & AT_EH_ADDAHALF) ? 0.5 : 0; /* for continuous system */
   cols = eh->cnt;
   base = eh->min;
   inc = eh->del;

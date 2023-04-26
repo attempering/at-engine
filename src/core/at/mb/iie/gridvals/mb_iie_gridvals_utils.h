@@ -4,14 +4,15 @@
 
 #include "mb_iie_gridvals__def.h"
 
-typedef struct mb_t_ mb_t;
-typedef struct cfg_t_ cfg_t;
+typedef struct at_mb_t_ at_mb_t;
+typedef struct zcom_cfg_t_ zcom_cfg_t;
 
 
-void mb_iie_gridvals_item__set_quality_bit(
-    mb_iie_gridvals_item_t *item,
+void at_mb_iie_gridvals_item__set_quality_bit(
+    at_mb_iie_gridvals_item_t *item,
     unsigned mask, int on);
 
-char *mb_iie_gridvals_item__quality_bits_to_string(const mb_iie_gridvals_item_t *item);
+char *at_mb_iie_gridvals_item__quality_bits_to_string(
+    const at_mb_iie_gridvals_item_t *item);
 
 #endif

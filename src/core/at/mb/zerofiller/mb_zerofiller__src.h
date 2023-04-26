@@ -9,7 +9,7 @@
 #include "mb_zerofiller.h"
 
 
-int mb_zerofiller__init(mb_zerofiller_t *zf, mb_t *mb)
+int at_mb_zerofiller__init(at_mb_zerofiller_t *zf, at_mb_t *mb)
 {
   int n = mb->n, i;
 
@@ -77,7 +77,7 @@ int mb_zerofiller__init(mb_zerofiller_t *zf, mb_t *mb)
 
 
 
-void mb_zerofiller__finish(mb_zerofiller_t *zf)
+void at_mb_zerofiller__finish(at_mb_zerofiller_t *zf)
 {
   free(zf->w);
   free(zf->vals);
@@ -89,9 +89,9 @@ void mb_zerofiller__finish(mb_zerofiller_t *zf)
 
 
 static double mb_zerofiller_get_raw_bin_value_from_proper_sum(
-      mb_t *mb, int ib, int *has_val, double *w)
+      at_mb_t *mb, int ib, int *has_val, double *w)
 {
-  sm_t *sm = mb_accum__get_proper_sums(mb->accum, ib, ib);
+  at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, ib, ib);
 
   double count = sm->s;
 
@@ -114,7 +114,7 @@ static double mb_zerofiller_get_raw_bin_value_from_proper_sum(
 
 
 
-static void mb_zerofiller_fill_raw_values(mb_zerofiller_t *zf,
+static void mb_zerofiller_fill_raw_values(at_mb_zerofiller_t *zf,
     int ib_begin, int ib_end,
     bin_value_get_func_t bin_value_get_func)
 {
@@ -131,7 +131,7 @@ static void mb_zerofiller_fill_raw_values(mb_zerofiller_t *zf,
 }
 
 
-static int mb_zerofiller_fill_missing_values(mb_zerofiller_t *zf, int ib_begin, int ib_end)
+static int mb_zerofiller_fill_missing_values(at_mb_zerofiller_t *zf, int ib_begin, int ib_end)
 {
   int ib;
   int n = zf->n;
@@ -227,7 +227,7 @@ static int mb_zerofiller_fill_missing_values(mb_zerofiller_t *zf, int ib_begin, 
 
 
 
-void mb_zerofiller_fill_range_custom(mb_zerofiller_t *zf, int ib_begin, int ib_end,
+void mb_zerofiller_fill_range_custom(at_mb_zerofiller_t *zf, int ib_begin, int ib_end,
     bin_value_get_func_t bin_value_get_func)
 {
   mb_zerofiller_fill_raw_values(
@@ -239,7 +239,7 @@ void mb_zerofiller_fill_range_custom(mb_zerofiller_t *zf, int ib_begin, int ib_e
 
 
 
-void mb_zerofiller_fill_range_with_proper_sums(mb_zerofiller_t *zf, int ib_begin, int ib_end)
+void mb_zerofiller_fill_range_with_proper_sums(at_mb_zerofiller_t *zf, int ib_begin, int ib_end)
 {
   mb_zerofiller_fill_range_custom(zf, ib_begin, ib_end,
       mb_zerofiller_get_raw_bin_value_from_proper_sum);

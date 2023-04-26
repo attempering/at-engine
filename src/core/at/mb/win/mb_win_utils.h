@@ -14,7 +14,7 @@
  *
  * Such windows are not designed to work with the window-accumulator module.
  */
-void mb_win__make_unres_windows_for_grid_estimators(
+void at_mb_win__make_unres_windows_for_grid_estimators(
     int n, const double *barr, double bdel,
     int bw_mod, double bw_del,
     int *js_grid_raw, int *jt_grid_raw);
@@ -25,7 +25,7 @@ void mb_win__make_unres_windows_for_grid_estimators(
  *
  * Such windows are designed to work with window-accumulator module.
  * They are usually symmetric. */
-void mb_win__make_windows_for_bin_estimators(
+void at_mb_win__make_windows_for_bin_estimators(
     int n,
     int symmetric,
     const int *js_grid_raw, const int *jt_grid_raw,
@@ -37,12 +37,12 @@ void mb_win__make_windows_for_bin_estimators(
  *
  * Such windows are designed to work with window-accumulator module.
  * They are contained in the bin estimators */
-void mb_win__make_res_windows_for_grid_estimators(int n,
+void at_mb_win__make_res_windows_for_grid_estimators(int n,
     int *js_bin, int *jt_bin,
     int *js_grid_res, int *jt_grid_res);
 
 
-int mb_win__init_bin2wins(mb_win_t *win);
+int at_mb_win__init_bin2wins(at_mb_win_t *win);
 
 
 #endif

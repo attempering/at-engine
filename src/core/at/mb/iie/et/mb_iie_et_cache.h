@@ -7,8 +7,8 @@
 #include "mb_iie_et__def.h"
 
 
-typedef struct mb_t_ mb_t;
-typedef struct sm_t_ sm_t;
+typedef struct at_mb_t_ at_mb_t;
+typedef struct at_mb_sm_t_ at_mb_sm_t;
 
 /* calculate the estimated average energy Et of bin ib
  * using the integral identity estimator.
@@ -16,10 +16,10 @@ typedef struct sm_t_ sm_t;
  * Note that the calculated value is a bin-averaged one,
  * not one at either boundary of the bin.
  * */
-double mb_iie_et__calc_et_cached(mb_iie_t *iie, int ib);
+double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib);
 
 
-void mb_iie_et_item_cache__clear(mb_iie_et_item_cache_t *cache);
+void at_mb_iie_et_item_cache__clear(at_mb_iie_et_item_cache_t *cache);
 
 
 

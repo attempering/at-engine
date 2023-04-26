@@ -13,23 +13,23 @@
 
 
 
-typedef struct mb_iie_t_ {
+typedef struct at_mb_iie_t_ {
 
   int n; /* == mb->n */
   unsigned flags; /* == mb->flags */
 
-  mb_iie_lr_t lr[1];
+  at_mb_iie_lr_t lr[1];
 
-  mb_iie_zerofiller_t zf[1];
+  at_mb_iie_zerofiller_t zf[1];
 
-  mb_iie_et_t et[1];
+  at_mb_iie_et_t et[1];
 
-  mb_iie_gridvals_t gridvals[1];
+  at_mb_iie_gridvals_t gridvals[1];
 
-  mb_win_t *win; /* reference to mb->win */
-  mb_accum_t *accum; /* reference to mb->accum */
+  at_mb_win_t *win; /* reference to mb->win */
+  at_mb_accum_t *accum; /* reference to mb->accum */
 
-} mb_iie_t;
+} at_mb_iie_t;
 
 
 

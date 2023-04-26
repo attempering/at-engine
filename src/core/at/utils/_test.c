@@ -1,11 +1,11 @@
-#include "utils__src.h"
+#include "at_utils___src.h"
 #include <stdio.h>
 
 int main(void)
 {
-  ssm_t *ssm = ssm_open();
+  zcom_ssm_t *ssm = zcom_ssm__open();
 
-  char *fn = utils_make_output_filename(ssm, "data1", "a.dat");
+  char *fn = at_utils__make_output_filename(ssm, "data1", "a.dat");
 
   FILE *fp = fopen(fn, "w");
   if (fp == NULL) {
@@ -15,7 +15,7 @@ int main(void)
     fclose(fp);
   }
 
-  ssm_close(ssm);
+  zcom_ssm__close(ssm);
 
   return 0;
 }

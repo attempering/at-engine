@@ -13,26 +13,26 @@
 typedef struct {
   char *key, *val;
   int used;
-} cfgent_t; /* line from cfg file */
+} zcom_cfgent_t; /* line from cfg file */
 
-typedef struct cfg_t_ {
+typedef struct zcom_cfg_t_ {
   char *buf;      /* the string buffer of the entire configuration file */
   int nent;       /* number of entries */
-  cfgent_t *ents; /* entries */
+  zcom_cfgent_t *ents; /* entries */
   int nopt;       /* number of user-requested options */
   int nopt_cap;   /* capacity of opts[] */
-  opt_t *opts;    /* user-requested options */
-  ssm_t *ssm;
-} cfg_t;
+  zcom_opt_t *opts;    /* user-requested options */
+  zcom_ssm_t *ssm;
+} zcom_cfg_t;
 
 #define CFG_CHECKUSE 0x0100
 #define CFG_VERBOSE  0x1000
 #define CFG_OPT__BLOCK_SIZE_ 64
 
-ZCOM_STRCLS cfg_t *cfg_open(const char *fn);
-ZCOM_STRCLS void cfg_close(cfg_t *cfg);
-ZCOM_STRCLS int cfg_add(cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc);
-ZCOM_STRCLS int cfg_match(cfg_t *cfg, unsigned flags);
-ZCOM_STRCLS int cfg_get(cfg_t *cfg, void *var, const char *key, const char *fmt);
+ZCOM_STRCLS zcom_cfg_t *zcom_cfg__open(const char *fn);
+ZCOM_STRCLS void zcom_cfg__close(zcom_cfg_t *cfg);
+ZCOM_STRCLS int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc);
+ZCOM_STRCLS int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags);
+ZCOM_STRCLS int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt);
 
 #endif

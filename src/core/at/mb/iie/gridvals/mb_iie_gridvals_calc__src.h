@@ -16,7 +16,7 @@
 
 
 /* set quality bit */
-void mb_iie__set_quality_bit(unsigned *ptr, unsigned mask, int on)
+void at_mb_iie__set_quality_bit(unsigned *ptr, unsigned mask, int on)
 {
   if (mask) {
     if (on) {
@@ -30,28 +30,28 @@ void mb_iie__set_quality_bit(unsigned *ptr, unsigned mask, int on)
 
 
 
-void mb_iie_gridvals__calc_energy(mb_t *mb)
+void at_mb_iie_gridvals__calc_energy(at_mb_t *mb)
 {
   int i;
-  mb_iie_t *iie = mb->iie;
-  mb_iie_lr_t *lr = mb->iie->lr;
-  mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
+  at_mb_iie_t *iie = mb->iie;
+  at_mb_iie_lr_t *lr = mb->iie->lr;
+  at_mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
 
   for (i = 0; i <= iie->n; i++) {
-    mb_iie_gridvals_item_t *item = gridvals->items + i;
+    at_mb_iie_gridvals_item_t *item = gridvals->items + i;
 
-    mb_iie_lr__init_instance(lr,
+    at_mb_iie_lr__init_instance(lr,
         MB_IIE_LR__TYPE_GRID,
         MB_IIE_LR__WIN_DIV_DEFAULT,
         i,
         mb->win->js_grid_res[i],
         mb->win->jt_grid_res[i]);
 
-    mb_iie_lr__collect_moments(lr);
+    at_mb_iie_lr__collect_moments(lr);
 
-    item->e = mb_iie_lr__balance_moments(lr);
+    item->e = at_mb_iie_lr__balance_moments(lr);
 
-    mb_iie_gridvals_item__set_quality_bit(item,
+    at_mb_iie_gridvals_item__set_quality_bit(item,
         MB_IIE_GRIDVALS__QUALITY_BIT_EHAT,
         lr->quality);
 
@@ -63,14 +63,14 @@ void mb_iie_gridvals__calc_energy(mb_t *mb)
 
 /* collect second-order moments from the left and right windows
  *
- * This routine is similar to mb_iie_lr__collect_moments() but for second-order
+ * This routine is similar to at_mb_iie_lr__collect_moments() but for second-order
  * moments and for grid-point values.
  * */
-static void mb_iie_lr__collect_2nd_order_moments(mb_iie_lr_t *lr)
+static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
 {
   double x;
   int j, jx, lr_id;
-  mb_t *mb = lr->mb;
+  at_mb_t *mb = lr->mb;
 
   if (0 > lr->js || lr->js >= lr->jt || lr->jt > lr->mb->n) {
     fprintf(stderr, "bad window [%d, %d)", lr->js, lr->jt);
@@ -78,7 +78,7 @@ static void mb_iie_lr__collect_2nd_order_moments(mb_iie_lr_t *lr)
   }
 
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
-    sm_t *sm = lr->sm0 + j;
+    at_mb_sm_t *sm = lr->sm0 + j;
 
     if (sm->s < MB_ACCUM_MIN_SIZE) {
       continue;
@@ -105,12 +105,12 @@ static void mb_iie_lr__collect_2nd_order_moments(mb_iie_lr_t *lr)
 
 
 
-void mb_iie_gridvals__calc_cv(mb_t *mb)
+void at_mb_iie_gridvals__calc_cv(at_mb_t *mb)
 {
   int i, need_cv;
   double beta, e_var;
-  mb_iie_lr_t *lr = mb->iie->lr;
-  mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
+  at_mb_iie_lr_t *lr = mb->iie->lr;
+  at_mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
 
   need_cv = (mb->flags & MB_CV);
 
@@ -119,16 +119,16 @@ void mb_iie_gridvals__calc_cv(mb_t *mb)
   }
 
   for (i = 0; i <= mb->n; i++) {
-    mb_iie_gridvals_item_t *item = gridvals->items + i;
+    at_mb_iie_gridvals_item_t *item = gridvals->items + i;
 
-    mb_iie_lr__init_instance(lr,
+    at_mb_iie_lr__init_instance(lr,
         MB_IIE_LR__TYPE_GRID,
         MB_IIE_LR__WIN_DIV_DEFAULT,
         i,
         mb->win->js_grid_res[i],
         mb->win->jt_grid_res[i]);
 
-    mb_iie_lr__collect_2nd_order_moments(lr);
+    at_mb_iie_lr__collect_2nd_order_moments(lr);
 
     if (lr->t1[0] * lr->t1[1] > 0) {
 
@@ -148,7 +148,7 @@ void mb_iie_gridvals__calc_cv(mb_t *mb)
     } else {
 
       /* normal case */
-      e_var = mb_iie_lr__balance_moments(lr);
+      e_var = at_mb_iie_lr__balance_moments(lr);
 
     }
 
@@ -156,7 +156,7 @@ void mb_iie_gridvals__calc_cv(mb_t *mb)
 
     item->cv = mb->boltz * (beta * beta) * e_var;
 
-    mb_iie_gridvals_item__set_quality_bit(item,
+    at_mb_iie_gridvals_item__set_quality_bit(item,
         MB_IIE_GRIDVALS__QUALITY_BIT_CV,
         lr->quality);
 
@@ -165,36 +165,36 @@ void mb_iie_gridvals__calc_cv(mb_t *mb)
 }
 
 
-void mb_iie_gridvals__calc_lnz(mb_t *mb)
+void at_mb_iie_gridvals__calc_lnz(at_mb_t *mb)
 {
   int i;
-  mb_iie_t *iie = mb->iie;
-  mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
-  mb_iie_gridvals_item_t *item = gridvals->items;
+  at_mb_iie_t *iie = mb->iie;
+  at_mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
+  at_mb_iie_gridvals_item_t *item = gridvals->items;
 
   item->lnz = 0.0;
-  mb_iie_gridvals_item__set_quality_bit(item, MB_IIE_GRIDVALS__QUALITY_BIT_LNZ, 1);
+  at_mb_iie_gridvals_item__set_quality_bit(item, MB_IIE_GRIDVALS__QUALITY_BIT_LNZ, 1);
 
   /* estimate the partition function */
   for (i = 0; i < iie->n; i++) {
     ++item;
 
-    double et = mb_iie_et__calc_et(iie, i);
+    double et = at_mb_iie_et__calc_et(iie, i);
 
     item->lnz = gridvals->items[i].lnz + et * (mb->barr[i] - mb->barr[i+1]);
 
-    mb_iie_gridvals_item__set_quality_bit(item, MB_IIE_GRIDVALS__QUALITY_BIT_LNZ, 1);
+    at_mb_iie_gridvals_item__set_quality_bit(item, MB_IIE_GRIDVALS__QUALITY_BIT_LNZ, 1);
   }
 }
 
 
-void mb_iie_gridvals__calc(mb_t *mb)
+void at_mb_iie_gridvals__calc(at_mb_t *mb)
 {
-  mb_iie_gridvals__calc_energy(mb);
+  at_mb_iie_gridvals__calc_energy(mb);
 
-  mb_iie_gridvals__calc_cv(mb);
+  at_mb_iie_gridvals__calc_cv(mb);
 
-  mb_iie_gridvals__calc_lnz(mb);
+  at_mb_iie_gridvals__calc_lnz(mb);
 }
 
 

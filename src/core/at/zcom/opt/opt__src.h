@@ -5,14 +5,14 @@
 #include "opt.h"
 
 /* translate string values to actual ones through sscanf() */
-ZCOM_INLINE int opt_getval(opt_t *o, ssm_t *m)
+ZCOM_INLINE int zcom_opt__getval(zcom_opt_t *o, zcom_ssm_t *m)
 {
   const char *fmt = o->fmt;
 
   if (fmt == NULL || fmt[0] == '\0') { /* raw string assignment */
     *(const char **)o->ptr = o->val;
   } else if (strcmp(fmt, "%s") == 0) {
-    ssm_copy(m, (char **)o->ptr, o->val);
+    zcom_ssm__copy(m, (char **)o->ptr, o->val);
   } else { /* call sscanf */
 
     if (strcmp(fmt, "%r") == 0) { /* real */
@@ -30,7 +30,7 @@ ZCOM_INLINE int opt_getval(opt_t *o, ssm_t *m)
 }
 
 /* set properties of an option: fmt = "%b" for a switch */
-ZCOM_INLINE void opt_set(opt_t *o, const char *sflag, const char *key,
+ZCOM_INLINE void zcom_opt__set(zcom_opt_t *o, const char *sflag, const char *key,
     const char *fmt, void *ptr, const char *desc)
 {
   o->ch = '\0';
@@ -45,16 +45,16 @@ ZCOM_INLINE void opt_set(opt_t *o, const char *sflag, const char *key,
   o->sflag = sflag;
   o->key = key;
   o->flags = 0;
-  exit_if (ptr == NULL, "null pass to argopt with %s: %s\n", sflag, desc);
+  zcom_util__exit_if (ptr == NULL, "null pass to argopt with %s: %s\n", sflag, desc);
   o->ptr = ptr;
   if (fmt == NULL) fmt = "";
   if (fmt[0] == '!') {
     fmt++;
-    o->flags |= OPT_MUST;
+    o->flags |= ZCOM_OPT_MUST;
   }
   if (strcmp(fmt, "%b") == 0) {
     fmt = "%d";
-    o->flags |= OPT_SWITCH;
+    o->flags |= ZCOM_OPT_SWITCH;
   }
   o->fmt = fmt;
   o->pfmt = NULL;
@@ -62,7 +62,7 @@ ZCOM_INLINE void opt_set(opt_t *o, const char *sflag, const char *key,
 }
 
 /* print the value of o->ptr */
-ZCOM_INLINE void opt_printptr(opt_t *o)
+ZCOM_INLINE void zcom_opt__print_ptr(zcom_opt_t *o)
 {
   const char *fmt;
 
@@ -92,7 +92,7 @@ ZCOM_INLINE void opt_printptr(opt_t *o)
 }
 
 /* search an option list, return an option whose variable address is p */
-ZCOM_INLINE opt_t *opt_find(opt_t *ls, int n, const void *p)
+ZCOM_INLINE zcom_opt_t *zcom_opt__find(zcom_opt_t *ls, int n, const void *p)
 {
    int i;
    for (i = 0; i < n; i++) if (ls[i].ptr == p) return ls + i;
@@ -100,11 +100,11 @@ ZCOM_INLINE opt_t *opt_find(opt_t *ls, int n, const void *p)
 }
 
 /* search an option list to see if an option is explicitly set */
-ZCOM_INLINE int opt_isset(opt_t *ls, int n, const void *p, const char *var)
+ZCOM_INLINE int zcom_opt__isset(zcom_opt_t *ls, int n, const void *p, const char *var)
 {
-  opt_t *o = opt_find(ls, n, p);
-  exit_if (!o, "cannot find var %s, ptr %p\n", var, p);
-  return o->flags & OPT_SET ? 1 : 0;
+  zcom_opt_t *o = zcom_opt__find(ls, n, p);
+  zcom_util__exit_if (!o, "cannot find var %s, ptr %p\n", var, p);
+  return o->flags & ZCOM_OPT_SET ? 1 : 0;
 }
 
 #endif

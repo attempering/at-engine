@@ -9,7 +9,7 @@
 #include "mb_integrator.h"
 
 
-int mb_integrator__init(mb_integrator_t *intgr, mb_t *mb)
+int at_mb_integrator__init(at_mb_integrator_t *intgr, at_mb_t *mb)
 {
   intgr->n = mb->n;
   intgr->beta_min = mb->bmin;
@@ -23,17 +23,17 @@ int mb_integrator__init(mb_integrator_t *intgr, mb_t *mb)
 }
 
 
-void mb_integrator__finish(mb_integrator_t *intgr)
+void at_mb_integrator__finish(at_mb_integrator_t *intgr)
 {
 }
 
 
-static int mb_integrator_beta_to_index(mb_integrator_t *intgr, double beta)
+static int mb_integrator_beta_to_index(at_mb_integrator_t *intgr, double beta)
 {
   return (int) ((beta - intgr->beta_min) / intgr->beta_del);
 }
 
-static void mb_integrator_init_indicies(mb_integrator_t *intgr)
+static void mb_integrator_init_indicies(at_mb_integrator_t *intgr)
 {
   intgr->ib_begin = mb_integrator_beta_to_index(intgr, intgr->beta_begin);
 
@@ -42,7 +42,7 @@ static void mb_integrator_init_indicies(mb_integrator_t *intgr)
 
 
 
-static void mb_integrator_init_integral(mb_integrator_t *intgr, double beta_from, double beta_to)
+static void mb_integrator_init_integral(at_mb_integrator_t *intgr, double beta_from, double beta_to)
 {
   if (beta_from < beta_to) {
     intgr->beta_begin = beta_from;
@@ -91,8 +91,8 @@ static void mb_integrator_init_integral(mb_integrator_t *intgr, double beta_from
 }
 
 
-double mb_integrator_get_unsigned_integral(mb_integrator_t *intgr,
-    mb_zerofiller_t *zf)
+double mb_integrator_get_unsigned_integral(at_mb_integrator_t *intgr,
+    at_mb_zerofiller_t *zf)
 {
   int ib;
   int ib_begin = intgr->ib_begin;
@@ -137,7 +137,7 @@ double mb_integrator_get_unsigned_integral(mb_integrator_t *intgr,
 
 
 
-double mb_integrator__integrate(mb_integrator_t *intgr, double beta_from, double beta_to)
+double at_mb_integrator__integrate(at_mb_integrator_t *intgr, double beta_from, double beta_to)
 {
   mb_integrator_init_integral(intgr, beta_from, beta_to);
 

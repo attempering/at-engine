@@ -10,11 +10,11 @@
 #include "../mb__def.h"
 
 
-int mb_integrator__init(mb_integrator_t *intgr, mb_t *mb);
+int at_mb_integrator__init(at_mb_integrator_t *intgr, at_mb_t *mb);
 
-void mb_integrator__finish(mb_integrator_t *intgr);
+void at_mb_integrator__finish(at_mb_integrator_t *intgr);
 
-double mb_integrator__integrate(mb_integrator_t *intgr, double beta_from, double beta_to);
+double at_mb_integrator__integrate(at_mb_integrator_t *intgr, double beta_from, double beta_to);
 
 
 #endif

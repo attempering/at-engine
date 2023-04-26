@@ -10,17 +10,17 @@
 
 
 
-static double langevin_move__calc_et_single_bin(
-    langevin_t *langevin,
-    mb_t *mb,
+static double at_langevin_move__calc_et_single_bin(
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     int ib,
     double def_val)
 {
   double et;
-  sm_t *sm = mb_accum__get_proper_sums(mb->accum, ib, ib);
+  at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, ib, ib);
 
   if (sm->s > MB_ACCUM_MIN_SIZE) {
-    et = sm__get_mean(sm, MB_ACCUM_MIN_SIZE);
+    et = at_mb_sm__get_mean(sm, MB_ACCUM_MIN_SIZE);
   } else {
     et = def_val;
   }
@@ -30,15 +30,15 @@ static double langevin_move__calc_et_single_bin(
 
 
 
-static double langevin_move__calc_et_iie(
-    langevin_t *langevin,
-    mb_t *mb,
+static double at_langevin_move__calc_et_iie(
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     int ib,
     double def_val)
 {
-  mb_iie_t *iie = mb->iie;
-  mb_iie_lr_t *lr = iie->lr;
-  double et = mb_iie_et__calc_et_cached(iie, ib);
+  at_mb_iie_t *iie = mb->iie;
+  at_mb_iie_lr_t *lr = iie->lr;
+  double et = at_mb_iie_et__calc_et_cached(iie, ib);
 
   if (lr->success && lr->quality) {
     return et;
@@ -50,16 +50,16 @@ static double langevin_move__calc_et_iie(
 
 
 
-double langevin_move__calc_et(
-    langevin_t *langevin,
-    mb_t *mb,
+double at_langevin_move__calc_et(
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     int ib,
     double def_val,
     int cheap_av_energy)
 {
   if (cheap_av_energy) {
 
-    return langevin_move__calc_et_single_bin(
+    return at_langevin_move__calc_et_single_bin(
         langevin,
         mb,
         ib,
@@ -67,7 +67,7 @@ double langevin_move__calc_et(
 
   } else {
 
-    return langevin_move__calc_et_iie(
+    return at_langevin_move__calc_et_iie(
         langevin,
         mb,
         ib,
@@ -80,9 +80,9 @@ double langevin_move__calc_et(
 
 
 /* deterministic part of the kT-based Langevin equation */
-double langevin_move__calc_dkt_deterministic(
-    langevin_t *langevin,
-    mb_t *mb, 
+double at_langevin_move__calc_dkt_deterministic(
+    at_langevin_t *langevin,
+    at_mb_t *mb, 
     int ib,
     double time_step,
     double neg_dlnwf_dbeta,
@@ -92,7 +92,7 @@ double langevin_move__calc_dkt_deterministic(
 {
   double delta;
 
-  *bin_av_energy = langevin_move__calc_et(
+  *bin_av_energy = at_langevin_move__calc_et(
       langevin,
       mb,
       ib,
@@ -101,8 +101,8 @@ double langevin_move__calc_dkt_deterministic(
 
   delta = (current_energy - *bin_av_energy + neg_dlnwf_dbeta);
 
-  if (langevin_move__debug__ >= 2) {
-    fprintf(stderr, "langevin_move__calc_dkt_deterministic()\n");
+  if (at_langevin_move__debug__ >= 2) {
+    fprintf(stderr, "at_langevin_move__calc_dkt_deterministic()\n");
     fprintf(stderr, "  cheap_av_energy %d\n", cheap_av_energy);
     fprintf(stderr, "  ib %d\n", (int) ib);
     fprintf(stderr, "  current_energy %g\n", current_energy);

@@ -4,7 +4,7 @@
 
 #include "mb_accum_winaccum_item.h"
 
-#include "../../../sm/sm.h"
+#include "../../sm/mb_sm.h"
 
 #include "../../../zcom/util/util.h"
 #include "../../../zcom/cfg/cfg.h"
@@ -12,8 +12,8 @@
 
 
 
-sm_t *mb_accum_winaccum_item__get_sums(
-    mb_accum_winaccum_item_t *item,
+at_mb_sm_t *at_mb_accum_winaccum_item__get_sums(
+    at_mb_accum_winaccum_item_t *item,
     int j)
 {
   return item->sums + j - item->js;
@@ -21,7 +21,7 @@ sm_t *mb_accum_winaccum_item__get_sums(
 
 
 
-void mb_accum_winaccum_item__normalize(mb_accum_winaccum_item_t *item)
+void at_mb_accum_winaccum_item__normalize(at_mb_accum_winaccum_item_t *item)
 {
   double fac;
   int j, m = item->jt - item->js;
@@ -33,7 +33,7 @@ void mb_accum_winaccum_item__normalize(mb_accum_winaccum_item_t *item)
   fac = 1.0 / item->amplifier;
 
   for (j = 0; j < m; j++) {
-    sm__scale(item->sums + j, fac);
+    at_mb_sm__scale(item->sums + j, fac);
   }
 
   item->amplifier = 1.0;
@@ -41,7 +41,7 @@ void mb_accum_winaccum_item__normalize(mb_accum_winaccum_item_t *item)
 
 
 
-double mb_accum_winaccum_item__calc_total(mb_accum_winaccum_item_t *item)
+double at_mb_accum_winaccum_item__calc_total(at_mb_accum_winaccum_item_t *item)
 {
   double total = 0.0;
   int j, m = item->jt - item->js;
@@ -55,30 +55,30 @@ double mb_accum_winaccum_item__calc_total(mb_accum_winaccum_item_t *item)
 
 
 
-void mb_accum_winaccum_item__add(
-    mb_accum_winaccum_item_t *item,
+void at_mb_accum_winaccum_item__add(
+    at_mb_accum_winaccum_item_t *item,
     int ib,
     double invwf, double e, int do_2nd,
-    mb_shk_t *shk,
+    at_mb_shk_t *shk,
     double total_visits)
 {
   const double amplifier_threshold = 2.0;
   double ginvwf;
-  sm_t *sm;
+  at_mb_sm_t *sm;
 
   // apply adaptive averaging
-  item->amplifier *= mb_shk__calc_inverse_gamma(shk, total_visits, item->i);
+  item->amplifier *= at_mb_shk__calc_inverse_gamma(shk, total_visits, item->i);
 
   ginvwf = item->amplifier * invwf; /* multiplied by the accumulated 1/gamma */
 
-  sm = mb_accum_winaccum_item__get_sums(item, ib);
+  sm = at_mb_accum_winaccum_item__get_sums(item, ib);
 
   //printf("%g %g %g %g\n", xsm->s, xsm->se, xsm->se2, xsm->se3);
-  sm__add(sm, ginvwf, e, do_2nd);
+  at_mb_sm__add(sm, ginvwf, e, do_2nd);
 
   /* we call normalization when the weight starts to blow up */
   if (item->amplifier > amplifier_threshold) {
-    mb_accum_winaccum_item__normalize(item);
+    at_mb_accum_winaccum_item__normalize(item);
   }
 
   item->visits += 1;
@@ -87,8 +87,8 @@ void mb_accum_winaccum_item__add(
 
 
 
-void mb_accum_winaccum_item__init(mb_accum_winaccum_item_t *item,
-    int i, mb_win_t *win)
+void at_mb_accum_winaccum_item__init(at_mb_accum_winaccum_item_t *item,
+    int i, at_mb_win_t *win)
 {
   int m;
   int j;
@@ -98,13 +98,13 @@ void mb_accum_winaccum_item__init(mb_accum_winaccum_item_t *item,
   item->jt = win->jt_bin[i];
 
   m = item->jt - item->js;
-  if ((item->sums = (sm_t *) calloc(m, sizeof(sm_t))) == NULL) {
+  if ((item->sums = (at_mb_sm_t *) calloc(m, sizeof(at_mb_sm_t))) == NULL) {
     fprintf(stderr, "no memory for winaccum item->sums\n");
     exit(1);
   }
 
   for (j = 0; j < m; j++) {
-    sm__init(item->sums + j);
+    at_mb_sm__init(item->sums + j);
   }
 
   item->amplifier = 1.0;
@@ -113,12 +113,12 @@ void mb_accum_winaccum_item__init(mb_accum_winaccum_item_t *item,
 
 
 
-void mb_accum_winaccum_item__clear(mb_accum_winaccum_item_t *item)
+void at_mb_accum_winaccum_item__clear(at_mb_accum_winaccum_item_t *item)
 {
   int j, m = item->jt - item->js;
 
   for (j = 0; j < m; j++) {
-    sm__clear(item->sums + j);
+    at_mb_sm__clear(item->sums + j);
   }
 
   item->amplifier = 1.0;
@@ -127,19 +127,19 @@ void mb_accum_winaccum_item__clear(mb_accum_winaccum_item_t *item)
 
 
 
-void mb_accum_winaccum_item__finish(mb_accum_winaccum_item_t *item)
+void at_mb_accum_winaccum_item__finish(at_mb_accum_winaccum_item_t *item)
 {
   free(item->sums);
 }
 
 
 
-int mb_accum_winaccum_item__read_binary(mb_accum_winaccum_item_t *item, FILE *fp, int endn)
+int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FILE *fp, int endn)
 {
   int i = item->i, itmp, j;
-  sm_t *sm;
+  at_mb_sm_t *sm;
 
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -151,7 +151,7 @@ int mb_accum_winaccum_item__read_binary(mb_accum_winaccum_item_t *item, FILE *fp
   }
 
   for (j = item->js; j < item->jt; j++) {
-    if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+    if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
       fprintf(stderr, "error in reading itmp\n");
       goto ERR;
     }
@@ -162,9 +162,9 @@ int mb_accum_winaccum_item__read_binary(mb_accum_winaccum_item_t *item, FILE *fp
       goto ERR;
     }
 
-    sm = mb_accum_winaccum_item__get_sums(item, j);
+    sm = at_mb_accum_winaccum_item__get_sums(item, j);
 
-    if (0 != sm__read_binary(sm, fp, endn)) {
+    if (0 != at_mb_sm__read_binary(sm, fp, endn)) {
       fprintf(stderr, "error reading object winaccum->items->sums i %d j %d\n", i, j);
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -180,27 +180,27 @@ ERR:
 
 
 
-int mb_accum_winaccum_item__write_binary(mb_accum_winaccum_item_t *item, FILE *fp)
+int at_mb_accum_winaccum_item__write_binary(at_mb_accum_winaccum_item_t *item, FILE *fp)
 {
   int i = item->i, j;
-  sm_t *sm;
+  at_mb_sm_t *sm;
 
-  mb_accum_winaccum_item__normalize(item);
+  at_mb_accum_winaccum_item__normalize(item);
 
-  if (endn_fwrite(&i, sizeof(int), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&i, sizeof(int), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing i\n");
     goto ERR;
   }
 
   for (j = item->js; j < item->jt; j++) {
-    if (endn_fwrite(&j, sizeof(j), 1, fp, 1) != 1) {
+    if (zcom_endn__fwrite(&j, sizeof(j), 1, fp, 1) != 1) {
       fprintf(stderr, "error in writing j\n");
       goto ERR;
     }
 
-    sm = mb_accum_winaccum_item__get_sums(item, j);
+    sm = at_mb_accum_winaccum_item__get_sums(item, j);
 
-    if (0 != sm__write_binary(sm, fp)) {
+    if (0 != at_mb_sm__write_binary(sm, fp)) {
       fprintf(stderr, "error writing object winaccum->items->sums i %d j %d\n", i, j);
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;

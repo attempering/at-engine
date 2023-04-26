@@ -1,17 +1,17 @@
-/* binary IO routines for mb_t */
+/* binary IO routines for at_mb_t */
 #ifndef AT__MB_IO_BINARY__SRC_H__
 #define AT__MB_IO_BINARY__SRC_H__
 
 #include "mb_io_binary.h"
 
 /* implementation headers */
-#include "../mb_basic.h" /* mb__clear() */
-#include "../../sm/sm.h"
+#include "../mb_basic.h" /* at_mb__clear() */
+#include "../sm/mb_sm.h"
 #include "../accum/mb_accum.h"
 
 #include "../../zcom/endn/endn.h"
 
-static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, int ver, int endn)
+static int mb_read_binary_low_level(at_mb_t *mb, at_langevin_t *langevin, FILE *fp, int ver, int endn)
 {
   int itmp;
 
@@ -22,11 +22,11 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
   }
 
   /* clear data before reading */
-  mb__clear(mb);
-  langevin_clear(langevin);
+  at_mb__clear(mb);
+  at_langevin__clear(langevin);
 
   /* n: number of temperature bins */
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -37,7 +37,7 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
     goto ERR;
   }
   /* m: maximal number of bins in a window */
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -52,7 +52,7 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
     int mb_order = 1;
 
     /* order: order, should be 1 */
-    if (endn_fread(&mb_order, sizeof(mb_order), 1, fp, endn) != 1) {
+    if (zcom_endn__fread(&mb_order, sizeof(mb_order), 1, fp, endn) != 1) {
       fprintf(stderr, "error in reading mb_order\n");
       goto ERR;
     }
@@ -64,17 +64,17 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
   }
 
   /* flags: combination of flags */
-  if (endn_fread(&mb->flags, sizeof(mb->flags), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&mb->flags, sizeof(mb->flags), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->flags\n");
     goto ERR;
   }
   /* use_winaccum */
-  if (endn_fread(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->use_winaccum\n");
     goto ERR;
   }
   /* cnt_int: number of additional integer variables to be written to binary file */
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -85,7 +85,7 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
     goto ERR;
   }
   /* cnt_dbl: number of additional double variables to be written to binary file */
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -96,7 +96,7 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
     goto ERR;
   }
   /* beta: current value of beta */
-  if (endn_fread(&mb->beta, sizeof(mb->beta), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&mb->beta, sizeof(mb->beta), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->beta\n");
     goto ERR;
   }
@@ -108,7 +108,7 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
   mb->beta = (mb->beta >= mb->bmax - 1e-5) ? (mb->bmax - 1e-5) : mb->beta;
   mb->beta = (mb->beta <= mb->bmin + 1e-5) ? (mb->bmin + 1e-5) : mb->beta;
   /* total_visits: total number of visits, number of tempering */
-  if (endn_fread(&mb->total_visits, sizeof(mb->total_visits), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&mb->total_visits, sizeof(mb->total_visits), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->total_visits\n");
     goto ERR;
   }
@@ -119,45 +119,45 @@ static int mb_read_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, in
   }
 
   /* shk_base: current generic shrink amplitude */
-  if (endn_fread(&mb->shk->base, sizeof(mb->shk->base), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&mb->shk->base, sizeof(mb->shk->base), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->shk_base\n");
     goto ERR;
   }
 
-  if (langevin_read_binary(langevin, fp, endn) != 0) {
+  if (at_langevin__read_binary(langevin, fp, endn) != 0) {
     goto ERR;
   }
 
   /* barr: temperature array */
   if ((mb->n > 0)
-    && (endn_fread(mb->barr, sizeof(*(mb->barr)), mb->n, fp, endn) != (size_t) (mb->n))) {
+    && (zcom_endn__fread(mb->barr, sizeof(*(mb->barr)), mb->n, fp, endn) != (size_t) (mb->n))) {
     fprintf(stderr, "error in reading mb->barr, n = mb->n(%d)\n", mb->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */
   /*
   if ((mb->n > 0)
-    && (endn_fread(mb->iie->et, sizeof(*(mb->iie->et)), mb->n, fp, endn) != (size_t) (mb->n))) {
+    && (zcom_endn__fread(mb->iie->et, sizeof(*(mb->iie->et)), mb->n, fp, endn) != (size_t) (mb->n))) {
     fprintf(stderr, "error in reading mb->et, n = mb->n(%d)\n", mb->n);
     goto ERR;
   }
   */
 
-  if (mb_accum__read_binary(mb->accum, fp, endn) != 0) {
+  if (at_mb_accum__read_binary(mb->accum, fp, endn) != 0) {
     goto ERR;
   }
 
   return 0;
 
 ERR:
-  mb__clear(mb);
-  langevin_clear(langevin);
+  at_mb__clear(mb);
+  at_langevin__clear(langevin);
   return -1;
 }
 
 
 
-int mb__read_binary(mb_t *mb, langevin_t *langevin, const char *fname, int *pver)
+int at_mb__read_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, int *pver)
 {
   FILE *fp;
   int ver;
@@ -172,13 +172,13 @@ int mb__read_binary(mb_t *mb, langevin_t *langevin, const char *fname, int *pver
   }
 
   /* determine file endian */
-  if ((endn = endn_rmatchi(&itmp, sizeof(int), fp)) < 0) {
+  if ((endn = zcom_endn__rmatchi(&itmp, sizeof(int), fp)) < 0) {
     fprintf(stderr, "itmp 0x%X cannot match sizeof(int) 0x%X\n",
         (unsigned) itmp, (unsigned) sizeof(int));
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
-  if (endn_fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
@@ -188,7 +188,7 @@ int mb__read_binary(mb_t *mb, langevin_t *langevin, const char *fname, int *pver
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
-  if (endn_fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
+  if (zcom_endn__fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading ver\n");
     goto ERR;
   }
@@ -206,7 +206,7 @@ ERR:
 
 
 
-static int mb_write_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, int ver)
+static int mb_write_binary_low_level(at_mb_t *mb, at_langevin_t *langevin, FILE *fp, int ver)
 {
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to mb_write_binary_low_level\n");
@@ -214,12 +214,12 @@ static int mb_write_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, i
     return -1;
   }
   /* n: number of temperature bins */
-  if (endn_fwrite(&mb->n, sizeof(mb->n), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->n, sizeof(mb->n), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->n\n");
     goto ERR;
   }
   /* m: maximal number of bins in a window */
-  if (endn_fwrite(&mb->accum->m, sizeof(mb->accum->m), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->accum->m, sizeof(mb->accum->m), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->m\n");
     goto ERR;
   }
@@ -227,68 +227,68 @@ static int mb_write_binary_low_level(mb_t *mb, langevin_t *langevin, FILE *fp, i
   {
     int mb_order = 1;
 
-    if (endn_fwrite(&mb_order, sizeof(mb_order), 1, fp, 1) != 1) {
+    if (zcom_endn__fwrite(&mb_order, sizeof(mb_order), 1, fp, 1) != 1) {
       fprintf(stderr, "error in writing mb_order\n");
       goto ERR;
     }
   }
 
   /* flags: combination of flags */
-  if (endn_fwrite(&mb->flags, sizeof(mb->flags), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->flags, sizeof(mb->flags), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->flags\n");
     goto ERR;
   }
   /* use_winaccum */
-  if (endn_fwrite(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->use_winaccum\n");
     goto ERR;
   }
   /* cnt_int: number of additional integer variables to be written to binary file */
-  if (endn_fwrite(&mb->cnt_int, sizeof(mb->cnt_int), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->cnt_int, sizeof(mb->cnt_int), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->cnt_int\n");
     goto ERR;
   }
   /* cnt_dbl: number of additional double variables to be written to binary file */
-  if (endn_fwrite(&mb->cnt_dbl, sizeof(mb->cnt_dbl), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->cnt_dbl, sizeof(mb->cnt_dbl), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->cnt_dbl\n");
     goto ERR;
   }
   /* beta: current value of beta */
-  if (endn_fwrite(&mb->beta, sizeof(mb->beta), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->beta, sizeof(mb->beta), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->beta\n");
     goto ERR;
   }
   /* total_visits: total number of visits, number of tempering */
-  if (endn_fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->total_visits\n");
     goto ERR;
   }
   /* shk_base: current generic shrink amplitude */
-  if (endn_fwrite(&mb->shk->base, sizeof(mb->shk->base), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->shk->base, sizeof(mb->shk->base), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->shk->base\n");
     goto ERR;
   }
 
-  if (langevin_write_binary(langevin, fp) != 0) {
+  if (at_langevin__write_binary(langevin, fp) != 0) {
     goto ERR;
   }
 
   /* barr: temperature array */
   if ((mb->n > 0)
-    && (endn_fwrite(mb->barr, sizeof(*(mb->barr)), mb->n, fp, 1) != (size_t) (mb->n))) {
+    && (zcom_endn__fwrite(mb->barr, sizeof(*(mb->barr)), mb->n, fp, 1) != (size_t) (mb->n))) {
     fprintf(stderr, "error in writing mb->barr, n = mb->n(%d)\n", mb->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */
   /*
   if ((mb->n > 0)
-    && (endn_fwrite(mb->iie->et, sizeof(*(mb->iie->et)), mb->n, fp, 1) != (size_t) (mb->n))) {
+    && (zcom_endn__fwrite(mb->iie->et, sizeof(*(mb->iie->et)), mb->n, fp, 1) != (size_t) (mb->n))) {
     fprintf(stderr, "error in writing mb->et, n = mb->n(%d)\n", mb->n);
     goto ERR;
   }
   */
 
-  if (mb_accum__write_binary(mb->accum, fp) != 0) {
+  if (at_mb_accum__write_binary(mb->accum, fp) != 0) {
     goto ERR;
   }
 
@@ -299,7 +299,7 @@ ERR:
 
 
 
-int mb__write_binary(mb_t *mb, langevin_t *langevin, const char *fname, int ver)
+int at_mb__write_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, int ver)
 {
   FILE *fp;
   int i;
@@ -312,16 +312,16 @@ int mb__write_binary(mb_t *mb, langevin_t *langevin, const char *fname, int ver)
   }
 
   size = (int) sizeof(int);
-  if (endn_fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing size\n");
     goto ERR;
   }
   size = (int) sizeof(double);
-  if (endn_fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing size\n");
     goto ERR;
   }
-  if (endn_fwrite(&ver, sizeof(ver), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&ver, sizeof(ver), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing ver\n");
     goto ERR;
   }

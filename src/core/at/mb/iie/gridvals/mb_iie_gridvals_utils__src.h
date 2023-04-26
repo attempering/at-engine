@@ -13,8 +13,8 @@
 
 
 /* set quality bit */
-void mb_iie_gridvals_item__set_quality_bit(
-    mb_iie_gridvals_item_t *item,
+void at_mb_iie_gridvals_item__set_quality_bit(
+    at_mb_iie_gridvals_item_t *item,
     unsigned mask, int on)
 {
   if (mask) {
@@ -28,7 +28,7 @@ void mb_iie_gridvals_item__set_quality_bit(
 
 
 /* translate the quality bits into an array of 0-1 characters */
-char *mb_iie_gridvals_item__quality_bits_to_string(const mb_iie_gridvals_item_t *item)
+char *at_mb_iie_gridvals_item__quality_bits_to_string(const at_mb_iie_gridvals_item_t *item)
 {
   static char buf[64]; /* has to be static to be the return value */
   int  cnt = 0;

@@ -7,7 +7,7 @@
 #include "../zcom/cfg/cfg.h"
 
 
-int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
+int at_eh__cfg_init(at_eh_t *eh, zcom_cfg_t *cfg, at_mb_t *mb, const char *data_dir)
 {
   int i;
 
@@ -16,7 +16,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
 
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
-  if (0 != cfg_get(cfg, &eh->mode, "ehist_mode", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &eh->mode, "ehist_mode", "%d")) {
     fprintf(stderr, "assuming default: eh->mode = 0, key: ehist_mode\n");
   }
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
@@ -28,7 +28,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_skip: interval of reconstructing energy histograms */
   eh->skip = 10;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->skip, "ehist_skip", "%d")) {
+    if (0 != zcom_cfg__get(cfg, &eh->skip, "ehist_skip", "%d")) {
       fprintf(stderr, "assuming default: eh->skip = 10, key: ehist_skip\n");
     }
     if ( !(eh->skip > 0) ) {
@@ -41,7 +41,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
   eh->bwmod = 1;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->bwmod, "ehist_mbin_mode", "%d")) {
+    if (0 != zcom_cfg__get(cfg, &eh->bwmod, "ehist_mbin_mode", "%d")) {
       fprintf(stderr, "assuming default: eh->bwmod = 1, key: ehist_mbin_mode\n");
     }
     if ( !(eh->bwmod >= 0 && eh->bwmod <= 2) ) {
@@ -54,7 +54,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_bwdel: delta lnT */
   eh->bwdel = 0.05;
   if (eh->mode && eh->bwmod == 1) {
-    if (cfg != NULL && 0 != cfg_get(cfg, &eh->bwdel, "ehist_delta_lnT", "%lf")) {
+    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_lnT", "%lf")) {
       fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_lnT, fmt: %%lf\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -69,7 +69,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_bwdel: delta beta */
   if (eh->mode && eh->bwmod == 0) {
     eh->bwdel = 0.02;
-    if (cfg != NULL && 0 != cfg_get(cfg, &eh->bwdel, "ehist_delta_beta", "%lf")) {
+    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_beta", "%lf")) {
       fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_beta, fmt: %%lf\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -84,7 +84,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_bwdel: delta kT */
   if (eh->mode && eh->bwmod == 2) {
     eh->bwdel = 0.10;
-    if (cfg != NULL && 0 != cfg_get(cfg, &eh->bwdel, "ehist_delta_kT", "%lf")) {
+    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_kT", "%lf")) {
       fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_kT, fmt: %%lf\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -99,7 +99,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_min: minimal energy */
   eh->min = -12.6e4;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->min, "ehist_min", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &eh->min, "ehist_min", "%lf")) {
       fprintf(stderr, "assuming default: eh->min = -12.6e4, key: ehist_min\n");
     }
   }
@@ -107,7 +107,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_max: maximal energy */
   eh->max = -9.0e4;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->max, "ehist_max", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &eh->max, "ehist_max", "%lf")) {
       fprintf(stderr, "assuming default: eh->max = -9.0e4, key: ehist_max\n");
     }
     if ( !(eh->max > eh->min) ) {
@@ -120,7 +120,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_del: energy bin size */
   eh->del = 20.0;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->del, "ehist_del", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &eh->del, "ehist_del", "%lf")) {
       fprintf(stderr, "assuming default: eh->del = 20.0, key: ehist_del\n");
     }
     if ( !(eh->del > 0) ) {
@@ -135,7 +135,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_binary: binary format for ehist file */
   eh->binary = 1;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->binary, "ehist_binary", "%d")) {
+    if (0 != zcom_cfg__get(cfg, &eh->binary, "ehist_binary", "%d")) {
       fprintf(stderr, "assuming default: eh->binary = 1, key: ehist_binary\n");
     }
   }
@@ -143,7 +143,7 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   /* eh_nst_save: interval of writing histogrm files */
   eh->nst_save = 100000;
   if (eh->mode) {
-    if (0 != cfg_get(cfg, &eh->nst_save, "nsthist", "%d")) {
+    if (0 != zcom_cfg__get(cfg, &eh->nst_save, "nsthist", "%d")) {
       fprintf(stderr, "assuming default: eh->nst_save = 100000, key: nsthist\n");
     }
   }
@@ -152,20 +152,20 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
   eh->file = NULL;
   if (eh->mode) {
     char *fn_eh = "hist.dat";
-    if (0 != cfg_get(cfg, &fn_eh, "ehist_file", "%s")) {
+    if (0 != zcom_cfg__get(cfg, &fn_eh, "ehist_file", "%s")) {
       fprintf(stderr, "assuming default: eh->file = \"%s\", key: ehist_file\n", fn_eh);
     }
-    eh->file = utils_make_output_filename(mb->ssm, data_dir, fn_eh);
+    eh->file = at_utils__make_output_filename(mb->ssm, data_dir, fn_eh);
   }
 
   /* eh_rfile: name of reconstructed energy histogram */
   eh->rfile = NULL;
   if (eh->mode) {
     char *fn_eh_mb = "hist_mb.dat";
-    if (0 != cfg_get(cfg, &fn_eh_mb, "ehist_mbin_file", "%s")) {
+    if (0 != zcom_cfg__get(cfg, &fn_eh_mb, "ehist_mbin_file", "%s")) {
       fprintf(stderr, "assuming default: eh->rfile = \"%s\", key: ehist_mbin_file\n", fn_eh_mb);
     }
-    eh->rfile = utils_make_output_filename(mb->ssm, data_dir, fn_eh_mb);
+    eh->rfile = at_utils__make_output_filename(mb->ssm, data_dir, fn_eh_mb);
   }
 
   /* eh_his: energy histogram data */
@@ -218,61 +218,61 @@ int eh__cfg_init(eh_t *eh, cfg_t *cfg, mb_t *mb, const char *data_dir)
     fprintf(stderr, "eh->is %p, eh->it %p\n", eh->is, eh->it);
 
     // windows for the reconstructed energy histograms
-    mb_win__make_unres_windows_for_grid_estimators(mb->n, mb->barr, mb->bdel,
+    at_mb_win__make_unres_windows_for_grid_estimators(mb->n, mb->barr, mb->bdel,
         eh->bwmod, eh->bwdel, eh->is, eh->it);
   }
 
-  /* EH_ADDAHALF: add a half energy bin width in output */
+  /* AT_EH_ADDAHALF: add a half energy bin width in output */
   if (eh->mode) {
     unsigned i = 1;
-    if (0 != cfg_get(cfg, &i, "ehist_addahalf", "%u")) {
-      fprintf(stderr, "assuming default: EH_ADDAHALF = 1, key: ehist_addahalf\n");
+    if (0 != zcom_cfg__get(cfg, &i, "ehist_addahalf", "%u")) {
+      fprintf(stderr, "assuming default: AT_EH_ADDAHALF = 1, key: ehist_addahalf\n");
     }
     if ( !(i == 0 || i == 1) ) {
-      fprintf(stderr, "EH_ADDAHALF: failed validation: i == 0 || i == 1\n");
+      fprintf(stderr, "AT_EH_ADDAHALF: failed validation: i == 0 || i == 1\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
     if (i) {
-      eh->flags |= EH_ADDAHALF;
+      eh->flags |= AT_EH_ADDAHALF;
     } else {
-      eh->flags &= ~EH_ADDAHALF;
+      eh->flags &= ~AT_EH_ADDAHALF;
     }
   }
 
-  /* EH_KEEPEDGE: keep zero edge at sides */
+  /* AT_EH_KEEPEDGE: keep zero edge at sides */
   if (eh->mode) {
     unsigned i = 0;
-    if (0 != cfg_get(cfg, &i, "ehist_keepedge", "%u")) {
-      fprintf(stderr, "assuming default: EH_KEEPEDGE = 0, key: ehist_keepedge\n");
+    if (0 != zcom_cfg__get(cfg, &i, "ehist_keepedge", "%u")) {
+      fprintf(stderr, "assuming default: AT_EH_KEEPEDGE = 0, key: ehist_keepedge\n");
     }
     if ( !(i == 0 || i == 1) ) {
-      fprintf(stderr, "EH_KEEPEDGE: failed validation: i == 0 || i == 1\n");
+      fprintf(stderr, "AT_EH_KEEPEDGE: failed validation: i == 0 || i == 1\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
     if (i) {
-      eh->flags |= EH_KEEPEDGE;
+      eh->flags |= AT_EH_KEEPEDGE;
     } else {
-      eh->flags &= ~EH_KEEPEDGE;
+      eh->flags &= ~AT_EH_KEEPEDGE;
     }
   }
 
-  /* EH_NOZEROES: do not output zeroes */
+  /* AT_EH_NOZEROES: do not output zeroes */
   if (eh->mode) {
     unsigned i = 0;
-    if (0 != cfg_get(cfg, &i, "ehist_nozeroes", "%u")) {
-      fprintf(stderr, "assuming default: EH_NOZEROES = 0, key: ehist_nozeroes\n");
+    if (0 != zcom_cfg__get(cfg, &i, "ehist_nozeroes", "%u")) {
+      fprintf(stderr, "assuming default: AT_EH_NOZEROES = 0, key: ehist_nozeroes\n");
     }
     if ( !(i == 0 || i == 1) ) {
-      fprintf(stderr, "EH_NOZEROES: failed validation: i == 0 || i == 1\n");
+      fprintf(stderr, "AT_EH_NOZEROES: failed validation: i == 0 || i == 1\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
     if (i) {
-      eh->flags |= EH_NOZEROES;
+      eh->flags |= AT_EH_NOZEROES;
     } else {
-      eh->flags &= ~EH_NOZEROES;
+      eh->flags &= ~AT_EH_NOZEROES;
     }
   }
 
@@ -283,7 +283,7 @@ ERR:
 }
 
 
-void eh__clear(eh_t *eh)
+void at_eh__clear(at_eh_t *eh)
 {
   int i;
 
@@ -304,7 +304,7 @@ void eh__clear(eh_t *eh)
 }
 
 
-void eh__finish(eh_t *eh)
+void at_eh__finish(at_eh_t *eh)
 {
   /* when eh->mode == 0, data members are not allocated */
   if (eh->mode) {

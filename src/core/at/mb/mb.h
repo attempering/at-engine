@@ -2,8 +2,11 @@
 #ifndef AT__MB_H__
 #define AT__MB_H__
 
-/* definition of mb_t */
+/* definition of at_mb_t */
 #include "mb__def.h"
+
+/* simple accumulator */
+#include "sm/mb_sm.h"
 
 /* beta distribution functions */
 #include "betadist/mb_betadist.h"
@@ -17,7 +20,7 @@
 /* accumulators */
 #include "accum/mb_accum.h"
 
-/* basic routines, such as cfg_open()/close() */
+/* basic routines, such as zcom_cfg__open()/close() */
 #include "mb_basic.h"
 
 /* miscellaneous routines */

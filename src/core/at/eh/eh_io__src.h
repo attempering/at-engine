@@ -9,12 +9,12 @@
 
 #include "../zcom/cfg/cfg.h"
 
-int eh__read(eh_t *eh)
+int at_eh__read(at_eh_t *eh)
 {
   int ret = 0, version;
 
   if (eh != NULL && eh->mode != 0) {
-    ret = eh__read_binary(eh, eh->file, &version);
+    ret = at_eh__read_binary(eh, eh->file, &version);
   }
 
   return ret;
@@ -22,13 +22,13 @@ int eh__read(eh_t *eh)
 
 
 
-int eh__write(eh_t *eh)
+int at_eh__write(at_eh_t *eh)
 {
   int ret = 0;
   const int version = 0;
 
   if (eh != NULL && eh->mode != 0) {
-    ret = eh__write_binary(eh, eh->file, version);
+    ret = at_eh__write_binary(eh, eh->file, version);
   }
 
   return ret;
@@ -36,7 +36,7 @@ int eh__write(eh_t *eh)
 
 
 
-void eh__manifest(const eh_t* eh, FILE *fp, int arrmax)
+void at_eh__manifest(const at_eh_t* eh, FILE *fp, int arrmax)
 {
   int i;
   int pacnt;
@@ -176,17 +176,17 @@ void eh__manifest(const eh_t* eh, FILE *fp, int arrmax)
     fprintf(fp, " {0}\n");
   }
 
-  /* EH_ADDAHALF: add a half energy bin width in output */
-  fprintf(fp, "eh->flags & EH_ADDAHALF (0x%X, ehist_addahalf): %s\n",
-    EH_ADDAHALF, (eh->flags & EH_ADDAHALF) ? "on" : "off");
+  /* AT_EH_ADDAHALF: add a half energy bin width in output */
+  fprintf(fp, "eh->flags & AT_EH_ADDAHALF (0x%X, ehist_addahalf): %s\n",
+    AT_EH_ADDAHALF, (eh->flags & AT_EH_ADDAHALF) ? "on" : "off");
 
-  /* EH_KEEPEDGE: keep zero edge at sides */
-  fprintf(fp, "eh->flags & EH_KEEPEDGE (0x%X, ehist_keepedge): %s\n",
-    EH_KEEPEDGE, (eh->flags & EH_KEEPEDGE) ? "on" : "off");
+  /* AT_EH_KEEPEDGE: keep zero edge at sides */
+  fprintf(fp, "eh->flags & AT_EH_KEEPEDGE (0x%X, ehist_keepedge): %s\n",
+    AT_EH_KEEPEDGE, (eh->flags & AT_EH_KEEPEDGE) ? "on" : "off");
 
-  /* EH_NOZEROES: do not output zeroes */
-  fprintf(fp, "eh->flags & EH_NOZEROES (0x%X, ehist_nozeroes): %s\n",
-    EH_NOZEROES, (eh->flags & EH_NOZEROES) ? "on" : "off");
+  /* AT_EH_NOZEROES: do not output zeroes */
+  fprintf(fp, "eh->flags & AT_EH_NOZEROES (0x%X, ehist_nozeroes): %s\n",
+    AT_EH_NOZEROES, (eh->flags & AT_EH_NOZEROES) ? "on" : "off");
 }
 
 #endif

@@ -4,6 +4,6 @@
 #include "utils_dir.h"
 #include "../zcom/ssm/ssm.h"
 
-char *utils_make_output_filename(ssm_t *ssm, const char *data_dir, const char *fn);
+char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, const char *fn);
 
 #endif

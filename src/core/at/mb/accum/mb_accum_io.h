@@ -8,11 +8,11 @@
 #include "../shk/mb_shk.h"
 #include <stdio.h>
 
-void mb_accum__manifest(const mb_accum_t *accum, FILE *fp, int arrmax);
+void at_mb_accum__manifest(const at_mb_accum_t *accum, FILE *fp, int arrmax);
 
-int mb_accum__read_binary(mb_accum_t *accum, FILE *fp, int endn);
+int at_mb_accum__read_binary(at_mb_accum_t *accum, FILE *fp, int endn);
 
-int mb_accum__write_binary(mb_accum_t *accum, FILE *fp);
+int at_mb_accum__write_binary(at_mb_accum_t *accum, FILE *fp);
 
 
 #endif

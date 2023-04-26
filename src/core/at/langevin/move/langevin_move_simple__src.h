@@ -8,15 +8,15 @@
 
 
 /* Langevin integration */
-double langevin__move_simple(
-    langevin_t *langevin,
-    mb_t *mb,
+double at_langevin__move_simple(
+    at_langevin_t *langevin,
+    at_mb_t *mb,
     double current_energy,
     double beta_old,
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    mtrng_t *rng,
+    zcom_mtrng_t *rng,
     double *bin_av_energy)
 {
   const int cheap_av_energy = 0;
@@ -26,13 +26,13 @@ double langevin__move_simple(
 
   //fprintf(stderr, "1. beta %g, ib %d\n", beta_old, ib);
 
-  if (!langevin_move__check_min_visits(langevin, mb, beta_old)) {
+  if (!at_langevin_move__check_min_visits(langevin, mb, beta_old)) {
     return beta_old;
   }
 
   //fprintf(stderr, "2. beta %g, ib %d\n", beta_old, ib);
 
-  langevin_move__propose(
+  at_langevin_move__propose(
       proposal,
       langevin, mb,
       current_energy,
@@ -44,7 +44,7 @@ double langevin__move_simple(
 
   //fprintf(stderr, "3. beta %g => %g, %g\n", beta_old, proposal->beta_new, *bin_av_energy);
 
-  langevin_move__moderate_stride(
+  at_langevin_move__moderate_stride(
       proposal,
       langevin,
       mb);

@@ -3,7 +3,7 @@
 
 
 
-/* IO routines for mb_t */
+/* IO routines for at_mb_t */
 
 #include "mb_io.h"
 
@@ -16,18 +16,18 @@
 
 
 
-int mb__read(mb_t *mb, langevin_t *langevin)
+int at_mb__read(at_mb_t *mb, at_langevin_t *langevin)
 {
   int ret, version;
 
-  ret = mb__read_binary(mb, langevin, mb->av_file, &version);
+  ret = at_mb__read_binary(mb, langevin, mb->av_file, &version);
 
   if (ret != 0) {
-    fprintf(stderr, "cannot load mb_t data from %s\n", mb->av_file);
+    fprintf(stderr, "cannot load at_mb_t data from %s\n", mb->av_file);
     return 1;
   }
 
-  fprintf(stderr, "loaded previous mb_t data, %s version: %d\n",
+  fprintf(stderr, "loaded previous at_mb_t data, %s version: %d\n",
     mb->av_file, version);
 
   return 0;
@@ -35,14 +35,14 @@ int mb__read(mb_t *mb, langevin_t *langevin)
 
 
 
-int mb__write(mb_t *mb, langevin_t *langevin)
+int at_mb__write(at_mb_t *mb, at_langevin_t *langevin)
 {
-  return mb__write_binary(mb, langevin, mb->av_file, 1);
+  return at_mb__write_binary(mb, langevin, mb->av_file, 1);
 }
 
 
 
-void mb__manifest(const mb_t *mb, FILE *fp, int arrmax)
+void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax)
 {
   int i;
   int pacnt;
@@ -100,7 +100,7 @@ void mb__manifest(const mb_t *mb, FILE *fp, int arrmax)
   fprintf(fp, "mb->flags & MB_VERBOSE (0x%X, mbest_verbose): %s\n",
     MB_VERBOSE, (mb->flags & MB_VERBOSE) ? "on" : "off");
 
-  mb_win__manifest(mb->win, fp, arrmax);
+  at_mb_win__manifest(mb->win, fp, arrmax);
 
   /* nstrefresh: interval of recalculating et for all temperature */
   fprintf(fp, "mb->nstrefresh: int, %4d\n", mb->nstrefresh);
@@ -150,13 +150,13 @@ void mb__manifest(const mb_t *mb, FILE *fp, int arrmax)
   /* cv_shift_max: maximal fraction for shift energy fluct. if cv is monotonic, it should be 0.0, for ising model, it can restrain the magnitude */
   fprintf(fp, "mb->iie->lr->cv_shift_max: double, %g\n", mb->iie->lr->cv_shift_max);
 
-  mb_betadist__manifest(mb->betadist, fp, arrmax);
+  at_mb_betadist__manifest(mb->betadist, fp, arrmax);
 
-  mb_shk__manifest(mb->shk, fp, arrmax);
+  at_mb_shk__manifest(mb->shk, fp, arrmax);
 
-  mb_iie__manifest(mb->iie, fp, arrmax);
+  at_mb_iie__manifest(mb->iie, fp, arrmax);
 
-  mb_accum__manifest(mb->accum, fp, arrmax);
+  at_mb_accum__manifest(mb->accum, fp, arrmax);
 
   /* cnt_int: number of additional integer variables to be written to binary file */
   fprintf(fp, "mb->cnt_int: int, %4d\n", mb->cnt_int);
