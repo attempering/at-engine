@@ -1,0 +1,206 @@
+/* testing the effect of the window boundary convention */
+
+
+//#define MB_DBG__ 1
+#include "at/at__src.h"
+
+
+
+double boltz = 1.0;
+
+
+/* parameters of the Gaussian energy model */
+double gaussian_sigma = 100.0;
+
+
+long ntimes = 100000;
+
+
+
+void init_mb_object(mb_t *mb)
+{
+  cfg_t *cfg = cfg_open("at.cfg");
+
+  // beta_min and beta_max are to be read from the configuration file
+  mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+
+  cfg_close(cfg);
+}
+
+
+
+void mb_mock_exact_moments(mb_t *mb, double fill_prob)
+{
+  int i;
+  mtrng_t rng[1];
+
+  mtrng_init_from_seed(rng, time(NULL));
+
+  for (i = 0; i < mb->n; i++) {
+    sm_t *sm = mb_accum__get_proper_sums(mb->accum, i, i);
+
+    if (mtrng_rand01(rng) < fill_prob) {
+      double beta = mb->bmin + (i + 0.5) * mb->bdel;
+      double epot = -beta * (gaussian_sigma * gaussian_sigma);
+
+      sm->s = 1.0;
+      sm->se = epot;
+      sm->se2 = gaussian_sigma * gaussian_sigma;
+      sm->se3 = 0;
+    } else {
+      sm->s = 0;
+      sm->se = 0;
+      sm->se2 = 0;
+      sm->se3 = 0;
+    }
+
+  }
+
+  mb->flags &= ~MB_USE_WIN_ACCUM;
+}
+
+
+
+void mb_mock_sampling(mb_t *mb, long ntimes)
+{
+  long t;
+  mtrng_t *rng = mtrng_open(time(NULL));
+
+  for (t = 1; t <= ntimes; t++) {
+    double beta = mb->bmin + mtrng_rand01(rng) * (mb->bmax - mb->bmin);
+
+    /* for the Gaussian energy model
+     * Ec = - sigma^2 beta
+     * and the energy fluctuation is sigma
+     */
+    double epot_c = -gaussian_sigma*gaussian_sigma * beta;
+    double epot = epot_c + gaussian_sigma * mtrng_randgaus(rng);
+    int ib;
+    mb__add(mb, epot, beta, &ib, NULL, NULL);
+
+    if (t % 10000 == 0) {
+      printf("%g%%%20s\r", 100.*t/ntimes, "");  
+    }
+  }
+
+  printf("%30s\n", "");
+
+  mtrng_close(rng);
+}
+
+
+static int test_iie(mb_t *mb, double tol)
+{
+  int ib;
+  int stride = (int) (mb->n / 5);
+  int passed = 1;
+
+  if (stride < 1) {
+    stride = 1;
+  }
+
+  for (ib = 0; ib < mb->n; ib += stride) {
+
+    fprintf(stderr, "\n# Testing integral-identity estimator for bin %d:\n", ib);
+
+    // beta at the center of the bin
+    double beta = mb->bmin + (ib + 0.5) * mb->bdel;
+
+    // reference energy of the Gaussian energy model
+    double et_ref = -beta * (gaussian_sigma * gaussian_sigma);
+
+    // testing the left-right estimator with different
+    // window-division conventions
+    double et_legacy = mb_iie_et__calc_et_iie_lr(mb->iie, ib, MB_IIE_LR__WIN_DIV_LEGACY);
+    double et_paper = mb_iie_et__calc_et_iie_lr(mb->iie, ib, MB_IIE_LR__WIN_DIV_PAPER);
+
+    fprintf(stderr, "Et  %g (legacy convention)\n    %g (paper convention)\nRef %g\n\n",
+      et_legacy, et_paper, et_ref);
+
+    if (fabs(et_legacy - et_ref) > tol
+      || fabs(et_paper - et_ref) > tol) {
+      passed = 0;
+    }
+
+  }
+
+  return passed;
+}
+
+
+int main(int argc, char **argv)
+{
+  mb_t mb[1];
+
+  int test_exact = 0;
+
+  double tol;
+
+  double fill_prob = 1.0;
+
+  int passed;
+
+  init_mb_object(mb);
+
+  if (argc > 1) {
+    test_exact = (argv[1][0] == 'x');
+  } else {
+    printf("\nTesting exact moments? y/[n] ");
+    char c = getchar();
+
+    test_exact = (c == 'y' || c == 'Y');
+  }
+
+
+
+  if (test_exact) {
+
+    if (argc > 2) {
+      fill_prob = atof(argv[2]);
+    }
+
+    // manufacture moments data
+    // with the exact moments data, both conventions
+    // should yield exactly the same results
+    mb_mock_exact_moments(mb, fill_prob);
+
+    tol = 1.0;
+
+  } else {
+
+    if (argc > 2) {
+      ntimes = atol(argv[2]);
+    } else {
+
+      char buf[100];
+
+      printf("Enter the number of samples [%ld]: ", ntimes);
+
+      if (fgets(buf, sizeof buf, stdin)) {
+        long ntimes_user = 0;
+        if (1 == sscanf(buf, "%ld", &ntimes_user)) {
+          ntimes = ntimes_user;
+        }
+      }
+    }
+
+    // manufacture moments data by sampling
+    mb_mock_sampling(mb, ntimes);
+
+    tol = 5.0;
+
+  }
+
+  // test integral-identity estimators with different window-division conventions
+  passed = test_iie(mb, tol);
+
+  mb__finish(mb);
+
+  if (passed) {
+    printf("Passed.\n");
+  } else {
+    printf("Failed.\n");
+  }
+
+  return 0;
+}

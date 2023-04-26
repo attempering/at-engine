@@ -1,0 +1,9 @@
+.*~
+*~
+.git
+.vscode
+*.zip
+_backup
+*.exe
+*.dat
+atdata*

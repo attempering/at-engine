@@ -1,0 +1,6 @@
+#ifndef ADAPTIVE_TEMPERING__ADAPTIVE_TEMPERING__SRC_H__
+#define ADAPTIVE_TEMPERING__ADAPTIVE_TEMPERING__SRC_H__
+
+#include "at/at__src.h"
+
+#endif

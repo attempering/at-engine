@@ -1,0 +1,6 @@
+#ifndef ADAPTIVE_TEMPERING__ADAPTIVE_TEMPERING_H__
+#define ADAPTIVE_TEMPERING__ADAPTIVE_TEMPERING_H__
+
+#include "at/at.h"
+
+#endif
