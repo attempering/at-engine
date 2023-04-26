@@ -17,12 +17,14 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(at_mb_t *mb)
+void init_mb_and_langevin(at_mb_t *mb, at_langevin_t *langevin)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
   at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+
+  at_langevin__cfg_init(langevin, mb, cfg, 1);
 
   zcom_cfg__close(cfg);
 }
@@ -66,17 +68,19 @@ double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
 
 
 
-static int test_fill_range(at_mb_t *mb)
+static int test_fill_range(at_mb_t *mb, at_langevin_t *langevin)
 {
   double *raw_data = mb_mock_sm_moments(mb, 0.2);
 
-  at_mb_zerofiller_t *zf = mb->zerofiller;
+  at_langevin_zerofiller_t zf[1];
 
   int i;
 
   int passed = 1;
 
-  mb_zerofiller_fill_range_with_proper_sums(mb->zerofiller, 0, mb->n - 1);
+  at_langevin_zerofiller__init(zf, mb);
+
+  at_langevin_zerofiller__fill_range_with_proper_sums(zf, 0, mb->n - 1);
 
   for (i = 0; i < mb->n; i++) {
     fprintf(stderr, "%d: %g %g\n", i, raw_data[i], zf->vals[i]);
@@ -84,6 +88,8 @@ static int test_fill_range(at_mb_t *mb)
       passed = 0;
     }
   }
+
+  at_langevin_zerofiller__finish(zf);
 
   free(raw_data);
 
@@ -96,13 +102,15 @@ static int test_fill_range(at_mb_t *mb)
 int main(void)
 {
   at_mb_t mb[1];
+  at_langevin_t langevin[1];
   int passed;
 
-  init_mb_object(mb);
+  init_mb_and_langevin(mb, langevin);
 
-  passed = test_fill_range(mb);
+  passed = test_fill_range(mb, langevin);
 
   at_mb__finish(mb);
+  at_langevin__finish(langevin);
 
   if (passed) {
     printf("Passed.\n");

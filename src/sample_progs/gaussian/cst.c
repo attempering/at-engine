@@ -19,7 +19,7 @@ uint32_t langevin_seed = 1234;
 
 double sigma = 10.0; /* standard deviation of energy distributions */
 double epot_dt = 0.01; /* equilibration rate, larger value means the system is able to equilibrate faster */
-llong_t nsteps = 50; // 5000000;
+llong_t nsteps = 5000000;
 
 
 void run_cst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)

@@ -1,15 +1,15 @@
-#ifndef AT__MB_ZEROFILLER__SRC_H__
-#define AT__MB_ZEROFILLER__SRC_H__
+#ifndef AT__LANGEVIN_ZEROFILLER__SRC_H__
+#define AT__LANGEVIN_ZEROFILLER__SRC_H__
 
 
 /* implementation dependent headers */
-#include "../mb_basic.h"
-#include "../accum/mb_accum.h"
+#include "../../mb/mb_basic.h"
+#include "../../mb/accum/mb_accum.h"
 
-#include "mb_zerofiller.h"
+#include "langevin_zerofiller.h"
 
 
-int at_mb_zerofiller__init(at_mb_zerofiller_t *zf, at_mb_t *mb)
+int at_langevin_zerofiller__init(at_langevin_zerofiller_t *zf, at_mb_t *mb)
 {
   int n = mb->n, i;
 
@@ -77,7 +77,7 @@ int at_mb_zerofiller__init(at_mb_zerofiller_t *zf, at_mb_t *mb)
 
 
 
-void at_mb_zerofiller__finish(at_mb_zerofiller_t *zf)
+void at_langevin_zerofiller__finish(at_langevin_zerofiller_t *zf)
 {
   free(zf->w);
   free(zf->vals);
@@ -88,7 +88,7 @@ void at_mb_zerofiller__finish(at_mb_zerofiller_t *zf)
 
 
 
-static double mb_zerofiller_get_raw_bin_value_from_proper_sum(
+static double at_langevin_zerofiller__get_raw_bin_value_from_proper_sum(
       at_mb_t *mb, int ib, int *has_val, double *w)
 {
   at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, ib, ib);
@@ -114,7 +114,7 @@ static double mb_zerofiller_get_raw_bin_value_from_proper_sum(
 
 
 
-static void mb_zerofiller_fill_raw_values(at_mb_zerofiller_t *zf,
+static void at_langevin_zerofiller__fill_raw_values(at_langevin_zerofiller_t *zf,
     int ib_begin, int ib_end,
     bin_value_get_func_t bin_value_get_func)
 {
@@ -131,7 +131,8 @@ static void mb_zerofiller_fill_raw_values(at_mb_zerofiller_t *zf,
 }
 
 
-static int mb_zerofiller_fill_missing_values(at_mb_zerofiller_t *zf, int ib_begin, int ib_end)
+static int at_langevin_zerofiller__fill_missing_values(at_langevin_zerofiller_t *zf,
+    int ib_begin, int ib_end)
 {
   int ib;
   int n = zf->n;
@@ -227,22 +228,27 @@ static int mb_zerofiller_fill_missing_values(at_mb_zerofiller_t *zf, int ib_begi
 
 
 
-void mb_zerofiller_fill_range_custom(at_mb_zerofiller_t *zf, int ib_begin, int ib_end,
+double *at_langevin_zerofiller__fill_range_custom(at_langevin_zerofiller_t *zf,
+    int ib_begin, int ib_end,
     bin_value_get_func_t bin_value_get_func)
 {
-  mb_zerofiller_fill_raw_values(
+  at_langevin_zerofiller__fill_raw_values(
       zf, ib_begin, ib_end,
       bin_value_get_func);
 
-  mb_zerofiller_fill_missing_values(zf, ib_begin, ib_end);
+  at_langevin_zerofiller__fill_missing_values(
+      zf, ib_begin, ib_end);
+
+  return zf->vals;
 }
 
 
 
-void mb_zerofiller_fill_range_with_proper_sums(at_mb_zerofiller_t *zf, int ib_begin, int ib_end)
+double *at_langevin_zerofiller__fill_range_with_proper_sums(at_langevin_zerofiller_t *zf, int ib_begin, int ib_end)
 {
-  mb_zerofiller_fill_range_custom(zf, ib_begin, ib_end,
-      mb_zerofiller_get_raw_bin_value_from_proper_sum);
+  return at_langevin_zerofiller__fill_range_custom(
+      zf, ib_begin, ib_end,
+      at_langevin_zerofiller__get_raw_bin_value_from_proper_sum);
 }
 
 

@@ -4,12 +4,16 @@
 
 #include "langevin_basic.h"
 
+#include "zerofiller/langevin_zerofiller.h"
+
+#include "integrator/langevin_integrator.h"
 
 #include "../zcom/cfg/cfg.h"
 
 
 
-int at_langevin__cfg_init(at_langevin_t *langevin, zcom_cfg_t *cfg, int silent)
+int at_langevin__cfg_init(at_langevin_t *langevin,
+    at_mb_t *mb, zcom_cfg_t *cfg, int silent)
 {
   /* dt: time step for the temperature Langevin eq */
   langevin->dt = 1e-5;
@@ -46,6 +50,20 @@ int at_langevin__cfg_init(at_langevin_t *langevin, zcom_cfg_t *cfg, int silent)
   /* total: total number of Langevin moves */
   langevin->total = 0.0;
 
+  // initialize the integrator
+  {
+    int use_zerofiller;
+
+    if (langevin->no_skip) {
+      use_zerofiller = 0;
+    } else {
+      use_zerofiller = 1;
+    }
+
+    at_langevin_integrator__init(langevin->integrator, mb, use_zerofiller);
+  }
+
+  /* the custom integration function must be set manually */
   langevin->integrate_func = NULL;
 
   return 0;
@@ -61,6 +79,8 @@ void at_langevin__clear(at_langevin_t *langevin)
 
 void at_langevin__finish(at_langevin_t *langevin)
 {
+  at_langevin_integrator__finish(langevin->integrator);
+
   memset(langevin, 0, sizeof(*langevin));
 }
 

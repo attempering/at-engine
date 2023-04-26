@@ -11,8 +11,6 @@
 #include "shk/mb_shk__def.h"
 #include "win/mb_win__def.h"
 #include "accum/mb_accum__def.h"
-#include "zerofiller/mb_zerofiller__def.h"
-#include "integrator/mb_integrator__def.h"
 #include "iie/mb_iie__def.h"
 
 typedef struct zcom_ssm_t_ zcom_ssm_t;
@@ -49,12 +47,6 @@ typedef struct at_mb_t_ {
 
   /* accumulators */
   at_mb_accum_t accum[1];
-
-  /* zero filler */
-  at_mb_zerofiller_t zerofiller[1];
-
-  /* integrator */
-  at_mb_integrator_t integrator[1];
 
   at_mb_iie_t  iie[1];
 

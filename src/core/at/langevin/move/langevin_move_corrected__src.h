@@ -7,9 +7,9 @@
 
 
 
-const int use_cheap_av_energy_for_backward_move = 0;
-const int use_cheap_av_energy_for_forward_move = 0;
-const int apply_dkt_max = 0;
+const int at_langevin_move_corrected__use_cheap_av_energy_for_backward_move = 0;
+const int at_langevin_move_corrected__use_cheap_av_energy_for_forward_move = 0;
+const int at_langevin_move_corrected__apply_dkt_max = 0;
 
 
 
@@ -56,7 +56,7 @@ static double at_langevin_move__calc_lnp_ratio(
     // use the custom integrator
     energy_beta_integral = (*langevin->integrate_func)(mb, beta_old, beta_new);
   } else {
-    energy_beta_integral = at_mb_integrator__integrate(mb->integrator, beta_old, beta_new);
+    energy_beta_integral = at_langevin_integrator__integrate(langevin->integrator, beta_old, beta_new);
   }
 
   lnp_ratio = ln_invwf_ratio
@@ -65,7 +65,7 @@ static double at_langevin_move__calc_lnp_ratio(
             + energy_beta_integral;
 
   if (at_langevin_move__debug__ >= 2) {
-    fprintf(stderr, "at_langevin_move__calc_lnp_ratio():\n");
+    fprintf(stderr, "at_langevin_move_corrected__calc_lnp_ratio():\n");
     fprintf(stderr, "  beta %g => %g\n", beta_old, beta_new);
     fprintf(stderr, "  log(invwf) %g, %g => %g\n", ln_invwf_ratio, invwf_old, invwf_new);
     fprintf(stderr, "  log(beta_kt_jacob) %g\n", ln_beta_kt_jacob);
@@ -137,7 +137,7 @@ static double at_langevin_move__calc_lng_ratio(
       neg_dlnwf_dbeta_new,
       current_energy,
       &bin_av_energy_new,
-      use_cheap_av_energy_for_backward_move);
+      at_langevin_move_corrected__use_cheap_av_energy_for_backward_move);
 
   kt_old_expected = kt_new + dkt_new_deterministic;
 
@@ -151,7 +151,7 @@ static double at_langevin_move__calc_lng_ratio(
   lng_ratio = ln_jac + forward - backward;
 
   if (at_langevin_move__debug__ >= 2) {
-    fprintf(stderr, "at_langevin_move__calc_lng_ratio():\n");
+    fprintf(stderr, "at_langevin_move_corrected__calc_lng_ratio():\n");
     fprintf(stderr, "  kT %g => %g, time step %g\n", kt_old, kt_new, time_step);
     fprintf(stderr, "  ln_jac %g\n", ln_jac);
     fprintf(stderr, "  forward %g, dkt_new %g, kt_new %g, expected %g\n", forward, dkt_new, kt_new, kt_new_expected);
@@ -271,8 +271,8 @@ double at_langevin__move_corrected(
       current_energy,
       beta_old, ib,
       invwf, neg_dlnwf_dbeta,
-      use_cheap_av_energy_for_forward_move,
-      apply_dkt_max,
+      at_langevin_move_corrected__use_cheap_av_energy_for_forward_move,
+      at_langevin_move_corrected__apply_dkt_max,
       rng,
       bin_av_energy);
 

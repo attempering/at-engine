@@ -1,6 +1,9 @@
 #ifndef AT__LANGEVIN__DEF_H__
 #define AT__LANGEVIN__DEF_H__
 
+#include "zerofiller/langevin_zerofiller__def.h"
+#include "integrator/langevin_integrator__def.h"
+
 typedef struct at_mb_t_ at_mb_t;
 
 /* custom integration function for the following integral
@@ -39,6 +42,8 @@ typedef struct at_langevin_t_
    * of the algorithm related to large time steps */
   int     no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
+
+  at_langevin_integrator_t integrator[1];
 
   at_mb_integrate_func_t integrate_func;
 

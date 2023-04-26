@@ -17,12 +17,14 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(at_mb_t *mb)
+void init_mb_and_langevin(at_mb_t *mb, at_langevin_t *langevin)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
   at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+
+  at_langevin__cfg_init(langevin, mb, cfg, 1);
 
   zcom_cfg__close(cfg);
 }
@@ -74,31 +76,35 @@ static double get_exact_integral(double beta1, double beta2)
 
 
 
-static int test_integrate(at_mb_t *mb, double fill_prob)
+static int test_integrate(at_mb_t *mb, at_langevin_t *langevin, double fill_prob)
 {
   double *raw_data = mb_mock_sm_moments(mb, fill_prob);
   int passed;
 
-  at_mb_integrator_t *intgr = mb->integrator;
-  at_mb_zerofiller_t *zf = mb->zerofiller;
+  at_langevin_integrator_t intgr[1];
+  at_langevin_zerofiller_t *zf = intgr->zerofiller;
+
+  at_langevin_integrator__init(intgr, mb, 1);
 
   double beta1 = mb->bmin * 0.7 + mb->bmax * 0.3;
   double beta2 = mb->bmin * 0.2 + mb->bmax * 0.8;
   int i, ib1, ib2;
 
-  double integral = at_mb_integrator__integrate(intgr, beta1, beta2);
+  double integral = at_langevin_integrator__integrate(intgr, beta1, beta2);
   double exact_integral = get_exact_integral(beta1, beta2);
 
   ib1 = intgr->ib_begin;
   ib2 = intgr->ib_end;
 
-  mb_zerofiller_fill_range_with_proper_sums(zf, ib1, ib2);
+  at_langevin_zerofiller__fill_range_with_proper_sums(zf, ib1, ib2);
 
   for (i = ib1; i <= ib2; i++) {
     fprintf(stderr, "%d: %g %g\n", i, raw_data[i], zf->vals[i]);
   }
 
   fprintf(stderr, "integral %g vs %g\n", integral, exact_integral);
+
+  at_langevin_integrator__finish(intgr);
 
   free(raw_data);
 
@@ -113,18 +119,20 @@ static int test_integrate(at_mb_t *mb, double fill_prob)
 int main(int argc, char **argv)
 {
   at_mb_t mb[1];
+  at_langevin_t langevin[1];
   double fill_prob = 0.5;
   int passed;
 
-  init_mb_object(mb);
+  init_mb_and_langevin(mb, langevin);
 
   if (argc > 1) {
     fill_prob = atof(argv[1]);
   }
 
-  passed = test_integrate(mb, fill_prob);
+  passed = test_integrate(mb, langevin, fill_prob);
 
   at_mb__finish(mb);
+  at_langevin__finish(langevin);
 
   if (passed) {
     printf("Passed.\n");

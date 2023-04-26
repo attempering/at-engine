@@ -222,10 +222,10 @@ int at_cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double tmstep)
   /* mb: handle for multiple-bin estimator */
   at_mb__cfg_init(at->mb, cfg, boltz, at->bmin, at->bmax, at->data_dir, silent);
 
-  at_langevin__cfg_init(at->langevin, cfg, silent);
+  at_langevin__cfg_init(at->langevin, at->mb, cfg, silent);
 
   /* eh: energy histogram */
-  at_eh__cfg_init(at->eh, cfg, at->mb, at->data_dir);
+  at_eh__cfg_init(at->eh, at->mb, cfg, at->data_dir);
 
   /* Ea: total potential energy */
   at->Ea = 0.0;

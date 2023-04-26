@@ -29,10 +29,6 @@
 /* IO routines */
 #include "io/mb_io.h"
 
-#include "zerofiller/mb_zerofiller.h"
-
-#include "integrator/mb_integrator.h"
-
 /* integral-identity-based estimators */
 #include "iie/mb_iie.h"
 

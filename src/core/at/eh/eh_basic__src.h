@@ -7,7 +7,7 @@
 #include "../zcom/cfg/cfg.h"
 
 
-int at_eh__cfg_init(at_eh_t *eh, zcom_cfg_t *cfg, at_mb_t *mb, const char *data_dir)
+int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg, const char *data_dir)
 {
   int i;
 

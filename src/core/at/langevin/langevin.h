@@ -7,6 +7,10 @@
 
 #include "langevin_io.h"
 
+#include "zerofiller/langevin_zerofiller.h"
+
+#include "integrator/langevin_integrator.h"
+
 #include "move/langevin_move.h"
 
 #endif

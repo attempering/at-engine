@@ -11,10 +11,6 @@
 /* adaptive averaging functions */
 #include "shk/mb_shk.h"
 
-#include "zerofiller/mb_zerofiller.h"
-
-#include "integrator/mb_integrator.h"
-
 #include "iie/mb_iie.h"
 
 
@@ -287,10 +283,6 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
 
   at_mb_shk__cfg_init(mb->shk, cfg, mb, mb->accum->m, silent);
 
-  at_mb_zerofiller__init(mb->zerofiller, mb);
-
-  at_mb_integrator__init(mb->integrator, mb);
-
   return 0;
 
 ERR:
@@ -315,10 +307,6 @@ void at_mb__finish(at_mb_t *mb)
   at_mb_accum__finish(mb->accum);
 
   at_mb_win__finish(mb->win);
-
-  at_mb_zerofiller__finish(mb->zerofiller);
-
-  at_mb_integrator__finish(mb->integrator);
 
   at_mb_iie__finish(mb->iie);
 
