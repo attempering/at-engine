@@ -16,7 +16,7 @@
 
 
 /* load previous data */
-int at_load_data(at_t *at, at_bool_t bCPT)
+int at__load_data(at_t *at, at_bool_t bCPT)
 {
   at_mb_t *mb = at->mb;
   int read_mb = 1;
@@ -29,14 +29,12 @@ int at_load_data(at_t *at, at_bool_t bCPT)
   read_mb = bCPT;
   if (read_mb) {
      /* read previous at_mb_t data */
-    if (at_mb__read(mb, at->langevin) != 0) {
+    if (at_mb__read(mb, at->langevin, &at->beta) != 0) {
       fprintf(stderr, "cannot load mb data from %s\n", mb->av_file);
       return 1;
     }
 
     at_mb__write_ze_file(mb, "ze_init.dat");
-
-    at->beta = at->mb->beta; /* update the current temperature */
 
     /* read previous energy histogram data */
     if (at_eh__read(at->eh) != 0) {
@@ -53,7 +51,7 @@ int at_load_data(at_t *at, at_bool_t bCPT)
 
 
 /* don't write at the first step; write at the last step */
-int at_do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
+int at__do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
 {
   return !bfirst && (blast || (nst > 0 && step % nst == 0));
 }
@@ -61,7 +59,7 @@ int at_do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
 
 
 /* write various output files */
-void at_output(at_t *at, llong_t step,
+void at__output(at_t *at, llong_t step,
           int ib, double invw, double t1, double t2, double Eav,
           at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
 {
@@ -79,27 +77,29 @@ void at_output(at_t *at, llong_t step,
   if (at->log) {
 
     if(bflush) {
-      at->log->flags |= ZCOM_LOG_FLUSHAFTER;
+      at->log->flags |= ZCOM_LOG__FLUSH_AFTER;
     } else {
-      at->log->flags ^= ZCOM_LOG_FLUSHAFTER;
+      at->log->flags ^= ZCOM_LOG__FLUSH_AFTER;
     }
 
     if (do_log) {
-      zcom_log__printf(at->log, "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
-        step * at->tmstep, ib, t2 - t1, at->Ea, Eav, at->beta, t1, invw);
+      zcom_log__printf(at->log,
+          "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
+          step * at->md_time_step, ib, t2 - t1,
+          at->energy, Eav, at->beta, t1, invw);
       zcom_log__printf(at->log, "\n");
     }
   }
 
-  if (at_do_every(step, at->mb->nst_save_av, bfirst, blast)) { /* save averages */
-    at_mb__write(at->mb, at->langevin);
+  if (at__do_every(step, at->mb->nst_save_av, bfirst, blast)) { /* save averages */
+    at_mb__write(at->mb, at->langevin, at->beta);
     at_mb__write_ze_file(at->mb, NULL);
     if (at->mtrng) {
       zcom_mtrng__save(at->mtrng, at->rng_file);
     }
   }
 
-  if (at_do_every(step, at->eh->nst_save, bfirst, blast)) { /* save energy histograms */
+  if (at__do_every(step, at->eh->nst_save, bfirst, blast)) { /* save energy histograms */
     if (at->eh != NULL) { 
       at_eh__write(at->eh);
       at_eh__reconstruct(at->eh, NULL);
@@ -110,32 +110,12 @@ void at_output(at_t *at, llong_t step,
 
 
 
-int at_cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double tmstep)
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
 {
-  /* NOTE: at->beta will not be initialized in this function */
-
-  zcom_util__exit_if((at == NULL), "null pointer to at_t\n");
-
-  zcom_util__exit_if((cfg == NULL), "cannot load *.cfg file\n");
-
-  /* bmin: minimal beta (highest temperature) */
-  zcom_util__exit_if(zcom_cfg__get(cfg, &at->bmin, "beta_min", "%lf") != 0,
-      "missing var: at->bmin, key: beta_min, fmt: %%lf\n");
-
-  zcom_util__exit_if((at->bmin <= 0.0), "at->bmin should be positive!\n");
-
-  /* bmax: maximum beta (lowest temperature) */
-  zcom_util__exit_if(zcom_cfg__get(cfg, &at->bmax, "beta_max", "%lf") != 0,
-      "missing var: at->bmax, key: beta_min, fmt: %%lf\n");
-
-  zcom_util__exit_if((at->bmax <= 0.0), "at->bmax: should be positive!\n");
-
-  zcom_util__exit_if(!(at->bmax > at->bmin), "at->bmax: failed validation: at->bmax > at->bmin\n");
-
-  /* T0: thermostat temperature */
-  at->T0 = 300.0;
-  if (zcom_cfg__get(cfg, &at->T0, "T0", "%lf")) {
-    fprintf(stderr, "assuming default: at->T0 = 300.0, key: T0\n");
+  /* temp_thermostat: thermostat temperature */
+  at->temp_thermostat = 300.0;
+  if (zcom_cfg__get(cfg, &at->temp_thermostat, "T0", "%lf")) {
+    fprintf(stderr, "assuming default: at->temp_thermostat = 300.0, key: T0\n");
   }
 
   /* nsttemp: frequency of tempering, 0: disable, -1: only ns */
@@ -144,14 +124,8 @@ int at_cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double tmstep)
     fprintf(stderr, "assuming default: at->nsttemp = -1, key: nsttemp\n");
   }
 
-  /* mvreps: number of repeating Langevin eq */
-  at->mvreps = 1;
-  if (zcom_cfg__get(cfg, &at->mvreps, "move_repeats", "%d")) {
-    fprintf(stderr, "assuming default: at->mvreps = 1, key: move_repeats\n");
-  }
-
-  /* tmstep: MD integration step, for convenience */
-  at->tmstep = tmstep;
+  /* md_time_step: MD integration step, for convenience */
+  at->md_time_step = md_time_step;
 
   /* nst_log: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
   at->nst_log = -1;
@@ -184,7 +158,7 @@ int at_cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double tmstep)
   }
 
   /* log: logfile */
-  // do not open log file yet, at_open_log();
+  // do not open log file yet, at__open_log();
   at->log = NULL;
 
   /* bTH : 0: disable; 1:enable */
@@ -219,22 +193,21 @@ int at_cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double tmstep)
 
   int silent = 0;
 
-  /* mb: handle for multiple-bin estimator */
-  at_mb__cfg_init(at->mb, cfg, boltz, at->bmin, at->bmax, at->data_dir, silent);
+  /* handler for multiple-bin estimator */
+  at_mb__cfg_init(at->mb, cfg, boltz, 0.0, 0.0, at->data_dir, silent);
 
   at_langevin__cfg_init(at->langevin, at->mb, cfg, silent);
 
   /* eh: energy histogram */
   at_eh__cfg_init(at->eh, at->mb, cfg, at->data_dir);
 
-  /* Ea: total potential energy */
-  at->Ea = 0.0;
+  at->energy = 0.0;
 
   return 1;
 }
 
 
-void at_finish(at_t *at)
+void at__finish(at_t *at)
 {
   if (at->mpi_rank == 0) {
     if (at->mtrng) {
@@ -259,14 +232,14 @@ void at_finish(at_t *at)
 }
 
 
-void at_close(at_t *at)
+void at__close(at_t *at)
 {
-  at_finish(at);
+  at__finish(at);
   free(at);
 }
 
 
-int at_manifest(at_t *at, const char *fn, int arrmax)
+int at__manifest(at_t *at, const char *fn, int arrmax)
 {
   FILE *fp;
 
@@ -276,13 +249,10 @@ int at_manifest(at_t *at, const char *fn, int arrmax)
       return -1;
   }
 
-  fprintf(fp, "at->bmin: double, %g\n", at->bmin);
-  fprintf(fp, "at->bmax: double, %g\n", at->bmax);
-  fprintf(fp, "at->T0: double, %g\n", at->T0);
-  fprintf(fp, "at->beta: double, %g\n", at->beta);
+
+  fprintf(fp, "at->temp_thermostat: double, %g\n", at->temp_thermostat);
   fprintf(fp, "at->nsttemp: int, %4d\n", at->nsttemp);
-  fprintf(fp, "at->mvreps: int, %4d\n", at->mvreps);
-  fprintf(fp, "at->tmstep: double, %g\n", at->tmstep);
+  fprintf(fp, "at->md_time_step: double, %g\n", at->md_time_step);
   fprintf(fp, "at->rng_file: char *, %s\n", at->rng_file);
 
   fprintf(fp, "at->nst_log: int, %4d\n", at->nst_log);
@@ -313,7 +283,7 @@ int at_manifest(at_t *at, const char *fn, int arrmax)
     at_langevin__manifest(at->langevin, fp, arrmax);
   }
 
-  fprintf(fp, "at->Ea: double, %g\n", at->Ea);
+  fprintf(fp, "at->energy: double, %g\n", at->energy);
 
   fclose(fp);
 

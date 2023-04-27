@@ -8,10 +8,10 @@
 
 #include "../def/def.h"
 
-ZCOM_STRCLS int zcom_endn__system(void);
-ZCOM_STRCLS size_t zcom_endn__fwrite(void *ptr, size_t size, size_t n, FILE *fp, int endn);
-ZCOM_STRCLS size_t zcom_endn__fread(void *ptr, size_t size, size_t n, FILE *fp, int flip);
-ZCOM_STRCLS int zcom_endn__rmatch(void *src, const void *ref, size_t size, FILE *fp);
-ZCOM_STRCLS int zcom_endn__rmatchi(int *src, int iref, FILE *fp);
+ZCOM__STRCLS int zcom_endn__system(void);
+ZCOM__STRCLS size_t zcom_endn__fwrite(void *ptr, size_t size, size_t n, FILE *fp, int endn);
+ZCOM__STRCLS size_t zcom_endn__fread(void *ptr, size_t size, size_t n, FILE *fp, int flip);
+ZCOM__STRCLS int zcom_endn__rmatch(void *src, const void *ref, size_t size, FILE *fp);
+ZCOM__STRCLS int zcom_endn__rmatchi(int *src, int iref, FILE *fp);
 
 #endif

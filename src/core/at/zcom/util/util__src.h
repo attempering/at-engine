@@ -6,7 +6,7 @@
 
 
 /* print an error message */
-ZCOM_INLINE void zcom_util__perrmsg__(const char *file, int line, const char *reason,
+ZCOM__INLINE void zcom_util__perrmsg__(const char *file, int line, const char *reason,
     const char *fmt, va_list args)
 {
   fprintf(stderr, "error: ");
@@ -29,7 +29,7 @@ ZCOM_INLINE void zcom_util__perrmsg__(const char *file, int line, const char *re
 }
 
 
-ZCOM_INLINE int zcom_util__fexists(const char *fn)
+ZCOM__INLINE int zcom_util__fexists(const char *fn)
 {
   FILE *fp;
   if ((fp = fopen(fn, "r")) == NULL) return 0;
@@ -37,16 +37,16 @@ ZCOM_INLINE int zcom_util__fexists(const char *fn)
 }
 
 
-ZCOM_INLINE int zcom_util__intmax(int x, int y) { return x > y ? x : y; }
-ZCOM_INLINE int zcom_util__intmin(int x, int y) { return x < y ? x : y; }
+ZCOM__INLINE int zcom_util__intmax(int x, int y) { return x > y ? x : y; }
+ZCOM__INLINE int zcom_util__intmin(int x, int y) { return x < y ? x : y; }
 /* confine x within [xmin, xmax] */
-ZCOM_INLINE int zcom_util__int_confined(int x, int xmin, int xmax)
+ZCOM__INLINE int zcom_util__int_confined(int x, int xmin, int xmax)
   { return x < xmin ? xmin : x > xmax ? xmax : x; }
 
-ZCOM_INLINE int zcom_util__intsqr(int x) { return x * x; }
+ZCOM__INLINE int zcom_util__intsqr(int x) { return x * x; }
 
 /* get the pair index from 0 to n*(n - 1)/2 - 1 */
-ZCOM_INLINE int zcom_util__get_pair_index(int i, int j, int n)
+ZCOM__INLINE int zcom_util__get_pair_index(int i, int j, int n)
 {
   zcom_util__exit_if (i < 0 || i >= n || j < 0 || j >= n || i == j,
       "bad index error i %d, j %d, n %d\n", i, j, n);
@@ -55,7 +55,7 @@ ZCOM_INLINE int zcom_util__get_pair_index(int i, int j, int n)
 }
 
 /* return individual indices for a given pair index */
-ZCOM_INLINE int zcom_util__parse_pair_index(int id, int n, int *i, int *j)
+ZCOM__INLINE int zcom_util__parse_pair_index(int id, int n, int *i, int *j)
 {
   int i1, n1;
   zcom_util__exit_if (id < 0 || id >= n*(n - 1)/2, "index %d too large for n %d\n", id, n);
@@ -69,16 +69,16 @@ ZCOM_INLINE int zcom_util__parse_pair_index(int id, int n, int *i, int *j)
   return 1;
 }
 
-ZCOM_INLINE double zcom_util__dblmax(double x, double y) { return x > y ? x : y; }
-ZCOM_INLINE double zcom_util__dblmin(double x, double y) { return x < y ? x : y; }
+ZCOM__INLINE double zcom_util__dblmax(double x, double y) { return x > y ? x : y; }
+ZCOM__INLINE double zcom_util__dblmin(double x, double y) { return x < y ? x : y; }
 /* confine x within [xmin, xmax] */
-ZCOM_INLINE double zcom_util__dbl_confined(double x, double xmin, double xmax)
+ZCOM__INLINE double zcom_util__dbl_confined(double x, double xmin, double xmax)
   { return x < xmin ? xmin : x > xmax ? xmax : x; }
 
-ZCOM_INLINE double zcom_util__dblsqr(double x) { return x * x; }
+ZCOM__INLINE double zcom_util__dblsqr(double x) { return x * x; }
 
 /* sqrt(x*x + y*y) */
-ZCOM_INLINE double zcom_util__dblhypot(double x, double y)
+ZCOM__INLINE double zcom_util__dblhypot(double x, double y)
 {
   double t;
   x = fabs(x);
@@ -91,13 +91,13 @@ ZCOM_INLINE double zcom_util__dblhypot(double x, double y)
 }
 
 /* round x to a multiple dx  */
-ZCOM_INLINE double zcom_util__dblround(double x, double dx)
+ZCOM__INLINE double zcom_util__dblround(double x, double dx)
 {
   if (x*dx > 0) return dx * (int)(x/dx + (.5 - DBL_EPSILON));
   else return -dx * (int)(-x/dx + (.5 - DBL_EPSILON));
 }
 
-ZCOM_INLINE void zcom_util__dblcleararr(double *x, int n)
+ZCOM__INLINE void zcom_util__dblcleararr(double *x, int n)
   { int i; for (i = 0; i < n; i++) x[i] = 0.0; }
 
 #ifndef LNADD_DEFINED
@@ -105,7 +105,7 @@ ZCOM_INLINE void zcom_util__dblcleararr(double *x, int n)
 #define LN_BIG 50.0
 
 /* log(exp(a) + exp(b)) */
-ZCOM_INLINE double zcom_util__lnadd(double a, double b)
+ZCOM__INLINE double zcom_util__lnadd(double a, double b)
 {
   double c;
   if (a < b) { c = a; a = b; b = c; } /* ensure a >= b */
@@ -113,7 +113,7 @@ ZCOM_INLINE double zcom_util__lnadd(double a, double b)
 }
 
 /* log(exp(a) - exp(b)), only works for a > b */
-ZCOM_INLINE double zcom_util__lndif(double a, double b)
+ZCOM__INLINE double zcom_util__lndif(double a, double b)
 {
   double c;
   zcom_util__exit_if (a < b, "zcom_util__lndif: %g < %g\n", a, b);
@@ -121,7 +121,7 @@ ZCOM_INLINE double zcom_util__lndif(double a, double b)
 }
 
 /* log(exp(a)+b) */
-ZCOM_INLINE double zcom_util__lnaddn(double a, double b)
+ZCOM__INLINE double zcom_util__lnaddn(double a, double b)
 {
   return (a > LN_BIG) ? a : a + log(1 + b*exp(-a));
 }
@@ -130,7 +130,7 @@ ZCOM_INLINE double zcom_util__lnaddn(double a, double b)
 #endif  /* LNADD_DEFINED */
 
 
-ZCOM_INLINE char *zcom_util__stripx(char *s, unsigned flags)
+ZCOM__INLINE char *zcom_util__stripx(char *s, unsigned flags)
 {
   char *p;
 
@@ -148,7 +148,7 @@ ZCOM_INLINE char *zcom_util__stripx(char *s, unsigned flags)
 /* safely copy/cat strings with case conversion
  * unlike strncpy(), s is always null-terminated on return: it copies at most
  * len nonblank characters, i.e., s[len] = '\0' for the longest output */
-ZCOM_INLINE char *zcom_util__strcnv(char *s, const char *t, size_t len, unsigned flags)
+ZCOM__INLINE char *zcom_util__strcnv(char *s, const char *t, size_t len, unsigned flags)
 {
   size_t i = 0, j;
   unsigned docase = flags & ZSTR_CASE, up = flags & ZSTR_UPPER_;
@@ -169,7 +169,7 @@ ZCOM_INLINE char *zcom_util__strcnv(char *s, const char *t, size_t len, unsigned
 
 /* compare strings without case */
 #define strcmpnc(s, t) zcom_util__strncmpnc(s, t, -1)
-ZCOM_INLINE int zcom_util__strncmpnc(const char *s, const char *t, int n)
+ZCOM__INLINE int zcom_util__strncmpnc(const char *s, const char *t, int n)
 {
   int i, cs, ct;
 

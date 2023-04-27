@@ -143,7 +143,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
   }
   cfg->nent = (int) n;
   cfg->nopt = 0;
-  cfg->nopt_cap = CFG_OPT__BLOCK_SIZE_;
+  cfg->nopt_cap = ZCOM_CFG__OPT_BLOCK_SIZE_;
   if ((cfg->opts = (zcom_opt_t *) calloc(cfg->nopt_cap, sizeof(zcom_opt_t))) == NULL) {
     fprintf(stderr, "Fatal no memory for %d objects of op_t", cfg->nopt_cap);
     exit(1);
@@ -168,7 +168,7 @@ int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, 
   zcom_opt_t *o;
 
   if (cfg->nopt > cfg->nopt_cap) {
-    cfg->nopt_cap += CFG_OPT__BLOCK_SIZE_;
+    cfg->nopt_cap += ZCOM_CFG__OPT_BLOCK_SIZE_;
     if ((cfg->opts = (zcom_opt_t *) realloc(cfg->opts, cfg->nopt_cap * sizeof(zcom_opt_t))) == NULL) {
       fprintf(stderr, "Fatal: no memory for %d objects of zcom_opt_t\n", cfg->nopt_cap);
       exit(1);
@@ -185,7 +185,7 @@ int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, 
  * returns 0 if successful */
 int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
 {
-  int i, j, ret = 0, verbose = flags & CFG_VERBOSE, must = flags & ZCOM_OPT_MUST;
+  int i, j, ret = 0, verbose = flags & ZCOM_CFG__VERBOSE, must = flags & ZCOM_OPT__MANDATORY;
   zcom_opt_t *o;
   zcom_cfgent_t *ent;
 
@@ -195,13 +195,13 @@ int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
       ent = cfg->ents + j;
       if (ent->key != NULL && strcmp(ent->key, o->key) == 0) {
         ent->used = 1;
-        o->flags |= ZCOM_OPT_SET;
+        o->flags |= ZCOM_OPT__SET;
         o->val = ent->val;
         zcom_opt__getval(o, cfg->ssm);
         break;
       }
     }
-    if (!(o->flags & ZCOM_OPT_SET) && (must || verbose)) {
+    if (!(o->flags & ZCOM_OPT__SET) && (must || verbose)) {
       printf("cfg: %s not set, default: ", o->key);
       zcom_opt__print_ptr(o);
       printf("\n");
@@ -209,7 +209,7 @@ int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
     }
   }
 
-  if (flags & CFG_CHECKUSE) {
+  if (flags & ZCOM_CFG__CHECK_USE) {
     for (j = 0; j < cfg->nent; j++) {
       ent = cfg->ents + j;
       if (ent->key != NULL && !ent->used && verbose)

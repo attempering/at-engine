@@ -39,16 +39,16 @@ typedef struct at_t_ {
   /*------Temperature bins-------------------------*/
   double    bmin;     // minimal beta
   double    bmax;     // maximal beta
+
   double    beta;     // current beta
-  double    T0;       // thermostat temperature
 
-  /*-----Integration of MD and Langevin related ---*/
-  int       mvreps;    // number of repeating Langevin eq
-  double    tmstep;    // MD integration step
+  double    temp_thermostat;       // thermostat temperature
+
+  double    md_time_step;    // MD integration step for reference
   int       nsttemp;   // interval of tempering, 0: disable, -1: only when doing neighbor searching
-  int       nst_log;  // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
+  int       nst_log;   // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
 
-  double    Ea;       /* current total potential energy */
+  double    energy;       /* current total potential energy */
 
   /*------Combined Hamiltonian:
     H = kappa* H0 + epsilon * H1
@@ -59,29 +59,29 @@ typedef struct at_t_ {
   double    *kappa, *epsilon;
   double    kappa0, epsilon0;
 
-  at_mb_t      mb[1];      /* multiple-bin estimator */
+  at_mb_t       mb[1];      /* multiple-bin estimator */
 
   at_langevin_t langevin[1]; /* Langevin equation */
 
-  at_eh_t      eh[1];  /* energy histogram */
+  at_eh_t       eh[1];  /* energy histogram */
 
-  zcom_ssm_t     *ssm; /* string allocator */
+  zcom_ssm_t    *ssm; /* string allocator */
 
-  zcom_mtrng_t   *mtrng; /* random number generator */
+  zcom_mtrng_t  *mtrng; /* random number generator */
 
-  /*------Files------------------------------------*/
-  char      *rng_file;    // random number file name
-  char      *log_file;    // log/trace file name
-  at_logfile_t *log;         // log file
-  char      ch_suffix;    // file suffix as a single-digit character
-  char      data_dir[32];
+  char          *rng_file;    // random number file name
+  char          *log_file;    // log/trace file name
+  at_logfile_t  *log;         // log file
+  char          ch_suffix;    // file suffix as a single-digit character
+  char          data_dir[32];
 
-  /*-----Parallel staffs-------------------------------------------*/
   int mpi_rank, mpi_size;
+
 #ifdef GMX_MPI
   MPI_Comm mpi_comm;
 #endif
-} at_t; /* types for accelerated tempering */
+
+} at_t;
 
 
 #endif

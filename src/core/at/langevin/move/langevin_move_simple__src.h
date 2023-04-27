@@ -23,6 +23,7 @@ double at_langevin__move_simple(
   const int apply_dkt_max = 1;
 
   langevin_move_proposal_t proposal[1];
+  double beta;
 
   //fprintf(stderr, "1. beta %g, ib %d\n", beta_old, ib);
 
@@ -51,15 +52,15 @@ double at_langevin__move_simple(
 
   if (proposal->beta_new < mb->bmax
    && proposal->beta_new > mb->bmin) {
-    mb->beta = proposal->beta_new;
+    beta = proposal->beta_new;
   } else {
-    mb->beta = proposal->beta_old;
+    beta = proposal->beta_old;
     langevin->rejects += 1.0;
   }
 
   langevin->total += 1.0;
 
-  return mb->beta;
+  return beta;
 }
 
 

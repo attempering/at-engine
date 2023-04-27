@@ -15,26 +15,26 @@
    ZCOM_XFUNCS should be defined before the first inclusion,
    otherwise it won't be effective in deciding storage classes.
  */
-#ifndef ZCOM_STRCLS
+#ifndef ZCOM__STRCLS
   #ifndef ZCOM_XFUNCS
-    #define ZCOM_STRCLS static
+    #define ZCOM__STRCLS static
   #else
-    #define ZCOM_STRCLS
+    #define ZCOM__STRCLS
   #endif
 #endif
 
 /* inline keyword */
-#ifndef ZCOM_INLINE
+#ifndef ZCOM__INLINE
   #if defined(__GNUC__) || defined(__xlC__)
-    #define ZCOM_INLINE ZCOM_STRCLS __inline__
+    #define ZCOM__INLINE ZCOM__STRCLS __inline__
   #elif defined(__INTEL_COMPILER)
-    #define ZCOM_INLINE ZCOM_STRCLS __inline
+    #define ZCOM__INLINE ZCOM__STRCLS __inline
   #elif defined(_MSC_VER) || defined(__BORLANDC__)
-    #define ZCOM_INLINE __inline ZCOM_STRCLS
+    #define ZCOM__INLINE __inline ZCOM__STRCLS
   #elif defined(__STDC_VERSION__) && (STDC_VERSION__ >= 199901L)
-    #define ZCOM_INLINE ZCOM_STRCLS inline
+    #define ZCOM__INLINE ZCOM__STRCLS inline
   #else
-    #define ZCOM_INLINE ZCOM_STRCLS
+    #define ZCOM__INLINE ZCOM__STRCLS
   #endif
 #endif
 
@@ -50,11 +50,11 @@
 #endif
 
 /* macros with variable-length arguments */
-#ifndef ZCOM_HAVE_VAM
+#ifndef ZCOM__HAVE_VAM
   #if (  (defined(__GNUC__) && (__GNUC__ >= 3))   \
       || (defined(__xlC__)  && (__xlC__ >= 0x0700)) \
       || (defined(_MSC_VER) && (_MSC_VER >= 1400)) )
-    #define ZCOM_HAVE_VAM 1
+    #define ZCOM__HAVE_VAM 1
   #endif
 #endif
 
@@ -81,15 +81,15 @@
 
 /* define a real type */
 #ifdef HAVE_REAL
-  #ifndef ZCOM_HAVE_REAL
-  #define ZCOM_HAVE_REAL HAVE_REAL
+  #ifndef ZCOM__HAVE_REAL
+  #define ZCOM__HAVE_REAL HAVE_REAL
   #endif
 #endif
 
 
 
-#ifndef ZCOM_HAVE_REAL
-  #define ZCOM_HAVE_REAL 1
+#ifndef ZCOM__HAVE_REAL
+  #define ZCOM__HAVE_REAL 1
   #define real double
 #endif
 

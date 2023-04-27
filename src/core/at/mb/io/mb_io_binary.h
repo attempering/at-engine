@@ -7,9 +7,20 @@
 
 
 /* at_mb__read_binary: read at_mb_t data as binary */
-int at_mb__read_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, int *pver);
+int at_mb__read_binary(
+    at_mb_t *mb,
+    at_langevin_t *langevin,
+    double *beta,
+    const char *fname,
+    int *pver);
+
 
 /* at_mb__write_binary: write at_mb_t data as binary */
-int at_mb__write_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, int ver);
+int at_mb__write_binary(
+    at_mb_t *mb,
+    at_langevin_t *langevin,
+    double beta,
+    const char *fname,
+    int ver);
 
 #endif

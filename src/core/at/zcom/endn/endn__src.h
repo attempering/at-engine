@@ -17,7 +17,7 @@ int zcom_endn__system(void)
 }
 
 /* change endianness in-place for n items of size in ptr */
-ZCOM_INLINE void endn_flip(void *ptr, size_t size, size_t n)
+ZCOM__INLINE void endn_flip(void *ptr, size_t size, size_t n)
 {
   unsigned char *p = (unsigned char *) ptr, ch;
   size_t i, r, half = size/2;

@@ -256,6 +256,7 @@ double at_langevin__move_corrected(
 {
   langevin_move_proposal_t proposal[1];
 
+  double beta = beta_old;
   int stride_moderated;
   int accepted;
 
@@ -289,7 +290,7 @@ double at_langevin__move_corrected(
       rng);
 
   if (accepted) {
-    mb->beta = proposal->beta_new;
+    beta = proposal->beta_new;
   } else {
     langevin->rejects += 1.0;
   }
@@ -308,7 +309,7 @@ double at_langevin__move_corrected(
     }
   }
 
-  return mb->beta;
+  return beta;
 }
 
 

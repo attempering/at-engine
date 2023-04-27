@@ -41,7 +41,7 @@ void init_mb_langevin_objects(at_mb_t *mb, at_langevin_t *langevin)
 
   at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
 
-  langevin_cfg_init(langevin, cfg, silent);
+  at_langevin__cfg_init(langevin, mb, cfg, silent);
 
   zcom_cfg__close(cfg);
 }

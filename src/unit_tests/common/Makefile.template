@@ -14,7 +14,7 @@ deps = $(dep_srcs) \
        Makefile
 includes = -I../../common
 
-all: $(bins)
+bins: $(bins)
 
 $(bins): %.exe : %.c $(deps)
 	$(CC) $(includes) $< $(dep_srcs) -o $@ $(LM)

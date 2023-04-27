@@ -11,8 +11,9 @@
 
 /* source code of zcom modules */
 #ifdef ADAPTIVE_TEMPERING_FOR_GROMACS
-  #define ZCOM_HAVE_REAL 1
+  #define ZCOM__HAVE_REAL 1
 #endif
+
 #include "zcom/def/def.h"
 #include "zcom/util/util__src.h"
 #include "zcom/endn/endn__src.h"

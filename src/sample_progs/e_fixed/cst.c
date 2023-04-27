@@ -40,7 +40,7 @@ void run_cst_md(at_t* at, llong_t nsteps)
     if (is_tempering_step) {
       at->Ea = epot;
 
-      at_move(at, step, is_first_step, is_last_step, TRUE, flush_output);
+      at__move(at, step, is_first_step, is_last_step, TRUE, flush_output);
       at->beta = at->mb->beta;
 
       //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
@@ -94,8 +94,8 @@ int main(int argc, char** argv)
   //remove("TRACE0");
   remove("atdata0/trace.dat");
 
-  at_t* at = at_open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
-  at_manifest(at, "atdata0/at-manifest.dat", 3);
+  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
+  at__manifest(at, "atdata0/at-manifest.dat", 3);
 
   if (use_minicst) { // simplified CST for reference
 
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
   fprintf(stderr, "CST simulation finished successfully.\n");
 
-  at_close(at);
+  at__close(at);
 
   return 0;
 }

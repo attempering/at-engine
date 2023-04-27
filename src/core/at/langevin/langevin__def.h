@@ -31,6 +31,8 @@ typedef struct at_langevin_t_
 {
   double  dt;           /* time step for the temperature Langevin equation (without the Boltzmann factor) */
   double  dTmax;        /* maximum amount of temperature change in a step */
+  int move_repeats;
+
   double  rejects;      /* total number of failed attempts */
   double  total;        /* total number of attempts */
 

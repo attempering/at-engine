@@ -1,7 +1,0 @@
-#include "gmx_fatal.c"
-#include "smalloc.c"
-#include "random.c"
-#include "main.c"
-#include "network.c"
-#include "mvdata.c"
-#include "domdec.c"

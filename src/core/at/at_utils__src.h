@@ -13,7 +13,7 @@
 /* return a pointer of an initialized at_t
  * if possible, initial values are taken from configuration
  * file `cfg`, otherwise default values are assumed */
-static at_t *at_cfg_open(const char *cfgname, double boltz, double tmstep, int isuffix)
+static at_t *at_cfg_open(const char *cfgname, double boltz, double md_time_step, int isuffix)
 {
   zcom_cfg_t *cfg;
   at_t *at;
@@ -39,7 +39,7 @@ static at_t *at_cfg_open(const char *cfgname, double boltz, double tmstep, int i
   printf("datadir: %s\n", at->data_dir);
 
   /* call low level function */
-  zcom_util__exit_if (!(bLoaded = at_cfg_init(at, cfg, boltz, tmstep)),
+  zcom_util__exit_if (!(bLoaded = at__cfg_init(at, cfg, boltz, md_time_step)),
     "at_t: error while reading configuration file %s\n", cfgname);
 
   fprintf(stderr, "Successfully loaded configuration file %s!\n", cfgname);
@@ -55,7 +55,7 @@ static at_t *at_cfg_open(const char *cfgname, double boltz, double tmstep, int i
 }
 
 
-at_t *at_open(
+at_t *at__open(
     const char *zcom_cfg_fn,
     at_bool_t bCPT,
     at_bool_t open_log,
@@ -69,14 +69,13 @@ at_t *at_open(
   at = at_cfg_open((zcom_cfg_fn != NULL) ? zcom_cfg_fn : "at.cfg", boltz, time_step, suffix);
   zcom_util__exit_if(at == NULL, "failed to load configuration file.\n");
 
-  fprintf(stderr, "initial temperature set to %g, beta %g\n", at->T0, at_beta_to_temp(at->T0, at->boltz));
+  fprintf(stderr, "initial temperature set to %g, beta %g\n", at->temp_thermostat, at__beta_to_temp(at->temp_thermostat, at->boltz));
 
-  /* make the initial temperature = T0 */
-  at->beta = at_temp_to_beta(at->T0, at->boltz);
-  at->mb->beta = at->beta;
+  /* make the initial temperature = temp_thermostat */
+  at->beta = at__temp_to_beta(at->temp_thermostat, at->boltz);
 
   /* we only load previous data if it's continuation */
-  if (at_load_data(at, bCPT) != 0) {
+  if (at__load_data(at, bCPT) != 0) {
     fprintf(stderr, "Warning: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 
@@ -89,36 +88,36 @@ at_t *at_open(
 
 
 
-int at_move(at_t *at, llong_t step, at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
+int at__move(at_t *at, llong_t step, at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
 {
   double invwf = 1.0, temp1, temp2, Eav = 0.0, neg_dlnwf_dbeta;
   int ib, rep;
 
-  temp1 = at_beta_to_temp(at->beta, at->boltz);
+  temp1 = at__beta_to_temp(at->beta, at->boltz);
 
   ib = at_mb__beta_to_index(at->mb, at->beta, 1);
 
   /* update energy data, change at->beta */
   /* repeat several times to change the temperature */
-  for (rep = 0; rep < at->mvreps; rep++) {
+  for (rep = 0; rep < at->langevin->move_repeats; rep++) {
     /* 1. deposit the current energy and temperature */
-    at_mb__add(at->mb, at->Ea, at->beta, &ib, &invwf, &neg_dlnwf_dbeta);
+    at_mb__add(at->mb, at->energy, at->beta, &ib, &invwf, &neg_dlnwf_dbeta);
 
     /* 2. add the current data point to the energy histogram */
-    at_eh__add(at->eh, ib, at->Ea);
+    at_eh__add(at->eh, ib, at->energy);
 
     /* 3. use the Langevin equation to update the temperature */
-    at->beta = at_langevin__move(at->langevin, at->mb, at->Ea, at->beta,
+    at->beta = at_langevin__move(at->langevin, at->mb, at->energy, at->beta,
         ib, invwf, neg_dlnwf_dbeta, at->mtrng, &Eav);
   }
 
-  temp2 = at_beta_to_temp(at->beta, at->boltz);
+  temp2 = at__beta_to_temp(at->beta, at->boltz);
 
-  if (at_do_every(step, at->mb->nstrefresh, 0, blast)) {
+  if (at__do_every(step, at->mb->nstrefresh, 0, blast)) {
     at_mb__refresh_et(at->mb, 1);
   }
 
-  at_output(at, step, ib, invwf, temp1, temp2, Eav, bfirst, blast, btr, bflush);
+  at__output(at, step, ib, invwf, temp1, temp2, Eav, bfirst, blast, btr, bflush);
 
   return 0;
 }

@@ -8,7 +8,7 @@
 #include "ssm.h"
 
 
-ZCOM_STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size)
+ZCOM__STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size)
 {
   zcom_ssm_t *m;
 
@@ -18,14 +18,14 @@ ZCOM_STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size)
   }
 
   if (hash_bits < 0) {
-    hash_bits = SSM_DEFAULT_HASH_BITS;
+    hash_bits = ZCOM_SSM__DEFAULT_HASH_BITS;
   }
 
   m->hash_bits = hash_bits;
   m->hash_size = (size_t) (1uLL << m->hash_bits);
 
   if (block_size == 0) {
-    block_size = SSM_DEFAULT_BLOCK_SIZE;
+    block_size = ZCOM_SSM__DEFAULT_BLOCK_SIZE;
   }
 
   m->block_size = block_size;
@@ -57,7 +57,7 @@ ZCOM_STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size)
 }
 
 
-ZCOM_STRCLS zcom_ssm_t *zcom_ssm__open(void)
+ZCOM__STRCLS zcom_ssm_t *zcom_ssm__open(void)
 {
   return zcom_ssm__openx(-1, 0);
 }
@@ -104,7 +104,7 @@ static zcom_ssm__ss_llist_node_t *zcom_ssm_llist_find_(zcom_ssm_t *m, const char
 
 
 
-ZCOM_INLINE void zcom_ssm_llist_print_(zcom_ssm_t *m, size_t hash_id, const char* tag)
+ZCOM__INLINE void zcom_ssm_llist_print_(zcom_ssm_t *m, size_t hash_id, const char* tag)
 {
   zcom_ssm__ss_llist_node_t *head = m->base_ + hash_id;
   zcom_ssm__ss_llist_node_t *hp = head;
@@ -249,7 +249,7 @@ static char *zcom_ssm_resize_string_(zcom_ssm_t *m, zcom_ssm__ss_llist_node_t **
 
 
 /* delete a string, etc ... */
-ZCOM_STRCLS int zcom_ssm__del(zcom_ssm_t *m, char *s)
+ZCOM__STRCLS int zcom_ssm__del(zcom_ssm_t *m, char *s)
 {
   zcom_ssm__ss_llist_node_t *hp;
 
@@ -268,7 +268,7 @@ ZCOM_STRCLS int zcom_ssm__del(zcom_ssm_t *m, char *s)
 
 
 /* delete all strings, shrink memory, etc ... */
-ZCOM_STRCLS int zcom_ssm__del_all(zcom_ssm_t *m)
+ZCOM__STRCLS int zcom_ssm__del_all(zcom_ssm_t *m)
 {
   zcom_ssm__ss_llist_node_t *hp, *head;
   size_t i;
@@ -304,7 +304,7 @@ ZCOM_STRCLS int zcom_ssm__del_all(zcom_ssm_t *m)
 }
 
 
-ZCOM_STRCLS void zcom_ssm__close(zcom_ssm_t *m)
+ZCOM__STRCLS void zcom_ssm__close(zcom_ssm_t *m)
 {
   zcom_ssm__del_all(m);
   free(m->base_);
@@ -315,7 +315,7 @@ ZCOM_STRCLS void zcom_ssm__close(zcom_ssm_t *m)
 /*
  * copy/cat t to *ps
  *
- * If (flags & SSM_TASK_CONCAT) == 0:
+ * If (flags & ZCOM_SSM__TASK_CONCAT) == 0:
  * copy t to *ps, if ps is not NULL, and return the result
  * if ps or *ps is NULL, we return a string created from t
  *   *ps is set to the same value if ps is not NULL
@@ -323,10 +323,10 @@ ZCOM_STRCLS void zcom_ssm__close(zcom_ssm_t *m)
  *
  * min_size: to request a minimal size for the resulting buffer
  *
- * If flags & SSM_TASK_CONCAT:
+ * If flags & ZCOM_SSM__TASK_CONCAT:
  * append t after *ps. Equivalent to cpy if ps or *ps is NULL.
  * */
-ZCOM_STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char *t, size_t min_size, unsigned flags)
+ZCOM__STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char *t, size_t min_size, unsigned flags)
 {
   zcom_ssm__ss_llist_node_t *hp = NULL;
   size_t t_size = 0u, s_size = 0u;
@@ -344,7 +344,7 @@ ZCOM_STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char 
     }
   }
 
-  if (flags & SSM_TASK_CONCAT) {
+  if (flags & ZCOM_SSM__TASK_CONCAT) {
     if (s != NULL) { /* s is also NULL, if ps itself is NULL */
       while (s[s_size]) { /* compute the length of s */
         s_size++;
@@ -375,25 +375,25 @@ ZCOM_STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char 
 }
 
 
-ZCOM_STRCLS char *zcom_ssm__copy(zcom_ssm_t *m, char **ps, const char *t)
+ZCOM__STRCLS char *zcom_ssm__copy(zcom_ssm_t *m, char **ps, const char *t)
 {
   return zcom_ssm__copy_or_concat(m, ps, t, 0, 0);
 }
 
 
-ZCOM_STRCLS char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t)
+ZCOM__STRCLS char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t)
 {
-  return zcom_ssm__copy_or_concat(m, ps, t, 0, SSM_TASK_CONCAT);
+  return zcom_ssm__copy_or_concat(m, ps, t, 0, ZCOM_SSM__TASK_CONCAT);
 }
 
 
-ZCOM_STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t)
+ZCOM__STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t)
 {
   return zcom_ssm__copy(m, NULL, t);
 }
 
 
-ZCOM_STRCLS char *zcom_ssm__new(zcom_ssm_t *m)
+ZCOM__STRCLS char *zcom_ssm__new(zcom_ssm_t *m)
 {
   return zcom_ssm__dup(m, NULL);
 }
@@ -405,7 +405,7 @@ ZCOM_STRCLS char *zcom_ssm__new(zcom_ssm_t *m)
  * *pn is number of characters read (including '\n', but not the terminal null)
  * delim is the '\n' for reading a singe line
  * */
-ZCOM_STRCLS char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp)
+ZCOM__STRCLS char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp)
 {
   size_t n, max;
   int c;
@@ -456,13 +456,13 @@ ZCOM_STRCLS char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int deli
 }
 
 
-ZCOM_STRCLS char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
+ZCOM__STRCLS char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
 {
   return zcom_ssm__fgetx(m, ps, pn, '\n', fp);
 }
 
 
-ZCOM_STRCLS char *zcom_ssm__fget_all(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
+ZCOM__STRCLS char *zcom_ssm__fget_all(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
 {
   return zcom_ssm__fgetx(m, ps, pn, EOF, fp);
 }

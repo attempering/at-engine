@@ -27,6 +27,11 @@ int at_langevin__cfg_init(at_langevin_t *langevin,
     if (!silent) fprintf(stderr, "assuming default: langevin->dTmax = 25.0, key: dTmax\n");
   }
 
+  langevin->move_repeats = 1;
+  if (zcom_cfg__get(cfg, &langevin->move_repeats, "move_repeats", "%d")) {
+    fprintf(stderr, "assuming default: langevin->move_repeats = 1, key: move_repeats\n");
+  }
+
   /* whether to apply the Metropolisation correction */
   langevin->corrected = 1;
   if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin_corrected", "%d")) {

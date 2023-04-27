@@ -33,13 +33,13 @@
 #endif
 
 
-ZCOM_INLINE void zcom_util__perrmsg__(const char *file, int line, const char *why,
+ZCOM__INLINE void zcom_util__perrmsg__(const char *file, int line, const char *why,
     const char *fmt, va_list args);
 
 
-#ifdef ZCOM_HAVE_VAM
+#ifdef ZCOM__HAVE_VAM
 
-ZCOM_INLINE void zcom_util__perrmsg_(const char *file, int line, const char *why,
+ZCOM__INLINE void zcom_util__perrmsg_(const char *file, int line, const char *why,
     int cond, const char *fmt, ...)
 {
   if (cond) {
@@ -56,7 +56,7 @@ ZCOM_INLINE void zcom_util__perrmsg_(const char *file, int line, const char *why
 
 #define zcom_util__fatal(fmt, ...)  zcom_util__exit_if(1, fmt, ## __VA_ARGS__)
 
-#else /* !ZCOM_HAVE_VAM */
+#else /* !ZCOM__HAVE_VAM */
 
 #define ZCOM_UTIL__PERRMSG__(c) {                        \
   if ((#c[0] == '1' && #c[1] == '\0') || c) { \
@@ -66,11 +66,11 @@ ZCOM_INLINE void zcom_util__perrmsg_(const char *file, int line, const char *why
     va_end(args);                             \
     exit(1);                                  \
   } }
-ZCOM_INLINE void zcom_util__exit_if(int cond, const char *fmt, ...) PERRMSG__(cond)
-ZCOM_INLINE void zcom_util__fatal(const char *fmt, ...) ZCOM_UTIL__PERRMSG__(1)
+ZCOM__INLINE void zcom_util__exit_if(int cond, const char *fmt, ...) PERRMSG__(cond)
+ZCOM__INLINE void zcom_util__fatal(const char *fmt, ...) ZCOM_UTIL__PERRMSG__(1)
 #undef ZCOM_UTIL__PERRMSG__
 
-#endif /* ZCOM_HAVE_VAM */
+#endif /* ZCOM__HAVE_VAM */
 
 #define zcom_util__xfopen(fp, fn, fmt, err) \
   if ((fp = fopen(fn, fmt)) == NULL) { \

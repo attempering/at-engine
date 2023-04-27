@@ -16,11 +16,11 @@
 
 
 
-int at_mb__read(at_mb_t *mb, at_langevin_t *langevin)
+int at_mb__read(at_mb_t *mb, at_langevin_t *langevin, double *beta)
 {
   int ret, version;
 
-  ret = at_mb__read_binary(mb, langevin, mb->av_file, &version);
+  ret = at_mb__read_binary(mb, langevin, beta, mb->av_file, &version);
 
   if (ret != 0) {
     fprintf(stderr, "cannot load at_mb_t data from %s\n", mb->av_file);
@@ -35,9 +35,9 @@ int at_mb__read(at_mb_t *mb, at_langevin_t *langevin)
 
 
 
-int at_mb__write(at_mb_t *mb, at_langevin_t *langevin)
+int at_mb__write(at_mb_t *mb, at_langevin_t *langevin, double beta)
 {
-  return at_mb__write_binary(mb, langevin, mb->av_file, 1);
+  return at_mb__write_binary(mb, langevin, beta, mb->av_file, 1);
 }
 
 
@@ -73,9 +73,6 @@ void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax)
   } else {
     fprintf(fp, " {0}\n");
   }
-
-  /* beta: current value of beta */
-  fprintf(fp, "mb->beta: double, %g\n", mb->beta);
 
   /* flags: combination of flags */
   fprintf(fp, "mb->flags: unsigned, 0x%X\n", mb->flags);

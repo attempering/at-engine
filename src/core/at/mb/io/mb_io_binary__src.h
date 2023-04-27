@@ -11,12 +11,16 @@
 
 #include "../../zcom/endn/endn.h"
 
-static int mb_read_binary_low_level(at_mb_t *mb, at_langevin_t *langevin, FILE *fp, int ver, int endn)
+static int at_mb__read_binary_low_level(
+    at_mb_t *mb,
+    at_langevin_t *langevin,
+    double *beta,
+    FILE *fp, int ver, int endn)
 {
   int itmp;
 
   if (mb == NULL) {
-    fprintf(stderr, "passing null pointer to mb_read_binary_low_level\n");
+    fprintf(stderr, "passing null pointer to at_mb__read_binary_low_level\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
@@ -95,18 +99,29 @@ static int mb_read_binary_low_level(at_mb_t *mb, at_langevin_t *langevin, FILE *
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
-  /* beta: current value of beta */
-  if (zcom_endn__fread(&mb->beta, sizeof(mb->beta), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->beta\n");
-    goto ERR;
+
+  {
+    /* beta: current value of beta */
+    if (zcom_endn__fread(beta, sizeof(*beta), 1, fp, endn) != 1) {
+      fprintf(stderr, "error in reading beta\n");
+      goto ERR;
+    }
+
+    if ( !(*beta >= mb->bmin && *beta <= mb->bmax) ) {
+      fprintf(stderr, "beta: failed validation: beta >= mb->bmin && beta <= mb->bmax\n");
+      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    if (*beta > mb->bmax - 1e-5) {
+      *beta = mb->bmax - 1e-5;
+    } else if (*beta < mb->bmin + 1e-5) {
+      *beta = mb->bmin + 1e-5;
+    }
+
   }
-  if ( !(mb->beta >= mb->bmin && mb->beta <= mb->bmax) ) {
-    fprintf(stderr, "mb->beta: failed validation: mb->beta >= mb->bmin && mb->beta <= mb->bmax\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-  mb->beta = (mb->beta >= mb->bmax - 1e-5) ? (mb->bmax - 1e-5) : mb->beta;
-  mb->beta = (mb->beta <= mb->bmin + 1e-5) ? (mb->bmin + 1e-5) : mb->beta;
+
+
   /* total_visits: total number of visits, number of tempering */
   if (zcom_endn__fread(&mb->total_visits, sizeof(mb->total_visits), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->total_visits\n");
@@ -157,7 +172,12 @@ ERR:
 
 
 
-int at_mb__read_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, int *pver)
+int at_mb__read_binary(
+    at_mb_t *mb,
+    at_langevin_t *langevin, 
+    double *beta,
+    const char *fname,
+    int *pver)
 {
   FILE *fp;
   int ver;
@@ -195,7 +215,7 @@ int at_mb__read_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, 
   if (pver != NULL) *pver = ver;
 
   /* call low level read function for members */
-  i = mb_read_binary_low_level(mb, langevin, fp, ver, endn);
+  i = at_mb__read_binary_low_level(mb, langevin, beta, fp, ver, endn);
 
   fclose(fp);
   return i;
@@ -206,10 +226,14 @@ ERR:
 
 
 
-static int mb_write_binary_low_level(at_mb_t *mb, at_langevin_t *langevin, FILE *fp, int ver)
+static int at_mb__write_binary_low_level(
+    at_mb_t *mb,
+    at_langevin_t *langevin,
+    double beta,
+    FILE *fp, int ver)
 {
   if (mb == NULL) {
-    fprintf(stderr, "passing null pointer to mb_write_binary_low_level\n");
+    fprintf(stderr, "passing null pointer to at_mb__write_binary_low_level\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
@@ -253,11 +277,15 @@ static int mb_write_binary_low_level(at_mb_t *mb, at_langevin_t *langevin, FILE 
     fprintf(stderr, "error in writing mb->cnt_dbl\n");
     goto ERR;
   }
-  /* beta: current value of beta */
-  if (zcom_endn__fwrite(&mb->beta, sizeof(mb->beta), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->beta\n");
-    goto ERR;
+
+  {
+    /* beta: current value of beta */
+    if (zcom_endn__fwrite(&beta, sizeof(beta), 1, fp, 1) != 1) {
+      fprintf(stderr, "error in writing mb->beta\n");
+      goto ERR;
+    }
   }
+
   /* total_visits: total number of visits, number of tempering */
   if (zcom_endn__fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->total_visits\n");
@@ -299,7 +327,12 @@ ERR:
 
 
 
-int at_mb__write_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname, int ver)
+int at_mb__write_binary(
+    at_mb_t *mb,
+    at_langevin_t *langevin,
+    double beta,
+    const char *fname,
+    int ver)
 {
   FILE *fp;
   int i;
@@ -327,7 +360,7 @@ int at_mb__write_binary(at_mb_t *mb, at_langevin_t *langevin, const char *fname,
   }
 
   /* call low level write function for members */
-  i = mb_write_binary_low_level(mb, langevin, fp, ver);
+  i = at_mb__write_binary_low_level(mb, langevin, beta, fp, ver);
 
   fclose(fp);
   return i;

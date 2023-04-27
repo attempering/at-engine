@@ -7,10 +7,10 @@
 
 
 /* load previous mb data */
-int at_mb__read(at_mb_t *mb, at_langevin_t *langevin);
+int at_mb__read(at_mb_t *mb, at_langevin_t *langevin, double *beta);
 
 /* prepare and write mb data  */
-int at_mb__write(at_mb_t *mb, at_langevin_t *langevin);
+int at_mb__write(at_mb_t *mb, at_langevin_t *langevin, double beta);
 
 /* at_mb__manifest: clear at_mb_t data */
 void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax);

@@ -25,14 +25,14 @@ typedef struct zcom_cfg_t_ {
   zcom_ssm_t *ssm;
 } zcom_cfg_t;
 
-#define CFG_CHECKUSE 0x0100
-#define CFG_VERBOSE  0x1000
-#define CFG_OPT__BLOCK_SIZE_ 64
+#define ZCOM_CFG__CHECK_USE         0x0100
+#define ZCOM_CFG__VERBOSE           0x1000
+#define ZCOM_CFG__OPT_BLOCK_SIZE_   64
 
-ZCOM_STRCLS zcom_cfg_t *zcom_cfg__open(const char *fn);
-ZCOM_STRCLS void zcom_cfg__close(zcom_cfg_t *cfg);
-ZCOM_STRCLS int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc);
-ZCOM_STRCLS int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags);
-ZCOM_STRCLS int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt);
+ZCOM__STRCLS zcom_cfg_t *zcom_cfg__open(const char *fn);
+ZCOM__STRCLS void zcom_cfg__close(zcom_cfg_t *cfg);
+ZCOM__STRCLS int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc);
+ZCOM__STRCLS int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags);
+ZCOM__STRCLS int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt);
 
 #endif

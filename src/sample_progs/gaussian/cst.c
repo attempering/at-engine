@@ -1,7 +1,7 @@
 #define GAUSSIAN_USE_MDSYS_ALIASES__
 #include "veritools/models/gaussian-energy/gaussian.h"
 
-//#define ENABLE_MINICST 1
+#define ENABLE_MINICST 1
 
 #include "adaptive_tempering__src.h"
 
@@ -41,10 +41,9 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)
     //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
     if (is_tempering_step) {
-      at->Ea = mdsys->epot;
+      at->energy = mdsys->epot;
 
-      at_move(at, step, is_first_step, is_last_step, TRUE, flush_output);
-      at->beta = at->mb->beta;
+      at__move(at, step, is_first_step, is_last_step, TRUE, flush_output);
 
       //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
       //getchar();
@@ -74,7 +73,7 @@ void run_minicst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)
     //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
 
     if (btr) {
-      at->Ea = mdsys->epot;
+      at->energy = mdsys->epot;
       minicst_add(minicst, at->beta, mdsys->epot);
       minicst_move(minicst, &at->beta, mdsys->epot);
       //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
@@ -103,8 +102,8 @@ int main(int argc, char** argv)
   //remove("TRACE0");
   remove("atdata0/trace.dat");
 
-  at_t* at = at_open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
-  //at_manifest(at, "atdata0/at-manifest.dat", 3);
+  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
+  //at__manifest(at, "atdata0/at-manifest.dat", 3);
 
   mdsys = mdsys_new(sigma, epot_dt, at->bmin, at->bmax, boltz);
 
@@ -122,7 +121,7 @@ int main(int argc, char** argv)
 
   mdsys_delete(mdsys);
 
-  at_close(at);
+  at__close(at);
 
   return 0;
 }

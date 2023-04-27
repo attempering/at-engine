@@ -134,14 +134,6 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
   mb->bmax = mb->bmin + mb->bdel * mb->n;
   /* beta: current value of beta */
 
-  //just for debug use
-  mb->beta = mb->bmax;
-  /*mb->beta = mb->bmin;*/
-  /*mb->beta = 0.5 * mb->bmin + 0.5 * mb->bmax;*/
-
-  mb->beta = (mb->beta >= mb->bmax - 1e-5) ? (mb->bmax - 1e-5) : mb->beta;
-  mb->beta = (mb->beta <= mb->bmin + 1e-5) ? (mb->bmin + 1e-5) : mb->beta;
-
   /* flags: combination of flags */
   mb->flags = 0;
 
