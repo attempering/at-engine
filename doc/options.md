@@ -221,25 +221,25 @@ The options are given below:
   * 0: disabled
   * 1: enabled
 
-  Variable: `at->bTH`.
+  Variable: `at->bias->bTH`.
 
   Default: 0.
 
 * `boost_Tref`: reference temperature
 
-  Variable: `at->TH_Tref`.
+  Variable: `at->bias->TH_Tref`.
 
   Default: 300.0 (unit is K).
 
 * `kappa0`: kappa0, magnitude of the original Hamiltonian
 
-  Variable: `at->kappa0`.
+  Variable: `at->bias->kappa0`.
 
   Default: 1.0.
 
 * `epsilon0`: epsilon0, magnitude of the bias potential
 
-  Variable: `at->epsilon0`.
+  Variable: `at->bias->epsilon0`.
 
   Default 0.0;
 

@@ -158,44 +158,16 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
   // do not open log file yet, at__open_log();
   at->log = NULL;
 
-  /* bTH : 0: disable; 1:enable */
-  at->bTH = 0;
-  if (zcom_cfg__get(cfg, &at->bTH, "boost_mode", "%d"))
-  {
-    fprintf(stderr, "assuming default: at->th_mode = 0, key: boost_mode\n");
-  }
-
-  /* TH_Tref */
-  at->TH_Tref = 300.0;
-  if (at->bTH) {
-    if (zcom_cfg__get(cfg, &at->TH_Tref, "boost_Tref", "%lf"))
-    {
-      fprintf(stderr, "assuming default: at->th_Tref = 300.0, key: boost_Tref\n");
-    }
-  }
-
-  /* kappa0 */
-  at->kappa0 = 1.0;
-  if (at->bTH) {
-    if (zcom_cfg__get(cfg, &at->kappa0, "kappa0", "%lf")) {
-      fprintf(stderr, "assuming default: at->kappa0 = 1.0, key: kappa0\n");
-    }
-  }
-
-  /* epsilon0 */
-  at->epsilon0 = 0.0;
-  if (at->bTH)
-    if (zcom_cfg__get(cfg, &at->epsilon0, "epsilon0", "%lf"))
-      fprintf(stderr, "assuming default: at->epsilon0 = 0.0, key: epsilon0\n");
-
   int silent = 0;
+
+  at_bias__cfg_init(at->bias, cfg, silent);
 
   /* handler for multiple-bin estimator */
   at_mb__cfg_init(at->mb, cfg, boltz, at->data_dir, silent);
 
   at_langevin__cfg_init(at->langevin, at->mb, cfg, silent);
 
-  /* eh: energy histogram */
+  /* energy histogram */
   at_eh__cfg_init(at->eh, at->mb, cfg, at->data_dir);
 
   at->energy = 0.0;
@@ -222,6 +194,10 @@ void at__finish(at_t *at)
   }
 
   at_mb__finish(at->mb);
+
+  at_langevin__finish(at->langevin);
+
+  at_bias__finish(at->bias);
 
   zcom_ssm__close(at->ssm);
 
@@ -257,13 +233,8 @@ int at__manifest(at_t *at, const char *fn, int arrmax)
   if (at->log) {
     fprintf(fp, "at->log->fname: char *, %s\n", at->log->fname);
   }
-  fprintf(fp, "at->bTH: at_bool_t, %s\n", (at->bTH ? "true" : "false"));
 
-  if (at->bTH) {
-    fprintf(fp, "at->th_Tref: double, %g\n", at->TH_Tref);
-    fprintf(fp, "at->kappa0: double, %g\n", at->kappa0);
-    fprintf(fp, "at->epsilon0: double, %g\n", at->epsilon0);
-  }
+  at_bias__manifest(at->bias, fp, arrmax);
 
   if (at->mb != NULL) {
     fprintf(fp, "at->mb: object pointer to at_mb_t\n");

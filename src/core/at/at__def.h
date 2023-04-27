@@ -9,11 +9,12 @@
 
 
 
-#include "../zcom/def/def.h"
+#include "../zcom/zcom.h"
 
-#include "mb/mb.h"
-#include "eh/eh.h"
-#include "langevin/langevin.h"
+#include "bias/bias__def.h"
+#include "mb/mb__def.h"
+#include "eh/eh__def.h"
+#include "langevin/langevin__def.h"
 
 
 
@@ -28,11 +29,6 @@ typedef long llong_t;
 
 
 
-typedef struct at_logfile_t_ at_logfile_t;
-typedef struct zcom_mtrng_t_ zcom_mtrng_t;
-
-
-
 typedef struct at_t_ {
   double    boltz;            // Boltzmann constant
 
@@ -42,22 +38,10 @@ typedef struct at_t_ {
 
   double    md_time_step;     // MD integration step for reference
   int       nsttemp;          // interval of tempering, 0: disable, -1: only when doing neighbor searching
-  int       nst_log;          // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
 
   double    energy;           // current coupling energy
 
-  /* high-temperature bias
-
-    H = kappa* H0 + epsilon * H1
-    kappa = 1-(T-Tref)*(1-kappa0)/(Tmax-Tref) if T>Tref; kappa=1 if T<Tref
-    epsilon= epsilon0*(T-Tref)/(Tmax-Tref) if T>Tref; epsilon=0 if T<Tref
-
-  */
-
-  at_bool_t bTH;
-  double    TH_Tref;
-  double    *kappa, *epsilon;
-  double    kappa0, epsilon0;
+  at_bias_t     bias[1];      // high-temperature bias
 
   at_mb_t       mb[1];        // multiple-bin estimator
 
@@ -70,8 +54,11 @@ typedef struct at_t_ {
   zcom_mtrng_t  *mtrng;       // random number generator
 
   char          *rng_file;    // random number file name
+
+  int           nst_log;          // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
   char          *log_file;    // log/trace file name
-  at_logfile_t  *log;         // log file
+  zcom_log_t    *log;         // log file
+
   char          ch_suffix;    // file suffix as a single-digit character
   char          data_dir[32];
 

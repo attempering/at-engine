@@ -5,12 +5,12 @@
 #include "log.h"
 
 
-ZCOM__INLINE at_logfile_t *zcom_log__open(const char *fn)
+ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn)
 {
-  at_logfile_t *log;
+  zcom_log_t *log;
 
-  if ((log = (at_logfile_t *) calloc(1, sizeof(*log))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for a new at_logfile_t object\n");
+  if ((log = (zcom_log_t *) calloc(1, sizeof(*log))) == NULL) {
+    fprintf(stderr, "Fatal: no memory for a new zcom_log_t object\n");
     exit(1);
   }
 
@@ -23,7 +23,7 @@ ZCOM__INLINE at_logfile_t *zcom_log__open(const char *fn)
   return log;
 }
 
-ZCOM__INLINE int zcom_log__printf(at_logfile_t *log, char *fmt, ...)
+ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, char *fmt, ...)
 {
   va_list args;
 
@@ -50,7 +50,7 @@ ZCOM__INLINE int zcom_log__printf(at_logfile_t *log, char *fmt, ...)
   return 0;
 }
 
-ZCOM__INLINE void zcom_log__close(at_logfile_t *log)
+ZCOM__INLINE void zcom_log__close(zcom_log_t *log)
 {
   if (log == NULL) {
     return;
@@ -66,7 +66,7 @@ ZCOM__INLINE void zcom_log__close(at_logfile_t *log)
 
 
 /* close & reopen log file to make sure that stuff is written to disk */
-ZCOM__INLINE int zcom_log__hard_flush(at_logfile_t *log)
+ZCOM__INLINE int zcom_log__hard_flush(zcom_log_t *log)
 {
   if (log->fp == NULL || log->fname == NULL) return 1;
 
@@ -81,7 +81,7 @@ ZCOM__INLINE int zcom_log__hard_flush(at_logfile_t *log)
 }
 
 #if defined(ZCOM__HAVE_VAM) && defined(NEED_WTRACE)
-ZCOM__STRCLS at_logfile_t log_stock_[1] = {{ NULL, "TRACE", 0 }};
+ZCOM__STRCLS zcom_log_t log_stock_[1] = {{ NULL, "TRACE", 0 }};
 #define wtrace(fmt, ...) { \
   if (fmt) zcom_log__printf(log_stock_, fmt, ##__VA_ARGS__); \
   else if (log_stock_->fp) { fclose(log_stock_->fp); log_stock_->fname = NULL; } }
