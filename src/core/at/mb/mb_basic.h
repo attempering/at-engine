@@ -11,7 +11,7 @@ typedef struct zcom_cfg_t_ zcom_cfg_t;
  * The initial values are taken from configuration file `cfg`
  * when available, otherwise default values are assumed */
 int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
-                double boltz, double bmin, double bmax,
+                double boltz,
                 const char *data_dir,
                 int silent);
 

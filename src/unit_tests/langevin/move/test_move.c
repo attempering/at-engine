@@ -37,7 +37,7 @@ void init_mb_langevin_objects(at_mb_t *mb, at_langevin_t *langevin)
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
   int silent = 1;
 
-  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
+  at_mb__cfg_init(mb, cfg, boltz, NULL, silent);
 
   at_langevin__cfg_init(langevin, mb, cfg, silent);
 
@@ -95,9 +95,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_langevin_t *langevin,
   hist_beta_min = fmax(mb->bmin, beta - 5*beta_sigma);
   hist_beta_max = fmin(mb->bmax, beta + 5*beta_sigma);
 
-  histogram_init(hist, hist_beta_min, hist_beta_max, mb->bdel*0.1);
-
-  mb->beta = beta;
+  histogram__init(hist, hist_beta_min, hist_beta_max, mb->bdel*0.1);
 
   fprintf(stderr, "beta %g (%g, %g)\n", beta, mb->bmin, mb->bmax);
 
@@ -109,7 +107,14 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_langevin_t *langevin,
   langevin->bin_min_visits = 0;
   langevin->no_skip = 0;
 
+  // uncomment the next two lines to print diagnostic information
   //at_langevin_move__debug__ = 2;
+  //at_mb_iie_et__debug__ = 1;
+
+  int nst_debug_print = 0;
+  if (at_langevin_move__debug__ || at_mb_iie_et__debug__) {
+    nst_debug_print = 1;
+  }
 
   // mimic the MD simulation loop
   // with a floating beta and fixed energy
@@ -132,7 +137,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_langevin_t *langevin,
     // we have to deduct each visit by a factor of 1.0/wf
     // in order to recover the native Gaussian.
     //
-    histogram_wadd(hist, beta, invwf);
+    histogram__wadd(hist, beta, invwf);
     at_mb_sm__add(sm_beta, invwf, beta, 0);
 
     // use the Langevin equation to update the temperature
@@ -144,9 +149,9 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_langevin_t *langevin,
           beta, ib, invwf, neg_dlnwf_dbeta, mtrng, &ergt);
     }
 
-    if (corrected) {
-      //fprintf(stderr, "step %d: beta %g, ib %d, invwf %g\n", step, beta, ib, invwf);
-      //if ((step+1) % 100 == 0) getchar();
+    if (corrected && nst_debug_print > 0) {
+      fprintf(stderr, "step %d: beta %g, ib %d, invwf %g\n", step, beta, ib, invwf);
+      if (nst_debug_print > 0 && (step+1) % nst_debug_print == 0) getchar();
     }
   }
 
@@ -174,8 +179,8 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_langevin_t *langevin,
     sprintf(fn_hist, "beta_hist_uncorrected.dat");
   }
 
-  histogram_save(hist, fn_hist);
-  histogram_finish(hist);
+  histogram__save(hist, fn_hist);
+  histogram__finish(hist);
 
   fprintf(stderr, "Result: %d\n\n", passed);
 

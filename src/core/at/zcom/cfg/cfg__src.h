@@ -6,6 +6,13 @@
 
 #define zcom_cfg__set(cfg, var) zcom_opt__isset(cfg->opts, cfg->nopt, &var, #var)
 
+
+int zcom_cfg__compare_keys(const char *user_key, const char *registered_keys)
+{
+  return strcmp(user_key, registered_keys);
+}
+
+
 /* Read the value of a given variable from the current configuration file,
  * the name of variable is given by `key`,
  * If the key is matched, its value is saved to `*var' through sscanf,
@@ -26,7 +33,7 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
   for (i = 0; i < cfg->nent; i++) {
     zcom_cfgent_t *ent = cfg->ents + i;
 
-    if (ent->key != NULL && strcmp(ent->key, key) == 0) {
+    if (ent->key != NULL && zcom_cfg__compare_keys(ent->key, key) == 0) {
       //fprintf(stderr, "found a matched key [%s] vs [%s]\n", key, ent->key);
 
       if (strcmp(fmt, "%s") == 0) { /* string */
@@ -193,7 +200,7 @@ int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
     o = cfg->opts + i;
     for (j = 0; j < cfg->nent; j++) {
       ent = cfg->ents + j;
-      if (ent->key != NULL && strcmp(ent->key, o->key) == 0) {
+      if (ent->key != NULL && zcom_cfg__compare_keys(ent->key, o->key) == 0) {
         ent->used = 1;
         o->flags |= ZCOM_OPT__SET;
         o->val = ent->val;

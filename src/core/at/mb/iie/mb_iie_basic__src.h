@@ -46,6 +46,7 @@ void at_mb_iie__clear(at_mb_iie_t *iie)
 
 void at_mb_iie__manifest(const at_mb_iie_t *iie, FILE *fp, int arrmax)
 {
+  at_mb_iie_et__manifest(iie->et, fp, arrmax);
 }
 
 #endif

@@ -194,7 +194,7 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
   int silent = 0;
 
   /* handler for multiple-bin estimator */
-  at_mb__cfg_init(at->mb, cfg, boltz, 0.0, 0.0, at->data_dir, silent);
+  at_mb__cfg_init(at->mb, cfg, boltz, at->data_dir, silent);
 
   at_langevin__cfg_init(at->langevin, at->mb, cfg, silent);
 

@@ -65,13 +65,14 @@ static double at_langevin_move__calc_lnp_ratio(
             + energy_beta_integral;
 
   if (at_langevin_move__debug__ >= 2) {
-    fprintf(stderr, "at_langevin_move_corrected__calc_lnp_ratio():\n");
+    fprintf(stderr, "at_langevin_move_corrected__calc_lnp_ratio(), %s:%d\n", __FILE__, __LINE__);
     fprintf(stderr, "  beta %g => %g\n", beta_old, beta_new);
     fprintf(stderr, "  log(invwf) %g, %g => %g\n", ln_invwf_ratio, invwf_old, invwf_new);
     fprintf(stderr, "  log(beta_kt_jacob) %g\n", ln_beta_kt_jacob);
     fprintf(stderr, "  (beta_old - beta_new)*energy %g\n", delta_beta_energy);
     fprintf(stderr, "  Int energy dbeta %g\n", energy_beta_integral);
     fprintf(stderr, "  ln(p_ratio): %g\n", lnp_ratio);
+    fprintf(stderr, "\n");
     if (at_langevin_move__debug__ >= 3) {
       getchar();
     }
@@ -151,13 +152,14 @@ static double at_langevin_move__calc_lng_ratio(
   lng_ratio = ln_jac + forward - backward;
 
   if (at_langevin_move__debug__ >= 2) {
-    fprintf(stderr, "at_langevin_move_corrected__calc_lng_ratio():\n");
+    fprintf(stderr, "at_langevin_move_corrected__calc_lng_ratio(), %s:%d\n", __FILE__, __LINE__);
     fprintf(stderr, "  kT %g => %g, time step %g\n", kt_old, kt_new, time_step);
     fprintf(stderr, "  ln_jac %g\n", ln_jac);
     fprintf(stderr, "  forward %g, dkt_new %g, kt_new %g, expected %g\n", forward, dkt_new, kt_new, kt_new_expected);
     fprintf(stderr, "  backward %g, dkt_old %g, kt_old %g, expected %g\n", -backward, dkt_old, kt_old, kt_old_expected);
     fprintf(stderr, "  dkt_new_deterministic %g\n", dkt_new_deterministic);
     fprintf(stderr, "  ln(g_ratio): %g\n", lng_ratio);
+    fprintf(stderr, "\n");
     if (at_langevin_move__debug__ >= 3) {
       getchar();
     }
@@ -298,7 +300,7 @@ double at_langevin__move_corrected(
   langevin->total += 1.0;
 
   if (at_langevin_move__debug__) {
-    fprintf(stderr, "at_langevin__move_corrected():\n");
+    fprintf(stderr, "at_langevin__move_corrected(), %s:%d\n", __FILE__, __LINE__);
     fprintf(stderr, "  beta %g => %g\n", proposal->beta_old, proposal->beta_new);
     fprintf(stderr, "  kT %g => %g\n", proposal->kt_old, proposal->kt_new);
     fprintf(stderr, "  stride_moderated %d\n", stride_moderated);

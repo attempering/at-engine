@@ -1,7 +1,7 @@
-#define GAUSSIAN_USE_MDSYS_ALIASES__
+#define GAUSSIAN__USE_MDSYS_ALIASES__
 #include "veritools/models/gaussian-energy/gaussian.h"
 
-#define ENABLE_MINICST 1
+//#define ENABLE_MINICST 1
 
 #include "adaptive_tempering__src.h"
 
@@ -36,7 +36,7 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)
     at_bool_t is_tempering_step = (at->nsttemp > 0 && (step % at->nsttemp == 0)) || (at->nsttemp <= 0);
     at_bool_t flush_output = FALSE;
 
-    mdsys_step(mdsys, at->beta);
+    mdsys__step(mdsys, at->beta);
 
     //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
@@ -61,28 +61,28 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)
 void run_minicst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)
 {
   llong_t step = 0;
-  minicst_t* minicst = minicst_new(at->bmin, at->bmax, at->mb->n, at->langevin->dt, at->langevin->dTmax, langevin_seed);
+  minicst_t* minicst = minicst__new(at->mb->bmin, at->mb->bmax, at->mb->n, at->langevin->dt, at->langevin->dTmax, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
 
   for (step = 1; step <= nsteps; step++) {
     at_bool_t btr = (at->nsttemp > 0 && (step % at->nsttemp == 0)) || (at->nsttemp <= 0);
 
-    mdsys_step(mdsys, at->beta);
+    mdsys__step(mdsys, at->beta);
 
     //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
 
     if (btr) {
       at->energy = mdsys->epot;
-      minicst_add(minicst, at->beta, mdsys->epot);
-      minicst_move(minicst, &at->beta, mdsys->epot);
+      minicst__add(minicst, at->beta, mdsys->epot);
+      minicst__move(minicst, &at->beta, mdsys->epot);
       //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
       //getchar();
     }
   }
 
-  minicst_save(minicst, "cst.dat");
-  minicst_delete(minicst);
+  minicst__save(minicst, "cst.dat");
+  minicst__delete(minicst);
 }
 #endif
 
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
   //at__manifest(at, "atdata0/at-manifest.dat", 3);
 
-  mdsys = mdsys_new(sigma, epot_dt, at->bmin, at->bmax, boltz);
+  mdsys = mdsys__new(sigma, epot_dt, at->mb->bmin, at->mb->bmax, boltz);
 
   if (use_minicst) { // simplified CST for reference
 #ifdef ENABLE_MINICST
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
 
   fprintf(stderr, "CST simulation finished successfully.\n");
 
-  mdsys_delete(mdsys);
+  mdsys__delete(mdsys);
 
   at__close(at);
 

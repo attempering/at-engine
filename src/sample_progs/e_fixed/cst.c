@@ -38,10 +38,9 @@ void run_cst_md(at_t* at, llong_t nsteps)
     //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
 
     if (is_tempering_step) {
-      at->Ea = epot;
+      at->energy = epot;
 
       at__move(at, step, is_first_step, is_last_step, TRUE, flush_output);
-      at->beta = at->mb->beta;
 
       //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
       //getchar();
@@ -56,7 +55,7 @@ void run_cst_md(at_t* at, llong_t nsteps)
 void run_minicst_md(at_t* at, llong_t nsteps)
 {
   llong_t step = 0;
-  minicst_t* minicst = minicst_new(at->bmin, at->bmax, at->mb->n, at->langevin->dt, at->langevin->dTmax, langevin_seed);
+  minicst_t* minicst = minicst__new(at->mb->bmin, at->mb->bmax, at->mb->n, at->langevin->dt, at->langevin->dTmax, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
 
@@ -66,16 +65,16 @@ void run_minicst_md(at_t* at, llong_t nsteps)
     //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
 
     if (btr) {
-      at->Ea = epot;
-      minicst_add(minicst, at->beta, epot);
-      minicst_move(minicst, &at->beta, epot);
+      at->energy = epot;
+      minicst__add(minicst, at->beta, epot);
+      minicst__move(minicst, &at->beta, epot);
       //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
       //getchar();
     }
   }
 
-  minicst_save(minicst, "cst.dat");
-  minicst_delete(minicst);
+  minicst__save(minicst, "cst.dat");
+  minicst__delete(minicst);
 }
 #endif
 

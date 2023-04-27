@@ -11,7 +11,7 @@ deps = $(dep_srcs) \
        $(wildcard ../../core/*.h) \
        $(wildcard ../../core/*/*.h) \
        Makefile
-includes = -I../../core -I../../external
+includes = -I../../core -I../../external -I../../external/veritools
 
 all: $(bins)
 

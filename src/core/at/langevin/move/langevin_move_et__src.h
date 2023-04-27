@@ -40,6 +40,16 @@ static double at_langevin_move__calc_et_iie(
   at_mb_iie_lr_t *lr = iie->lr;
   double et = at_mb_iie_et__calc_et_cached(iie, ib);
 
+  if (at_langevin_move__debug__ >= 2) {
+    fprintf(stderr, "at_langevin_move__calc_et_iie() %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "  et %g (default %g)\n", et, def_val);
+    fprintf(stderr, "  ib %d\n", (int) ib);
+    fprintf(stderr, "  success %d, quality %d\n", lr->success, lr->quality);
+    fprintf(stderr, "  cache enabled %d, hit %d\n",
+        iie->et->cache_params->enabled, iie->et->cache_hit);
+    fprintf(stderr, "\n");
+  }
+
   if (lr->success && lr->quality) {
     return et;
   } else {
@@ -102,7 +112,7 @@ double at_langevin_move__calc_dkt_deterministic(
   delta = (current_energy - *bin_av_energy + neg_dlnwf_dbeta);
 
   if (at_langevin_move__debug__ >= 2) {
-    fprintf(stderr, "at_langevin_move__calc_dkt_deterministic()\n");
+    fprintf(stderr, "at_langevin_move__calc_dkt_deterministic() %s:%d\n", __FILE__, __LINE__);
     fprintf(stderr, "  cheap_av_energy %d\n", cheap_av_energy);
     fprintf(stderr, "  ib %d\n", (int) ib);
     fprintf(stderr, "  current_energy %g\n", current_energy);
@@ -110,6 +120,7 @@ double at_langevin_move__calc_dkt_deterministic(
     fprintf(stderr, "  neg_dlnwf_dbeta %g\n", neg_dlnwf_dbeta);
     fprintf(stderr, "  delta %g\n", delta);
     fprintf(stderr, "  dkt %g\n", delta * time_step);
+    fprintf(stderr, "\n");
   }
 
   return delta * time_step;

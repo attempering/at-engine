@@ -10,6 +10,7 @@
 #include "mb_iie_et_cache.h"
 
 
+double at_mb_iie_et__debug__ = 0;
 
 
 static void at_mb_iie_et_item__clear(at_mb_iie_et_item_t *item)
@@ -54,6 +55,14 @@ void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, in
     }
   }
 
+  et->cache_params->min_visits = 100.0;
+  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &et->cache_params->min_visits, "et_cache_min_visits", "%lf")) {
+    if (!silent) {
+      fprintf(stderr, "assuming default: mb->iie->et->cache_params->min_visits = %lf, key: et_cache_min_visits\n",
+          et->cache_params->min_visits);
+    }
+  }
+
 }
 
 
@@ -75,6 +84,16 @@ void at_mb_iie_et__clear(at_mb_iie_et_t *et)
 
 }
 
+
+
+void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, FILE *fp, int arrmax)
+{
+  fprintf(fp, "mb->iie->et->cache_params->enabled: double, %d\n", et->cache_params->enabled);
+
+  fprintf(fp, "mb->iie->et->cache_params->lifespan: double, %g\n", et->cache_params->lifespan);
+
+  fprintf(fp, "mb->iie->et->cache_params->min_visits: double, %g\n", et->cache_params->min_visits);
+}
 
 
 #endif

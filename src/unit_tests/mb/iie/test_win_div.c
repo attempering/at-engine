@@ -22,7 +22,7 @@ void init_mb_object(at_mb_t *mb)
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
-  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+  at_mb__cfg_init(mb, cfg, boltz, NULL, 1);
 
   zcom_cfg__close(cfg);
 }

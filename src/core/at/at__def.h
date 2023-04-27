@@ -34,40 +34,40 @@ typedef struct zcom_mtrng_t_ zcom_mtrng_t;
 
 
 typedef struct at_t_ {
-  double    boltz; // Boltzmann constant
+  double    boltz;            // Boltzmann constant
 
-  /*------Temperature bins-------------------------*/
-  double    bmin;     // minimal beta
-  double    bmax;     // maximal beta
+  double    beta;             // current beta
 
-  double    beta;     // current beta
+  double    temp_thermostat;  // thermostat temperature
 
-  double    temp_thermostat;       // thermostat temperature
+  double    md_time_step;     // MD integration step for reference
+  int       nsttemp;          // interval of tempering, 0: disable, -1: only when doing neighbor searching
+  int       nst_log;          // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
 
-  double    md_time_step;    // MD integration step for reference
-  int       nsttemp;   // interval of tempering, 0: disable, -1: only when doing neighbor searching
-  int       nst_log;   // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
+  double    energy;           // current coupling energy
 
-  double    energy;       /* current total potential energy */
+  /* high-temperature bias
 
-  /*------Combined Hamiltonian:
     H = kappa* H0 + epsilon * H1
     kappa = 1-(T-Tref)*(1-kappa0)/(Tmax-Tref) if T>Tref; kappa=1 if T<Tref
-    epsilon= epsilon0*(T-Tref)/(Tmax-Tref) if T>Tref; epsilon=0 if T<Tref */
+    epsilon= epsilon0*(T-Tref)/(Tmax-Tref) if T>Tref; epsilon=0 if T<Tref
+
+  */
+
   at_bool_t bTH;
   double    TH_Tref;
   double    *kappa, *epsilon;
   double    kappa0, epsilon0;
 
-  at_mb_t       mb[1];      /* multiple-bin estimator */
+  at_mb_t       mb[1];        // multiple-bin estimator
 
-  at_langevin_t langevin[1]; /* Langevin equation */
+  at_langevin_t langevin[1];  // Langevin equation
 
-  at_eh_t       eh[1];  /* energy histogram */
+  at_eh_t       eh[1];        // energy histogram
 
-  zcom_ssm_t    *ssm; /* string allocator */
+  zcom_ssm_t    *ssm;         // string allocator
 
-  zcom_mtrng_t  *mtrng; /* random number generator */
+  zcom_mtrng_t  *mtrng;       // random number generator
 
   char          *rng_file;    // random number file name
   char          *log_file;    // log/trace file name

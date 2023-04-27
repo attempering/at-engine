@@ -22,7 +22,7 @@ void init_mb_and_langevin(at_mb_t *mb, at_langevin_t *langevin)
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
-  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, 1);
+  at_mb__cfg_init(mb, cfg, boltz, NULL, 1);
 
   at_langevin__cfg_init(langevin, mb, cfg, 1);
 

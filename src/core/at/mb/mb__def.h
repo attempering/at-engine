@@ -24,7 +24,6 @@ typedef struct at_mb_t_ {
   double    bdel;     /* bin size of beta */
   int       n;        /* number of temperature bins */
   double    *barr;    /* temperature array */
-  double    beta;     /* current value of beta */
   unsigned  flags;    /* combination of flags */
 
   int       nstrefresh;   /* interval of recalculating et for all temperature */

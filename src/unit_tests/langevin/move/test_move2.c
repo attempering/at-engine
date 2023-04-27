@@ -39,7 +39,7 @@ void init_mb_langevin_objects(at_mb_t *mb, at_langevin_t *langevin)
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
   int silent = 1;
 
-  at_mb__cfg_init(mb, cfg, boltz, 0.0, 0.0, NULL, silent);
+  at_mb__cfg_init(mb, cfg, boltz, NULL, silent);
 
   at_langevin__cfg_init(langevin, mb, cfg, silent);
 
@@ -86,8 +86,6 @@ int test_langevin_move(at_mb_t *mb, at_langevin_t *langevin,
   int passed = 0;
 
   zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
-
-  mb->beta = beta;
 
   fprintf(stderr, "beta %g (%g, %g)\n", beta, mb->bmin, mb->bmax);
 

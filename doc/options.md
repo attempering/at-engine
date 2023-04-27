@@ -74,13 +74,13 @@ and `T = 600K` a value of about `beta = 0.2045`.
 
 * `beta_min`: minimal reciprocal temperature
 
-  Variable: `at->bmin == at->mb->bmin`.
+  Variable: `at->mb->bmin`.
 
   Default: none.
 
 * `beta_max`: maximal reciprocal temperature
 
-  Variable: `at->bmax == at->mb->bmax`.
+  Variable: `at->mb->bmax`.
 
   Default: none.
 

@@ -42,7 +42,7 @@
 
 
 
-/* Mersenne Twister was developped by Makoto Matsumoto and Takuji Nishimura */
+/* Mersenne Twister was developed by Makoto Matsumoto and Takuji Nishimura */
 #define ZCOM_RNG__MT_N 624
 #define ZCOM_RNG__MT_M 397
 #define ZCOM_RNG__MT_UMASK 0x80000000UL /* most significant w-r bits */

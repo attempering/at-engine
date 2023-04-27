@@ -41,7 +41,7 @@ static int at_mb__check_barr(at_mb_t *mb)
 #define IF_VERBOSE_FPRINTF  if(!silent) fprintf
 
 int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
-    double boltz, double bmin, double bmax,
+    double boltz,
     const char *data_dir,
     int silent)
 {
@@ -57,46 +57,35 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
 
   mb->boltz = boltz;
 
-  if (bmin != 0.0 && bmax != 0.0 && bmin < bmax) {
+  /* read bmin and bmax from the configuration file */
 
-    /* bmin: minimal beta (highest temperature) */
-    mb->bmin = bmin;
-    /* bmax: maximal beta (lowest temperature) */
-    mb->bmax = bmax;
+  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bmin, "beta_min", "%lf")) {
+    fprintf(stderr, "missing var: mb->bmin, key: beta_min, fmt: %%lf\n");
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
+  }
 
-  } else {
-
-    /* read bmin and bmax from the configuration file */
-
-    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bmin, "beta_min", "%lf")) {
-      fprintf(stderr, "missing var: mb->bmin, key: beta_min, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-
-    if ( !(mb->bmin >= 0.0) ) {
-      fprintf(stderr, "mb->bmin: failed validation: mb->bmin %g > 1e-6\n",
-          mb->bmin);
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
+  if ( !(mb->bmin >= 0.0) ) {
+    fprintf(stderr, "mb->bmin: failed validation: mb->bmin %g > 1e-6\n",
+        mb->bmin);
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
+  }
 
 
-    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bmax, "beta_max", "%lf")) {
-      fprintf(stderr, "missing var: mb->bmax, key: beta_max, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
+  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bmax, "beta_max", "%lf")) {
+    fprintf(stderr, "missing var: mb->bmax, key: beta_max, fmt: %%lf\n");
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
+  }
 
-    //printf("mb->bmin %g, mb->bmax %g\n", mb->bmin, mb->bmax); getchar();
+  //printf("mb->bmin %g, mb->bmax %g\n", mb->bmin, mb->bmax); getchar();
 
-    if ( !(mb->bmax >= mb->bmin) ) {
-      fprintf(stderr, "mb->bmax: failed validation: mb->bmax %g > mb->bmin %g\n",
-          mb->bmax, mb->bmin);
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-
+  if ( !(mb->bmax >= mb->bmin) ) {
+    fprintf(stderr, "mb->bmax: failed validation: mb->bmax %g > mb->bmin %g\n",
+        mb->bmax, mb->bmin);
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
   }
 
   /* bdel: bin size of beta */

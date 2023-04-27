@@ -12,4 +12,6 @@ void at_mb_iie_et__finish(at_mb_iie_et_t *et);
 
 void at_mb_iie_et__clear(at_mb_iie_et_t *et);
 
+void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, FILE *fp, int arrmax);
+
 #endif
