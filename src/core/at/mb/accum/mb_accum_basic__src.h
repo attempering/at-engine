@@ -8,9 +8,8 @@
 
 #include "../sm/mb_sm.h"
 
-#include "../../zcom/util/util.h"
-#include "../../zcom/cfg/cfg.h"
-#include "../../zcom/endn/endn.h"
+#include "../../../zcom/zcom.h"
+
 
 
 /* return the origin of sums for the window estimator at win_id */

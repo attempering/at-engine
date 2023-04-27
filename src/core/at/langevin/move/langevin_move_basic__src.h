@@ -7,7 +7,7 @@
 
 /* implementation headers */
 #include "../../mb/mb.h"
-#include "../../zcom/cfg/cfg.h"
+#include "../../../zcom/zcom.h"
 #include "langevin_move_et.h"
 
 

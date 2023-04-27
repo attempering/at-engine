@@ -4,8 +4,8 @@
 
 #include "mb_win_basic.h"
 
-#include "../../zcom/util/util.h"
-#include "../../zcom/cfg/cfg.h"
+#include "../../../zcom/util/util.h"
+#include "../../../zcom/cfg/cfg.h"
 
 
 

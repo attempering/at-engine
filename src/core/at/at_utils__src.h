@@ -4,8 +4,7 @@
 
 #include "at_utils.h"
 
-#include "zcom/util/util.h"
-#include "zcom/rng/rng.h"
+#include "../zcom/zcom.h"
 #include "utils/utils.h"
 
 

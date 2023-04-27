@@ -33,7 +33,7 @@
 #endif
 
 
-ZCOM__INLINE void zcom_util__perrmsg__(const char *file, int line, const char *why,
+void zcom_util__perrmsg__(const char *file, int line, const char *reason,
     const char *fmt, va_list args);
 
 

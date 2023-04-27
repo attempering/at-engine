@@ -7,7 +7,7 @@
 /* include the source code of sub-modules */
 #include "eh_io_binary__src.h"
 
-#include "../zcom/cfg/cfg.h"
+#include "../../zcom/zcom.h"
 
 int at_eh__read(at_eh_t *eh)
 {

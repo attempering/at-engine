@@ -12,7 +12,7 @@
 
 #include "../../accum/mb_accum.h"
 #include "../../win/mb_win.h"
-#include "../../../zcom/util/util.h"
+#include "../../../../zcom/zcom.h"
 
 
 

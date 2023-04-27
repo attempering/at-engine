@@ -3,7 +3,7 @@
 
 #include "langevin_io.h"
 
-#include "../zcom/endn/endn.h"
+#include "../../zcom/zcom.h"
 
 void at_langevin__manifest(const at_langevin_t *langevin, FILE *fp, int arrcnt)
 {

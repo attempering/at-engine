@@ -8,7 +8,7 @@
 #include "mb_sm.h"
 
 
-#include "../../zcom/endn/endn.h"
+#include "../../../zcom/endn/endn.h"
 #include <math.h>
 
 

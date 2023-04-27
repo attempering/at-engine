@@ -9,7 +9,7 @@
 
 #include <stdlib.h>
 
-#include "../../zcom/cfg/cfg.h"
+#include "../../../zcom/cfg/cfg.h"
 
 
 int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, int silent)

@@ -9,7 +9,7 @@
 
 
 
-#include "zcom/def/def.h"
+#include "../zcom/def/def.h"
 
 #include "mb/mb.h"
 #include "eh/eh.h"

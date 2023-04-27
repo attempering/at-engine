@@ -6,7 +6,7 @@
 
 /* implementation dependent headers */
 #include "../../mb_basic.h"
-#include "../../../zcom/cfg/cfg.h"
+#include "../../../../zcom/zcom.h"
 #include "../../accum/mb_accum.h"
 #include "../zerofiller/mb_iie_zerofiller.h"
 

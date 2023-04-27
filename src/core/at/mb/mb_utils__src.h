@@ -6,8 +6,7 @@
 #include "accum/mb_accum.h"
 #include "mb_utils.h"
 
-#include "../zcom/util/util.h"
-#include "../zcom/endn/endn.h"
+#include "../../zcom/zcom.h"
 
 
 

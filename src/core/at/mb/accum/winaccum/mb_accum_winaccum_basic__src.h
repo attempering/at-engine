@@ -7,8 +7,8 @@
 
 #include "../../sm/mb_sm.h"
 
-#include "../../../zcom/util/util.h"
-#include "../../../zcom/cfg/cfg.h"
+#include "../../../../zcom/zcom.h"
+
 
 
 

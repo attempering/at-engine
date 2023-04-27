@@ -4,7 +4,7 @@
 #include "eh_basic.h"
 #include "../mb/win/mb_win.h"
 
-#include "../zcom/cfg/cfg.h"
+#include "../../zcom/zcom.h"
 
 
 int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg, const char *data_dir)

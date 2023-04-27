@@ -9,7 +9,7 @@
 #include "../sm/mb_sm.h"
 #include "../accum/mb_accum.h"
 
-#include "../../zcom/endn/endn.h"
+#include "../../../zcom/zcom.h"
 
 static int at_mb__read_binary_low_level(
     at_mb_t *mb,

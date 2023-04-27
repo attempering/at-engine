@@ -10,7 +10,7 @@
 #include "gridvals/mb_iie_gridvals.h"
 
 #include "../mb__def.h"
-#include "../../zcom/cfg/cfg.h"
+#include "../../../zcom/zcom.h"
 
 
 void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,

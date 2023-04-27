@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include "../zcom/endn/endn.h"
+#include "../../zcom/zcom.h"
 
 
 static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)

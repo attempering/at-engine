@@ -5,9 +5,8 @@
 #include "mb_accum_winaccum.h"
 
 #include "../../sm/mb_sm.h"
-#include "../../../zcom/util/util.h"
-#include "../../../zcom/cfg/cfg.h"
-#include "../../../zcom/endn/endn.h"
+#include "../../../../zcom/zcom.h"
+
 
 
 void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum, FILE *fp, int arrmax)

@@ -8,7 +8,7 @@
 
 #include "integrator/langevin_integrator.h"
 
-#include "../zcom/cfg/cfg.h"
+#include "../../zcom/zcom.h"
 
 
 

@@ -4,9 +4,8 @@
 
 #include "util.h"
 
-
 /* print an error message */
-ZCOM__INLINE void zcom_util__perrmsg__(const char *file, int line, const char *reason,
+void zcom_util__perrmsg__(const char *file, int line, const char *reason,
     const char *fmt, va_list args)
 {
   fprintf(stderr, "error: ");

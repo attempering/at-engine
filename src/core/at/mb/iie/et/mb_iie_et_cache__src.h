@@ -6,7 +6,7 @@
 #include "mb_iie_et_cache.h"
 #include "../../accum/mb_accum.h"
 #include "../../mb.h"
-#include "../../../zcom/util/util.h"
+#include "../../../../zcom/zcom.h"
 
 
 

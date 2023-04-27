@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-#include "../../zcom/cfg/cfg.h"
+#include "../../../zcom/cfg/cfg.h"
 
 
 

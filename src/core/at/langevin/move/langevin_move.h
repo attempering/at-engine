@@ -5,7 +5,7 @@
 
 #include "../../mb/mb__def.h"
 #include "../langevin__def.h"
-#include "../../zcom/rng/rng.h"
+#include "../../../zcom/zcom.h"
 
 
 

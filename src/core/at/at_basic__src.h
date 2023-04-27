@@ -5,10 +5,7 @@
 
 #include "at_basic.h"
 
-#include "zcom/util/util.h"
-#include "zcom/cfg/cfg.h"
-#include "zcom/log/log.h"
-#include "zcom/rng/rng.h"
+#include "../zcom/zcom.h"
 
 #include "mb/mb.h"
 #include "langevin/langevin.h"

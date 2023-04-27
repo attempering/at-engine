@@ -14,9 +14,7 @@
 #include "iie/mb_iie.h"
 
 
-#include "../zcom/util/util.h"
-#include "../zcom/ssm/ssm.h"
-#include "../zcom/cfg/cfg.h"
+#include "../../zcom/zcom.h"
 #include "../utils/utils.h"
 
 
