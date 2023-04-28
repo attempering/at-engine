@@ -4,7 +4,9 @@
 
 
 /* this header needs to be placed before zcom modules
- * so that we can determine whether `real` should be defined or not */
+ * so that we can determine whether `real` should be
+ * defined or not depending on whether the context is
+ * GROMACS */
 #include "context/context.h"
 
 

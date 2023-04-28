@@ -58,22 +58,22 @@ int at__do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
 /* write various output files */
 void at__output(at_t *at, llong_t step,
           int ib, double invw, double t1, double t2, double Eav,
-          at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
+          at_bool_t is_first_step, at_bool_t is_last_step,
+          at_bool_t do_log, at_bool_t flush_output)
 {
-  at_bool_t do_log;
-
-  /* write the trace file */
+  // whether to write the log file
   if (at->nst_log > 0) {
-    do_log = (step % at->nst_log == 0) || bfirst || blast;
-  } else { /* tracing is disabled if at->nst_log < 0 */
-    do_log = (at->nst_log == 0) ? btr : 0;
+    do_log = (step % at->nst_log == 0) || is_first_step || is_last_step;
+  } else if (at->nst_log < 0) {
+    // logging is disabled if at->nst_log < 0
+    do_log = 0;
   }
 
   //fprintf(stderr, "%d, %d %p\n", do_log, at->nst_log, at->log);getchar();
 
   if (at->log) {
 
-    if(bflush) {
+    if(flush_output) {
       at->log->flags |= ZCOM_LOG__FLUSH_AFTER;
     } else {
       at->log->flags ^= ZCOM_LOG__FLUSH_AFTER;
@@ -88,7 +88,7 @@ void at__output(at_t *at, llong_t step,
     }
   }
 
-  if (at__do_every(step, at->mb->nst_save_av, bfirst, blast)) { /* save averages */
+  if (at__do_every(step, at->mb->nst_save_av, is_first_step, is_last_step)) { /* save averages */
     at_mb__write(at->mb, at->langevin, at->beta);
     at_mb__write_ze_file(at->mb, NULL);
     if (at->mtrng) {
@@ -96,7 +96,7 @@ void at__output(at_t *at, llong_t step,
     }
   }
 
-  if (at__do_every(step, at->eh->nst_save, bfirst, blast)) { /* save energy histograms */
+  if (at__do_every(step, at->eh->nst_save, is_first_step, is_last_step)) { /* save energy histograms */
     if (at->eh != NULL) { 
       at_eh__write(at->eh);
       at_eh__reconstruct(at->eh, NULL);

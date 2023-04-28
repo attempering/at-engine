@@ -609,12 +609,12 @@ The trace file outputs the current potential energy and temperature every few st
   Remarks: by default, this file is always appended instead of rewritten.
   So if you restart a fresh simulation, make sure to delete the TRACE file.
   
-* `nsttrace`: frequency of write the trace file.
+* `nsttrace`: frequency of write the log file.
     A common value can be something like `1000`.
 
-  * -1: disable the trace file
-  * 0:  writing the trace file only in steps of writing the .xtc file
-  * any positive integer: write trace file this number of steps.
+  * -1: disable the log file
+  * 0:  writing the log file only in steps of outputting the .xtc file
+  * any positive integer: write log file this number of steps.
 
   Variable: `at->nsttrace`.
 

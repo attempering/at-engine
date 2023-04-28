@@ -8,14 +8,32 @@ The algorithm adopts a few self-learning techniques
 to adaptive the parameters related to statistical weights
 (the partition function).
 
-The current code is written in C, and is compatible with GROMACS 4.6.
+The current code is written in ANSI C,
+its and is compatible with GROMACS 4.6.
+
+## Getting started
+
+A typical simulation goes like this:
+
+```C
+at_t* at = at__open("at.cfg", FALSE, TRUE, boltz, md_dt, 0);
+
+for (step = 1; step <= nsteps; step++) {
+  at->energy = 0.0;
+  at__move(at, step, (step == 1), (step == nsteps), TRUE, FALSE);
+}
+
+at__close(at);
+```
+
+Simulation parameters are provided in the configuration file `at.cfg`.
 
 ## Options
 
 A brief manual on the configuration file `at.cfg`
 is included under the [doc](doc) directory.
 
-### Improvements
+## Improvements
 
 Compared with the 2010 paper, the current code brings about
 a few key improvements on the overall accuracy and performance.
