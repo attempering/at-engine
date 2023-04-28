@@ -28,6 +28,8 @@
 void at_utils_manifest__cfg_init(at_utils_manifest_t *manifest,
     zcom_cfg_t *cfg, int silent)
 {
+  manifest->enabled = 1;
+
   manifest->filename = "at-manifest.dat";
   if (cfg != NULL && zcom_cfg__get(cfg, &manifest->filename, "manifest_file", "%s"))
   {

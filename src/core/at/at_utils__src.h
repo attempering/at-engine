@@ -30,7 +30,7 @@
 /* return a pointer of an initialized at_t
  * if possible, initial values are taken from configuration
  * file `cfg`, otherwise default values are assumed */
-static at_t *at_cfg_open(const char *cfgname, double boltz, double md_time_step, int isuffix)
+static at_t *at__cfg_open(const char *cfgname, double boltz, double md_time_step, int isuffix)
 {
   zcom_cfg_t *cfg;
   at_t *at;
@@ -61,9 +61,7 @@ static at_t *at_cfg_open(const char *cfgname, double boltz, double md_time_step,
 
   fprintf(stderr, "Successfully loaded configuration file %s!\n", cfgname);
 
-  /* load random number generator */
-  at->mtrng = zcom_mtrng__open(0);
-  zcom_mtrng__load_or_init_from_seed(at->mtrng, at->rng_file, 0);
+  at_utils_rng__reset(at->utils->rng, 0);
 
   /* close handle to configuration file */
   zcom_cfg__close(cfg);
@@ -83,7 +81,7 @@ at_t *at__open(
   at_t *at;
 
   /* this will also initialize settings for member objects such as at->mb */
-  at = at_cfg_open((zcom_cfg_fn != NULL) ? zcom_cfg_fn : "at.cfg", boltz, time_step, suffix);
+  at = at__cfg_open((zcom_cfg_fn != NULL) ? zcom_cfg_fn : "at.cfg", boltz, time_step, suffix);
   zcom_util__exit_if(at == NULL, "failed to load configuration file.\n");
 
   fprintf(stderr, "initial temperature set to %g, beta %g\n", at->temp_thermostat, at__beta_to_temp(at->temp_thermostat, at->boltz));

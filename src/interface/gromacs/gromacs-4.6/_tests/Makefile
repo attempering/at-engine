@@ -6,3 +6,4 @@ use_adaptive_tempering_driver.exe : use_adaptive_tempering_driver.c
 
 clean::
 	$(RM) use_adaptive_tempering_driver.exe .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat cst.dat gmon.out data/*
+

@@ -23,6 +23,7 @@
 
 typedef struct at_utils_log_t_
 {
+  int enabled;
   char *filename;
   FILE *fp;
 } at_utils_log_t;

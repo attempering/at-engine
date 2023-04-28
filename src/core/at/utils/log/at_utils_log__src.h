@@ -28,6 +28,8 @@
 void at_utils_log__cfg_init(at_utils_log_t *log,
     zcom_cfg_t *cfg, int silent)
 {
+  log->enabled = 1;
+
   log->filename = "log.dat";
   if (cfg != NULL && zcom_cfg__get(cfg, &log->filename, "log_file", "%s"))
   {

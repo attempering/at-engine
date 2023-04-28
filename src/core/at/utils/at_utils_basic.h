@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef UTILS_BASIC_H__
-#define UTILS_BASIC_H__
+#ifndef AT_UTILS_BASIC_H__
+#define AT_UTILS_BASIC_H__
 
 
 #include "at_utils__def.h"

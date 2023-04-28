@@ -23,6 +23,7 @@
 
 typedef struct at_utils_manifest_t_
 {
+  int enabled;
   char *filename;
   FILE *fp;
   int arr_max_items;

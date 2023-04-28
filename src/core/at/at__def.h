@@ -83,12 +83,6 @@ typedef struct at_t_ {
 
   at_utils_t    utils[1];
 
-  int mpi_rank, mpi_size;
-
-#ifdef GMX_MPI
-  MPI_Comm mpi_comm;
-#endif
-
 } at_t;
 
 

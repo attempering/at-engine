@@ -16,7 +16,8 @@
 
 Many test programs have been built into the project.
 
-* [Basic tests to the core files](core/_tests)
-* [Basic tests to the GROMACS 4.6 plugins](interface/gromacs/4.6/_tests)
-* [Unit tests to the modules of the core files](unit_tests)
-* [Sample programs](sample_progs)
+1. [Basic compiling tests to the core files](core/_tests)
+2. [Unit tests to the modules of the core files](unit_tests)
+3. [Sample programs](sample_progs)
+4. [Basic tests to the GROMACS 4.6 plugins](interface/gromacs/4.6/_tests)
+

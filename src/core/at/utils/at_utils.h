@@ -16,12 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef UTILS_H__
-#define UTILS_H__
+#ifndef AT_UTILS_H__
+#define AT_UTILS_H__
 
 #include "sys/at_utils_sys.h"
-#include "../../zcom/zcom.h"
+#include "manifest/at_utils_manifest.h"
+#include "rng/at_utils_rng.h"
+#include "log/at_utils_log.h"
 
-char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, const char *fn);
+#include "at_utils_basic.h"
+#include "at_utils_misc.h"
 
 #endif

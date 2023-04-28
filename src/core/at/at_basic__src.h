@@ -109,9 +109,7 @@ void at__output(at_t *at, llong_t step,
   if (at__do_every(step, at->mb->nst_save_av, is_first_step, is_last_step)) { /* save averages */
     at_mb__write(at->mb, at->langevin, at->beta);
     at_mb__write_ze_file(at->mb, NULL);
-    if (at->mtrng) {
-      zcom_mtrng__save(at->mtrng, at->rng_file);
-    }
+    at_utils_rng__save(at->utils->rng);
   }
 
   if (at__do_every(step, at->eh->nst_save, is_first_step, is_last_step)) { /* save energy histograms */
@@ -198,16 +196,7 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
 
 void at__finish(at_t *at)
 {
-  if (at->mpi_rank == 0) {
-    if (at->mtrng) {
-      zcom_mtrng__save(at->mtrng, at->rng_file);
-      zcom_mtrng__close(at->mtrng);
-    }
-  }
-
-  if (at->mpi_rank == 0) {
-    zcom_log__close(at->log);
-  }
+  at_utils__finish(at->utils);
 
   if (at->eh != NULL) {
     at_eh__finish(at->eh);
@@ -246,7 +235,6 @@ int at__manifest(at_t *at, const char *fn, int arrmax)
   fprintf(fp, "at->temp_thermostat: double, %g\n", at->temp_thermostat);
   fprintf(fp, "at->nsttemp: int, %4d\n", at->nsttemp);
   fprintf(fp, "at->md_time_step: double, %g\n", at->md_time_step);
-  fprintf(fp, "at->rng_file: char *, %s\n", at->rng_file);
 
   fprintf(fp, "at->nst_log: int, %4d\n", at->nst_log);
 
