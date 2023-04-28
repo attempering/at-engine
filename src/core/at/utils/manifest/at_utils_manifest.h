@@ -21,13 +21,25 @@
 
 #include "at_utils_manifest__def.h"
 
-void at_utils_manifest__cfg_init(at_utils_manifest_t *manifest,
-    zcom_cfg_t *cfg, int silent);
+void at_utils_manifest__cfg_init(
+    at_utils_manifest_t *manifest,
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    int silent);
 
-int at_utils_manifest__open_file(at_utils_manifest_t *manifest);
+FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest);
 
 void at_utils_manifest__close_file(at_utils_manifest_t *manifest);
 
 void at_utils_manifest__finish(at_utils_manifest_t *manifest);
+
+void at_utils_manifest__manifest(at_utils_manifest_t *manifest);
+
+void at_utils_manifest__print_int_arr(at_utils_manifest_t *manifest,
+    const int *arr, int n, const char *name);
+
+void at_utils_manifest__print_double_arr(at_utils_manifest_t *manifest,
+    const double *arr, int n, const char *name);
 
 #endif

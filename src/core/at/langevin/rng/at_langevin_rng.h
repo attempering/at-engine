@@ -16,17 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_LOG__DEF_H__
-#define AT_UTILS_LOG__DEF_H__
+#ifndef AT_UTILS_RNG_H__
+#define AT_UTILS_RNG_H__
 
-#include "../../../zcom/zcom.h"
+#include "at_langevin_rng__def.h"
+#include "../../utils/at_utils.h"
 
-typedef struct at_utils_log_t_
-{
-  int inited;
-  char *filename;
-  int nst_log;
-  zcom_log_t *log;
-} at_utils_log_t;
+void at_langevin_rng__reset(at_langevin_rng_t *rng, uint32_t seed);
+
+void at_langevin_rng__save(at_langevin_rng_t *rng);
+
+void at_langevin_rng__cfg_init(at_langevin_rng_t *rng,
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    int silent);
+
+void at_langevin_rng__finish(at_langevin_rng_t *rng);
+
+void at_langevin_rng__manifest(at_langevin_rng_t *rng,
+    at_utils_manifest_t *manifest);
 
 #endif

@@ -221,7 +221,7 @@ The options are given below:
   * 0: disabled
   * 1: enabled
 
-  Variable: `at->bias->bTH`.
+  Variable: `at->bias->enabled`.
 
   Default: 0.
 
@@ -419,9 +419,9 @@ Thus, the quantity `shk` is gradually reduced in simulation.
 
 The basic formula for `shk` is given by
 
-  `shk = shk_base * shk_window_multiplier`.
+  `shk = shk_base * shk_win_multiplier`.
 
-The window multiplier `shk_window_multiplier` is inversely
+The window multiplier `shk_win_multiplier` is inversely
 proportional to the window width (or the number of bins
 contained within) and the ensemble weight (which is the
 probability density of the overall beta distribution).

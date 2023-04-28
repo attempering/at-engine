@@ -60,10 +60,9 @@ int at_mb__write(at_mb_t *mb, at_langevin_t *langevin, double beta)
 
 
 
-void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax)
+void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 {
-  int i;
-  int pacnt;
+  FILE *fp = manifest->fp;
 
   /* bdel: bin size of beta */
   fprintf(fp, "mb->bdel: double, %g\n", mb->bdel);
@@ -72,25 +71,7 @@ void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax)
   fprintf(fp, "mb->n: int, %4d\n", mb->n);
 
   /* barr: temperature array */
-  fprintf(fp, "mb->barr: dynamic array of mb->n+1: ");
-  for (i = mb->n+1-1; i >= 0; i--) if (fabs(mb->barr[i]) > 1e-30) break;
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && mb->n+1 > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < mb->n+1; i++) {
-      if (i == arrmax && i < mb->n+1-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (mb->n+1-arrmax)) continue;
-      fprintf(fp, "%g, ", mb->barr[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_double_arr(manifest, mb->barr, mb->n+1, "mb->barr");
 
   /* flags: combination of flags */
   fprintf(fp, "mb->flags: unsigned, 0x%X\n", mb->flags);
@@ -115,7 +96,7 @@ void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax)
   fprintf(fp, "mb->flags & MB_VERBOSE (0x%X, mbest_verbose): %s\n",
     MB_VERBOSE, (mb->flags & MB_VERBOSE) ? "on" : "off");
 
-  at_mb_win__manifest(mb->win, fp, arrmax);
+  at_mb_win__manifest(mb->win, manifest);
 
   /* nstrefresh: interval of recalculating et for all temperature */
   fprintf(fp, "mb->nstrefresh: int, %4d\n", mb->nstrefresh);
@@ -136,42 +117,18 @@ void at_mb__manifest(const at_mb_t *mb, FILE *fp, int arrmax)
   fprintf(fp, "mb->wze_reps: int, %4d\n", mb->wze_reps);
 
   /* visits: number of visits */
-  fprintf(fp, "mb->visits: dynamic array of mb->n: ");
-  for (i = mb->n-1; i >= 0; i--) if (fabs(mb->visits[i]) > 1e-30) break;
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && mb->n > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < mb->n; i++) {
-      if (i == arrmax && i < mb->n-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (mb->n-arrmax)) continue;
-      fprintf(fp, "%g, ", mb->visits[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_double_arr(manifest, mb->visits, mb->n, "mb->visits");
 
   /* total_visits: total number of visits, number of tempering */
   fprintf(fp, "mb->total_visits: double, %g\n", mb->total_visits);
 
-  /* frac_min: minimal allowable coefficient during left/right combination */
-  fprintf(fp, "mb->iie->lr->frac_min: double, %g\n", mb->iie->lr->frac_min);
+  at_mb_betadist__manifest(mb->betadist, manifest);
 
-  /* cv_shift_max: maximal fraction for shift energy fluct. if cv is monotonic, it should be 0.0, for ising model, it can restrain the magnitude */
-  fprintf(fp, "mb->iie->lr->cv_shift_max: double, %g\n", mb->iie->lr->cv_shift_max);
+  at_mb_shk__manifest(mb->shk, manifest);
 
-  at_mb_betadist__manifest(mb->betadist, fp, arrmax);
+  at_mb_iie__manifest(mb->iie, manifest);
 
-  at_mb_shk__manifest(mb->shk, fp, arrmax);
-
-  at_mb_iie__manifest(mb->iie, fp, arrmax);
-
-  at_mb_accum__manifest(mb->accum, fp, arrmax);
+  at_mb_accum__manifest(mb->accum, manifest);
 
   /* cnt_int: number of additional integer variables to be written to binary file */
   fprintf(fp, "mb->cnt_int: int, %4d\n", mb->cnt_int);

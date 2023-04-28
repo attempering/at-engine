@@ -23,6 +23,7 @@
 
 //#include "mb_win__def.h"
 #include "../at_mb__def.h"
+#include "../../utils/at_utils.h"
 
 #include <stdio.h>
 
@@ -67,7 +68,7 @@ int at_mb_win__cfg_init(at_mb_win_t *win, zcom_cfg_t *cfg, at_mb_t *mb);
 
 void at_mb_win__finish(at_mb_win_t *win);
 
-void at_mb_win__manifest(const at_mb_win_t *win, FILE *fp, int arrmax);
+void at_mb_win__manifest(const at_mb_win_t *win, at_utils_manifest_t *manifest);
 
 
 #endif

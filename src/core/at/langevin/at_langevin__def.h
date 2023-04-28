@@ -19,6 +19,7 @@
 #ifndef AT_LANGEVIN__DEF_H__
 #define AT_LANGEVIN__DEF_H__
 
+#include "rng/at_langevin_rng__def.h"
 #include "zerofiller/at_langevin_zerofiller__def.h"
 #include "integrator/at_langevin_integrator__def.h"
 
@@ -62,6 +63,8 @@ typedef struct at_langevin_t_
    * of the algorithm related to large time steps */
   int     no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
+
+  at_langevin_rng_t rng[1];
 
   at_langevin_integrator_t integrator[1];
 

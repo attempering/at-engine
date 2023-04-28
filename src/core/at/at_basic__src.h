@@ -79,41 +79,47 @@ void at__output(at_t *at, llong_t step,
           at_bool_t is_first_step, at_bool_t is_last_step,
           at_bool_t do_log, at_bool_t flush_output)
 {
-  // whether to write the log file
-  if (at->nst_log > 0) {
-    do_log = (step % at->nst_log == 0) || is_first_step || is_last_step;
-  } else if (at->nst_log < 0) {
-    // logging is disabled if at->nst_log < 0
-    do_log = 0;
-  }
+  if (at->utils->log->inited) {
 
-  //fprintf(stderr, "%d, %d %p\n", do_log, at->nst_log, at->log);getchar();
+    zcom_log_t *log = at->utils->log->log;
 
-  if (at->log) {
+    if (log != NULL) {
 
-    if(flush_output) {
-      at->log->flags |= ZCOM_LOG__FLUSH_AFTER;
-    } else {
-      at->log->flags ^= ZCOM_LOG__FLUSH_AFTER;
-    }
+      int nst_log = at->utils->log->nst_log;
 
-    if (do_log) {
-      zcom_log__printf(at->log,
-          "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
-          step * at->md_time_step, ib, t2 - t1,
-          at->energy, Eav, at->beta, t1, invw);
-      zcom_log__printf(at->log, "\n");
+      // whether to write the log file
+      if (nst_log > 0) {
+        do_log = (step % nst_log == 0) || is_first_step || is_last_step;
+      } else if (nst_log < 0) {
+        // logging is disabled if at->nst_log < 0
+        do_log = 0;
+      }
+
+      if (do_log) {
+
+        if(flush_output) {
+          log->flags |= ZCOM_LOG__FLUSH_AFTER;
+        } else {
+          log->flags ^= ZCOM_LOG__FLUSH_AFTER;
+        }
+
+        zcom_log__printf(log,
+            "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
+            step * at->md_time_step, ib, t2 - t1,
+            at->energy, Eav, at->beta, t1, invw);
+        zcom_log__printf(log, "\n");
+      }
     }
   }
 
   if (at__do_every(step, at->mb->nst_save_av, is_first_step, is_last_step)) { /* save averages */
     at_mb__write(at->mb, at->langevin, at->beta);
     at_mb__write_ze_file(at->mb, NULL);
-    at_utils_rng__save(at->utils->rng);
+    at_langevin_rng__save(at->langevin->rng);
   }
 
-  if (at__do_every(step, at->eh->nst_save, is_first_step, is_last_step)) { /* save energy histograms */
-    if (at->eh != NULL) { 
+  if (at->eh->mode != 0) { 
+    if (at__do_every(step, at->eh->nst_save, is_first_step, is_last_step)) { /* save energy histograms */
       at_eh__write(at->eh);
       at_eh__reconstruct(at->eh, NULL);
     }
@@ -123,7 +129,7 @@ void at__output(at_t *at, llong_t step,
 
 
 
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step)
 {
   /* temp_thermostat: thermostat temperature */
   at->temp_thermostat = 300.0;
@@ -140,53 +146,24 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
   /* md_time_step: MD integration step, for convenience */
   at->md_time_step = md_time_step;
 
-  /* nst_log: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
-  at->nst_log = -1;
-  if (zcom_cfg__get(cfg, &at->nst_log, "nsttrace", "%d")) {
-    fprintf(stderr, "assuming default: at->nst_log = -1, key: nsttrace\n");
-  }
-
-  {
-    char *fn_rng = "mtrng.dat";
-
-    /* rng_file: file name of random number state */
-    if (zcom_cfg__get(cfg, &fn_rng, "rng_file", "%s")) {
-      fprintf(stderr, "assuming default: at->rng_file = \"%s\", key: rng_file\n", fn_rng);
-    }
-
-    at->rng_file = at_utils__make_output_filename(at->ssm, at->data_dir, fn_rng);
-  }
-
-  {
-    char *fn_log = "trace.dat";
-
-    /* log_file: name of trace file */
-    if (zcom_cfg__get(cfg, &fn_log, "log_file", "%s"))
-    {
-      fprintf(stderr, "assuming default: at->log_file = \"%s\", key: log_file\n", fn_log);
-    }
-
-    at->log_file = at_utils__make_output_filename(at->ssm, at->data_dir, fn_log);
-    //fprintf(stderr, "log file %s => %s\n", fn_log, at->log_file);getchar();
-  }
-
-  /* log: logfile */
-  // do not open log file yet, at__open_log();
-  at->log = NULL;
-
   int silent = 0;
+  const char *data_dir;
+  zcom_ssm_t *ssm;
 
-  at_utils__cfg_init(at->utils, cfg, silent);
+  at_utils__cfg_init(at->utils, cfg, isuffix, silent);
+
+  data_dir = at->utils->data_dir;
+  ssm = at->utils->ssm;
 
   at_bias__cfg_init(at->bias, cfg, silent);
 
   /* handler for multiple-bin estimator */
-  at_mb__cfg_init(at->mb, cfg, boltz, at->data_dir, silent);
+  at_mb__cfg_init(at->mb, cfg, boltz, ssm, data_dir, silent);
 
-  at_langevin__cfg_init(at->langevin, at->mb, cfg, silent);
+  at_langevin__cfg_init(at->langevin, at->mb, cfg, ssm, data_dir, silent);
 
   /* energy histogram */
-  at_eh__cfg_init(at->eh, at->mb, cfg, at->data_dir);
+  at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, silent);
 
   at->energy = 0.0;
 
@@ -198,17 +175,13 @@ void at__finish(at_t *at)
 {
   at_utils__finish(at->utils);
 
-  if (at->eh != NULL) {
-    at_eh__finish(at->eh);
-  }
+  at_eh__finish(at->eh);
 
   at_mb__finish(at->mb);
 
   at_langevin__finish(at->langevin);
 
   at_bias__finish(at->bias);
-
-  zcom_ssm__close(at->ssm);
 
   memset(at, 0, sizeof(*at));
 }
@@ -221,47 +194,36 @@ void at__close(at_t *at)
 }
 
 
-int at__manifest(at_t *at, const char *fn, int arrmax)
+int at__manifest(at_t *at)
 {
-  FILE *fp;
-
-  if ((fp = fopen(fn, "w")) == NULL)
-  {
-      fprintf(stderr, "cannot write %s\n", fn);
-      return -1;
-  }
-
+  at_utils_manifest_t *manifest = at->utils->manifest;
+  FILE *fp = at_utils_manifest__open_file(manifest);
 
   fprintf(fp, "at->temp_thermostat: double, %g\n", at->temp_thermostat);
   fprintf(fp, "at->nsttemp: int, %4d\n", at->nsttemp);
   fprintf(fp, "at->md_time_step: double, %g\n", at->md_time_step);
 
-  fprintf(fp, "at->nst_log: int, %4d\n", at->nst_log);
+  at_utils__manifest(at->utils);
 
-  if (at->log) {
-    fprintf(fp, "at->log->fname: char *, %s\n", at->log->fname);
-  }
-
-  at_bias__manifest(at->bias, fp, arrmax);
+  at_bias__manifest(at->bias, manifest);
 
   if (at->mb != NULL) {
     fprintf(fp, "at->mb: object pointer to at_mb_t\n");
-    at_mb__manifest(at->mb, fp, arrmax);
+    at_mb__manifest(at->mb, manifest);
   }
 
-  if (at->eh != NULL) {
-    fprintf(fp, "at->eh: object pointer to at_eh_t\n");
-    at_eh__manifest(at->eh, fp, arrmax);
+  if (at->eh->mode != 0) {
+    at_eh__manifest(at->eh, manifest);
   }
 
   if (at->langevin != NULL) {
     fprintf(fp, "at->langevin: object pointer to at_langevin_t\n");
-    at_langevin__manifest(at->langevin, fp, arrmax);
+    at_langevin__manifest(at->langevin, manifest);
   }
 
   fprintf(fp, "at->energy: double, %g\n", at->energy);
 
-  fclose(fp);
+  at_utils_manifest__close_file(manifest);
 
   return 0;
 }

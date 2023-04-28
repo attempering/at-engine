@@ -21,6 +21,8 @@
 
 #include "at_mb_iie_et__def.h"
 
+#include "../../../utils/at_utils.h"
+
 typedef struct at_mb_t_ at_mb_t;
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
@@ -30,6 +32,6 @@ void at_mb_iie_et__finish(at_mb_iie_et_t *et);
 
 void at_mb_iie_et__clear(at_mb_iie_et_t *et);
 
-void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, FILE *fp, int arrmax);
+void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, at_utils_manifest_t *manifest);
 
 #endif

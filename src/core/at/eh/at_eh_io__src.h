@@ -54,10 +54,9 @@ int at_eh__write(at_eh_t *eh)
 
 
 
-void at_eh__manifest(const at_eh_t* eh, FILE *fp, int arrmax)
+void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
 {
-  int i;
-  int pacnt;
+  FILE *fp = manifest->fp;
 
   /* eh_mode: 0: disable; 1: simple histogram */
   fprintf(fp, "eh->mode: int, %4d\n", eh->mode);
@@ -100,99 +99,16 @@ void at_eh__manifest(const at_eh_t* eh, FILE *fp, int arrmax)
   fprintf(fp, "eh->rfile: char *, %s\n", eh->rfile);
 
   /* eh_his: energy histogram data */
-  fprintf(fp, "eh->his: dynamic array of eh->n*eh->cnt: ");
-
-  for (i = eh->n*eh->cnt-1; i >= 0; i--) {
-    if (fabs(eh->his[i]) > 1e-30) {
-      break;
-    }
-  }
-
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && eh->n*eh->cnt > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < eh->n*eh->cnt; i++) {
-      if (i == arrmax && i < eh->n*eh->cnt-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (eh->n*eh->cnt-arrmax)) continue;
-      fprintf(fp, "%g, ", eh->his[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->cnt, "eh->his");
 
   /* eh_recon: temporary space for reconstructing histogram */
-  fprintf(fp, "eh->recon: dynamic array of eh->cnt: ");
-  for (i = eh->cnt-1; i >= 0; i--) {
-    if (fabs(eh->recon[i]) > 1e-30) {
-      break;
-    }
-  }
-
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && eh->cnt > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < eh->cnt; i++) {
-      if (i == arrmax && i < eh->cnt-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (eh->cnt-arrmax)) continue;
-      fprintf(fp, "%g, ", eh->recon[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_double_arr(manifest, eh->recon, eh->cnt, "eh->recon");
 
   /* eh_is: indices for temperature windows (lower) */
-  fprintf(fp, "eh->is: dynamic array of eh->n + 1: ");
-  for (i = eh->n + 1-1; i >= 0; i--) if (eh->is[i]) break;
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && eh->n + 1 > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < eh->n + 1; i++) {
-      if (i == arrmax && i < eh->n + 1-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (eh->n + 1-arrmax)) continue;
-      fprintf(fp, "%4d, ", eh->is[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_int_arr(manifest, eh->is, eh->n + 1, "eh->is");
 
   /* eh_it: indices for temperature windows (higher) */
-  fprintf(fp, "eh->it: dynamic array of eh->n + 1: ");
-  for (i = eh->n + 1-1; i >= 0; i--) if (eh->it[i]) break;
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && eh->n + 1 > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < eh->n + 1; i++) {
-      if (i == arrmax && i < eh->n + 1-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (eh->n + 1-arrmax)) continue;
-      fprintf(fp, "%4d, ", eh->it[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_int_arr(manifest, eh->it, eh->n + 1, "eh->it");
 
   /* AT_EH_ADDAHALF: add a half energy bin width in output */
   fprintf(fp, "eh->flags & AT_EH_ADDAHALF (0x%X, ehist_addahalf): %s\n",

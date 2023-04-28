@@ -58,6 +58,7 @@ static int at_mb__check_barr(at_mb_t *mb)
 
 int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
     double boltz,
+    zcom_ssm_t *ssm,
     const char *data_dir,
     int silent)
 {
@@ -68,8 +69,6 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
-
-  mb->ssm = zcom_ssm__open();
 
   mb->boltz = boltz;
 
@@ -236,7 +235,7 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
     if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav_file", "%s")) {
       IF_VERBOSE_FPRINTF(stderr, "assuming default: mb->av_file = \"%s\", key: mbav_file\n", fn_mb);
     }
-    mb->av_file = at_utils__make_output_filename(mb->ssm, data_dir, fn_mb);
+    mb->av_file = at_utils__make_output_filename(ssm, data_dir, fn_mb);
   }
 
   /* ze_file: name of ze file */
@@ -245,7 +244,7 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
     if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze_file", "%s")) {
       IF_VERBOSE_FPRINTF(stderr, "assuming default: mb->ze_file = \"%s\", key: ze_file\n", fn_ze);
     }
-    mb->ze_file = at_utils__make_output_filename(mb->ssm, data_dir, fn_ze);
+    mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
   }
 
   /* wze_reps: number of iterations before writing ze file */
@@ -306,8 +305,6 @@ void at_mb__finish(at_mb_t *mb)
   at_mb_win__finish(mb->win);
 
   at_mb_iie__finish(mb->iie);
-
-  zcom_ssm__close(mb->ssm);
 
   memset(mb, 0, sizeof(*mb));
 }

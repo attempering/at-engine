@@ -24,14 +24,14 @@
 
 void at_bias__cfg_init(at_bias_t *bias, zcom_cfg_t *cfg, int silent)
 {
-  /* bTH : 0: disable; 1:enable */
-  bias->bTH = 0;
-  if (cfg != NULL && zcom_cfg__get(cfg, &bias->bTH, "boost_mode", "%d"))
+  /* enabled : 0: disable; 1:enable */
+  bias->enabled = 0;
+  if (cfg != NULL && zcom_cfg__get(cfg, &bias->enabled, "boost_mode", "%d"))
   {
     fprintf(stderr, "assuming default: bias->th_mode = 0, key: boost_mode\n");
   }
 
-  if (bias->bTH) {
+  if (bias->enabled) {
 
     /* TH_Tref */
     bias->TH_Tref = 300.0;
@@ -61,11 +61,13 @@ void at_bias__finish(at_bias_t *bias)
 {
 }
 
-void at_bias__manifest(at_bias_t *bias, FILE *fp, int arrmax)
+void at_bias__manifest(at_bias_t *bias, at_utils_manifest_t *manifest)
 {
-  fprintf(fp, "bias->bTH: at_bool_t, %s\n", (bias->bTH ? "true" : "false"));
+  FILE *fp = manifest->fp;
 
-  if (bias->bTH) {
+  fprintf(fp, "bias->enabled: at_bool_t, %s\n", (bias->enabled ? "true" : "false"));
+
+  if (bias->enabled) {
     fprintf(fp, "bias->th_Tref: double, %g\n", bias->TH_Tref);
     fprintf(fp, "bias->kappa0: double, %g\n", bias->kappa0);
     fprintf(fp, "bias->epsilon0: double, %g\n", bias->epsilon0);

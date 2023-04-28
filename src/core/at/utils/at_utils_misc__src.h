@@ -39,7 +39,14 @@ char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, cons
     zcom_ssm__concat(ssm, &buf, fn);
 
   } else {
-    buf = zcom_ssm__dup(ssm, fn);
+
+    if (ssm != NULL) {
+      buf = zcom_ssm__dup(ssm, fn);
+    } else {
+      // only for testing code
+      buf = (char *) fn;
+    }
+
   }
 
   return buf;

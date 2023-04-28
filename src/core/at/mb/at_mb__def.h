@@ -31,8 +31,6 @@
 #include "accum/at_mb_accum__def.h"
 #include "iie/at_mb_iie__def.h"
 
-typedef struct zcom_ssm_t_ zcom_ssm_t;
-
 /* multiple-bin estimator parameters */
 typedef struct at_mb_t_ {
   double    boltz;    /* Boltzmann constant */
@@ -66,8 +64,6 @@ typedef struct at_mb_t_ {
   at_mb_accum_t accum[1];
 
   at_mb_iie_t  iie[1];
-
-  zcom_ssm_t     *ssm;     /* string allocator */
 
   int       cnt_int;  /* number of additional integer variables to be written to binary file */
   int       cnt_dbl;  /* number of additional double variables to be written to binary file */

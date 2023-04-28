@@ -34,14 +34,14 @@ void at__output(at_t *at, llong_t step,
 
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values */
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step);
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step);
 
 void at__finish(at_t *at);
 
 /* close a pointer to at_t */
 void at__close(at_t *at);
 
-int at__manifest(at_t *at, const char *fn, int arrmax);
+int at__manifest(at_t *at);
 
 #endif
 

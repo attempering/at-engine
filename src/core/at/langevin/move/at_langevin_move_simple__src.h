@@ -34,7 +34,6 @@ double at_langevin__move_simple(
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    zcom_mtrng_t *rng,
     double *bin_av_energy)
 {
   const int cheap_av_energy = 0;
@@ -59,7 +58,7 @@ double at_langevin__move_simple(
       invwf, neg_dlnwf_dbeta,
       cheap_av_energy,
       apply_dkt_max,
-      rng, bin_av_energy);
+      bin_av_energy);
 
   //fprintf(stderr, "3. beta %g => %g, %g\n", beta_old, proposal->beta_new, *bin_av_energy);
 

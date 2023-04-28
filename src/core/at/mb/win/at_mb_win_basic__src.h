@@ -187,66 +187,27 @@ void at_mb_win__finish(at_mb_win_t *win)
 
 
 
-static void at_mb_win__manifest_int_arr(FILE *fp, const int *arr, int n,
-    const char* name, int arrmax)
+void at_mb_win__manifest(const at_mb_win_t *win, at_utils_manifest_t *manifest)
 {
-  int i, pacnt;
+  FILE *fp = manifest->fp;
 
-  fprintf(fp, "%s: dynamic array of win->n: ", name);
-
-  for (i = n-1; i >= 0; i--) {
-    if (arr[i] > 0) break;
-  }
-
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && n > 6) {
-      fprintf(fp, "\n");
-    }
-    for (pacnt = 0, i = 0; i < n; i++) {
-      if (i == arrmax && i < n-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) {
-          fprintf(fp, "\n");
-        }
-        fprintf(fp, "..., ");
-        if (arrmax > 3) {
-          fprintf(fp, "\n");
-        }
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (n-arrmax)) continue;
-      fprintf(fp, "%4d, ", arr[i]);
-      if (++pacnt % 10 == 0) {
-        fprintf(fp, "\n");
-      }
-    }
-    if (pacnt % 10 != 0) {
-      fprintf(fp, "\n");
-    }
-  } else {
-    fprintf(fp, " {0}\n");
-  }
-}
-
-
-
-void at_mb_win__manifest(const at_mb_win_t *win, FILE *fp, int arrmax)
-{
   /* bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
   fprintf(fp, "win->bwmod: int, %4d\n", win->bwmod);
 
   /* bwdel: delta lnT */
   fprintf(fp, "win->bwdel: double, %g\n", win->bwdel);
 
-  at_mb_win__manifest_int_arr(fp, win->js_grid_unres, win->n+1, "win->js_grid_unres", arrmax);
+  at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "win->js_grid_unres");
 
-  at_mb_win__manifest_int_arr(fp, win->jt_grid_unres, win->n+1, "win->jt_grid_unres", arrmax);
+  at_utils_manifest__print_int_arr(manifest, win->jt_grid_unres, win->n+1, "win->jt_grid_unres");
 
-  at_mb_win__manifest_int_arr(fp, win->js_bin, win->n, "win->js_bin", arrmax);
+  at_utils_manifest__print_int_arr(manifest, win->js_bin, win->n, "win->js_bin");
 
-  at_mb_win__manifest_int_arr(fp, win->jt_bin, win->n, "win->jt_bin", arrmax);
+  at_utils_manifest__print_int_arr(manifest, win->jt_bin, win->n, "win->jt_bin");
 
-  at_mb_win__manifest_int_arr(fp, win->js_grid_res, win->n+1, "win->js_grid_res", arrmax);
+  at_utils_manifest__print_int_arr(manifest, win->js_grid_res, win->n+1, "win->js_grid_res");
 
-  at_mb_win__manifest_int_arr(fp, win->jt_grid_res, win->n+1, "win->jt_grid_res", arrmax);
+  at_utils_manifest__print_int_arr(manifest, win->jt_grid_res, win->n+1, "win->jt_grid_res");
 }
 
 

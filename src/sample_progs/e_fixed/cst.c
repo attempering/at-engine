@@ -43,7 +43,7 @@ void run_cst_md(at_t* at, llong_t nsteps)
 {
   llong_t step = 0;
 
-  zcom_mtrng__init_from_seed(at->mtrng, langevin_seed);
+  zcom_mtrng__init_from_seed(at->langevin->rng->mtrng, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
   remove("atdata0/trace.dat");
 
   at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
-  at__manifest(at, "atdata0/at-manifest.dat", 3);
+  at__manifest(at);
 
   if (use_minicst) { // simplified CST for reference
 

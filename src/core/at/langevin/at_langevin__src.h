@@ -27,6 +27,8 @@
 
 #include "at_langevin_io__src.h"
 
+#include "rng/at_langevin_rng__src.h"
+
 #include "zerofiller/at_langevin_zerofiller__src.h"
 
 #include "integrator/at_langevin_integrator__src.h"

@@ -33,7 +33,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, i
 
 void at_mb_shk__finish(at_mb_shk_t *shk);
 
-void at_mb_shk__manifest(const at_mb_shk_t *shk, FILE *fp, int arrmax);
+void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest);
 
 double at_mb_shk__calc_shk_base(at_mb_shk_t *shk, double total_visits);
 

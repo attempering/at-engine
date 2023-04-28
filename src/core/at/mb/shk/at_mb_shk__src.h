@@ -55,9 +55,9 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, i
     goto ERR;
   }
 
-  /* shk_window_multiplier: array used of modulation shrinking factors */
-  if ((shk->window_multiplier = (double *) calloc((shk->n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: shk->window_multiplier, type: double\n");
+  /* shk_win_multiplier: array used of modulation shrinking factors */
+  if ((shk->win_multiplier = (double *) calloc((shk->n + 1), sizeof(double))) == NULL) {
+    fprintf(stderr, "no memory! var: shk->win_multiplier, type: double\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -66,7 +66,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, i
     double beta_midpoint = 0.5*(mb->barr[i] + mb->barr[i+1]);
     double invwf = at_mb_betadist__calc_inv_weight(mb->betadist, beta_midpoint, NULL, NULL, NULL);
     int window_width = mb->win->jt_bin[i] - mb->win->js_bin[i];
-    shk->window_multiplier[i] = invwf * mb->accum->m / window_width;
+    shk->win_multiplier[i] = invwf * mb->accum->m / window_width;
   }
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
@@ -118,16 +118,16 @@ ERR:
 
 
 void at_mb_shk__finish(at_mb_shk_t *shk) {
-  if (shk->window_multiplier != NULL) {
-    free(shk->window_multiplier);
+  if (shk->win_multiplier != NULL) {
+    free(shk->win_multiplier);
   }
 }
 
 
 
-void at_mb_shk__manifest(const at_mb_shk_t *shk, FILE *fp, int arrmax)
+void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest)
 {
-  int i, pacnt;
+  FILE *fp = manifest->fp;
 
   /* shk_base: current generic shrink amplitude */
   fprintf(fp, "shk->base: double, %g\n", shk->base);
@@ -138,42 +138,8 @@ void at_mb_shk__manifest(const at_mb_shk_t *shk, FILE *fp, int arrmax)
   /* shk_max: initial and maximal shrink (adjusted) */
   fprintf(fp, "shk->max: double, %g\n", shk->max);
 
-  /* shk_window_multiplier: array used of modulation shrinking factors */
-  fprintf(fp, "shk->window_multiplier: dynamic array of shk->n: ");
-
-  for (i = shk->n-1; i >= 0; i--) {
-    if (fabs(shk->window_multiplier[i]) > 1e-30) {
-      break;
-    }
-  }
-
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && shk->n > 6) {
-      fprintf(fp, "\n");
-    }
-
-    for (pacnt = 0, i = 0; i < shk->n; i++) {
-      if (i == arrmax && i < shk->n - arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) {
-          fprintf(fp, "\n");
-        }
-        fprintf(fp, "..., ");
-        if (arrmax > 3) {
-          fprintf(fp, "\n");
-        }
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (shk->n - arrmax)) {
-        continue;
-      }
-      fprintf(fp, "%g, ", shk->window_multiplier[i]);
-      if (++pacnt % 10 == 0) {
-        fprintf(fp, "\n");
-      }
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  /* shk_win_multiplier: array used of modulation shrinking factors */
+  at_utils_manifest__print_double_arr(manifest, shk->win_multiplier, shk->n, "shk->win_multiplier");
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   fprintf(fp, "shk->mode: int, %4d\n", shk->mode);
@@ -254,10 +220,10 @@ double at_mb_shk__calc_inverse_gamma(at_mb_shk_t *shk, double total_visits, int 
   shk_val = at_mb_shk__calc_shk_base(shk, total_visits); /* compute the unadjusted */
 
   if (shk->window_adjusted) { /* multiply the gauge */
-    zcom_util__exit_if (shk->window_multiplier == NULL, "window multiplier is null\n");
+    zcom_util__exit_if (shk->win_multiplier == NULL, "window multiplier is null\n");
     zcom_util__exit_if (ib < 0 || ib >= shk->n, "index %d out of range\n", ib);
 
-    shk_val *= shk->window_multiplier[ib];
+    shk_val *= shk->win_multiplier[ib];
 
     if (shk_val > shk->max) {
       shk_val = shk->max;

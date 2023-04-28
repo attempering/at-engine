@@ -22,6 +22,7 @@
 #include <stdio.h>
 
 #include "at_mb_betadist__def.h"
+#include "../../utils/at_utils.h"
 
 typedef struct at_mb_t_ at_mb_t;
 typedef struct zcom_cfg_t_ zcom_cfg_t;
@@ -30,7 +31,7 @@ int at_mb_betadist__cfg_init(at_mb_betadist_t *betadist, zcom_cfg_t *cfg, at_mb_
 
 void at_mb_betadist__finish(at_mb_betadist_t *betadist);
 
-void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, FILE *fp, int arrmax);
+void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, at_utils_manifest_t *manifest);
 
 /* return the inverse of overall temperature weight
  *

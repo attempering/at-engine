@@ -39,7 +39,6 @@ double at_langevin__move(
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    zcom_mtrng_t *rng,
     double *bin_av_energy);
 
 /* Langevin equation without Metropolis correction */
@@ -51,7 +50,6 @@ double at_langevin__move_simple(
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    zcom_mtrng_t *rng,
     double *bin_av_energy);
 
 /* Langevin equation with Metropolisation correction */
@@ -63,7 +61,6 @@ double at_langevin__move_corrected(
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    zcom_mtrng_t *rng,
     double *bin_av_energy);
 
 /* return the acceptance ratio so far (for the corrected move) */

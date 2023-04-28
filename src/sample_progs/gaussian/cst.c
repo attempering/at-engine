@@ -44,7 +44,7 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, llong_t nsteps)
 {
   llong_t step = 0;
 
-  zcom_mtrng__init_from_seed(at->mtrng, langevin_seed);
+  zcom_mtrng__init_from_seed(at->langevin->rng->mtrng, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 

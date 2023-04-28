@@ -28,7 +28,7 @@
 */
 typedef struct at_bias_t_
 {
-  int       bTH;
+  int       enabled;
   double    TH_Tref;
   double    *kappa, *epsilon;
   double    kappa0, epsilon0;

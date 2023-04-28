@@ -16,17 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_LOG__DEF_H__
-#define AT_UTILS_LOG__DEF_H__
+#ifndef AT_LANGEVIN_RNG__DEF_H__
+#define AT_LANGEVIN_RNG__DEF_H__
 
-#include "../../../zcom/zcom.h"
+typedef struct zcom_mtrng_t_ zcom_mtrng_t;
 
-typedef struct at_utils_log_t_
+typedef struct at_langevin_rng_t_
 {
   int inited;
   char *filename;
-  int nst_log;
-  zcom_log_t *log;
-} at_utils_log_t;
+  zcom_mtrng_t *mtrng;
+} at_langevin_rng_t;
 
 #endif

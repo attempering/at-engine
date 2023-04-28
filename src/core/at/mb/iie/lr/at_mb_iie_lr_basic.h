@@ -31,5 +31,7 @@ void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf,
 
 void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr);
 
+void at_mb_iie_lr__manifest(const at_mb_iie_lr_t *lr, at_utils_manifest_t *manifest);
+
 #endif
 

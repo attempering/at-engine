@@ -51,14 +51,15 @@ typedef long llong_t;
 typedef struct at_t_ {
   double    boltz;            // Boltzmann constant
 
-  double    beta;             // current beta
+  double    md_time_step;     // MD integration step for reference
 
   double    temp_thermostat;  // thermostat temperature
 
-  double    md_time_step;     // MD integration step for reference
-  int       nsttemp;          // interval of tempering, 0: disable, -1: only when doing neighbor searching
+  double    beta;             // current beta
 
   double    energy;           // current coupling energy
+
+  int       nsttemp;          // interval of tempering, 0: disable, -1: only when doing neighbor searching
 
   at_bias_t     bias[1];      // high-temperature bias
 
@@ -67,19 +68,6 @@ typedef struct at_t_ {
   at_langevin_t langevin[1];  // Langevin equation
 
   at_eh_t       eh[1];        // energy histogram
-
-  zcom_ssm_t    *ssm;         // string allocator
-
-  zcom_mtrng_t  *mtrng;       // random number generator
-
-  char          *rng_file;    // random number file name
-
-  int           nst_log;      // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
-  char          *log_file;    // log/trace file name
-  zcom_log_t    *log;         // log file
-
-  char          ch_suffix;    // file suffix as a single-digit character
-  char          data_dir[32];
 
   at_utils_t    utils[1];
 

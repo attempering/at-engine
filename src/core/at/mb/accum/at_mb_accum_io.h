@@ -24,9 +24,9 @@
 #include "../at_mb__def.h"
 #include "../win/at_mb_win.h"
 #include "../shk/at_mb_shk.h"
-#include <stdio.h>
+#include "../../utils/at_utils.h"
 
-void at_mb_accum__manifest(const at_mb_accum_t *accum, FILE *fp, int arrmax);
+void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *manifest);
 
 int at_mb_accum__read_binary(at_mb_accum_t *accum, FILE *fp, int endn);
 

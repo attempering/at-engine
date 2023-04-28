@@ -20,14 +20,15 @@
 #define AT_UTILS__DEF_H__
 
 #include "manifest/at_utils_manifest__def.h"
-#include "rng/at_utils_rng__def.h"
 #include "log/at_utils_log__def.h"
 
 typedef struct at_utils_t_
 {
+  int inited;
   at_utils_manifest_t manifest[1];
-  at_utils_rng_t rng[1];
   at_utils_log_t log[1];
+  char data_dir[FILENAME_MAX];
+  zcom_ssm_t *ssm;
 } at_utils_t;
 
 #endif

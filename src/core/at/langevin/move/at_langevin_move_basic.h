@@ -59,7 +59,6 @@ int at_langevin_move__propose(
     double neg_dlnwf_dbeta,
     int cheap_av_energy,
     int apply_dkt_max,
-    zcom_mtrng_t *rng,
     double *bin_av_energy);
 
 /* moderate the stride in the beta space */

@@ -25,7 +25,8 @@
 #include "../../zcom/zcom.h"
 
 
-int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg, const char *data_dir)
+int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm, const char *data_dir, int silent)
 {
   int i;
 
@@ -173,7 +174,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg, const char *data_
     if (0 != zcom_cfg__get(cfg, &fn_eh, "ehist_file", "%s")) {
       fprintf(stderr, "assuming default: eh->file = \"%s\", key: ehist_file\n", fn_eh);
     }
-    eh->file = at_utils__make_output_filename(mb->ssm, data_dir, fn_eh);
+    eh->file = at_utils__make_output_filename(ssm, data_dir, fn_eh);
   }
 
   /* eh_rfile: name of reconstructed energy histogram */
@@ -183,7 +184,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg, const char *data_
     if (0 != zcom_cfg__get(cfg, &fn_eh_mb, "ehist_mbin_file", "%s")) {
       fprintf(stderr, "assuming default: eh->rfile = \"%s\", key: ehist_mbin_file\n", fn_eh_mb);
     }
-    eh->rfile = at_utils__make_output_filename(mb->ssm, data_dir, fn_eh_mb);
+    eh->rfile = at_utils__make_output_filename(ssm, data_dir, fn_eh_mb);
   }
 
   /* eh_his: energy histogram data */
@@ -325,7 +326,7 @@ void at_eh__clear(at_eh_t *eh)
 void at_eh__finish(at_eh_t *eh)
 {
   /* when eh->mode == 0, data members are not allocated */
-  if (eh->mode) {
+  if (eh->mode != 0) {
     if (eh->his    != NULL) free(eh->his);
     if (eh->recon  != NULL) free(eh->recon);
     if (eh->is     != NULL) free(eh->is);

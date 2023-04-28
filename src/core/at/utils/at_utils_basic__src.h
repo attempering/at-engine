@@ -24,24 +24,37 @@
 #include "at_utils_basic.h"
 #include "log/at_utils_log.h"
 #include "manifest/at_utils_manifest.h"
-#include "rng/at_utils_rng.h"
 #include "../../zcom/zcom.h"
 
 
 
-void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, int silent)
+void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
+    int isuffix, int silent)
 {
-  at_utils_manifest__cfg_init(utils->manifest, cfg, silent);
-  at_utils_log__cfg_init(utils->log, cfg, silent);
-  at_utils_rng__cfg_init(utils->rng, cfg, silent);
+  sprintf(utils->data_dir, "atdata%d", isuffix);
+  printf("datadir: %s\n", utils->data_dir);
+
+  utils->ssm = zcom_ssm__open();
+  at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, utils->data_dir, silent);
+  at_utils_log__cfg_init(utils->log, cfg, utils->ssm, utils->data_dir, silent);
+  utils->inited = 1;
 }
 
 
 void at_utils__finish(at_utils_t *utils)
 {
-  at_utils_rng__finish(utils->rng);
   at_utils_log__finish(utils->log);
   at_utils_manifest__finish(utils->manifest);
+  if (utils->inited) {
+    zcom_ssm__close(utils->ssm);
+    utils->ssm = NULL;
+  }
+}
+
+void at_utils__manifest(at_utils_t *utils)
+{
+  at_utils_manifest__manifest(utils->manifest);
+  at_utils_log__manifest(utils->log, utils->manifest);
 }
 
 #endif

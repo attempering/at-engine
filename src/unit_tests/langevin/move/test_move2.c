@@ -57,9 +57,9 @@ void init_mb_langevin_objects(at_mb_t *mb, at_langevin_t *langevin)
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
   int silent = 1;
 
-  at_mb__cfg_init(mb, cfg, boltz, NULL, silent);
+  at_mb__cfg_init(mb, cfg, boltz, NULL, NULL, silent);
 
-  at_langevin__cfg_init(langevin, mb, cfg, silent);
+  at_langevin__cfg_init(langevin, mb, cfg, NULL, NULL, silent);
 
   zcom_cfg__close(cfg);
 }
@@ -117,7 +117,7 @@ int test_langevin_move(at_mb_t *mb, at_langevin_t *langevin,
 
     // use the Langevin equation to update the temperature
     beta = at_langevin__move(langevin, mb, energy,
-        beta, ib, invwf, neg_dlnwf_dbeta, mtrng, &ergt);
+        beta, ib, invwf, neg_dlnwf_dbeta, &ergt);
 
     //fprintf(stderr, "step %d: beta %g, energy %g, invwf %g\n", step, beta, energy, invwf);
   }

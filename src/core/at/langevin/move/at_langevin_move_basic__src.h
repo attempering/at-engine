@@ -65,7 +65,6 @@ int at_langevin_move__propose(
     double neg_dlnwf_dbeta,
     int cheap_av_energy,
     int apply_dkt_max,
-    zcom_mtrng_t *rng,
     double *bin_av_energy)
 {
   double rand_mag, noise;
@@ -82,7 +81,7 @@ int at_langevin_move__propose(
 
   rand_mag = proposal->kt_old * sqrt(2.0 * proposal->time_step);
 
-  noise = zcom_mtrng__randgaus(rng);
+  noise = zcom_mtrng__randgaus(langevin->rng->mtrng);
 
   proposal->dkt_deterministic = at_langevin_move__calc_dkt_deterministic(
       langevin,

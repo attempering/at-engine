@@ -22,46 +22,76 @@
 #include "at_utils_log.h"
 
 #include "../../../zcom/zcom.h"
+#include "../at_utils_misc.h"
+#include "../manifest/at_utils_manifest.h"
 
 
 
 void at_utils_log__cfg_init(at_utils_log_t *log,
-    zcom_cfg_t *cfg, int silent)
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    int silent)
 {
-  log->enabled = 1;
-
   log->filename = "log.dat";
   if (cfg != NULL && zcom_cfg__get(cfg, &log->filename, "log_file", "%s"))
   {
-    fprintf(stderr, "assuming default: log->filename = \"log.dat\", key: log_file\n");
+    fprintf(stderr, "assuming default: utils->log->filename = \"log.dat\", key: log_file\n");
   }
 
-}
+  log->filename = at_utils__make_output_filename(ssm, data_dir, log->filename);
 
-
-
-int at_utils_log__open_file(at_utils_log_t *log)
-{
-  if ((log->fp = fopen(log->filename, "w")) == NULL) {
-    return -1;
+  /* nst_log: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
+  log->nst_log = -1;
+  if (zcom_cfg__get(cfg, &log->nst_log, "nsttrace", "%d")) {
+    fprintf(stderr, "assuming default: utils->log->nst_log = -1, key: nsttrace\n");
   }
-  return 0;
-}
+  
+  {
+    char *fn_log = "trace.dat";
 
+    /* log_file: name of trace file */
+    if (zcom_cfg__get(cfg, &fn_log, "log_file", "%s"))
+    {
+      fprintf(stderr, "assuming default: utils->log->log_file = \"%s\", key: log_file\n", fn_log);
+    }
 
-void at_utils_log__close_file(at_utils_log_t *log)
-{
-  if (log->fp != NULL) {
-    fclose(log->fp);
-    log->fp = NULL;
+    //fprintf(stderr, "log file %s => %s\n", fn_log, at->log_file);getchar();
   }
+
+  // do not open log file yet, at__open_log();
+  log->log = NULL;
+
+  log->inited = 1;
 }
+
 
 
 void at_utils_log__finish(at_utils_log_t *log)
 {
-  at_utils_log__close_file(log);
+  if (log->inited) {
+    at_utils_log__close_file(log);
+  }
 }
 
+
+void at_utils_log__open_file(at_utils_log_t *log)
+{
+  log->log = zcom_log__open(log->filename);
+}
+
+void at_utils_log__close_file(at_utils_log_t *log)
+{
+  if (log->log) {
+    zcom_log__close(log->log);
+  }
+}
+
+void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest)
+{
+  fprintf(manifest->fp, "utils->log->nst_log: int, %4d\n", log->nst_log);
+
+  fprintf(manifest->fp, "utils->log->fname: char *, %s\n", log->filename);
+}
 
 #endif

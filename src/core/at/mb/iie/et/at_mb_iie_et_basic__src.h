@@ -104,8 +104,10 @@ void at_mb_iie_et__clear(at_mb_iie_et_t *et)
 
 
 
-void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, FILE *fp, int arrmax)
+void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, at_utils_manifest_t *manifest)
 {
+  FILE *fp = manifest->fp;
+
   fprintf(fp, "mb->iie->et->cache_params->enabled: double, %d\n", et->cache_params->enabled);
 
   fprintf(fp, "mb->iie->et->cache_params->lifespan: double, %g\n", et->cache_params->lifespan);

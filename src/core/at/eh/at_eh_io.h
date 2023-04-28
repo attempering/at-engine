@@ -23,10 +23,12 @@
 
 #include "at_eh_io_binary.h"
 
+#include "../utils/at_utils.h"
+
 int at_eh__read(at_eh_t *eh);
 
 int at_eh__write(at_eh_t *eh);
 
-void at_eh__manifest(const at_eh_t *eh, FILE *fp, int arrmax);
+void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest);
 
 #endif

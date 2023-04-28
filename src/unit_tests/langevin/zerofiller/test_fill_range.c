@@ -40,9 +40,9 @@ void init_mb_and_langevin(at_mb_t *mb, at_langevin_t *langevin)
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
 
   // beta_min and beta_max are to be read from the configuration file
-  at_mb__cfg_init(mb, cfg, boltz, NULL, 1);
+  at_mb__cfg_init(mb, cfg, boltz, NULL, NULL, 1);
 
-  at_langevin__cfg_init(langevin, mb, cfg, 1);
+  at_langevin__cfg_init(langevin, mb, cfg, NULL, NULL, 1);
 
   zcom_cfg__close(cfg);
 }
@@ -53,16 +53,16 @@ double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
   at_mb_sm_t *sm;
-  zcom_mtrng_t rng[1];
+  zcom_mtrng_t mtrng[1];
   double *data;
 
-  zcom_mtrng__init_from_seed(rng, 12345);
+  zcom_mtrng__init_from_seed(mtrng, 12345);
 
   data = (double *) calloc(mb->n, sizeof(double));
 
   for (i = 0; i < mb->n; i++) {
 
-    if (zcom_mtrng__rand01(rng) < fill_prob) {
+    if (zcom_mtrng__rand01(mtrng) < fill_prob) {
 
       sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
       double beta = mb->bmin + (i + 0.5) * mb->bdel;

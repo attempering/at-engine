@@ -105,9 +105,9 @@ ERR:
 }
 
 
-void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, FILE *fp, int arrmax)
+void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, at_utils_manifest_t *manifest)
 {
-  int i, pacnt;
+  FILE *fp = manifest->fp;
 
   /* ens_exp: ensemble exponent of beta */
   fprintf(fp, "mb->ens_exp: double, %g\n", betadist->ens_exp);
@@ -129,32 +129,8 @@ void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, FILE *fp, int ar
   }
 
   /* ens_w: array of ensemble weights at bin boundaries */
-  fprintf(fp, "mb->ens_w: dynamic array of mb->n+1: ");
-  for (i = betadist->n+1-1; i >= 0; i--) {
-    if (fabs(betadist->ens_w[i]) > 1e-30) {
-      break;
-    }
-  }
+  at_utils_manifest__print_double_arr(manifest, betadist->ens_w, betadist->n, "betadist->ens_w");
 
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && betadist->n+1 > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < betadist->n+1; i++) {
-      if (i == arrmax && i < betadist->n+1-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (betadist->n+1-arrmax)) {
-        continue;
-      }
-      fprintf(fp, "%g, ", betadist->ens_w[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
 }
 
 

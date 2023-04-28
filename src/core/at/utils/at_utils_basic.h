@@ -26,9 +26,12 @@
 
 
 
-void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, int silent);
+void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
+    int isuffix, int silent);
 
 void at_utils__finish(at_utils_t *utils);
+
+void at_utils__manifest(at_utils_t *utils);
 
 
 #endif

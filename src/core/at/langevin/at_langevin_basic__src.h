@@ -22,6 +22,8 @@
 
 #include "at_langevin_basic.h"
 
+#include "rng/at_langevin_rng.h"
+
 #include "zerofiller/at_langevin_zerofiller.h"
 
 #include "integrator/at_langevin_integrator.h"
@@ -31,7 +33,11 @@
 
 
 int at_langevin__cfg_init(at_langevin_t *langevin,
-    at_mb_t *mb, zcom_cfg_t *cfg, int silent)
+    at_mb_t *mb,
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    int silent)
 {
   /* dt: time step for the temperature Langevin eq */
   langevin->dt = 1e-5;
@@ -72,6 +78,9 @@ int at_langevin__cfg_init(at_langevin_t *langevin,
   langevin->rejects = 0.0;
   /* total: total number of Langevin moves */
   langevin->total = 0.0;
+
+  // initialize the random number generator
+  at_langevin_rng__cfg_init(langevin->rng, cfg, ssm, data_dir, silent);
 
   // initialize the integrator
   {

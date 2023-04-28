@@ -20,9 +20,9 @@
 #define AT_LANGEVIN_IO_H__
 
 #include "at_langevin__def.h"
-#include <stdio.h>
+#include "../utils/at_utils.h"
 
-void at_langevin__manifest(const at_langevin_t *langevin, FILE *fp, int arrcnt);
+void at_langevin__manifest(const at_langevin_t *langevin, at_utils_manifest_t *manifest);
 
 int at_langevin__read_binary(at_langevin_t *langevin, FILE *fp, int endn);
 

@@ -193,8 +193,7 @@ static double at_langevin_move__calc_lng_ratio(
 static int at_langevin_move__accept(
     const langevin_move_proposal_t *proposal,
     at_langevin_t *langevin,
-    at_mb_t *mb,
-    zcom_mtrng_t *rng)
+    at_mb_t *mb)
 {
   int ib_new;
   double neg_dlnwf_dbeta_new;
@@ -248,7 +247,7 @@ static int at_langevin_move__accept(
 
   } else {
 
-    double r = zcom_mtrng__rand01(rng);
+    double r = zcom_mtrng__rand01(langevin->rng->mtrng);
 
     if (r < exp(ln_fac)) {
       return 1;
@@ -271,7 +270,6 @@ double at_langevin__move_corrected(
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    zcom_mtrng_t *rng,
     double *bin_av_energy)
 {
   langevin_move_proposal_t proposal[1];
@@ -294,7 +292,6 @@ double at_langevin__move_corrected(
       invwf, neg_dlnwf_dbeta,
       at_langevin_move_corrected__use_cheap_av_energy_for_forward_move,
       at_langevin_move_corrected__apply_dkt_max,
-      rng,
       bin_av_energy);
 
   stride_moderated = at_langevin_move__moderate_stride(
@@ -306,8 +303,7 @@ double at_langevin__move_corrected(
   accepted = at_langevin_move__accept(
       proposal,
       langevin,
-      mb,
-      rng);
+      mb);
 
   if (accepted) {
     beta = proposal->beta_new;
@@ -342,17 +338,15 @@ double at_langevin__move(
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    zcom_mtrng_t *rng,
     double *bin_av_energy)
 {
-
   if (langevin->corrected) {
 
     return at_langevin__move_corrected(
         langevin, mb,
         current_energy, beta, ib,
         invwf, neg_dlnwf_dbeta,
-        rng, bin_av_energy);
+        bin_av_energy);
 
   } else {
 
@@ -360,7 +354,7 @@ double at_langevin__move(
         langevin, mb,
         current_energy, beta, ib,
         invwf, neg_dlnwf_dbeta,
-        rng, bin_av_energy);
+        bin_av_energy);
 
   }
 

@@ -20,11 +20,11 @@
 #define AT_UTILS_H__
 
 #include "sys/at_utils_sys.h"
+#include "at_utils_misc.h"
+
 #include "manifest/at_utils_manifest.h"
-#include "rng/at_utils_rng.h"
 #include "log/at_utils_log.h"
 
 #include "at_utils_basic.h"
-#include "at_utils_misc.h"
 
 #endif

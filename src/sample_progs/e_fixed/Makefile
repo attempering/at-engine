@@ -13,7 +13,7 @@ deps = $(dep_srcs) \
        Makefile
 includes = -I../../core -I../../external -I../../external/veritools
 
-all: $(bins)
+bins: $(bins)
 
 $(bins): %.exe : %.c $(deps)
 	$(CC) $(includes) $< $(dep_srcs) -o $@ $(LM)

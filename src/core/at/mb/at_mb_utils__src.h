@@ -64,7 +64,7 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
       0.0, // mb->iie->imbal[ip], // 7
       mb->accum->sums[ip].s, // 8
       mb->visits[ip], // 9
-      mb->shk->window_multiplier[ip], // 10
+      mb->shk->win_multiplier[ip], // 10
       mb->accum->win_total[ip]);
 
     fprintf(fp, "\n");

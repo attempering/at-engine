@@ -23,8 +23,10 @@
 
 #include "../../zcom/zcom.h"
 
-void at_langevin__manifest(const at_langevin_t *langevin, FILE *fp, int arrcnt)
+void at_langevin__manifest(const at_langevin_t *langevin, at_utils_manifest_t *manifest)
 {
+  FILE *fp = manifest->fp;
+
   fprintf(fp, "langevin->dt: double, %g\n", langevin->dt);
 
   fprintf(fp, "langevin->dTmax: double, %g\n", langevin->dTmax);

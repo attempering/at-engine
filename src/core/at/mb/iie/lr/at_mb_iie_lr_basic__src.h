@@ -69,7 +69,16 @@ void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr)
 }
 
 
+void at_mb_iie_lr__manifest(const at_mb_iie_lr_t *lr, at_utils_manifest_t *manifest)
+{
+  FILE *fp = manifest->fp;
 
+  /* frac_min: minimal allowable coefficient during left/right combination */
+  fprintf(fp, "mb->iie->lr->frac_min: double, %g\n", lr->frac_min);
+
+  /* cv_shift_max: maximal fraction for shift energy fluct. if cv is monotonic, it should be 0.0, for ising model, it can restrain the magnitude */
+  fprintf(fp, "mb->iie->lr->cv_shift_max: double, %g\n", lr->cv_shift_max);
+}
 
 #endif
 

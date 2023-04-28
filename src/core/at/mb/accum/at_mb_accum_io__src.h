@@ -28,9 +28,11 @@
 
 
 
-void at_mb_accum__manifest(const at_mb_accum_t *accum, FILE *fp, int arrmax)
+void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *manifest)
 {
-  int i, pacnt;
+  int i;
+  FILE *fp = manifest->fp;
+  int arrmax = manifest->arr_max_items;
 
   /* sums: normal data */
   if (accum->sums != NULL) {
@@ -61,25 +63,7 @@ void at_mb_accum__manifest(const at_mb_accum_t *accum, FILE *fp, int arrmax)
   fprintf(fp, "accum->use_winaccum: int, %4d\n", accum->use_winaccum);
 
   /* win_total: total of sum.s over a multiple-bine temperature window */
-  fprintf(fp, "accum->win_total: dynamic array of accum->n: ");
-  for (i = accum->n-1; i >= 0; i--) if (fabs(accum->win_total[i]) > 1e-30) break;
-  if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && accum->n > 6)
-      fprintf(fp, "\n");
-    for (pacnt = 0, i = 0; i < accum->n; i++) {
-      if (i == arrmax && i < accum->n-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) fprintf(fp, "\n");
-        fprintf(fp, "..., ");
-        if (arrmax > 3) fprintf(fp, "\n");
-      }
-      if (arrmax >= 0 && i >= arrmax && i < (accum->n-arrmax)) continue;
-      fprintf(fp, "%g, ", accum->win_total[i]);
-      if (++pacnt % 10 == 0) fprintf(fp, "\n");
-    }
-    if (pacnt % 10 != 0) fprintf(fp, "\n");
-  } else {
-    fprintf(fp, " {0}\n");
-  }
+  at_utils_manifest__print_double_arr(manifest, accum->win_total, accum->n, "accum->win_total");
 
 }
 
