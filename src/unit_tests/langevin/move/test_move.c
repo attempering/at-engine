@@ -17,7 +17,7 @@ plot "beta_hist_0.dat" u 1:3 w l, "beta_hist_1.dat" u 1:3 w l, exp(-((x-0.3)/0.0
 
 */
 
-//#define MB_DBG__ 1
+//#define AT_MB_DBG__ 1
 #include "at/at__src.h"
 #include "veritools/utilities/histogram/histogram.h"
 

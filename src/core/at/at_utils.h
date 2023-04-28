@@ -1,5 +1,5 @@
-#ifndef AT__AT_UTILS_H__
-#define AT__AT_UTILS_H__
+#ifndef AT_UTILS_H__
+#define AT_UTILS_H__
 
 #include "at_basic.h"
 

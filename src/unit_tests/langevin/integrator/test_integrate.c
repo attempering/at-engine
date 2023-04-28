@@ -1,7 +1,7 @@
 /* testing the effect of the window boundary convention */
 
 
-//#define MB_DBG__ 1
+//#define AT_MB_DBG__ 1
 #include "at/at__src.h"
 
 

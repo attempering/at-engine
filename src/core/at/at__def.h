@@ -1,20 +1,21 @@
-#ifndef AT__AT__DEF_H__
-#define AT__AT__DEF_H__
+#ifndef AT_DEF_H__
+#define AT_DEF_H__
 
 
 
 /* this header needs to be placed before zcom modules
  * so that we can determine whether `real` should be defined or not */
-#include "context/context.h"
+#include "context/at_context.h"
 
 
 
 #include "../zcom/zcom.h"
 
-#include "bias/bias__def.h"
-#include "mb/mb__def.h"
-#include "eh/eh__def.h"
-#include "langevin/langevin__def.h"
+#include "utils/at_utils__def.h"
+#include "bias/at_bias__def.h"
+#include "mb/at_mb__def.h"
+#include "eh/at_eh__def.h"
+#include "langevin/at_langevin__def.h"
 
 
 
@@ -55,12 +56,14 @@ typedef struct at_t_ {
 
   char          *rng_file;    // random number file name
 
-  int           nst_log;          // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
+  int           nst_log;      // interval of writing trace file, 0: disable, -1: only when doing neighbor searching
   char          *log_file;    // log/trace file name
   zcom_log_t    *log;         // log file
 
   char          ch_suffix;    // file suffix as a single-digit character
   char          data_dir[32];
+
+  at_utils_t    utils[1];
 
   int mpi_rank, mpi_size;
 

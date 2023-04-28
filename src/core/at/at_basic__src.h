@@ -1,5 +1,5 @@
-#ifndef AT__AT_BASIC__SRC_H__
-#define AT__AT_BASIC__SRC_H__
+#ifndef AT_BASIC__SRC_H__
+#define AT_BASIC__SRC_H__
 
 #include <unistd.h>
 
@@ -7,9 +7,9 @@
 
 #include "../zcom/zcom.h"
 
-#include "mb/mb.h"
-#include "langevin/langevin.h"
-#include "eh/eh.h"
+#include "mb/at_mb.h"
+#include "langevin/at_langevin.h"
+#include "eh/at_eh.h"
 
 
 /* load previous data */
@@ -159,6 +159,8 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, double boltz, double md_time_step)
   at->log = NULL;
 
   int silent = 0;
+
+  at_utils__cfg_init(at->utils, cfg, silent);
 
   at_bias__cfg_init(at->bias, cfg, silent);
 
