@@ -65,9 +65,9 @@ static int at_mb__read_binary_low_level(
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
-  if (itmp != mb->accum->m) {
+  if (itmp != mb->win->max_win_bins) {
     fprintf(stderr, "mb->m mismatch, expect: %d, read: %d, pos: %#lx\n",
-        mb->accum->m, itmp, (unsigned long) ftell(fp));
+        mb->win->max_win_bins, itmp, (unsigned long) ftell(fp));
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
@@ -263,7 +263,7 @@ static int at_mb__write_binary_low_level(
     goto ERR;
   }
   /* m: maximal number of bins in a window */
-  if (zcom_endn__fwrite(&mb->accum->m, sizeof(mb->accum->m), 1, fp, 1) != 1) {
+  if (zcom_endn__fwrite(&mb->win->max_win_bins, sizeof(mb->win->max_win_bins), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->m\n");
     goto ERR;
   }

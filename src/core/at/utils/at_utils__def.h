@@ -28,6 +28,9 @@ typedef struct at_utils_t_
   at_utils_manifest_t manifest[1];
   at_utils_log_t log[1];
   char data_dir[FILENAME_MAX];
+  double boltz;
+  double md_time_step;
+  double temp_thermostat;
   zcom_ssm_t *ssm;
 } at_utils_t;
 

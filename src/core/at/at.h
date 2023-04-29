@@ -19,6 +19,14 @@
 #ifndef AT_H__
 #define AT_H__
 
+#include "at__def.h"
+
+#include "utils/at_utils.h"
+#include "distr/at_distr.h"
+#include "mb/at_mb.h"
+#include "eh/at_eh.h"
+#include "driver/at_driver.h"
+
 #include "at_basic.h"
 #include "at_move.h"
 

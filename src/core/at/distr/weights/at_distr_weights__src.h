@@ -30,7 +30,7 @@
 
 
 int at_distr_weights__cfg_init(at_distr_weights_t *w,
-    at_distr_domain_t *domain, zcom_cfg_t *cfg, int silent)
+    at_distr_domain_t *domain, zcom_cfg_t *cfg, int verbose)
 {
   int i;
 
@@ -41,13 +41,14 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   /* ens_exp: ensemble exponent of beta */
   w->ens_exp = 1.0;
   if (0 != zcom_cfg__get(cfg, &w->ens_exp, "ensemble_factor", "%lf")) {
-    fprintf(stderr, "assuming default: w->ens_exp = 1.0, key: ensemble_factor\n");
+    if (verbose) fprintf(stderr, "assuming default: distr->weights->ens_exp = 1.0, key: ensemble_factor\n");
   }
 
   /* flat ensemble mode */
   w->mode = 0;
-  if (0 != zcom_cfg__get(cfg, &w->mode, "ensemble_mode", "%d"))
-    fprintf(stderr, "assuming default: w->mode = 0, key: ensemble_mode\n");
+  if (0 != zcom_cfg__get(cfg, &w->mode, "ensemble_mode", "%d")) {
+    if (verbose) fprintf(stderr, "assuming default: distr->weights->mode = 0, key: ensemble_mode\n");
+  }
 
   /* default values */
   w->beta0 = 0.5 * (w->beta_max + w->beta_min);
@@ -57,16 +58,19 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   if(w->mode == 1)
   {
     /* beta0 */
-    if (0 != zcom_cfg__get(cfg, &w->beta0, "ensemble_beta0", "%lf"))
-      fprintf(stderr, "assuming default: w->beta0 = 0.5 * (w->bmax + w->bmin), key: ensemble_beta0\n");
+    if (0 != zcom_cfg__get(cfg, &w->beta0, "ensemble_beta0", "%lf")) {
+      if (verbose) fprintf(stderr, "assuming default: distr->weights->beta0 = 0.5 * (w->bmax + w->bmin), key: ensemble_beta0\n");
+    }
 
     if (w->beta0 >= domain->bmax || w->beta0 <= domain->bmin)
       fprintf(stderr, "WARNING: beta0 is not in the temperature range!\n");
 
     /* sigma */
     double sigma = 1.0;
-    if (0 != zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf"))
-      fprintf(stderr, "assuming default: w->sigma = 1.0, key: ensemble_sigma\n");
+    if (0 != zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf")) {
+      if (verbose) fprintf(stderr, "assuming default: distr->weights->sigma = 1.0, key: ensemble_sigma\n");
+    }
+
     if (sigma == 0)
     {
       fprintf(stderr, "ERROR: sigma cannot be zero!\n");
@@ -78,8 +82,9 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   {
     /* c */
     w->c = 0.0;
-    if (0 != zcom_cfg__get(cfg, &w->c, "ensemble_c", "%lf"))
-      fprintf(stderr, "assuming default: w->c = 0.0, key: ensemble_c\n");
+    if (0 != zcom_cfg__get(cfg, &w->c, "ensemble_c", "%lf")) {
+      if (verbose) fprintf(stderr, "assuming default: distr->weights->c = 0.0, key: ensemble_c\n");
+    }
   }
   else if(w->mode != 0)
   {
@@ -111,26 +116,26 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
   FILE *fp = manifest->fp;
 
   /* ens_exp: ensemble exponent of beta */
-  fprintf(fp, "w->ens_exp: double, %g\n", w->ens_exp);
+  fprintf(fp, "distr->weights->ens_exp: double, %g\n", w->ens_exp);
 
   /* mode */
-  fprintf(fp, "w->mode: int, %d\n", w->mode);
+  fprintf(fp, "distr->weights->mode: int, %d\n", w->mode);
   if(w->mode == 1)
   {
     /* beta0 */
-    fprintf(fp, "w->beta0: double, %g\n", w->beta0);
+    fprintf(fp, "distr->weights->beta0: double, %g\n", w->beta0);
 
     /* inv_sigma2 */
-    fprintf(fp, "w->inv_sigma2: double, %g\n", w->inv_sigma2);
+    fprintf(fp, "distr->weights->inv_sigma2: double, %g\n", w->inv_sigma2);
   }
   else if(w->mode == 2)
   {
     /* c */
-    fprintf(fp, "w->c: double, %g\n", w->c);
+    fprintf(fp, "distr->weights->c: double, %g\n", w->c);
   }
 
   /* ens_w: array of ensemble weights at bin boundaries */
-  at_utils_manifest__print_double_arr(manifest, w->ens_w, w->n, "w->ens_w");
+  at_utils_manifest__print_double_arr(manifest, w->ens_w, w->n, "distr->weights->ens_w");
 
 }
 
@@ -149,7 +154,7 @@ void at_distr_weights__finish(at_distr_weights_t *w)
  * f: f(beta);
  * *pndfdbeta: -df(beta)/dbeta;
  */
-static double at_distr_weights__calc_f_factor(at_distr_weights_t *w, double beta, double *pndfdbeta)
+static double at_distr_weights__calc_f_factor(const at_distr_weights_t *w, double beta, double *pndfdbeta)
 {
   double f, ndfdbeta;
 
@@ -183,7 +188,7 @@ static double at_distr_weights__calc_f_factor(at_distr_weights_t *w, double beta
 }
 
 
-static double at_distr_weights__calc_invw_factor(at_distr_weights_t *w, double beta)
+static double at_distr_weights__calc_invw_factor(const at_distr_weights_t *w, double beta)
 {
   const double eps = 1e-5;
   double beta_r = beta / w->beta_max; /* to relative beta */
@@ -204,7 +209,7 @@ static double at_distr_weights__calc_invw_factor(at_distr_weights_t *w, double b
 }
 
 
-double at_distr_weights__calc_inv_weight(at_distr_weights_t *w, double beta,
+double at_distr_weights__calc_inv_weight(const at_distr_weights_t *w, double beta,
     double *neg_dlnwf_dbeta, double *pf, double *neg_df_dbeta)
 {
   double f, invw, invwf, neg_df_dbeta_ = 0.0;
@@ -224,7 +229,7 @@ double at_distr_weights__calc_inv_weight(at_distr_weights_t *w, double beta,
 
   invwf = invw / f;
 
-  zcom_util__exit_if (invwf > 1e6 || invwf < 1e-6, "bad invwf=%g, beta=%g\n", invwf, beta);
+  zcom_util__exit_if (invwf > 1e6 || invwf < 1e-6, "bad invwf=%g, f=%g, beta=%g\n", invwf, beta);
 
   if (neg_dlnwf_dbeta != NULL) {
     *neg_dlnwf_dbeta = (w->ens_exp / beta)

@@ -38,15 +38,15 @@ long ntimes = 100000;
 void init_distr_mb_and_langevin(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
-  int silent = 1;
+  int verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, boltz, cfg, silent);
+  at_distr__cfg_init(distr, cfg, boltz, verbose);
 
   // beta_min and beta_max are to be read from the configuration file
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, silent);
+  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
 
-  at_driver_langevin__cfg_init(langevin, mb->distr, mb, cfg, NULL, NULL, silent);
+  at_driver_langevin__cfg_init(langevin, mb->distr, mb, cfg, NULL, NULL, verbose);
 
   zcom_cfg__close(cfg);
 }
@@ -102,12 +102,13 @@ static int test_fill_range(at_mb_t *mb, at_driver_langevin_t *langevin)
   int i;
 
   int passed = 1;
+  int n = mb->distr->domain->n;
 
-  at_driver_langevin_zerofiller__init(zf, mb->n);
+  at_driver_langevin_zerofiller__init(zf, n);
 
-  at_driver_langevin_zerofiller__fill_range_with_proper_sums(zf, 0, mb->n - 1, mb);
+  at_driver_langevin_zerofiller__fill_range_with_proper_sums(zf, 0, n - 1, mb);
 
-  for (i = 0; i < mb->n; i++) {
+  for (i = 0; i < n; i++) {
     fprintf(stderr, "%d: %g %g\n", i, raw_data[i], zf->vals[i]);
     if (zf->vals[i] == 0.0) {
       passed = 0;

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_LANGEVIN_INTEGRATOR__DEF_H__
-#define AT_LANGEVIN_INTEGRATOR__DEF_H__
+#ifndef AT_DRIVER_LANGEVIN_INTEGRATOR__DEF_H__
+#define AT_DRIVER_LANGEVIN_INTEGRATOR__DEF_H__
 
 typedef struct at_driver_langevin_zerofiller_t_ at_driver_langevin_zerofiller_t;
 

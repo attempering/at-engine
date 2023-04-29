@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_IIE__BASIC_SRC_H__
-#define AT_MB_IIE__BASIC_SRC_H__
+#ifndef AT_MB_IIE_BASIC__SRC_H__
+#define AT_MB_IIE_BASIC__SRC_H__
 
 
 #include "at_mb_iie_basic.h"
@@ -32,7 +32,7 @@
 
 
 void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
-    zcom_cfg_t *cfg, int silent)
+    zcom_cfg_t *cfg, int verbose)
 {
   iie->n = mb->distr->domain->n;
   iie->flags = mb->flags;
@@ -40,9 +40,9 @@ void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
   iie->accum = mb->accum;
 
   at_mb_iie_zerofiller__init(iie->zf, mb);
-  at_mb_iie_lr__cfg_init(iie->lr, iie->zf, mb, cfg, silent);
-  at_mb_iie_et__cfg_init(iie->et, mb, cfg, silent);
-  at_mb_iie_gridvals__cfg_init(iie->gridvals, mb, cfg, silent);
+  at_mb_iie_lr__cfg_init(iie->lr, iie->zf, mb, cfg, verbose);
+  at_mb_iie_et__cfg_init(iie->et, mb, cfg, verbose);
+  at_mb_iie_gridvals__cfg_init(iie->gridvals, mb, cfg, verbose);
 }
 
 

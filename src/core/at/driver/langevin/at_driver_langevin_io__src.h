@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_LANGEVIN_IO__SRC_H__
-#define AT_LANGEVIN_IO__SRC_H__
+#ifndef AT_DRIVER_LANGEVIN_IO__SRC_H__
+#define AT_DRIVER_LANGEVIN_IO__SRC_H__
 
 #include "at_driver_langevin_io.h"
 

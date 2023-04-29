@@ -27,11 +27,16 @@
 
 
 void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
-    int isuffix, int silent);
+    double boltz, double md_time_step,
+    int isuffix, int verbose);
 
 void at_utils__finish(at_utils_t *utils);
 
 void at_utils__manifest(at_utils_t *utils);
+
+double at_utils__beta_to_temp(const at_utils_t *utils, double beta);
+
+double at_utils__temp_to_beta(const at_utils_t *utils, double temp);
 
 
 #endif

@@ -27,7 +27,7 @@
 
 
 int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm, const char *data_dir, int silent)
+    zcom_ssm_t *ssm, const char *data_dir, int verbose)
 {
   int i;
   at_distr_t *distr = mb->distr;
@@ -38,7 +38,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
   if (0 != zcom_cfg__get(cfg, &eh->mode, "ehist_mode", "%d")) {
-    fprintf(stderr, "assuming default: eh->mode = 0, key: ehist_mode\n");
+    if (verbose) fprintf(stderr, "assuming default: eh->mode = 0, key: ehist_mode\n");
   }
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
     fprintf(stderr, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
@@ -75,7 +75,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwdel: delta lnT */
   eh->bwdel = 0.05;
   if (eh->mode && eh->bwmod == 1) {
-    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_lnT", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_lnT", "%lf")) {
       fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_lnT, fmt: %%lf\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -90,7 +90,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwdel: delta beta */
   if (eh->mode && eh->bwmod == 0) {
     eh->bwdel = 0.02;
-    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_beta", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_beta", "%lf")) {
       fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_beta, fmt: %%lf\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -105,7 +105,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwdel: delta kT */
   if (eh->mode && eh->bwmod == 2) {
     eh->bwdel = 0.10;
-    if (cfg != NULL && 0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_kT", "%lf")) {
+    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_kT", "%lf")) {
       fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_kT, fmt: %%lf\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;

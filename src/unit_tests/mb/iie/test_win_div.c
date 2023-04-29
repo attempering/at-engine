@@ -35,12 +35,13 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(at_mb_t *mb)
+void init_mb_object(at_distr_t *distr, at_mb_t *mb)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
+  int verbose = 0;
 
-  // beta_min and beta_max are to be read from the configuration file
-  at_mb__cfg_init(mb, cfg, boltz, NULL, NULL, 1);
+  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
 
   zcom_cfg__close(cfg);
 }
@@ -51,14 +52,15 @@ void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
   zcom_mtrng_t mtrng[1];
+  at_distr_domain_t *domain = mb->distr->domain;
 
   zcom_mtrng__init_from_seed(mtrng, time(NULL));
 
-  for (i = 0; i < mb->n; i++) {
+  for (i = 0; i < domain->n; i++) {
     at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
 
     if (zcom_mtrng__rand01(mtrng) < fill_prob) {
-      double beta = mb->bmin + (i + 0.5) * mb->bdel;
+      double beta = domain->bmin + (i + 0.5) * domain->bdel;
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
       sm->s = 1.0;
@@ -83,9 +85,10 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
 {
   long t;
   zcom_mtrng_t *rng = zcom_mtrng__open(time(NULL));
+  at_distr_domain_t *domain = mb->distr->domain;
 
   for (t = 1; t <= ntimes; t++) {
-    double beta = mb->bmin + zcom_mtrng__rand01(rng) * (mb->bmax - mb->bmin);
+    double beta = domain->bmin + zcom_mtrng__rand01(rng) * (domain->bmax - domain->bmin);
 
     /* for the Gaussian energy model
      * Ec = - sigma^2 beta
@@ -109,20 +112,21 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
 
 static int test_iie(at_mb_t *mb, double tol)
 {
+  at_distr_domain_t *domain = mb->distr->domain;
   int ib;
-  int stride = (int) (mb->n / 5);
+  int stride = (int) (domain->n / 5);
   int passed = 1;
 
   if (stride < 1) {
     stride = 1;
   }
 
-  for (ib = 0; ib < mb->n; ib += stride) {
+  for (ib = 0; ib < domain->n; ib += stride) {
 
     fprintf(stderr, "\n# Testing integral-identity estimator for bin %d:\n", ib);
 
     // beta at the center of the bin
-    double beta = mb->bmin + (ib + 0.5) * mb->bdel;
+    double beta = domain->bmin + (ib + 0.5) * domain->bdel;
 
     // reference energy of the Gaussian energy model
     double et_ref = -beta * (gaussian_sigma * gaussian_sigma);
@@ -148,6 +152,7 @@ static int test_iie(at_mb_t *mb, double tol)
 
 int main(int argc, char **argv)
 {
+  at_distr_t distr[1];
   at_mb_t mb[1];
 
   int test_exact = 0;
@@ -158,7 +163,7 @@ int main(int argc, char **argv)
 
   int passed;
 
-  init_mb_object(mb);
+  init_mb_object(distr, mb);
 
   if (argc > 1) {
     test_exact = (argv[1][0] == 'x');

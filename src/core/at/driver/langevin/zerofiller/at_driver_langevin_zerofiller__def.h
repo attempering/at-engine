@@ -16,11 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_LANGEVIN_ZEROFILLER__DEF_H__
-#define AT_LANGEVIN_ZEROFILLER__DEF_H__
+#ifndef AT_DRIVER_LANGEVIN_ZEROFILLER__DEF_H__
+#define AT_DRIVER_LANGEVIN_ZEROFILLER__DEF_H__
 
-#include "../../../distr/at_distr.h"
-#include "../../../mb/at_mb.h"
+#include "../../../distr/at_distr__def.h"
+#include "../../../mb/at_mb__def.h"
 
 /* parameters for the zerofiller */
 typedef struct at_driver_langevin_zerofiller_t_ {

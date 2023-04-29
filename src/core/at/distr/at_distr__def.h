@@ -26,6 +26,8 @@
 /* parameters for the overall beta disribution */
 typedef struct at_distr_t_ {
 
+  double    boltz;    /* Boltzmann constant */
+
   at_distr_domain_t domain[1];
 
   at_distr_weights_t weights[1];

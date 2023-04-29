@@ -24,6 +24,7 @@
 #include "at_mb_io_binary.h"
 
 #include "../../utils/at_utils.h"
+#include "../../driver/at_driver.h"
 
 
 /* load previous mb data */

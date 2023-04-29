@@ -50,7 +50,7 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
   for (step = 1; step <= nsteps; step++) {
     at_bool_t is_first_step = (step == 1);
     at_bool_t is_last_step = (step == nsteps);
-    at_bool_t is_tempering_step = (at->nsttemp > 0 && (step % at->nsttemp == 0)) || (at->nsttemp <= 0);
+    at_bool_t is_tempering_step = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
     at_bool_t flush_output = FALSE;
 
     //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
@@ -78,7 +78,7 @@ void run_minicst_md(at_t* at, at_llong_t nsteps)
   //fprintf(stderr, "0 %g %g | %u %d\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
 
   for (step = 1; step <= nsteps; step++) {
-    at_bool_t btr = (at->nsttemp > 0 && (step % at->nsttemp == 0)) || (at->nsttemp <= 0);
+    at_bool_t btr = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
 
     //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
 
@@ -102,6 +102,7 @@ int main(int argc, char** argv)
 {
   int suffix = 0; /* sequence ID for multiple runs */
   const char* fn_cfg = "at.cfg";
+  int verbose = 0;
 
   if (argc > 1) {
     fn_cfg = argv[1];
@@ -111,7 +112,7 @@ int main(int argc, char** argv)
   //remove("TRACE0");
   remove("atdata0/log.dat");
 
-  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
+  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix, verbose);
   at__manifest(at);
 
   if (use_minicst) { // simplified CST for reference

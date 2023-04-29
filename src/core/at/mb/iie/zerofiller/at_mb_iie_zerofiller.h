@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_IIE_ZEROFILLER__H__
-#define AT_MB_IIE_ZEROFILLER__H__
+#ifndef AT_MB_IIE_ZEROFILLER_H__
+#define AT_MB_IIE_ZEROFILLER_H__
 
 
 #include "at_mb_iie_zerofiller__def.h"

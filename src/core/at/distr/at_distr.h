@@ -27,15 +27,15 @@
 
 #include "../utils/at_utils.h"
 
-int at_distr__cfg_init(at_distr_t *distr, double boltz, zcom_cfg_t *cfg, int silent);
+int at_distr__cfg_init(at_distr_t *distr, zcom_cfg_t *cfg, double boltz, int verbose);
 
 void at_distr__finish(at_distr_t *distr);
 
-void at_distr__manifest(at_distr_t *distr, at_utils_manifest_t *manifest);
+void at_distr__manifest(const at_distr_t *distr, at_utils_manifest_t *manifest);
 
-int at_distr__beta_to_index(at_distr_t *distr, double beta, int check);
+int at_distr__beta_to_index(const at_distr_t *distr, double beta, int check);
 
-double at_distr__calc_inv_weight(at_distr_t *distr, double beta,
+double at_distr__calc_inv_weight(const at_distr_t *distr, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
 
 #endif

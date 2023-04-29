@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_LANGEVIN_MOVE_BASIC__SRC_H__
-#define AT_LANGEVIN_MOVE_BASIC__SRC_H__
+#ifndef AT_DRIVER_LANGEVIN_MOVE_BASIC__SRC_H__
+#define AT_DRIVER_LANGEVIN_MOVE_BASIC__SRC_H__
 
 
 
@@ -78,7 +78,7 @@ int at_driver_langevin_move__propose(
 
   proposal->kt_old = 1.0 / beta_old;
 
-  proposal->time_step = langevin->dt * mb->boltz;
+  proposal->time_step = langevin->dt * langevin->distr->boltz;
 
   rand_mag = proposal->kt_old * sqrt(2.0 * proposal->time_step);
 
@@ -96,7 +96,7 @@ int at_driver_langevin_move__propose(
   proposal->dkt = proposal->dkt_deterministic + rand_mag * noise;
 
   if (apply_dkt_max) {
-    double dkt_max = langevin->dTmax * mb->boltz;
+    double dkt_max = langevin->dTmax * langevin->distr->boltz;
 
     if (proposal->dkt > dkt_max) {
       proposal->dkt = dkt_max;

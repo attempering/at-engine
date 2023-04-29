@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_SRC_H__
-#define AT_SRC_H__
+#ifndef AT__SRC_H__
+#define AT__SRC_H__
 
 
 
@@ -36,11 +36,10 @@
 
 #include "../zcom/zcom__src.h"
 
+#include "at.h"
+
 
 #include "utils/at_utils__src.h"
-
-
-/* include the source code of sub-modules */
 #include "distr/at_distr__src.h"
 #include "mb/at_mb__src.h"
 #include "eh/at_eh__src.h"

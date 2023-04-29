@@ -28,12 +28,14 @@ int main(void)
   at_mb_t mb[1];
   at_driver_t driver[1];
   zcom_cfg_t *cfg = NULL;
-  int silent = 1;
+  int verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, boltz, cfg, silent);
-  at_mb__cfg_init(mb, distr, cfg, 1.0, NULL, NULL, silent);
-  at_driver__cfg_init(driver, distr, mb, cfg, NULL, NULL, silent);
+  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_mb__cfg_init(mb, distr, cfg, 1.0, NULL, NULL, verbose);
+  at_driver__cfg_init(driver, distr, mb, cfg, NULL, NULL, verbose);
+
+  at_driver_langevin_rng__reset(driver->langevin->rng, 1234);
 
   at_driver__finish(driver);
   at_mb__finish(mb);

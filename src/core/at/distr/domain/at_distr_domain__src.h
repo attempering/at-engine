@@ -41,11 +41,9 @@ static int at_distr_domain__check_barr(at_distr_domain_t *domain)
 
 
 void at_distr_domain__init_simple(at_distr_domain_t *domain,
-    double boltz, double bmin, double bmax, double bdel)
+    double bmin, double bmax, double bdel)
 {
   int i, n;
-
-  domain->boltz = boltz;
 
   n = (int) ((bmax - bmin)/bdel + 0.5);
   domain->n = n;
@@ -61,31 +59,31 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
 
 
 
-int at_distr_domain__cfg_init(at_distr_domain_t *domain, double boltz,
-    zcom_cfg_t *cfg, int silent)
+int at_distr_domain__cfg_init(at_distr_domain_t *domain,
+    zcom_cfg_t *cfg, int verbose)
 {
   int i;
 
-  domain->boltz = boltz;
-
   /* read bmin and bmax from the configuration file */
 
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &domain->bmin, "beta_min", "%lf")) {
-    fprintf(stderr, "missing var: domain->bmin, key: beta_min, fmt: %%lf\n");
+  domain->bmin = 0.2;
+  if (0 != zcom_cfg__get(cfg, &domain->bmin, "beta_min", "%lf")) {
+    fprintf(stderr, "missing var: distr->domain->bmin, key: beta_min, fmt: %%lf\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   if ( !(domain->bmin >= 0.0) ) {
-    fprintf(stderr, "domain->bmin: failed validation: domain->bmin %g > 1e-6\n",
+    fprintf(stderr, "domain->bmin: failed validation: distr->domain->bmin %g > 1e-6\n",
         domain->bmin);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
 
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &domain->bmax, "beta_max", "%lf")) {
-    fprintf(stderr, "missing var: domain->bmax, key: beta_max, fmt: %%lf\n");
+  domain->bmax = 0.4;
+  if (0 != zcom_cfg__get(cfg, &domain->bmax, "beta_max", "%lf")) {
+    fprintf(stderr, "missing var: distr->domain->bmax, key: beta_max, fmt: %%lf\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
@@ -93,23 +91,23 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain, double boltz,
   //printf("domain->bmin %g, domain->bmax %g\n", domain->bmin, domain->bmax); getchar();
 
   if ( !(domain->bmax >= domain->bmin) ) {
-    fprintf(stderr, "domain->bmax: failed validation: domain->bmax %g > domain->bmin %g\n",
+    fprintf(stderr, "distr->domain->bmax: failed validation: domain->bmax %g > domain->bmin %g\n",
         domain->bmax, domain->bmin);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   /* bdel: bin size of beta */
-  domain->bdel = 0.0001;
+  domain->bdel = 0.01;
 
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &domain->bdel, "beta_del", "%lf")) {
-    fprintf(stderr, "missing var: domain->bdel, key: beta_del, fmt: %%lf\n");
+  if (0 != zcom_cfg__get(cfg, &domain->bdel, "beta_del", "%lf")) {
+    fprintf(stderr, "missing var: distr->domain->bdel, key: beta_del, fmt: %%lf\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   if ( !(domain->bdel > 1e-6) ) {
-    fprintf(stderr, "domain->bdel: failed validation: domain->bdel > 1e-6\n");
+    fprintf(stderr, "distr->domain->bdel: failed validation: domain->bdel > 1e-6\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
@@ -118,12 +116,14 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain, double boltz,
   domain->n = (int)((domain->bmax - domain->bmin)/domain->bdel - 1e-5) + 1;
   /* barr: temperature array */
   if ((domain->barr = (double *) calloc((domain->n + 2), sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: domain->barr, type: double\n");
+    fprintf(stderr, "no memory! var: distr->domain->barr, type: double\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
+
   for (i = 0; i < domain->n+1; i++)
     domain->barr[i] = domain->bmin + i * domain->bdel;
+
   /* check beta array */
   if ( !(at_distr_domain__check_barr(domain) == 0) ) {
     fprintf(stderr, "check beta array\n");
@@ -144,26 +144,26 @@ ERR:
 
 void at_distr_domain__finish(at_distr_domain_t *domain)
 {
-  if (domain->barr      != NULL) free(domain->barr);
+  if (domain->barr != NULL) free(domain->barr);
 }
 
-void at_distr_domain__manifest(at_distr_domain_t *domain, at_utils_manifest_t *manifest)
+void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest)
 {
   FILE *fp = manifest->fp;
 
   /* bdel: bin size of beta */
-  fprintf(fp, "domain->bdel: double, %g\n", domain->bdel);
+  fprintf(fp, "distr->domain->bdel: double, %g\n", domain->bdel);
 
   /* n: number of temperature bins */
-  fprintf(fp, "domain->n: int, %4d\n", domain->n);
+  fprintf(fp, "distr->domain->n: int, %4d\n", domain->n);
 
   /* barr: temperature array */
-  at_utils_manifest__print_double_arr(manifest, domain->barr, domain->n+1, "domain->barr");
+  at_utils_manifest__print_double_arr(manifest, domain->barr, domain->n+1, "distr->domain->barr");
 }
 
 
 
-int at_distr_domain__beta_to_index(at_distr_domain_t *domain, double beta, int check)
+int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta, int check)
 {
   int j;
 

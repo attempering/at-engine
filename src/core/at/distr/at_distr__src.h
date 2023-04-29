@@ -30,11 +30,13 @@
 
 
 
-int at_distr__cfg_init(at_distr_t *distr, double boltz, zcom_cfg_t *cfg, int silent)
+int at_distr__cfg_init(at_distr_t *distr, zcom_cfg_t *cfg, double boltz, int verbose)
 {
-  at_distr_domain__cfg_init(distr->domain, boltz, cfg, silent);
-  at_distr_weights__cfg_init(distr->weights, distr->domain, cfg, silent);
-  at_distr_bias__cfg_init(distr->bias, cfg, silent);
+  distr->boltz = boltz;
+
+  at_distr_domain__cfg_init(distr->domain, cfg, verbose);
+  at_distr_weights__cfg_init(distr->weights, distr->domain, cfg, verbose);
+  at_distr_bias__cfg_init(distr->bias, cfg, verbose);
 
   return 0;
 }
@@ -50,7 +52,7 @@ void at_distr__finish(at_distr_t *distr)
 
 
 
-void at_distr__manifest(at_distr_t *distr, at_utils_manifest_t *manifest)
+void at_distr__manifest(const at_distr_t *distr, at_utils_manifest_t *manifest)
 {
   at_distr_domain__manifest(distr->domain, manifest);
   at_distr_weights__manifest(distr->weights, manifest);
@@ -59,14 +61,14 @@ void at_distr__manifest(at_distr_t *distr, at_utils_manifest_t *manifest)
 
 
 
-int at_distr__beta_to_index(at_distr_t *distr, double beta, int check)
+int at_distr__beta_to_index(const at_distr_t *distr, double beta, int check)
 {
   return at_distr_domain__beta_to_index(distr->domain, beta, check);
 }
 
 
 
-double at_distr__calc_inv_weight(at_distr_t *distr, double beta,
+double at_distr__calc_inv_weight(const at_distr_t *distr, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta)
 {
   return at_distr_weights__calc_inv_weight(distr->weights, beta,

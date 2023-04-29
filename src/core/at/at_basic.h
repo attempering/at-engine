@@ -21,10 +21,7 @@
 
 #include "at__def.h"
 
-#define at__beta_to_temp(x, boltz) (1.0/(boltz * x))
-#define at__temp_to_beta(x, boltz) (1.0/(boltz * x))
-
-int at__load_data(at_t *at, at_bool_t bCPT);
+int at__load_data(at_t *at, at_bool_t is_continuation);
 
 int at__do_every(at_llong_t step, int nst, at_bool_t bfirst, at_bool_t blast);
 
@@ -34,9 +31,13 @@ void at__output(at_t *at, at_llong_t step,
 
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values */
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step);
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix,
+    double boltz, double md_time_step, int verbose);
 
-at_t *at__open(const char *cfg_fn, at_bool_t bCPT, at_bool_t open_log, double boltz, double md_time_step, int suffix);
+at_t *at__open(const char *cfg_fn,
+    at_bool_t is_continuation, at_bool_t open_log,
+    double boltz, double md_time_step, int suffix,
+    int verbose);
 
 void at__finish(at_t *at);
 
@@ -44,6 +45,10 @@ void at__finish(at_t *at);
 void at__close(at_t *at);
 
 int at__manifest(at_t *at);
+
+double at__beta_to_temp(const at_t *at, double beta);
+
+double at__temp_to_beta(const at_t *at, double temp);
 
 #endif
 

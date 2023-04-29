@@ -110,27 +110,35 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
     fclose(fp);
   }
 
+  mtrng->loaded = 1;
+
   return err;
 }
 
 
 
-/* load mt state from `fname`,
- * or if it fails, use `seed` to initialize mt
- * In the latter case, if `seed == 0` then
- * the integer from time(NULL) will be used as the seed
- * */
-ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng, const char *fname, uint32_t seed)
+ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
+    const char *fname, uint32_t seed, int force_reload)
 {
-  int err = zcom_mtrng__load_from_file_(mtrng, fname);
+  int err;
+  
+  if (force_reload || !mtrng->loaded) {
+    //fprintf(stderr, "start loading rng from file %s, %d %d\n", fname, force_reload, mtrng->loaded);
+    err = zcom_mtrng__load_from_file_(mtrng, fname);
 
-  if (err) { /* fallback: to initialize from the seed */
-    fprintf(stderr, "zcom_mtrng__load_or_init_from_seed(): cannot load file: \"%s\". Init. from seed: %d directly.\n", fname, seed);
+    if (err) { /* fallback: to initialize from the seed */
+      fprintf(stderr, "zcom_mtrng__load_or_init_from_seed(): cannot load file: \"%s\". Init. from seed: %d directly [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
 
-    zcom_mtrng__init_from_seed(mtrng, seed);
+      zcom_mtrng__init_from_seed(mtrng, seed);
+    } else {
+      fprintf(stderr, "zcom_mtrng__load_or_init_from_seed(): Successfully loaded rng file \"%s\" (seed %d unused) [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
+    }
+
   } else {
-    fprintf(stderr, "Successfully loaded \"%s\".\n", fname);
+    err = 0;
   }
+
+
 
   return (mtrng->index < 0);
 }

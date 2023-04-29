@@ -28,16 +28,12 @@
 
 
 
-static void mock_mb__init(at_mb_t *mb, double bmin, double bmax, double bdel)
+static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double bmin, double bmax, double bdel)
 {
   int i, n;
-  at_distr_t *distr;
-  double boltz = 1.0;
 
-  zcom_utils__xnew(distr, 1);
-
-  at_distr__cfg_init(distr, boltz, NULL, 1);
-  at_distr_domain__init_simple(distr->domain, boltz, bmin, bmax, bdel);
+  at_distr__cfg_init(distr, NULL, boltz, 1);
+  at_distr_domain__init_simple(distr->domain, bmin, bmax, bdel);
 
   mb->distr = distr;
 
@@ -48,19 +44,19 @@ static void mock_mb__init(at_mb_t *mb, double bmin, double bmax, double bdel)
 static void mock_mb__finish(at_mb_t *mb)
 {
   at_distr__finish(mb->distr);
-  free(mb->distr);
 }
 
 
 
 int main()
 {
+  at_distr_t distr[1];
   at_mb_accum_winaccum_t winaccum[1];
   at_mb_win_t win[1];
   at_mb_t mb[1];
 
 
-  mock_mb__init(mb, 0.2, 0.4, 0.001);
+  mock_mb__init(distr, mb, 0.2, 0.4, 0.001);
 
   at_mb_win__cfg_init(win, NULL, mb);
   at_mb_accum_winaccum__init(winaccum, mb->distr->domain->n, win, 0);

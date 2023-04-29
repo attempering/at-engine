@@ -17,8 +17,8 @@
  */
 
 /* multiple-bin estimators of thermodynamical quantities */
-#ifndef AT_MB_DEF_H__
-#define AT_MB_DEF_H__
+#ifndef AT_MB__DEF_H__
+#define AT_MB__DEF_H__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,9 +35,9 @@ typedef struct at_distr_t_ at_distr_t;
 /* multiple-bin estimator parameters */
 typedef struct at_mb_t_ {
 
-  double    boltz;
+  double    boltz;    /* Boltzmann constant */
 
-  int       n;        /* same as distr->domain->n */
+  //int       n;        /* same as distr->domain->n */
 
   unsigned  flags;    /* combination of flags */
 

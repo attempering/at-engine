@@ -32,7 +32,7 @@ int at__move(at_t *at, at_llong_t step, at_bool_t bfirst, at_bool_t blast, at_bo
   double invwf = 1.0, temp1, temp2, Eav = 0.0, neg_dlnwf_dbeta;
   int ib, rep;
 
-  temp1 = at__beta_to_temp(at->beta, at->boltz);
+  temp1 = at__beta_to_temp(at, at->beta);
 
   ib = at_mb__beta_to_index(at->mb, at->beta, 1);
 
@@ -50,7 +50,7 @@ int at__move(at_t *at, at_llong_t step, at_bool_t bfirst, at_bool_t blast, at_bo
         ib, invwf, neg_dlnwf_dbeta, &Eav);
   }
 
-  temp2 = at__beta_to_temp(at->beta, at->boltz);
+  temp2 = at__beta_to_temp(at, at->beta);
 
   if (at__do_every(step, at->mb->nstrefresh, 0, blast)) {
     at_mb__refresh_et(at->mb, 1);

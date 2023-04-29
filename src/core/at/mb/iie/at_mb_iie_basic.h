@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_IIE__BASIC_H__
-#define AT_MB_IIE__BASIC_H__
+#ifndef AT_MB_IIE_BASIC_H__
+#define AT_MB_IIE_BASIC_H__
 
 #include "at_mb_iie__def.h"
 
@@ -25,7 +25,7 @@
 
 #include "../../utils/at_utils.h"
 
-void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb, zcom_cfg_t *cfg, int silent);
+void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb, zcom_cfg_t *cfg, int verbose);
 
 void at_mb_iie__finish(at_mb_iie_t *iie);
 

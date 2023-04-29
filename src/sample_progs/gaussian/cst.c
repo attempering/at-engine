@@ -51,7 +51,7 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, at_llong_t nsteps)
   for (step = 1; step <= nsteps; step++) {
     at_bool_t is_first_step = (step == 1);
     at_bool_t is_last_step = (step == nsteps);
-    at_bool_t is_tempering_step = (at->nsttemp > 0 && (step % at->nsttemp == 0)) || (at->nsttemp <= 0);
+    at_bool_t is_tempering_step = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
     at_bool_t flush_output = FALSE;
 
     mdsys__step(mdsys, at->beta);
@@ -84,7 +84,7 @@ void run_minicst_md(at_t* at, mdsys_t* mdsys, at_llong_t nsteps)
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
 
   for (step = 1; step <= nsteps; step++) {
-    at_bool_t btr = (at->nsttemp > 0 && (step % at->nsttemp == 0)) || (at->nsttemp <= 0);
+    at_bool_t btr = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
 
     mdsys__step(mdsys, at->beta);
 
@@ -111,6 +111,7 @@ int main(int argc, char** argv)
   int suffix = 0; /* sequence ID for multiple runs */
   const char* fn_cfg = "at.cfg";
   mdsys_t* mdsys;
+  int verbose = 0;
 
   if (argc > 1) {
     fn_cfg = argv[1];
@@ -120,8 +121,8 @@ int main(int argc, char** argv)
   //remove("TRACE0");
   remove("atdata0/log.dat");
 
-  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix);
-  //at__manifest(at, "atdata0/at-manifest.dat", 3);
+  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix, verbose);
+  //at__manifest(at, "atdata0/manifest.dat", 3);
 
   mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->bmin, at->distr->domain->bmax, boltz);
 

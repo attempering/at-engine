@@ -25,15 +25,15 @@
 
 /* simple initialization, used for testing programs */
 void at_distr_domain__init_simple(at_distr_domain_t *domain,
-    double boltz, double bmin, double bmax, double bdel);
+    double bmin, double bmax, double bdel);
 
 int at_distr_domain__cfg_init(at_distr_domain_t *domain,
-    double boltz, zcom_cfg_t *cfg, int silent);
+    zcom_cfg_t *cfg, int verbose);
 
 void at_distr_domain__finish(at_distr_domain_t *domain);
 
-void at_distr_domain__manifest(at_distr_domain_t *domain, at_utils_manifest_t *manifest);
+void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest);
 
-int at_distr_domain__beta_to_index(at_distr_domain_t *domain, double beta, int check);
+int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta, int check);
 
 #endif

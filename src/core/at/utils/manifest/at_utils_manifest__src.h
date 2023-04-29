@@ -30,24 +30,25 @@ void at_utils_manifest__cfg_init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int silent)
+    int verbose)
 {
   manifest->inited = 1;
 
-  manifest->filename = "at-manifest.dat";
-  if (cfg != NULL && zcom_cfg__get(cfg, &manifest->filename, "manifest_file", "%s"))
+  manifest->filename = "manifest.dat";
+  if (zcom_cfg__get(cfg, &manifest->filename, "manifest_file", "%s") != 0)
   {
-    fprintf(stderr, "assuming default: utils->manifest->filename = \"at-manifest.dat\", key: manifest_file\n");
+    if (verbose) fprintf(stderr, "assuming default: utils->manifest->filename = \"manifest.dat\", key: manifest_file\n");
   }
 
   manifest->filename = at_utils__make_output_filename(ssm, data_dir, manifest->filename);
 
   manifest->arr_max_items = 3;
-  if (cfg != NULL && zcom_cfg__get(cfg, &manifest->arr_max_items, "manifest_arr_max_items", "%d"))
+  if (zcom_cfg__get(cfg, &manifest->arr_max_items, "manifest_arr_max_items", "%d") != 0)
   {
-    fprintf(stderr, "assuming default: utils->manifest->arr_max_items = 3, key: manifest_arr_max_items\n");
+    if (verbose) fprintf(stderr, "assuming default: utils->manifest->arr_max_items = 3, key: manifest_arr_max_items\n");
   }
 
+  manifest->fp = NULL; // do not open it yet
 }
 
 
@@ -65,6 +66,9 @@ FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest)
 void at_utils_manifest__close_file(at_utils_manifest_t *manifest)
 {
   if (manifest->inited) {
+    //fprintf(stderr, "manifest->fp %p\n", manifest->fp);
+    //if (manifest->fp) {fprintf(stderr, "error %d\n", ferror(manifest->fp)); getchar();}
+
     if (manifest->fp != NULL) {
       fclose(manifest->fp);
       manifest->fp = NULL;
@@ -77,6 +81,7 @@ void at_utils_manifest__finish(at_utils_manifest_t *manifest)
 {
   if (manifest->inited) {
     at_utils_manifest__close_file(manifest);
+    manifest->inited = 0;
   }
 }
 

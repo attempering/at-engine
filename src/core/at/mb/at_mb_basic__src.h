@@ -35,7 +35,7 @@
 
 
 
-#define IF_VERBOSE_FPRINTF  if(!silent) fprintf
+#define IF_VERBOSE_FPRINTF  if(verbose) fprintf
 
 int at_mb__cfg_init(
     at_mb_t *mb,
@@ -44,7 +44,7 @@ int at_mb__cfg_init(
     double boltz,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int silent)
+    int verbose)
 {
   int i, n;
 
@@ -57,7 +57,7 @@ int at_mb__cfg_init(
   mb->distr = distr;
 
   n = distr->domain->n;
-  mb->n = n;
+  //mb->n = n;
 
   mb->boltz = boltz;
 
@@ -194,11 +194,11 @@ int at_mb__cfg_init(
   /* cnt_dbl: number of additional double variables to be written to binary file */
   mb->cnt_dbl = 5;
 
-  at_mb_iie__cfg_init(mb->iie, mb, cfg, silent);
+  at_mb_iie__cfg_init(mb->iie, mb, cfg, verbose);
 
   at_mb_accum__init(mb->accum, distr->domain->n, mb->win, mb->flags);
 
-  at_mb_shk__cfg_init(mb->shk, cfg, mb, mb->accum->m, silent);
+  at_mb_shk__cfg_init(mb->shk, cfg, mb, verbose);
 
   return 0;
 

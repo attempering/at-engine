@@ -20,17 +20,21 @@
 
 int main(void)
 {
-  at_llong_t step = 0, nsteps = 500000;
+  at_llong_t step = 0, nsteps = 1;
+  double boltz = 1.0;
+  double md_time_step = 0.002;
+  int verbose = 0;
+  at_t at[1];
 
-  at_t* at = at__open("at.cfg", FALSE, TRUE, 1.0, 0.01, 0);
-
-  at->energy = 0.0;
+  //at_t* at = at__open("at.cfg", FALSE, TRUE, boltz, md_time_step, 0, verbose);
+  at__cfg_init(at, NULL, 0, boltz, md_time_step, verbose);
 
   for (step = 1; step <= nsteps; step++) {
+    at->energy = 0.0;
     at__move(at, step, (step == 1), (step == nsteps), TRUE, FALSE);
   }
 
-  at__close(at);
+  at__finish(at);
 
   return 0;
 }

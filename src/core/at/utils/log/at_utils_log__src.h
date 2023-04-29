@@ -31,12 +31,12 @@ void at_utils_log__cfg_init(at_utils_log_t *log,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int silent)
+    int verbose)
 {
   log->filename = "log.dat";
-  if (cfg != NULL && zcom_cfg__get(cfg, &log->filename, "log_file", "%s"))
+  if (zcom_cfg__get(cfg, &log->filename, "log_file", "%s") != 0)
   {
-    fprintf(stderr, "assuming default: utils->log->filename = \"log.dat\", key: log_file\n");
+    if (verbose) fprintf(stderr, "assuming default: utils->log->filename = \"log.dat\", key: log_file\n");
   }
 
   log->filename = at_utils__make_output_filename(ssm, data_dir, log->filename);
@@ -44,7 +44,7 @@ void at_utils_log__cfg_init(at_utils_log_t *log,
   /* nst_log: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
   log->nst_log = -1;
   if (zcom_cfg__get(cfg, &log->nst_log, "nsttrace", "%d")) {
-    fprintf(stderr, "assuming default: utils->log->nst_log = -1, key: nsttrace\n");
+    if (verbose) fprintf(stderr, "assuming default: utils->log->nst_log = -1, key: nsttrace\n");
   }
   
   {
@@ -53,7 +53,7 @@ void at_utils_log__cfg_init(at_utils_log_t *log,
     /* log_file: name of trace file */
     if (zcom_cfg__get(cfg, &fn_log, "log_file", "%s"))
     {
-      fprintf(stderr, "assuming default: utils->log->log_file = \"%s\", key: log_file\n", fn_log);
+      if (verbose) fprintf(stderr, "assuming default: utils->log->log_file = \"%s\", key: log_file\n", fn_log);
     }
 
     //fprintf(stderr, "log file %s => %s\n", fn_log, at->log_file);getchar();

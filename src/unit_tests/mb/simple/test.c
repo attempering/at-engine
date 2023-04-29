@@ -26,11 +26,11 @@ int main(void)
 {
   at_distr_t distr[1];
   at_mb_t mb[1];
-  int silent = 1;
+  int verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, boltz, NULL, silent);
-  at_mb__cfg_init(mb, distr, NULL, boltz, NULL, NULL, silent);
+  at_distr__cfg_init(distr, NULL, boltz, verbose);
+  at_mb__cfg_init(mb, distr, NULL, boltz, NULL, NULL, verbose);
 
   at_mb__finish(mb);
   at_distr__finish(distr);

@@ -25,25 +25,35 @@
 
 #include "../zcom/zcom.h"
 
+#include "utils/at_utils.h"
 #include "distr/at_distr.h"
 #include "mb/at_mb.h"
 #include "driver/at_driver.h"
 #include "eh/at_eh.h"
 
 
+
+double at__beta_to_temp(const at_t *at, double beta) {
+    return at_utils__beta_to_temp(at->utils, beta);
+}
+
+double at__temp_to_beta(const at_t *at, double temp) {
+    return at_utils__temp_to_beta(at->utils, temp);
+}
+
+
 /* load previous data */
-int at__load_data(at_t *at, at_bool_t bCPT)
+int at__load_data(at_t *at, at_bool_t is_continuation)
 {
   at_mb_t *mb = at->mb;
-  int read_mb = 1;
+  int load_data;
 
-  if (!bCPT) { /* initial run */
+  if (!is_continuation) { /* initial run */
     return 0;
   }
 
-  /*read_mb = (at->premode > 0) ? 0 : bCPT;*/
-  read_mb = bCPT;
-  if (read_mb) {
+  load_data = is_continuation;
+  if (load_data) {
      /* read previous at_mb_t data */
     if (at_mb__read(mb, at->driver->langevin, &at->beta) != 0) {
       fprintf(stderr, "cannot load mb data from %s\n", mb->av_file);
@@ -106,7 +116,7 @@ void at__output(at_t *at, at_llong_t step,
 
         zcom_log__printf(log,
             "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
-            step * at->md_time_step, ib, t2 - t1,
+            step * at->utils->md_time_step, ib, t2 - t1,
             at->energy, Eav, at->beta, t1, invw);
         zcom_log__printf(log, "\n");
       }
@@ -129,46 +139,47 @@ void at__output(at_t *at, at_llong_t step,
 }
 
 
-
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step)
+static void at__set_init_beta(at_t *at)
 {
-  /* temp_thermostat: thermostat temperature */
-  at->temp_thermostat = 300.0;
-  if (zcom_cfg__get(cfg, &at->temp_thermostat, "T0", "%lf")) {
-    fprintf(stderr, "assuming default: at->temp_thermostat = 300.0, key: T0\n");
+  /* make the initial temperature = temp_thermostat */
+  double beta = at__temp_to_beta(at, at->utils->temp_thermostat);
+
+  if (beta >= at->distr->domain->bmin
+   && beta <= at->distr->domain->bmax) {
+    at->beta = beta;
+  } else {
+    at->beta = 0.5 * (at->distr->domain->bmin + at->distr->domain->bmax);
   }
+  fprintf(stderr, "initial beta %g\n", at->beta);
+}
 
-  /* nsttemp: frequency of tempering, 0: disable, -1: only ns */
-  at->nsttemp = -1;
-  if (zcom_cfg__get(cfg, &at->nsttemp, "nsttemp", "%d")) {
-    fprintf(stderr, "assuming default: at->nsttemp = -1, key: nsttemp\n");
-  }
 
-  /* md_time_step: MD integration step, for convenience */
-  at->md_time_step = md_time_step;
 
-  int silent = 0;
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step, int verbose)
+{
   const char *data_dir;
   zcom_ssm_t *ssm;
 
-  at_utils__cfg_init(at->utils, cfg, isuffix, silent);
+  at_utils__cfg_init(at->utils, cfg, boltz, md_time_step, isuffix, verbose);
 
   data_dir = at->utils->data_dir;
   ssm = at->utils->ssm;
 
-  at_distr__cfg_init(at->distr, boltz, cfg, silent);
+  at_distr__cfg_init(at->distr, cfg, boltz, verbose);
+
+  at__set_init_beta(at);
 
   /* handler for multiple-bin estimator */
-  at_mb__cfg_init(at->mb, at->distr, cfg, boltz, ssm, data_dir, silent);
+  at_mb__cfg_init(at->mb, at->distr, cfg, boltz, ssm, data_dir, verbose);
 
-  at_driver__cfg_init(at->driver, at->distr, at->mb, cfg, ssm, data_dir, silent);
+  at_driver__cfg_init(at->driver, at->distr, at->mb, cfg, ssm, data_dir, verbose);
 
   /* energy histogram */
-  at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, silent);
+  at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, verbose);
 
   at->energy = 0.0;
 
-  return 1;
+  return 0;
 }
 
 
@@ -176,24 +187,22 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md
 /* return a pointer of an initialized at_t
  * if possible, initial values are taken from configuration
  * file `cfg`, otherwise default values are assumed */
-static at_t *at__cfg_open(const char *cfg_filename, double boltz, double md_time_step, int isuffix)
+static at_t *at__cfg_open(const char *cfg_filename,
+    double boltz, double md_time_step, int isuffix, int verbose)
 {
   zcom_cfg_t *cfg;
   at_t *at;
-  at_bool_t bLoaded;
 
   /* open configuration file */
-  zcom_util__exit_if(!(cfg = zcom_cfg__open(cfg_filename)),
+  zcom_util__exit_if((cfg = zcom_cfg__open(cfg_filename)) == NULL,
       "at_t: cannot open configuration file %s.\n", cfg_filename);
 
   /* allocate memory for at_t */
   zcom_util__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
       "Fatal: no memory for a new object of at_t\n");
 
-  at->boltz = boltz;
-
   /* call low level function */
-  zcom_util__exit_if (!(bLoaded = at__cfg_init(at, cfg, isuffix, boltz, md_time_step)),
+  zcom_util__exit_if (at__cfg_init(at, cfg, isuffix, boltz, md_time_step, verbose) != 0,
     "at_t: error while reading configuration file %s\n", cfg_filename);
 
   fprintf(stderr, "Successfully loaded configuration file %s\n", cfg_filename);
@@ -207,25 +216,23 @@ static at_t *at__cfg_open(const char *cfg_filename, double boltz, double md_time
 
 at_t *at__open(
     const char *zcom_cfg_fn,
-    at_bool_t bCPT,
+    at_bool_t is_continuation,
     at_bool_t open_log,
     double boltz,
     double time_step,
-    int suffix)
+    int suffix,
+    int verbose)
 {
   at_t *at;
 
   /* this will also initialize settings for member objects such as at->mb */
-  at = at__cfg_open((zcom_cfg_fn != NULL) ? zcom_cfg_fn : "at.cfg", boltz, time_step, suffix);
+  at = at__cfg_open((zcom_cfg_fn != NULL) ? zcom_cfg_fn : "at.cfg",
+      boltz, time_step, suffix, verbose);
+
   zcom_util__exit_if(at == NULL, "failed to load configuration file.\n");
 
-  fprintf(stderr, "initial temperature set to %g, beta %g\n", at->temp_thermostat, at__beta_to_temp(at->temp_thermostat, at->boltz));
-
-  /* make the initial temperature = temp_thermostat */
-  at->beta = at__temp_to_beta(at->temp_thermostat, at->boltz);
-
   /* we only load previous data if it's continuation */
-  if (at__load_data(at, bCPT) != 0) {
+  if (at__load_data(at, is_continuation) != 0) {
     fprintf(stderr, "Warning: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 
@@ -269,18 +276,11 @@ int at__manifest(at_t *at)
 
   //fprintf(stderr, "at %p, manifest %p, fp %p (%s)\n", at, manifest, fp, manifest->filename);
 
-  fprintf(fp, "at->temp_thermostat: double, %g\n", at->temp_thermostat);
-  fprintf(fp, "at->nsttemp: int, %4d\n", at->nsttemp);
-  fprintf(fp, "at->md_time_step: double, %g\n", at->md_time_step);
-
   at_utils__manifest(at->utils);
 
   at_distr__manifest(at->distr, manifest);
 
-  if (at->mb != NULL) {
-    fprintf(fp, "at->mb: object pointer to at_mb_t\n");
-    at_mb__manifest(at->mb, manifest);
-  }
+  at_mb__manifest(at->mb, manifest);
 
   if (at->eh->mode != 0) {
     at_eh__manifest(at->eh, manifest);
@@ -288,7 +288,11 @@ int at__manifest(at_t *at)
 
   at_driver__manifest(at->driver, manifest);
 
+  fprintf(fp, "at->beta: double, %g\n", at->beta);
+
   fprintf(fp, "at->energy: double, %g\n", at->energy);
+
+  //fprintf(stderr, "fp %p %p, error %d\n", fp, manifest->fp, ferror(fp)); getchar();
 
   at_utils_manifest__close_file(manifest);
 

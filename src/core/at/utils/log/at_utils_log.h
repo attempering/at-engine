@@ -26,7 +26,7 @@ void at_utils_log__cfg_init(at_utils_log_t *log,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int silent);
+    int verbose);
 
 void at_utils_log__open_file(at_utils_log_t *log);
 

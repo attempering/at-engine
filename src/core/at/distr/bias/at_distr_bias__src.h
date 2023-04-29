@@ -22,11 +22,11 @@
 #include "at_distr_bias.h"
 #include "../../../zcom/zcom.h"
 
-void at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, int silent)
+void at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, int verbose)
 {
   /* enabled : 0: disable; 1:enable */
   bias->enabled = 0;
-  if (cfg != NULL && zcom_cfg__get(cfg, &bias->enabled, "boost_mode", "%d"))
+  if (zcom_cfg__get(cfg, &bias->enabled, "boost_mode", "%d") != 0)
   {
     fprintf(stderr, "assuming default: bias->th_mode = 0, key: boost_mode\n");
   }
@@ -35,20 +35,20 @@ void at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, int silent)
 
     /* TH_Tref */
     bias->TH_Tref = 300.0;
-    if (cfg != NULL && zcom_cfg__get(cfg, &bias->TH_Tref, "boost_Tref", "%lf"))
+    if (zcom_cfg__get(cfg, &bias->TH_Tref, "boost_Tref", "%lf") != 0)
     {
       fprintf(stderr, "assuming default: bias->th_Tref = 300.0, key: boost_Tref\n");
     }
 
     /* kappa0 */
     bias->kappa0 = 1.0;
-    if (cfg != NULL && zcom_cfg__get(cfg, &bias->kappa0, "kappa0", "%lf")) {
+    if (zcom_cfg__get(cfg, &bias->kappa0, "kappa0", "%lf") != 0) {
       fprintf(stderr, "assuming default: bias->kappa0 = 1.0, key: kappa0\n");
     }
 
     /* epsilon0 */
     bias->epsilon0 = 0.0;
-    if (cfg != NULL && zcom_cfg__get(cfg, &bias->epsilon0, "epsilon0", "%lf")) {
+    if (zcom_cfg__get(cfg, &bias->epsilon0, "epsilon0", "%lf") != 0) {
       fprintf(stderr, "assuming default: bias->epsilon0 = 0.0, key: epsilon0\n");
     }
 
@@ -61,7 +61,7 @@ void at_distr_bias__finish(at_distr_bias_t *bias)
 {
 }
 
-void at_distr_bias__manifest(at_distr_bias_t *bias, at_utils_manifest_t *manifest)
+void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *manifest)
 {
   FILE *fp = manifest->fp;
 

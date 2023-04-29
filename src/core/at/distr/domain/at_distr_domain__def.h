@@ -22,8 +22,6 @@
 
 typedef struct at_distr_domain_t_
 {
-  double    boltz;    /* Boltzmann constant */
-
   double    bmin;     /* minimal beta (highest temperature) */
   double    bmax;     /* maximal beta (lowest temperature) */
   double    bdel;     /* bin size of beta */

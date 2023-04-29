@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DEF_H__
-#define AT_DEF_H__
+#ifndef AT__DEF_H__
+#define AT__DEF_H__
 
 
 
@@ -34,17 +34,10 @@
 
 
 typedef struct at_t_ {
-  double    boltz;            // Boltzmann constant
-
-  double    md_time_step;     // MD integration step for reference
 
   double    beta;             // current beta
 
   double    energy;           // current coupling energy
-
-  double    temp_thermostat;  // thermostat temperature
-
-  int       nsttemp;          // interval of tempering, 0: disable, -1: only when doing neighbor searching
 
   at_distr_t    distr[1];     // distribution
 
@@ -54,7 +47,7 @@ typedef struct at_t_ {
 
   at_eh_t       eh[1];        // energy histogram
 
-  at_utils_t    utils[1];
+  at_utils_t    utils[1];     // utilities and everything else
 
 } at_t;
 

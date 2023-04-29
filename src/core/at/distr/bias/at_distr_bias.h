@@ -23,11 +23,11 @@
 #include "../../utils/at_utils.h"
 #include "../../../zcom/zcom.h"
 
-void at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, int silent);
+void at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, int verbose);
 
 void at_distr_bias__finish(at_distr_bias_t *bias);
 
-void at_distr_bias__manifest(at_distr_bias_t *bias, at_utils_manifest_t *manifest);
+void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *manifest);
 
 
 #endif

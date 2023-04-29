@@ -38,7 +38,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   /* bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
   win->bwmod = 1;
 
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwmod, "mbest_mbin_mode", "%d")) {
+  if (0 != zcom_cfg__get(cfg, &win->bwmod, "mbest_mbin_mode", "%d")) {
     fprintf(stderr, "assuming default: win->bwmod = 1, key: mbest_mbin_mode\n");
   }
 
@@ -50,7 +50,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     /* bwdel: delta lnT */
     win->bwdel = 0.05;
 
-    zcom_util__exit_if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf"),
+    zcom_util__exit_if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf"),
         "missing var: win->bwdel, key: mbest_delta_lnT, fmt: %%lf\n");
 
     zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 1.0)),
@@ -62,7 +62,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     /* bwdel: delta beta */
     win->bwdel = 0.02;
 
-    zcom_util__exit_if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf"),
+    zcom_util__exit_if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf"),
         "missing var: win->bwdel, key: mbest_delta_beta, fmt: %%lf\n");
 
     zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 0.0)),
@@ -74,7 +74,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     /* bwdel: delta kT */
     win->bwdel = 0.1;
 
-    zcom_util__exit_if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf"),
+    zcom_util__exit_if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf"),
         "missing var: win->bwdel, key: mbest_delta_kT, fmt: %%lf\n");
 
     zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 2.0)),
@@ -128,7 +128,14 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   /* initialize the mapping from bin index to the affected window indices */
   at_mb_win__init_bin2wins(win);
 
+  win->max_win_bins = 0;
+  for (i = 0; i < n; i++) {
+    int win_bins = win->jt_bin[i] - win->js_bin[i];
 
+    if (win_bins > win->max_win_bins) {
+      win->max_win_bins = win_bins;
+    }
+  }
 
   zcom_util__exit_if ((win->js_grid_res = (int *) calloc(n + 1, sizeof(int))) == NULL,
       "no memory! var: mb->js_grid_res, type: int\n");
@@ -193,22 +200,22 @@ void at_mb_win__manifest(const at_mb_win_t *win, at_utils_manifest_t *manifest)
   FILE *fp = manifest->fp;
 
   /* bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
-  fprintf(fp, "win->bwmod: int, %4d\n", win->bwmod);
+  fprintf(fp, "mb->win->bwmod: int, %4d\n", win->bwmod);
 
   /* bwdel: delta lnT */
-  fprintf(fp, "win->bwdel: double, %g\n", win->bwdel);
+  fprintf(fp, "mb->win->bwdel: double, %g\n", win->bwdel);
 
-  at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "win->js_grid_unres");
+  at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "mb->win->js_grid_unres");
 
-  at_utils_manifest__print_int_arr(manifest, win->jt_grid_unres, win->n+1, "win->jt_grid_unres");
+  at_utils_manifest__print_int_arr(manifest, win->jt_grid_unres, win->n+1, "mb->win->jt_grid_unres");
 
-  at_utils_manifest__print_int_arr(manifest, win->js_bin, win->n, "win->js_bin");
+  at_utils_manifest__print_int_arr(manifest, win->js_bin, win->n, "mb->win->js_bin");
 
-  at_utils_manifest__print_int_arr(manifest, win->jt_bin, win->n, "win->jt_bin");
+  at_utils_manifest__print_int_arr(manifest, win->jt_bin, win->n, "mb->win->jt_bin");
 
-  at_utils_manifest__print_int_arr(manifest, win->js_grid_res, win->n+1, "win->js_grid_res");
+  at_utils_manifest__print_int_arr(manifest, win->js_grid_res, win->n+1, "mb->win->js_grid_res");
 
-  at_utils_manifest__print_int_arr(manifest, win->jt_grid_res, win->n+1, "win->jt_grid_res");
+  at_utils_manifest__print_int_arr(manifest, win->jt_grid_res, win->n+1, "mb->win->jt_grid_res");
 }
 
 

@@ -81,9 +81,14 @@ void at_mb_accum_winaccum_item__add(
   const double amplifier_threshold = 2.0;
   double ginvwf;
   at_mb_sm_t *sm;
+  double inv_gamma;
+
+  inv_gamma = at_mb_shk__calc_inv_gamma(shk, total_visits, item->i);
+
+  //fprintf(stderr, "inv_gamma %g, shk %p\n", inv_gamma, shk); getchar();
 
   // apply adaptive averaging
-  item->amplifier *= at_mb_shk__calc_inverse_gamma(shk, total_visits, item->i);
+  item->amplifier *= inv_gamma;
 
   ginvwf = item->amplifier * invwf; /* multiplied by the accumulated 1/gamma */
 

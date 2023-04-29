@@ -1,5 +1,7 @@
-CC = gcc -O3 -g -Wall -Wno-unused-variable -Wno-unused-function -Wno-stringop-truncation
+CC = gcc -O0 -g -Wall -Wno-unused-variable -Wno-unused-function -Wno-stringop-truncation
 LM = -lm
+
+bins: use_adaptive_tempering_driver.exe
 
 use_adaptive_tempering_driver.exe : use_adaptive_tempering_driver.c
 	$(CC) -I../include -Igmxmock/include -I../src/kernel $< ../src/kernel/adaptive_tempering_driver.c gmxmock/src/gmxmock.c -o $@ $(LM)

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_LANGEVIN_MOVE_UTILS__SRC_H__
-#define AT_LANGEVIN_MOVE_UTILS__SRC_H__
+#ifndef AT_DRIVER_LANGEVIN_MOVE_UTILS__SRC_H__
+#define AT_DRIVER_LANGEVIN_MOVE_UTILS__SRC_H__
 
 
 
@@ -25,7 +25,8 @@
 
 
 
-double at_driver_langevin_move__get_acceptance_ratio(at_driver_langevin_t *langevin)
+double at_driver_langevin_move__get_acceptance_ratio(
+    const at_driver_langevin_t *langevin)
 {
   if (langevin->total > 0) {
     return 1 - langevin->rejects/langevin->total; 

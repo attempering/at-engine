@@ -72,6 +72,8 @@ typedef struct at_mb_win_t_ {
   /* mapping from bin to affected windows */
   at_mb_win_ids_t *bin2wins;
 
+  int max_win_bins;
+
 } at_mb_win_t;
 
 

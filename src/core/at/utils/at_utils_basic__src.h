@@ -29,14 +29,25 @@
 
 
 void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
-    int isuffix, int silent)
+    double boltz, double md_time_step,
+    int isuffix, int verbose)
 {
+  utils->boltz = boltz;
+
+  utils->md_time_step = md_time_step;
+
+  /* temp_thermostat: thermostat temperature */
+  utils->temp_thermostat = 300.0;
+  if (zcom_cfg__get(cfg, &utils->temp_thermostat, "T0", "%lf") != 0) {
+    if (verbose) fprintf(stderr, "assuming default: utils->temp_thermostat = 300.0, key: T0\n");
+  }
+
   sprintf(utils->data_dir, "atdata%d", isuffix);
   printf("datadir: %s\n", utils->data_dir);
 
   utils->ssm = zcom_ssm__open();
-  at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, utils->data_dir, silent);
-  at_utils_log__cfg_init(utils->log, cfg, utils->ssm, utils->data_dir, silent);
+  at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, utils->data_dir, verbose);
+  at_utils_log__cfg_init(utils->log, cfg, utils->ssm, utils->data_dir, verbose);
   utils->inited = 1;
 }
 
@@ -53,8 +64,23 @@ void at_utils__finish(at_utils_t *utils)
 
 void at_utils__manifest(at_utils_t *utils)
 {
+  FILE *fp = utils->manifest->fp;
+
   at_utils_manifest__manifest(utils->manifest);
   at_utils_log__manifest(utils->log, utils->manifest);
+
+  fprintf(fp, "utils->temp_thermostat: double, %g\n", utils->temp_thermostat);
+  fprintf(fp, "utils->md_time_step: double, %g\n", utils->md_time_step);
 }
+
+
+double at_utils__beta_to_temp(const at_utils_t *utils, double beta) {
+    return 1.0/(utils->boltz * beta);
+}
+
+double at_utils__temp_to_beta(const at_utils_t *utils, double temp) {
+    return 1.0/(utils->boltz * temp);
+}
+
 
 #endif

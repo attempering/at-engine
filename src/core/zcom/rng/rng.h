@@ -70,6 +70,7 @@
 typedef struct zcom_mtrng_t_ {
   int index; /* index of `arr` */
   uint32_t arr[ZCOM_RNG__MT_N];
+  int loaded;
 } zcom_mtrng_t;
 
 
@@ -92,8 +93,12 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
  * or if it fails, use `seed` to initialize mt
  * In the latter case, if `seed == 0` then
  * the integer from time(NULL) will be used as the seed
+ * 
+ * if force_reload == 0, then loading from file is not invoked
+ * if a previous file loading operation is already performed.
  * */
-ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng, const char *fname, uint32_t seed);
+ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
+  const char *fname, uint32_t seed, int force_reload);
 
 ZCOM__INLINE zcom_mtrng_t *zcom_mtrng__open(uint32_t seed);
 

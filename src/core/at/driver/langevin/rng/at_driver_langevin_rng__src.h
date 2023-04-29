@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_LANGEVIN_RNG__SRC_H__
-#define AT_LANGEVIN_RNG__SRC_H__
+#ifndef AT_DRIVER_LANGEVIN_RNG__SRC_H__
+#define AT_DRIVER_LANGEVIN_RNG__SRC_H__
 
 #include "at_driver_langevin_rng.h"
 
@@ -27,8 +27,15 @@
 
 void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed)
 {
-  rng->mtrng = zcom_mtrng__open(seed);
-  zcom_mtrng__load_or_init_from_seed(rng->mtrng, rng->filename, seed);
+  int force_reload = 0;
+
+  if (rng->mtrng == NULL) {
+    rng->mtrng = zcom_mtrng__open(seed);
+  }
+
+  zcom_mtrng__load_or_init_from_seed(rng->mtrng, rng->filename, seed, force_reload);
+
+  rng->inited = 1;
 }
 
 
@@ -44,19 +51,19 @@ void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int silent)
+    int verbose)
 {
   rng->filename = "rng.dat";
-  if (cfg != NULL && zcom_cfg__get(cfg, &rng->filename, "rng_file", "%s"))
+  if (zcom_cfg__get(cfg, &rng->filename, "rng_file", "%s") != 0)
   {
-    fprintf(stderr, "assuming default: langevin->rng->filename = \"rng.dat\", key: rng_file\n");
+    if (verbose) fprintf(stderr, "assuming default: langevin->rng->filename = \"rng.dat\", key: rng_file\n");
   }
 
   rng->filename = at_utils__make_output_filename(ssm, data_dir, rng->filename);
 
-  at_driver_langevin_rng__reset(rng, 0);
+  rng->mtrng = NULL;
 
-  rng->inited = 1;
+  at_driver_langevin_rng__reset(rng, 0);
 }
 
 

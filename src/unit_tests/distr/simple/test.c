@@ -27,7 +27,7 @@ int main(void)
   at_utils_manifest_t manifest[1];
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, boltz, cfg, 1);
+  at_distr__cfg_init(distr, cfg, boltz, 1);
   at_distr__manifest(distr, manifest);
   at_distr__finish(distr);
 

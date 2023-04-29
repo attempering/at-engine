@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_EH_BINARY_IO_H__
-#define AT_EH_BINARY_IO_H__
+#ifndef AT_EH_IO_BINARY_H__
+#define AT_EH_IO_BINARY_H__
 
 #include "at_eh__def.h"
 

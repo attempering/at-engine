@@ -9,7 +9,7 @@ header_source_bins = $(patsubst %.c, %_header_source.exe, $(srcs))
 
 includes = -I../../../core
 
-all: $(header_only_bins) $(header_source_bins)
+bins: $(header_only_bins) $(header_source_bins)
 
 use_at_header_only.exe : use_at.c
 	$(CC) -DHEADER_ONLY=1 $(includes) $< -o $@ $(LM)

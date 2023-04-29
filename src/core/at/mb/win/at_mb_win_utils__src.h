@@ -180,11 +180,6 @@ void at_mb_win__make_res_windows_for_grid_estimators(int n,
 
 
 
-/* calculate the maximum number of window estimators
- * that are affected by a single bin visit.
- *
- * The array `affected_win_count` needs to be allocated before
- * calling this function */
 static void at_mb_win__calc_window_counts(at_mb_win_t *win)
 {
   int i, j;

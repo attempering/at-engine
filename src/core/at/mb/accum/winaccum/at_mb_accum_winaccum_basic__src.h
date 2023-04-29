@@ -57,19 +57,28 @@ void at_mb_accum_winaccum__add(
     double invwf, double e, int do_2nd,
     at_mb_shk_t *shk, double total_visits)
 {
+  //fprintf(stderr, "at_mb_accum_winaccum__add() winaccum %p\n", winaccum);
+  //fprintf(stderr, "at_mb_accum_winaccum__add() win %p\n", winaccum->win);
+  //getchar();
+
   int i, l;
   at_mb_win_t *win = winaccum->win;
   at_mb_win_ids_t *wj = win->bin2wins + j;
+
+  //fprintf(stderr, "at_mb_accum_winaccum__add() win %p, bin2wins %p\n", win, win->bin2wins); getchar();
 
   for (l = 0; l < wj->count; l++) { /* loop over affected estimators */
 
     // update the ith window accumulator
     i = wj->ids[l];
 
+    //fprintf(stderr, "at_mb_accum_winaccum__add() j %d/%d, l %d, i %d, %p, %s:%d\n", j, winaccum->n, l, i, winaccum->items, __FILE__, __LINE__);
+
     at_mb_accum_winaccum_item__add(
         winaccum->items + i, j,
         invwf, e, do_2nd, shk, total_visits);
   }
+  //getchar();
 
 }
 
@@ -95,6 +104,8 @@ void at_mb_accum_winaccum__init(at_mb_accum_winaccum_t *winaccum, int n, at_mb_w
   winaccum->n = n;
 
   winaccum->win = win;
+  zcom_util__exit_if (win == NULL,
+      "at_mb_win_t *win is NULL\n");
 
   winaccum->flags = flags;
 

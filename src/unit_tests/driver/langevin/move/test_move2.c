@@ -56,14 +56,14 @@ double custom_integrate_func(at_mb_t *mb, double beta_old, double beta_new)
 void init_distr_mb_langevin_objects(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
-  int silent = 1;
+  int verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, boltz, cfg, silent);
+  at_distr__cfg_init(distr, cfg, boltz, verbose);
 
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, silent);
+  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
 
-  at_driver_langevin__cfg_init(langevin, distr, mb, cfg, NULL, NULL, silent);
+  at_driver_langevin__cfg_init(langevin, distr, mb, cfg, NULL, NULL, verbose);
 
   zcom_cfg__close(cfg);
 }
@@ -106,7 +106,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
   double invwf;
   zcom_mtrng_t mtrng[1];
   double vis_min = 1e10, vis_max = 0, flatness;
-
+  int n = domain->n;
   int passed = 0;
 
   zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
@@ -131,7 +131,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
   // histogram flatness u 1:9
   at_mb__write_ze_file(mb, "ze.dat");
 
-  for (ib = 0; ib < mb->n; ib++) {
+  for (ib = 0; ib < n; ib++) {
     if (mb->visits[ib] < vis_min) {
       vis_min = mb->visits[ib];
     }

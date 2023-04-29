@@ -169,6 +169,10 @@ void at_mb_accum__init(at_mb_accum_t *accum, int n, at_mb_win_t *win, unsigned f
 
   accum->use_winaccum = flags & MB_USE_WIN_ACCUM;
 
+  if (accum->use_winaccum) {
+    at_mb_accum_winaccum__init(accum->winaccum, n, win, flags);
+  }
+
   /* win_total: total of sum.s over a multiple-bin temperature window */
   zcom_util__exit_if ((accum->win_total = (double *) calloc(n, sizeof(double))) == NULL,
     "no memory! var: accum->win_total, type: double\n");
@@ -194,7 +198,9 @@ void at_mb_accum__clear(at_mb_accum_t *accum)
     accum->win_total[i] = 0.0;
   }
 
-  at_mb_accum_winaccum__clear(accum->winaccum);
+  if (accum->use_winaccum) {
+    at_mb_accum_winaccum__clear(accum->winaccum);
+  }
 
 }
 

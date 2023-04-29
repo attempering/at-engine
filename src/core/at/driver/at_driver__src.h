@@ -1,12 +1,12 @@
 /* 
  * Copyright (C) 2010-2023  AT-Engine Developers
  *
- * This library is free software; you can redriveribute it and/or
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is driveributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
@@ -37,15 +37,21 @@ int at_driver__cfg_init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int silent)
+    int verbose)
 {
   at_driver_langevin__cfg_init(
     driver->langevin, distr, mb,
-    cfg, ssm, data_dir, silent);
+    cfg, ssm, data_dir, verbose);
+
+  /* nsttemp: frequency of tempering, 0: disable, -1: only ns */
+  driver->nsttemp = -1;
+  if (zcom_cfg__get(cfg, &driver->nsttemp, "nsttemp", "%d") != 0) {
+    if (verbose) fprintf(stderr, "assuming default: driver->nsttemp = -1, key: nsttemp\n");
+  }
 
   driver->move_repeats = 1;
-  if (zcom_cfg__get(cfg, &driver->move_repeats, "move_repeats", "%d")) {
-    fprintf(stderr, "assuming default: driver->move_repeats = 1, key: move_repeats\n");
+  if (zcom_cfg__get(cfg, &driver->move_repeats, "move_repeats", "%d") != 0) {
+    if (verbose) fprintf(stderr, "assuming default: driver->move_repeats = 1, key: move_repeats\n");
   }
 
   return 0;
@@ -60,11 +66,13 @@ void at_driver__finish(at_driver_t *driver)
 
 
 
-void at_driver__manifest(at_driver_t *driver, at_utils_manifest_t *manifest)
+void at_driver__manifest(const at_driver_t *driver, at_utils_manifest_t *manifest)
 {
   FILE *fp = manifest->fp;
 
   at_driver_langevin__manifest(driver->langevin, manifest);
+
+  fprintf(fp, "driver->nsttemp: int, %4d\n", driver->nsttemp);
 
   fprintf(fp, "driver->move_repeats: int, %d\n", driver->move_repeats);
 
