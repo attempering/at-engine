@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,7 @@ at_t *at__open(
 
 
 
-int at__move(at_t *at, llong_t step, at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
+int at__move(at_t *at, at_llong_t step, at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
 {
   double invwf = 1.0, temp1, temp2, Eav = 0.0, neg_dlnwf_dbeta;
   int ib, rep;

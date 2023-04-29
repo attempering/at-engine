@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,9 +26,9 @@
 
 int at__load_data(at_t *at, at_bool_t bCPT);
 
-int at__do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast);
+int at__do_every(at_llong_t step, int nst, at_bool_t bfirst, at_bool_t blast);
 
-void at__output(at_t *at, llong_t step,
+void at__output(at_t *at, at_llong_t step,
     int ib, double invw, double t1, double t2, double Eav,
     at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush);
 

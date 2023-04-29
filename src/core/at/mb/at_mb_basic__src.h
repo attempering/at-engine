@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,6 @@
 
 #include "at_mb_basic.h"
 
-/* beta distribution functions */
-#include "betadist/at_mb_betadist.h"
-
 /* adaptive averaging functions */
 #include "shk/at_mb_shk.h"
 
@@ -38,25 +35,12 @@
 
 
 
-/* check if mb->barr is arranged in an ascending order */
-static int at_mb__check_barr(at_mb_t *mb)
-{
-  int i;
-
-  for (i = 0; i <= mb->n; i++)
-    if (i > 0 && mb->barr[i] <= mb->barr[i-1]) {
-      fprintf(stderr, "barr should ascend: barr[%d] = %g, barr[%d] = %g\n",
-          i, mb->barr[i], i-1, mb->barr[i-1]);
-      return 1;
-    }
-  return 0;
-}
-
-
-
 #define IF_VERBOSE_FPRINTF  if(!silent) fprintf
 
-int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
+int at_mb__cfg_init(
+    at_mb_t *mb,
+    at_distr_t *distr,
+    zcom_cfg_t *cfg,
     double boltz,
     zcom_ssm_t *ssm,
     const char *data_dir,
@@ -70,73 +54,9 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
     goto ERR;
   }
 
+  mb->distr = distr;
+
   mb->boltz = boltz;
-
-  /* read bmin and bmax from the configuration file */
-
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bmin, "beta_min", "%lf")) {
-    fprintf(stderr, "missing var: mb->bmin, key: beta_min, fmt: %%lf\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-  if ( !(mb->bmin >= 0.0) ) {
-    fprintf(stderr, "mb->bmin: failed validation: mb->bmin %g > 1e-6\n",
-        mb->bmin);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bmax, "beta_max", "%lf")) {
-    fprintf(stderr, "missing var: mb->bmax, key: beta_max, fmt: %%lf\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-  //printf("mb->bmin %g, mb->bmax %g\n", mb->bmin, mb->bmax); getchar();
-
-  if ( !(mb->bmax >= mb->bmin) ) {
-    fprintf(stderr, "mb->bmax: failed validation: mb->bmax %g > mb->bmin %g\n",
-        mb->bmax, mb->bmin);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-  /* bdel: bin size of beta */
-  mb->bdel = 0.0001;
-
-  if (cfg != NULL && 0 != zcom_cfg__get(cfg, &mb->bdel, "beta_del", "%lf")) {
-    fprintf(stderr, "missing var: mb->bdel, key: beta_del, fmt: %%lf\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-  if ( !(mb->bdel > 1e-6) ) {
-    fprintf(stderr, "mb->bdel: failed validation: mb->bdel > 1e-6\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-  /* n: number of temperature bins */
-  mb->n = (int)((mb->bmax - mb->bmin)/mb->bdel - 1e-5) + 1;
-  /* barr: temperature array */
-  if ((mb->barr = (double *) calloc((mb->n + 2), sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: mb->barr, type: double\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-  for (i = 0; i < mb->n+1; i++)
-    mb->barr[i] = mb->bmin + i * mb->bdel;
-  /* check beta array */
-  if ( !(at_mb__check_barr(mb) == 0) ) {
-    fprintf(stderr, "check beta array\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-  /* fix bmax to a bin boundary */
-  mb->bmax = mb->bmin + mb->bdel * mb->n;
-  /* beta: current value of beta */
 
   /* flags: combination of flags */
   mb->flags = 0;
@@ -266,8 +186,6 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
   /* total_visits: total number of visits, number of tempering */
   mb->total_visits = 0.0;
 
-  at_mb_betadist__cfg_init(mb->betadist, cfg, mb);
-
   /* cnt_int: number of additional integer variables to be written to binary file */
   mb->cnt_int = 0;
   /* cnt_dbl: number of additional double variables to be written to binary file */
@@ -275,7 +193,7 @@ int at_mb__cfg_init(at_mb_t *mb, zcom_cfg_t *cfg,
 
   at_mb_iie__cfg_init(mb->iie, mb, cfg, silent);
 
-  at_mb_accum__init(mb->accum, mb->n, mb->win, mb->flags);
+  at_mb_accum__init(mb->accum, distr->n, mb->win, mb->flags);
 
   at_mb_shk__cfg_init(mb->shk, cfg, mb, mb->accum->m, silent);
 
@@ -293,10 +211,7 @@ ERR:
 
 void at_mb__finish(at_mb_t *mb)
 {
-  if (mb->barr      != NULL) free(mb->barr);
   if (mb->visits    != NULL) free(mb->visits);
-
-  at_mb_betadist__finish(mb->betadist);
 
   at_mb_shk__finish(mb->shk);
 

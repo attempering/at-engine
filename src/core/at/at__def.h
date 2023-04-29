@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,29 +23,14 @@
 
 /* this header needs to be placed before zcom modules
  * so that we can determine whether `real` should be defined or not */
-#include "context/at_context.h"
+#include "utils/context/at_utils_context.h"
 
-
-
-#include "../zcom/zcom.h"
 
 #include "utils/at_utils__def.h"
-#include "bias/at_bias__def.h"
+#include "distr/at_distr__def.h"
 #include "mb/at_mb__def.h"
 #include "eh/at_eh__def.h"
 #include "langevin/at_langevin__def.h"
-
-
-
-/* define a long long int type */
-#ifndef I32ONLY
-typedef long long  llong_t;
-#define llong_pfmt "%lld"
-#else
-typedef long llong_t;
-#define llong_pfmt "%ld"
-#endif
-
 
 
 typedef struct at_t_ {
@@ -53,15 +38,15 @@ typedef struct at_t_ {
 
   double    md_time_step;     // MD integration step for reference
 
-  double    temp_thermostat;  // thermostat temperature
-
   double    beta;             // current beta
 
   double    energy;           // current coupling energy
 
+  double    temp_thermostat;  // thermostat temperature
+
   int       nsttemp;          // interval of tempering, 0: disable, -1: only when doing neighbor searching
 
-  at_bias_t     bias[1];      // high-temperature bias
+  at_distr_t    distr[1];     // distribution
 
   at_mb_t       mb[1];        // multiple-bin estimator
 

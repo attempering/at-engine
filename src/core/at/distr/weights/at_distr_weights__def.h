@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,26 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Simplest program of using the at module */
-#ifdef HEADER_ONLY
-#include "at/at__src.h"
-#else
-#include "at/at.h"
+#ifndef AT_DISTR_WEIGHTS__DEF_H__
+#define AT_DISTR_WEIGHTS__DEF_H__
+
+typedef struct at_distr_weights_t_ {
+
+  double    beta_min;
+  double    beta_max;
+  int       n;
+
+  int       mode;         /* mode 0: disable 1: Gaussian 2:exponential */
+  double    ens_exp;      /* ensemble exponent of beta */
+  double    beta0;        /* beta0 in Gaussian distribution */
+  double    inv_sigma2;   /* 1/sigma^2 in Gaussian distribution */
+  double    c;            /* c in exponential distribution */
+  double   *ens_w;        /* array of ensemble weights at bin boundaries */
+
+} at_distr_weights_t;
+
 #endif
-
-int main(void)
-{
-  llong_t step = 0, nsteps = 500000;
-
-  at_t* at = at__open("at.cfg", FALSE, TRUE, 1.0, 0.01, 0);
-
-  at->energy = 0.0;
-
-  for (step = 1; step <= nsteps; step++) {
-    at__move(at, step, (step == 1), (step == nsteps), TRUE, FALSE);
-  }
-
-  at__close(at);
-
-  return 0;
-}

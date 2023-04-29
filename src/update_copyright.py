@@ -76,7 +76,7 @@ def update_copyright_dir(root, copyright_info, excluded_dirs):
             update_copyright(path, copyright)
 
 copyright_info = {
-    "author": "At-engine Developers",
+    "author": "AT-Engine Developers",
     "year": "2010-2023",
     "description": "",
 }

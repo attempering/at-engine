@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,6 @@
 
 /* simple accumulator */
 #include "sm/at_mb_sm__src.h"
-
-/* beta distribution functions */
-#include "betadist/at_mb_betadist__src.h"
 
 /* shrinking rate of the adaptive averaging scheme */
 #include "shk/at_mb_shk__src.h"

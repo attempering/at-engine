@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,21 +25,18 @@
 #include <math.h>
 
 #include "sm/at_mb_sm__def.h"
-#include "betadist/at_mb_betadist__def.h"
 #include "shk/at_mb_shk__def.h"
 #include "win/at_mb_win__def.h"
 #include "accum/at_mb_accum__def.h"
 #include "iie/at_mb_iie__def.h"
 
+typedef struct_t at_distr_t_ at_distr_t;
+
 /* multiple-bin estimator parameters */
 typedef struct at_mb_t_ {
-  double    boltz;    /* Boltzmann constant */
 
-  double    bmin;     /* minimal beta (highest temperature) */
-  double    bmax;     /* maximal beta (lowest temperature) */
-  double    bdel;     /* bin size of beta */
-  int       n;        /* number of temperature bins */
-  double    *barr;    /* temperature array */
+  double    boltz;
+
   unsigned  flags;    /* combination of flags */
 
   int       nstrefresh;   /* interval of recalculating et for all temperature */
@@ -51,8 +48,7 @@ typedef struct at_mb_t_ {
   double    *visits;      /* number of visits */
   double    total_visits; /* total number of visits, number of tempering */
 
-  /* overall beta distribution */
-  at_mb_betadist_t betadist[1];
+  at_distr_t *distr;
 
   /* adaptive averaging related parameters */
   at_mb_shk_t  shk[1];

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_BIAS__SRC_H__
-#define AT_BIAS__SRC_H__
+#ifndef AT_DISTR_BIAS__SRC_H__
+#define AT_DISTR_BIAS__SRC_H__
 
-#include "at_bias.h"
-#include "../../zcom/zcom.h"
+#include "at_distr_bias.h"
+#include "../../../zcom/zcom.h"
 
-void at_bias__cfg_init(at_bias_t *bias, zcom_cfg_t *cfg, int silent)
+void at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, int silent)
 {
   /* enabled : 0: disable; 1:enable */
   bias->enabled = 0;
@@ -57,11 +57,11 @@ void at_bias__cfg_init(at_bias_t *bias, zcom_cfg_t *cfg, int silent)
 }
 
 
-void at_bias__finish(at_bias_t *bias)
+void at_distr_bias__finish(at_distr_bias_t *bias)
 {
 }
 
-void at_bias__manifest(at_bias_t *bias, at_utils_manifest_t *manifest)
+void at_distr_bias__manifest(at_distr_bias_t *bias, at_utils_manifest_t *manifest)
 {
   FILE *fp = manifest->fp;
 

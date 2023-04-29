@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +21,14 @@
 
 
 
-typedef long long llong_t;
+typedef long long at_llong_t;
 double boltz = 1;
 
 
 
-void run_md(mdsys_t* mdsys, double beta, llong_t nsteps)
+void run_md(mdsys_t* mdsys, double beta, at_llong_t nsteps)
 {
-  llong_t step = 0;
+  at_llong_t step = 0;
 
   for (step = 1; step <= nsteps; step++) {
     mdsys__step(mdsys, beta);
@@ -46,7 +46,7 @@ int main(void)
   double sigma = 10.0; /* spring constant */
   double epot_dt = 0.05; /* time step */
   double beta = 1.0;
-  llong_t nsteps = 100000;
+  at_llong_t nsteps = 100000;
 
   mdsys_t* mdsys;
 

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef BIAS_H__
-#define BIAS_H__
+#ifndef AT_DISTR_DOMAIN__DEF_H__
+#define AT_DISTR_DOMAIN__DEF_H__
 
-#include "at_bias__def.h"
-#include "../utils/at_utils.h"
-#include "../../zcom/zcom.h"
 
-void at_bias__cfg_init(at_bias_t *bias, zcom_cfg_t *cfg, int silent);
+typedef struct at_distr_domain_t_
+{
+  double    boltz;    /* Boltzmann constant */
 
-void at_bias__finish(at_bias_t *bias);
-
-void at_bias__manifest(at_bias_t *bias, at_utils_manifest_t *manifest);
+  double    bmin;     /* minimal beta (highest temperature) */
+  double    bmax;     /* maximal beta (lowest temperature) */
+  double    bdel;     /* bin size of beta */
+  int       n;        /* number of temperature bins */
+  double    *barr;    /* temperature array */
+} at_distr_domain_t;
 
 
 #endif

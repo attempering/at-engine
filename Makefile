@@ -1,7 +1,8 @@
 zip::
-	zip -r ../at-engine_`date +'%Y-%m-%d-%H%M'`.zip \
+	zip -r --symlinks ../at-engine_`date +'%Y-%m-%d-%H%M'`.zip \
 	    --exclude="*.zip" \
 	    --exclude="*.vscode*" \
+	    --exclude="*.git*" \
 	    *
 
 clean::

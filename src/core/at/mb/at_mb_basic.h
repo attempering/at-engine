@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,8 @@
 
 #include "at_mb__def.h"
 
+#include "../distr/at_distr.h"
+
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
 /* initialize an object of at_mb_t
@@ -30,6 +32,7 @@ typedef struct zcom_cfg_t_ zcom_cfg_t;
  * when available, otherwise default values are assumed */
 int at_mb__cfg_init(
     at_mb_t *mb,
+    at_distr_t *distr,
     zcom_cfg_t *cfg,
     double boltz,
     zcom_ssm_t *ssm,

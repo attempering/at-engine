@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 
 #include "../zcom/zcom.h"
 
+#include "distr/at_distr.h"
 #include "mb/at_mb.h"
 #include "langevin/at_langevin.h"
 #include "eh/at_eh.h"
@@ -66,7 +67,7 @@ int at__load_data(at_t *at, at_bool_t bCPT)
 
 
 /* don't write at the first step; write at the last step */
-int at__do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
+int at__do_every(at_llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
 {
   return !bfirst && (blast || (nst > 0 && step % nst == 0));
 }
@@ -74,7 +75,7 @@ int at__do_every(llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
 
 
 /* write various output files */
-void at__output(at_t *at, llong_t step,
+void at__output(at_t *at, at_llong_t step,
           int ib, double invw, double t1, double t2, double Eav,
           at_bool_t is_first_step, at_bool_t is_last_step,
           at_bool_t do_log, at_bool_t flush_output)
@@ -155,7 +156,7 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md
   data_dir = at->utils->data_dir;
   ssm = at->utils->ssm;
 
-  at_bias__cfg_init(at->bias, cfg, silent);
+  at_distr__cfg_init(at->distr, cfg, silent);
 
   /* handler for multiple-bin estimator */
   at_mb__cfg_init(at->mb, cfg, boltz, ssm, data_dir, silent);
@@ -181,7 +182,7 @@ void at__finish(at_t *at)
 
   at_langevin__finish(at->langevin);
 
-  at_bias__finish(at->bias);
+  at_distr__finish(at->distr);
 
   memset(at, 0, sizeof(*at));
 }
@@ -205,7 +206,7 @@ int at__manifest(at_t *at)
 
   at_utils__manifest(at->utils);
 
-  at_bias__manifest(at->bias, manifest);
+  at_distr__manifest(at->distr, manifest);
 
   if (at->mb != NULL) {
     fprintf(fp, "at->mb: object pointer to at_mb_t\n");

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -209,7 +209,7 @@ static int at_langevin_move__accept(
   }
 
   ib_new = at_mb__beta_to_index(mb, proposal->beta_new, 0);
-  invwf_new = at_mb_betadist__calc_inv_weight(mb->betadist,
+  invwf_new = at_distr_weights__calc_inv_weight(mb->distr->weights,
       proposal->beta_new, &neg_dlnwf_dbeta_new, NULL, NULL);
 
   // ln [ p(kT_new) / p(kT_old) ]

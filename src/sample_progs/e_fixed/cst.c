@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,21 +27,21 @@
 #endif
 
 
-typedef long long llong_t;
+typedef long long at_llong_t;
 double boltz = 1.0;
 int use_minicst = 0;
 uint32_t langevin_seed = 1234;
 
 double sigma = 10.0; /* standard deviation of energy distributions */
 double epot_dt = 0.01; /* equilibration rate, larger value means the system is able to equilibrate faster */
-llong_t nsteps = 500000;
+at_llong_t nsteps = 500000;
 
 double epot = -100.0;
 
 
-void run_cst_md(at_t* at, llong_t nsteps)
+void run_cst_md(at_t* at, at_llong_t nsteps)
 {
-  llong_t step = 0;
+  at_llong_t step = 0;
 
   zcom_mtrng__init_from_seed(at->langevin->rng->mtrng, langevin_seed);
 
@@ -70,9 +70,9 @@ void run_cst_md(at_t* at, llong_t nsteps)
 
 
 #ifdef ENABLE_MINICST
-void run_minicst_md(at_t* at, llong_t nsteps)
+void run_minicst_md(at_t* at, at_llong_t nsteps)
 {
-  llong_t step = 0;
+  at_llong_t step = 0;
   minicst_t* minicst = minicst__new(at->mb->bmin, at->mb->bmax, at->mb->n, at->langevin->dt, at->langevin->dTmax, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);

@@ -177,7 +177,7 @@ Options:
 
     Conditions: applicable only to `ensemble_mode == 1`
 
-    Variable: `mb->invsigma2 = 1/(sigma*sigma)`
+    Variable: `mb->inv_sigma2 = 1/(sigma*sigma)`
 
     Default: 1.0.
 

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,22 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_BIAS__DEF_H__
-#define AT_BIAS__DEF_H__
-
-/* high-temperature bias
-
-  H = kappa* H0 + epsilon * H1
-  kappa = 1-(T-Tref)*(1-kappa0)/(Tmax-Tref) if T>Tref; kappa=1 if T<Tref
-  epsilon= epsilon0*(T-Tref)/(Tmax-Tref) if T>Tref; epsilon=0 if T<Tref
-
-*/
-typedef struct at_bias_t_
-{
-  int       enabled;
-  double    TH_Tref;
-  double    *kappa, *epsilon;
-  double    kappa0, epsilon0;
-} at_bias_t;
-
+/* Simplest program of using the at module */
+#ifdef HEADER_ONLY
+#include "at/at__src.h"
+#else
+#include "at/at.h"
 #endif
+
+int main(void)
+{
+  at_llong_t step = 0, nsteps = 500000;
+
+  at_t* at = at__open("at.cfg", FALSE, TRUE, 1.0, 0.01, 0);
+
+  at->energy = 0.0;
+
+  for (step = 1; step <= nsteps; step++) {
+    at__move(at, step, (step == 1), (step == nsteps), TRUE, FALSE);
+  }
+
+  at__close(at);
+
+  return 0;
+}

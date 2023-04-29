@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,22 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_BETADIST_H__
-#define AT_MB_BETADIST_H__
+#ifndef AT_DISTR_WEIGHTS_H__
+#define AT_DISTR_WEIGHTS_H__
 
 #include <stdio.h>
 
-#include "at_mb_betadist__def.h"
+#include "at_distr_weights__def.h"
+#include "../domain/at_distr_domain__def.h"
 #include "../../utils/at_utils.h"
 
-typedef struct at_mb_t_ at_mb_t;
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-int at_mb_betadist__cfg_init(at_mb_betadist_t *betadist, zcom_cfg_t *cfg, at_mb_t *mb);
+int at_distr_weights__cfg_init(at_distr_weights_t *w,
+    at_distr_domain_t *domain, zcom_cfg_t *cfg, int silent);
 
-void at_mb_betadist__finish(at_mb_betadist_t *betadist);
+void at_distr_weights__finish(at_distr_weights_t *w);
 
-void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, at_utils_manifest_t *manifest);
+void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t *manifest);
 
 /* return the inverse of overall temperature weight
  *
@@ -48,7 +49,7 @@ void at_mb_betadist__manifest(const at_mb_betadist_t *betadist, at_utils_manifes
  * are saved in *p_f and *p_neg_df_dbeta, respectively,
  * if the two pointers are not NULL.
  */
-double at_mb_betadist__calc_inv_weight(at_mb_betadist_t *betadist, double beta,
+double at_distr_weights__calc_inv_weight(at_distr_weights_t *w, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
 
 #endif

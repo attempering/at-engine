@@ -7,7 +7,7 @@ srcs = $(wildcard *.c)
 header_only_bins = $(patsubst %.c, %_header_only.exe, $(srcs))
 header_source_bins = $(patsubst %.c, %_header_source.exe, $(srcs))
 
-includes = -I..
+includes = -I../../../core
 
 all: $(header_only_bins) $(header_source_bins)
 
@@ -15,13 +15,7 @@ use_at_header_only.exe : use_at.c
 	$(CC) -DHEADER_ONLY=1 $(includes) $< -o $@ $(LM)
 
 use_at_header_source.exe : use_at.c
-	$(CC) $(includes) $< ../at/at.c -o $@ $(LM)
-
-use_AdaptTempering_header_only.exe : use_AdaptTempering.c
-	$(CC) -DHEADER_ONLY=1 $(includes) $< -o $@ $(LM)
-
-use_AdaptTempering_header_source.exe : use_AdaptTempering.c
-	$(CC) $(includes) $< ../AdaptTempering/AdaptTempering.c -o $@ $(LM)
+	$(CC) $(includes) $< ../../../core/at/at.c -o $@ $(LM)
 
 clean::
 	$(RM) $(header_only_bins) $(header_source_bins) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat cst.dat gmon.out data/*

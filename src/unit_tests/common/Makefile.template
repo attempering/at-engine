@@ -8,11 +8,11 @@ bins_dbg = $(patsubst %.c, %_d.exe, $(srcs))
 dep_srcs =
 deps = $(dep_srcs) \
        $(wildcard *.h) \
-			 $(wildcard ../../common/at/*.h) \
-			 $(wildcard ../../common/at/*/*.h) \
-			 $(wildcard ../../common/at/*/*/*.h) \
+			 $(wildcard ../../../core/at/*.h) \
+			 $(wildcard ../../../core/at/*/*.h) \
+			 $(wildcard ../../../core/at/*/*/*.h) \
        Makefile
-includes = -I../../common
+includes = -I../../../core
 
 bins: $(bins)
 

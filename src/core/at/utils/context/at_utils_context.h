@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_CONTEXT_H__
-#define AT_CONTEXT_H__
+#ifndef AT_UTILS_CONTEXT_H__
+#define AT_UTILS_CONTEXT_H__
 
 
 /* This module defines the programming context:
-   whether we are programming under the GROMACS environment
-   or plain ANSI?
-   Specifically, do we have `real` and `gmx_bool`?
+   It determines whether we have defined `real` and `gmx_bool`
+   as in the GROMACS environment.
+
+   It also defines at_bool_t and at_llong_t
 */
 
 
@@ -63,6 +64,16 @@
   #endif
 
 #endif /* defined(ADAPTIVE_TEMPERING_FOR_GROMACS) */
+
+
+/* define a long long int type */
+#ifndef AT_INT32_ONLY
+typedef long long  at_llong_t;
+#define at_llong_pfmt "%lld"
+#else
+typedef long at_llong_t;
+#define at_llong_pfmt "%ld"
+#endif
 
 
 

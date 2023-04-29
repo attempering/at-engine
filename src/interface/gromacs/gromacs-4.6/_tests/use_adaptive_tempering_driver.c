@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  At-engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 
 int main(void)
 {
-  llong_t step = 0, nsteps = 500000;
+  at_llong_t step = 0, nsteps = 500000;
 
   at_t* at = at__open("at.cfg", FALSE, TRUE, 1.0, 0.01, 0);
 

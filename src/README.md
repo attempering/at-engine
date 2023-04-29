@@ -18,7 +18,6 @@ Many test programs have been built into the project.
 
 Normally, test in this order:
 
-1. [Basic compiling tests to the core files](core/_tests)
-2. [Unit tests to the modules of the core files](unit_tests)
-3. [Sample programs](sample_progs)
-4. [Basic tests to the GROMACS 4.6 plugins](interface/gromacs/4.6/_tests)
+1. [Unit tests to the modules of the core files](unit_tests)
+2. [Sample programs](sample_progs)
+3. [Basic tests to the GROMACS 4.6 plugins](interface/gromacs/4.6/_tests)

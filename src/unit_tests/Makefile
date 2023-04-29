@@ -1,4 +1,10 @@
 bins::
+	$(MAKE) $@ -C at
+	$(MAKE) $@ -C mb
+	$(MAKE) $@ -C langevin
+
+clean::
+	$(MAKE) $@ -C at
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C langevin
 
@@ -8,7 +14,3 @@ zip::
 	    --exclude="*.vscode*" \
 	    --exclude="*.git*" \
 	    *
-
-clean::
-	$(MAKE) $@ -C mb
-	$(MAKE) $@ -C langevin
