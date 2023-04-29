@@ -18,4 +18,4 @@ use_at_header_source.exe : use_at.c
 	$(CC) $(includes) $< ../../../core/at/at.c -o $@ $(LM)
 
 clean::
-	$(RM) $(header_only_bins) $(header_source_bins) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat cst.dat gmon.out data/*
+	$(RM) $(header_only_bins) $(header_source_bins) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* log.dat cst.dat gmon.out data/*

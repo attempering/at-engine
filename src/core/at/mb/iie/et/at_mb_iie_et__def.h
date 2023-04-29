@@ -61,7 +61,7 @@ typedef struct at_mb_iie_et_cache_params_t_ {
 
 
 typedef struct at_mb_iie_et_t_ {
-  int n; /* same as mb->n */
+  int n; /* same as distr->domain->n */
   at_mb_iie_et_item_t *items;
   at_mb_iie_et_cache_params_t cache_params[1];
   int cache_hit; /* whether the latest call to at_mb_iie_et__calc_et_cached() is a cache hit */

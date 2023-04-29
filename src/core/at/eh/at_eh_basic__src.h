@@ -21,6 +21,7 @@
 
 #include "at_eh_basic.h"
 #include "../mb/win/at_mb_win.h"
+#include "../distr/at_distr.h"
 
 #include "../../zcom/zcom.h"
 
@@ -29,9 +30,10 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
     zcom_ssm_t *ssm, const char *data_dir, int silent)
 {
   int i;
+  at_distr_t *distr = mb->distr;
 
   eh->mb = mb;
-  eh->n = mb->n;
+  eh->n = distr->domain->n;
 
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
@@ -78,7 +80,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if ( !(eh->bwdel > mb->bdel/pow(mb->bmin, 1.0)) ) {
+    if ( !(eh->bwdel > distr->domain->bdel/pow(distr->domain->bmin, 1.0)) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > mb->bdel/pow(mb->bmin, 1.0)\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -93,7 +95,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if ( !(eh->bwdel > mb->bdel/pow(mb->bmin, 0.0)) ) {
+    if ( !(eh->bwdel > distr->domain->bdel/pow(distr->domain->bmin, 0.0)) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > mb->bdel/pow(mb->bmin, 0.0)\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -108,7 +110,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if ( !(eh->bwdel > mb->bdel/pow(mb->bmin, 2.0)) ) {
+    if ( !(eh->bwdel > distr->domain->bdel/pow(distr->domain->bmin, 2.0)) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > mb->bdel/pow(mb->bmin, 2.0)\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
@@ -237,7 +239,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
     fprintf(stderr, "eh->is %p, eh->it %p\n", eh->is, eh->it);
 
     // windows for the reconstructed energy histograms
-    at_mb_win__make_unres_windows_for_grid_estimators(mb->n, mb->barr, mb->bdel,
+    at_mb_win__make_unres_windows_for_grid_estimators(
+        distr->domain->n, distr->domain->barr, distr->domain->bdel,
         eh->bwmod, eh->bwdel, eh->is, eh->it);
   }
 

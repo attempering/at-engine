@@ -30,7 +30,7 @@
 #include "distr/at_distr__def.h"
 #include "mb/at_mb__def.h"
 #include "eh/at_eh__def.h"
-#include "langevin/at_langevin__def.h"
+#include "driver/at_driver__def.h"
 
 
 typedef struct at_t_ {
@@ -50,7 +50,7 @@ typedef struct at_t_ {
 
   at_mb_t       mb[1];        // multiple-bin estimator
 
-  at_langevin_t langevin[1];  // Langevin equation
+  at_driver_t   driver[1];    // Langevin equation
 
   at_eh_t       eh[1];        // energy histogram
 

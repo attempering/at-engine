@@ -54,7 +54,7 @@ void at_utils_manifest__cfg_init(
 
 FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest)
 {
-  if ((manifest->fp = fopen(manifest->filename, "w")) == NULL) {
+  if ((manifest->fp = fopen(manifest->filename, "w")) != NULL) {
     return manifest->fp;
   }
 

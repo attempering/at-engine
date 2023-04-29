@@ -33,7 +33,7 @@
 
 typedef struct at_mb_iie_t_ {
 
-  int n; /* == mb->n */
+  int n; /* == distr->domain->n */
   unsigned flags; /* == mb->flags */
 
   at_mb_iie_lr_t lr[1];

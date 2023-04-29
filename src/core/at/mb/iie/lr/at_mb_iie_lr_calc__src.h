@@ -38,7 +38,7 @@ void at_mb_iie_lr__init_instance(at_mb_iie_lr_t *lr,
   lr->type = type;
   lr->win_div = win_div;
 
-  zcom_util__exit_if (0 > js || js >= jt || jt > lr->mb->n,
+  zcom_util__exit_if (0 > js || js >= jt || jt > lr->mb->distr->domain->n,
     "bad window [%d, %d)", js, jt);
 
   lr->ib = ib;

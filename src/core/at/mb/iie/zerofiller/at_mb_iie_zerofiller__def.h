@@ -28,10 +28,7 @@ typedef struct at_mb_iie_zerofiller_item_t_ {
 } at_mb_iie_zerofiller_item_t;
 
 typedef struct at_mb_iie_zerofiller_t_ {
-  int n; /* same as mb->n */
-  double    beta_min; /* same as mb->bmin */
-  double    beta_max; /* same as mb->bmax */
-  double    beta_del; /* same as mb->bdel */
+  int n; /* same as distr->domain->n */
 
   /* In an earlier design, we kept a record of *raw_vals
    * in addition to the *vals. This is now abandoned.

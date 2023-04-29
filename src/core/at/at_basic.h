@@ -36,6 +36,8 @@ void at__output(at_t *at, at_llong_t step,
  * file `cfg`, or if unavailable, from default values */
 int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step);
 
+at_t *at__open(const char *cfg_fn, at_bool_t bCPT, at_bool_t open_log, double boltz, double md_time_step, int suffix);
+
 void at__finish(at_t *at);
 
 /* close a pointer to at_t */

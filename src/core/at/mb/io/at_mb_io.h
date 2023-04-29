@@ -27,12 +27,9 @@
 
 
 /* load previous mb data */
-int at_mb__read(at_mb_t *mb, at_langevin_t *langevin, double *beta);
+int at_mb__read(at_mb_t *mb, at_driver_langevin_t *langevin, double *beta);
 
 /* prepare and write mb data  */
-int at_mb__write(at_mb_t *mb, at_langevin_t *langevin, double beta);
-
-/* at_mb__manifest: clear at_mb_t data */
-void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest);
+int at_mb__write(at_mb_t *mb, at_driver_langevin_t *langevin, double beta);
 
 #endif

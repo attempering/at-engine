@@ -26,16 +26,18 @@
 #include "../at_mb_basic.h"
 #include "../sm/at_mb_sm.h"
 #include "../accum/at_mb_accum.h"
+#include "../../distr/at_distr.h"
 
 #include "../../../zcom/zcom.h"
 
 static int at_mb__read_binary_low_level(
     at_mb_t *mb,
-    at_langevin_t *langevin,
+    at_driver_langevin_t *langevin,
     double *beta,
     FILE *fp, int ver, int endn)
 {
   int itmp;
+  at_distr_domain_t *domain = mb->distr->domain;
 
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to at_mb__read_binary_low_level\n");
@@ -45,16 +47,16 @@ static int at_mb__read_binary_low_level(
 
   /* clear data before reading */
   at_mb__clear(mb);
-  at_langevin__clear(langevin);
+  at_driver_langevin__clear(langevin);
 
   /* n: number of temperature bins */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
     goto ERR;
   }
-  if (itmp != mb->n) {
-    fprintf(stderr, "mb->n mismatch, expect: %d, read: %d, pos: %#lx\n",
-        mb->n, itmp, (unsigned long) ftell(fp));
+  if (itmp != mb->distr->domain->n) {
+    fprintf(stderr, "mb->distr->domain->n mismatch, expect: %d, read: %d, pos: %#lx\n",
+        mb->distr->domain->n, itmp, (unsigned long) ftell(fp));
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
@@ -125,16 +127,16 @@ static int at_mb__read_binary_low_level(
       goto ERR;
     }
 
-    if ( !(*beta >= mb->bmin && *beta <= mb->bmax) ) {
+    if ( !(*beta >= domain->bmin && *beta <= domain->bmax) ) {
       fprintf(stderr, "beta: failed validation: beta >= mb->bmin && beta <= mb->bmax\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
 
-    if (*beta > mb->bmax - 1e-5) {
-      *beta = mb->bmax - 1e-5;
-    } else if (*beta < mb->bmin + 1e-5) {
-      *beta = mb->bmin + 1e-5;
+    if (*beta > domain->bmax - 1e-5) {
+      *beta = domain->bmax - 1e-5;
+    } else if (*beta < domain->bmin + 1e-5) {
+      *beta = domain->bmin + 1e-5;
     }
 
   }
@@ -157,21 +159,21 @@ static int at_mb__read_binary_low_level(
     goto ERR;
   }
 
-  if (at_langevin__read_binary(langevin, fp, endn) != 0) {
+  if (at_driver_langevin__read_binary(langevin, fp, endn) != 0) {
     goto ERR;
   }
 
   /* barr: temperature array */
-  if ((mb->n > 0)
-    && (zcom_endn__fread(mb->barr, sizeof(*(mb->barr)), mb->n, fp, endn) != (size_t) (mb->n))) {
-    fprintf(stderr, "error in reading mb->barr, n = mb->n(%d)\n", mb->n);
+  if ((mb->distr->domain->n > 0)
+    && (zcom_endn__fread(mb->distr->domain->barr, sizeof(*(mb->distr->domain->barr)), mb->distr->domain->n, fp, endn) != (size_t) (mb->distr->domain->n))) {
+    fprintf(stderr, "error in reading mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */
   /*
-  if ((mb->n > 0)
-    && (zcom_endn__fread(mb->iie->et, sizeof(*(mb->iie->et)), mb->n, fp, endn) != (size_t) (mb->n))) {
-    fprintf(stderr, "error in reading mb->et, n = mb->n(%d)\n", mb->n);
+  if ((mb->distr->domain->n > 0)
+    && (zcom_endn__fread(mb->iie->et, sizeof(*(mb->iie->et)), mb->distr->domain->n, fp, endn) != (size_t) (mb->distr->domain->n))) {
+    fprintf(stderr, "error in reading mb->et, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   */
@@ -184,7 +186,7 @@ static int at_mb__read_binary_low_level(
 
 ERR:
   at_mb__clear(mb);
-  at_langevin__clear(langevin);
+  at_driver_langevin__clear(langevin);
   return -1;
 }
 
@@ -192,7 +194,7 @@ ERR:
 
 int at_mb__read_binary(
     at_mb_t *mb,
-    at_langevin_t *langevin, 
+    at_driver_langevin_t *langevin, 
     double *beta,
     const char *fname,
     int *pver)
@@ -246,7 +248,7 @@ ERR:
 
 static int at_mb__write_binary_low_level(
     at_mb_t *mb,
-    at_langevin_t *langevin,
+    at_driver_langevin_t *langevin,
     double beta,
     FILE *fp, int ver)
 {
@@ -256,8 +258,8 @@ static int at_mb__write_binary_low_level(
     return -1;
   }
   /* n: number of temperature bins */
-  if (zcom_endn__fwrite(&mb->n, sizeof(mb->n), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->n\n");
+  if (zcom_endn__fwrite(&mb->distr->domain->n, sizeof(mb->distr->domain->n), 1, fp, 1) != 1) {
+    fprintf(stderr, "error in writing mb->distr->domain->n\n");
     goto ERR;
   }
   /* m: maximal number of bins in a window */
@@ -315,21 +317,21 @@ static int at_mb__write_binary_low_level(
     goto ERR;
   }
 
-  if (at_langevin__write_binary(langevin, fp) != 0) {
+  if (at_driver_langevin__write_binary(langevin, fp) != 0) {
     goto ERR;
   }
 
   /* barr: temperature array */
-  if ((mb->n > 0)
-    && (zcom_endn__fwrite(mb->barr, sizeof(*(mb->barr)), mb->n, fp, 1) != (size_t) (mb->n))) {
-    fprintf(stderr, "error in writing mb->barr, n = mb->n(%d)\n", mb->n);
+  if ((mb->distr->domain->n > 0)
+    && (zcom_endn__fwrite(mb->distr->domain->barr, sizeof(*(mb->distr->domain->barr)), mb->distr->domain->n, fp, 1) != (size_t) (mb->distr->domain->n))) {
+    fprintf(stderr, "error in writing mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */
   /*
-  if ((mb->n > 0)
-    && (zcom_endn__fwrite(mb->iie->et, sizeof(*(mb->iie->et)), mb->n, fp, 1) != (size_t) (mb->n))) {
-    fprintf(stderr, "error in writing mb->et, n = mb->n(%d)\n", mb->n);
+  if ((mb->distr->domain->n > 0)
+    && (zcom_endn__fwrite(mb->iie->et, sizeof(*(mb->iie->et)), mb->distr->domain->n, fp, 1) != (size_t) (mb->distr->domain->n))) {
+    fprintf(stderr, "error in writing mb->et, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   */
@@ -347,7 +349,7 @@ ERR:
 
 int at_mb__write_binary(
     at_mb_t *mb,
-    at_langevin_t *langevin,
+    at_driver_langevin_t *langevin,
     double beta,
     const char *fname,
     int ver)

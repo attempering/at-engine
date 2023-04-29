@@ -24,6 +24,7 @@
 #include "at_mb_shk.h"
 
 #include "../at_mb_basic.h"
+#include "../../distr/at_distr.h"
 
 #include <stdlib.h>
 
@@ -32,9 +33,11 @@
 
 int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, int silent)
 {
+  at_distr_domain_t *domain = mb->distr->domain;
+  at_distr_weights_t *w = mb->distr->weights;
   int i;
 
-  shk->n = mb->n;
+  shk->n = domain->n;
 
   /* shk_base: current generic shrink amplitude */
   shk->base = 0.0;
@@ -63,8 +66,8 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int m, i
   }
 
   for (i = 0; i < shk->n; i++) {
-    double beta_midpoint = 0.5*(mb->barr[i] + mb->barr[i+1]);
-    double invwf = at_mb_betadist__calc_inv_weight(mb->betadist, beta_midpoint, NULL, NULL, NULL);
+    double beta_midpoint = 0.5*(domain->barr[i] + domain->barr[i+1]);
+    double invwf = at_distr_weights__calc_inv_weight(w, beta_midpoint, NULL, NULL, NULL);
     int window_width = mb->win->jt_bin[i] - mb->win->js_bin[i];
     shk->win_multiplier[i] = invwf * mb->accum->m / window_width;
   }

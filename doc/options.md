@@ -604,7 +604,7 @@ The trace file outputs the current potential energy and temperature every few st
 
   Variable: `at->trace_file`.
 
-  Default: "trace.dat" (legacy: "TRACE").
+  Default: "log.dat" (legacy: "TRACE").
 
   Remarks: by default, this file is always appended instead of rewritten.
   So if you restart a fresh simulation, make sure to delete the TRACE file.

@@ -21,6 +21,7 @@
 
 #include "at_eh_utils.h"
 
+#include "../distr/at_distr.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -43,8 +44,10 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
   double eav, db, x;
   double num, den;
   double del, base, inc;
-  at_mb_t *mb;
-  at_mb_iie_t *iie;
+  at_mb_t *mb = eh->mb;
+  at_mb_iie_t *iie = mb->iie;
+  at_distr_t *distr = mb->distr;
+  int n = distr->domain->n;
 
   if (eh == NULL || eh->mode == 0) {
     return 0;
@@ -54,9 +57,6 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
     fprintf(stderr, "invalid eh_mode %d\n", eh->mode);
     return -1;
   }
-
-  mb = eh->mb;
-  iie = mb->iie;
 
   if ((fp = fopen((fname != NULL) ? fname : eh->rfile, "w")) == NULL) {
     fprintf(stderr, "cannot write reconstructed histogram [%s].\n",
@@ -69,20 +69,21 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
   cols = eh->cnt;
   base = eh->min;
   inc = eh->del;
-  db = mb->bdel;
+  db = distr->domain->bdel;
 
   /* build lnZ */
-  for (iie->gridvals->items[0].lnz = 0.0, ib = 0; ib < mb->n; ib++) {
+  for (iie->gridvals->items[0].lnz = 0.0, ib = 0; ib < n; ib++) {
     double et = iie->et->items[ib].value;
-    iie->gridvals->items[ib+1].lnz = iie->gridvals->items[ib].lnz + et*(mb->barr[ib] - mb->barr[ib+1]);
+    iie->gridvals->items[ib+1].lnz = iie->gridvals->items[ib].lnz
+      + et*(distr->domain->barr[ib] - distr->domain->barr[ib+1]);
   }
 
   /* loop over temperatures, and skip a few intermediate temperatures */
-  for (ib = 0; ib <= mb->n; ib += eh->skip) {
-    /* reconstruct energy histogram at beta = mb->barr[ib] */
+  for (ib = 0; ib <= n; ib += eh->skip) {
+    /* reconstruct energy histogram at beta = distr->domain->barr[ib] */
     js = eh->is[ib];
     jt = eh->it[ib];
-    if (js < 0 || jt > mb->n || js >= jt) {
+    if (js < 0 || jt > n || js >= jt) {
       fprintf(stderr, "bad window (%d, %d)\n", js, jt);
       return -1;
     }
@@ -91,8 +92,13 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
     for (ie = 0; ie < cols; ie++) {
       eav = base + (ie+del)*inc;
       for (den = 0, j = js; j <= jt; j++) { /* denominator */
-        x = mb->betadist->ens_w[j] * exp(-eav*db*(j - ib) - iie->gridvals->items[j].lnz + iie->gridvals->items[ib].lnz);
-        if (j == js || j == jt) x *= 0.5;
+        double exp_fac = -eav*db*(j - ib)
+                       - iie->gridvals->items[j].lnz
+                       + iie->gridvals->items[ib].lnz;
+        x = distr->weights->ens_w[j] * exp(exp_fac);
+        if (j == js || j == jt) {
+          x *= 0.5;
+        }
         den += x;
       }
       for (num = 0.0, j = js; j < jt; j++) { /* numerator */
@@ -102,6 +108,7 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
       }
       eh->recon[ie] = num/den;
     }
+
     /* determine the output range */
     if (full) {
       imin = 0;
@@ -121,7 +128,8 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
     for (ie = imin; ie < imax; ie++) {
       if (keep0 || eh->recon[ie] > AT_MB_ACCUM_MIN_SIZE) {
         fprintf(fp, "%g %.14E %g\n",
-          base + (ie+del)*inc, eh->recon[ie]*x, mb->barr[ib]);
+            base + (ie+del)*inc, eh->recon[ie]*x,
+            distr->domain->barr[ib]);
       }
     }
     fprintf(fp, "\n");

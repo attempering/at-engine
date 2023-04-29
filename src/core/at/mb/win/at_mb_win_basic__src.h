@@ -21,16 +21,17 @@
 
 
 #include "at_mb_win_basic.h"
+#include "../../distr/at_distr.h"
 
-#include "../../../zcom/util/util.h"
-#include "../../../zcom/cfg/cfg.h"
+#include "../../../zcom/zcom.h"
 
 
 
 
 int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
 {
-  int i, n = mb->n;
+  at_distr_domain_t *domain = mb->distr->domain;
+  int i, n = domain->n;
 
   win->n = n;
 
@@ -52,9 +53,9 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     zcom_util__exit_if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf"),
         "missing var: win->bwdel, key: mbest_delta_lnT, fmt: %%lf\n");
 
-    zcom_util__exit_if ( !(win->bwdel > mb->bdel/pow(mb->bmin, 1.0)),
-        "win->bwdel: failed validation: win->bwdel %g > %g, mb->bdel %g /pow(mb->bmin %g , 1.0)\n",
-        win->bwdel, mb->bdel/pow(mb->bmin, 1.0), mb->bdel, mb->bmin);
+    zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 1.0)),
+        "win->bwdel: failed validation: win->bwdel %g > %g, domain->bdel %g /pow(domain->bmin %g , 1.0)\n",
+        win->bwdel, domain->bdel/pow(domain->bmin, 1.0), domain->bdel, domain->bmin);
   }
 
   if (win->bwmod == 0) {
@@ -64,8 +65,8 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     zcom_util__exit_if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf"),
         "missing var: win->bwdel, key: mbest_delta_beta, fmt: %%lf\n");
 
-    zcom_util__exit_if ( !(win->bwdel > mb->bdel/pow(mb->bmin, 0.0)),
-        "win->bwdel: failed validation: win->bwdel > mb->bdel/pow(mb->bmin, 0.0)\n");
+    zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 0.0)),
+        "win->bwdel: failed validation: win->bwdel > domain->bdel/pow(domain->bmin, 0.0)\n");
   }
 
 
@@ -76,13 +77,13 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     zcom_util__exit_if (cfg != NULL && 0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf"),
         "missing var: win->bwdel, key: mbest_delta_kT, fmt: %%lf\n");
 
-    zcom_util__exit_if ( !(win->bwdel > mb->bdel/pow(mb->bmin, 2.0)),
-        "win->bwdel: failed validation: win->bwdel > mb->bdel/pow(mb->bmin, 2.0)\n");
+    zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 2.0)),
+        "win->bwdel: failed validation: win->bwdel > domain->bdel/pow(domain->bmin, 2.0)\n");
   }
 
 
   zcom_util__exit_if ((win->js_grid_unres = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      "no memory! var: mb->js_grid_unres, type: int\n");
+      "no memory! var: domain->js_grid_unres, type: int\n");
 
   for (i = 0; i <= n; i++) {
     win->js_grid_unres[i] = 0;
@@ -95,7 +96,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->jt_grid_unres[i] = 0;
   }
 
-  at_mb_win__make_unres_windows_for_grid_estimators(n, mb->barr, mb->bdel,
+  at_mb_win__make_unres_windows_for_grid_estimators(n, domain->barr, domain->bdel,
       win->bwmod, win->bwdel,
       win->js_grid_unres, win->jt_grid_unres);
 

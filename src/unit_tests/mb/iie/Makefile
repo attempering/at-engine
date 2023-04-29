@@ -1,1 +1,1 @@
-../../common/Makefile.template
+../../common/Makefile.level-2

@@ -30,7 +30,7 @@
 #include "../lr/at_mb_iie_lr.h"
 #include "../et/at_mb_iie_et.h"
 #include "../../win/at_mb_win.h"
-
+#include "../../../distr/at_distr.h"
 
 
 /* set quality bit */
@@ -88,9 +88,9 @@ static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
 {
   double x;
   int j, jx, lr_id;
-  at_mb_t *mb = lr->mb;
+  double bdel = lr->mb->distr->domain->bdel;
 
-  if (0 > lr->js || lr->js >= lr->jt || lr->jt > lr->mb->n) {
+  if (0 > lr->js || lr->js >= lr->jt || lr->jt > lr->mb->distr->domain->n) {
     fprintf(stderr, "bad window [%d, %d)", lr->js, lr->jt);
     exit(1);
   }
@@ -117,8 +117,8 @@ static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
     lr->t1[lr_id] += x * (j - jx + 0.5);
   }
 
-  lr->t1[0] *= -mb->bdel;
-  lr->t1[1] *= -mb->bdel;
+  lr->t1[0] *= -bdel;
+  lr->t1[1] *= -bdel;
 }
 
 
@@ -136,7 +136,7 @@ void at_mb_iie_gridvals__calc_cv(at_mb_t *mb)
     return;
   }
 
-  for (i = 0; i <= mb->n; i++) {
+  for (i = 0; i <= mb->distr->domain->n; i++) {
     at_mb_iie_gridvals_item_t *item = gridvals->items + i;
 
     at_mb_iie_lr__init_instance(lr,
@@ -170,7 +170,7 @@ void at_mb_iie_gridvals__calc_cv(at_mb_t *mb)
 
     }
 
-    beta = mb->barr[i];
+    beta = mb->distr->domain->barr[i];
 
     item->cv = mb->boltz * (beta * beta) * e_var;
 
@@ -189,6 +189,7 @@ void at_mb_iie_gridvals__calc_lnz(at_mb_t *mb)
   at_mb_iie_t *iie = mb->iie;
   at_mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
   at_mb_iie_gridvals_item_t *item = gridvals->items;
+  at_distr_domain_t *domain = mb->distr->domain;
 
   item->lnz = 0.0;
   at_mb_iie_gridvals_item__set_quality_bit(item, AT_MB_IIE_GRIDVALS__QUALITY_BIT_LNZ, 1);
@@ -199,7 +200,7 @@ void at_mb_iie_gridvals__calc_lnz(at_mb_t *mb)
 
     double et = at_mb_iie_et__calc_et(iie, i);
 
-    item->lnz = gridvals->items[i].lnz + et * (mb->barr[i] - mb->barr[i+1]);
+    item->lnz = gridvals->items[i].lnz + et * (domain->barr[i] - domain->barr[i+1]);
 
     at_mb_iie_gridvals_item__set_quality_bit(item, AT_MB_IIE_GRIDVALS__QUALITY_BIT_LNZ, 1);
   }

@@ -28,7 +28,7 @@
 
 
 typedef struct at_mb_accum_t_ {
-  int n; /* number of bins == mb->n */
+  int n; /* number of bins == distr->domain->n */
 
   /* regular accumulators */
   at_mb_sm_t *sums;

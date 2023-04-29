@@ -23,6 +23,7 @@
 
 #include "at_mb_iie_zerofiller.h"
 #include "../../at_mb_basic.h"
+#include "../../../distr/at_distr.h"
 
 
 static void at_mb_iie_zerofiller_item__set_zero(at_mb_iie_zerofiller_item_t *p)
@@ -69,7 +70,11 @@ static void at_mb_iie_zerofiller_item__set_equal(
 
 void at_mb_iie_zerofiller__init(at_mb_iie_zerofiller_t *zf, at_mb_t *mb)
 {
-  int n = mb->n, i;
+  int n, i;
+  at_distr_domain_t *domain = mb->distr->domain;
+
+  n = domain->n;
+  zf->n = n;
 
   if ((zf->vals = (at_mb_iie_zerofiller_item_t *) calloc((n + 1),
                   sizeof(at_mb_iie_zerofiller_item_t))) == NULL) {
@@ -115,10 +120,7 @@ void at_mb_iie_zerofiller__init(at_mb_iie_zerofiller_t *zf, at_mb_t *mb)
   }
 
 
-  zf->n = mb->n;
-  zf->beta_min = mb->bmin;
-  zf->beta_max = mb->bmax;
-  zf->beta_del = mb->bdel;
+  zf->n = domain->n;
 
   zf->mb = mb;
 }

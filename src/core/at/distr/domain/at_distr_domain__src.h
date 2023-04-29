@@ -20,6 +20,7 @@
 #define AT_DISTR_DOMAIN__SRC_H__
 
 #include "at_distr_domain.h"
+#include "../../../zcom/zcom.h"
 
 
 
@@ -39,11 +40,33 @@ static int at_distr_domain__check_barr(at_distr_domain_t *domain)
 
 
 
+void at_distr_domain__init_simple(at_distr_domain_t *domain,
+    double boltz, double bmin, double bmax, double bdel)
+{
+  int i, n;
+
+  domain->boltz = boltz;
+
+  n = (int) ((bmax - bmin)/bdel + 0.5);
+  domain->n = n;
+  domain->bmin = bmin;
+  domain->bmax = bmax;
+  domain->bdel = bdel;
+  domain->barr = calloc(n+1, sizeof(double));
+
+  for (i = 0; i <= n; i++) {
+    domain->barr[i] = bmin + bdel * i;
+  }
+}
 
 
-int at_distr_domain__cfg_init(at_distr_domain_t *domain, zcom_cfg_t *cfg, int silent)
+
+int at_distr_domain__cfg_init(at_distr_domain_t *domain, double boltz,
+    zcom_cfg_t *cfg, int silent)
 {
   int i;
+
+  domain->boltz = boltz;
 
   /* read bmin and bmax from the configuration file */
 
@@ -126,7 +149,39 @@ void at_distr_domain__finish(at_distr_domain_t *domain)
 
 void at_distr_domain__manifest(at_distr_domain_t *domain, at_utils_manifest_t *manifest)
 {
+  FILE *fp = manifest->fp;
 
+  /* bdel: bin size of beta */
+  fprintf(fp, "domain->bdel: double, %g\n", domain->bdel);
+
+  /* n: number of temperature bins */
+  fprintf(fp, "domain->n: int, %4d\n", domain->n);
+
+  /* barr: temperature array */
+  at_utils_manifest__print_double_arr(manifest, domain->barr, domain->n+1, "domain->barr");
 }
+
+
+
+int at_distr_domain__beta_to_index(at_distr_domain_t *domain, double beta, int check)
+{
+  int j;
+
+  if (beta > domain->bmin) {
+    j = (int)((beta - domain->bmin)/domain->bdel);
+  } else {
+    j = -1;
+  }
+
+  if (check) {
+    zcom_util__exit_if (j < 0 || j >= domain->n, "beta = %d, %g, range = (%g, %g, %g)\n",
+        j, beta, domain->bmin, domain->bdel, domain->bmax);
+  }
+
+  return j;
+}
+
+
+
 
 #endif

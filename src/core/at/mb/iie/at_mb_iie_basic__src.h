@@ -34,7 +34,7 @@
 void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
     zcom_cfg_t *cfg, int silent)
 {
-  iie->n = mb->n;
+  iie->n = mb->distr->domain->n;
   iie->flags = mb->flags;
   iie->win = mb->win;
   iie->accum = mb->accum;

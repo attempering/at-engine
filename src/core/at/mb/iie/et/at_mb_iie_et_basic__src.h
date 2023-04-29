@@ -45,7 +45,7 @@ void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, in
 {
   int i;
 
-  et->n = mb->n;
+  et->n = mb->distr->domain->n;
 
   if ((et->items = (at_mb_iie_et_item_t *) calloc(et->n, sizeof(at_mb_iie_et_item_t))) == NULL) {
     fprintf(stderr, "no memory! var: et_items, type: at_mb_iie_et_item_t\n");

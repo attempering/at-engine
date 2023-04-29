@@ -44,10 +44,10 @@
 #include "distr/at_distr__src.h"
 #include "mb/at_mb__src.h"
 #include "eh/at_eh__src.h"
-#include "langevin/at_langevin__src.h"
+#include "driver/at_driver__src.h"
 
 #include "at_basic__src.h"
-#include "at_main__src.h"
+#include "at_move__src.h"
 
 
 #endif

@@ -24,6 +24,8 @@
 #include "accum/at_mb_accum.h"
 #include "at_mb_utils.h"
 
+#include "../distr/at_distr.h"
+
 #include "../../zcom/zcom.h"
 
 
@@ -31,7 +33,7 @@
 
 int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 {
-  int i, ip;
+  int i, ip, n = mb->distr->domain->n;
   FILE *fp;
 
   if (fname == NULL) {
@@ -49,14 +51,14 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
     return 1;
   }
 
-  for (i = 0; i <= mb->n; i++) {
+  for (i = 0; i <= n; i++) {
     fprintf(fp, "%16.10f %20.10f %22.10f %22.10f ",
-      mb->barr[i], // 1
+      mb->distr->domain->barr[i], // 1
       mb->iie->gridvals->items[i].lnz, // 2
       mb->iie->gridvals->items[i].e, // 3
       mb->iie->gridvals->items[i].cv); // 4
 
-    ip = (i < mb->n) ? i : (i-1); /* for quantities with no [mb->n] */
+    ip = (i < n) ? i : (i-1); /* for quantities with no [n] */
 
     fprintf(fp, " %22.10f %s %+10.6f %22.10e %22.10e %22.10e %22.10e",
       mb->iie->et->items[ip].value, // 5
@@ -78,20 +80,7 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 
 int at_mb__beta_to_index(at_mb_t *mb, double beta, int check)
 {
-  int j;
-
-  if (beta > mb->bmin) {
-    j = (int)((beta - mb->bmin)/mb->bdel);
-  } else {
-    j = -1;
-  }
-
-  if (check) {
-    zcom_util__exit_if (j < 0 || j >= mb->n, "beta = %d, %g, range = (%g, %g, %g)\n",
-        j, beta, mb->bmin, mb->bdel, mb->bmax);
-  }
-
-  return j;
+  return at_distr__beta_to_index(mb->distr, beta, check);
 }
 
 
@@ -116,7 +105,7 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
    * neg_dlnwf_dbeta: -dln(w(beta)f(beta))/dbeta;
    * ginvwf: adaptive weight = ampf * invwf;
    */
-  invwf = at_mb_betadist__calc_inv_weight(mb->betadist, beta, neg_dlnwf_dbeta, &f, &neg_df_dbeta);
+  invwf = at_distr_weights__calc_inv_weight(mb->distr->weights, beta, neg_dlnwf_dbeta, &f, &neg_df_dbeta);
 
   if (pinvwf != NULL) {
     *pinvwf = invwf;
@@ -133,7 +122,7 @@ void at_mb__refresh_et(at_mb_t *mb, int reps)
   int i, rep;
 
   for (rep = 0; rep < reps; rep++) {
-    for (i = 0; i < mb->n; i++)
+    for (i = 0; i < mb->distr->domain->n; i++)
       at_mb_iie_et__calc_et(mb->iie, i);
   }
 }

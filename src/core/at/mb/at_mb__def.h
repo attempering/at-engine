@@ -30,12 +30,14 @@
 #include "accum/at_mb_accum__def.h"
 #include "iie/at_mb_iie__def.h"
 
-typedef struct_t at_distr_t_ at_distr_t;
+typedef struct at_distr_t_ at_distr_t;
 
 /* multiple-bin estimator parameters */
 typedef struct at_mb_t_ {
 
   double    boltz;
+
+  int       n;        /* same as distr->domain->n */
 
   unsigned  flags;    /* combination of flags */
 

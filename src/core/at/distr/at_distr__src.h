@@ -28,9 +28,11 @@
 
 #include "../../zcom/zcom.h"
 
-int at_distr__cfg_init(at_distr_t *distr, zcom_cfg_t *cfg, int silent)
+
+
+int at_distr__cfg_init(at_distr_t *distr, double boltz, zcom_cfg_t *cfg, int silent)
 {
-  at_distr_domain__cfg_init(distr->domain, cfg, silent);
+  at_distr_domain__cfg_init(distr->domain, boltz, cfg, silent);
   at_distr_weights__cfg_init(distr->weights, distr->domain, cfg, silent);
   at_distr_bias__cfg_init(distr->bias, cfg, silent);
 
@@ -56,5 +58,19 @@ void at_distr__manifest(at_distr_t *distr, at_utils_manifest_t *manifest)
 }
 
 
+
+int at_distr__beta_to_index(at_distr_t *distr, double beta, int check)
+{
+  return at_distr_domain__beta_to_index(distr->domain, beta, check);
+}
+
+
+
+double at_distr__calc_inv_weight(at_distr_t *distr, double beta,
+    double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta)
+{
+  return at_distr_weights__calc_inv_weight(distr->weights, beta,
+      neg_dlnwf_dbeta, f, neg_df_dbeta);
+}
 
 #endif

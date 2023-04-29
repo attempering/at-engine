@@ -27,9 +27,6 @@
 
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-/* initialize an object of at_mb_t
- * The initial values are taken from configuration file `cfg`
- * when available, otherwise default values are assumed */
 int at_mb__cfg_init(
     at_mb_t *mb,
     at_distr_t *distr,
@@ -39,10 +36,10 @@ int at_mb__cfg_init(
     const char *data_dir,
     int silent);
 
-/* destroy data members */
 void at_mb__finish(at_mb_t *mb);
 
-/* clear data members */
 void at_mb__clear(at_mb_t *mb);
+
+void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest);
 
 #endif

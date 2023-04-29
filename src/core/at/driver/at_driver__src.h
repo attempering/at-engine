@@ -1,0 +1,74 @@
+/* 
+ * Copyright (C) 2010-2023  AT-Engine Developers
+ *
+ * This library is free software; you can redriveribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is driveributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#ifndef AT_DRIVER__SRC_H__
+#define AT_DRIVER__SRC_H__
+
+
+#include "at_driver.h"
+
+#include "langevin/at_driver_langevin__src.h"
+
+#include "../distr/at_distr.h"
+#include "../mb/at_mb.h"
+#include "../../zcom/zcom.h"
+
+
+
+int at_driver__cfg_init(
+    at_driver_t *driver,
+    at_distr_t *distr,
+    at_mb_t *mb,
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    int silent)
+{
+  at_driver_langevin__cfg_init(
+    driver->langevin, distr, mb,
+    cfg, ssm, data_dir, silent);
+
+  driver->move_repeats = 1;
+  if (zcom_cfg__get(cfg, &driver->move_repeats, "move_repeats", "%d")) {
+    fprintf(stderr, "assuming default: driver->move_repeats = 1, key: move_repeats\n");
+  }
+
+  return 0;
+}
+
+
+
+void at_driver__finish(at_driver_t *driver)
+{
+  at_driver_langevin__finish(driver->langevin);
+}
+
+
+
+void at_driver__manifest(at_driver_t *driver, at_utils_manifest_t *manifest)
+{
+  FILE *fp = manifest->fp;
+
+  at_driver_langevin__manifest(driver->langevin, manifest);
+
+  fprintf(fp, "driver->move_repeats: int, %d\n", driver->move_repeats);
+
+}
+
+
+#endif

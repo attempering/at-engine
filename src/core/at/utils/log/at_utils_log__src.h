@@ -48,7 +48,7 @@ void at_utils_log__cfg_init(at_utils_log_t *log,
   }
   
   {
-    char *fn_log = "trace.dat";
+    char *fn_log = "log.dat";
 
     /* log_file: name of trace file */
     if (zcom_cfg__get(cfg, &fn_log, "log_file", "%s"))
