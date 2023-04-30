@@ -127,11 +127,11 @@ ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
     err = zcom_mtrng__load_from_file_(mtrng, fname);
 
     if (err) { /* fallback: to initialize from the seed */
-      fprintf(stderr, "zcom_mtrng__load_or_init_from_seed(): cannot load file: \"%s\". Init. from seed: %d directly [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
+      fprintf(stderr, "zcom_mtrng: cannot load file: \"%s\", init. from seed: %d directly [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
 
       zcom_mtrng__init_from_seed(mtrng, seed);
     } else {
-      fprintf(stderr, "zcom_mtrng__load_or_init_from_seed(): Successfully loaded rng file \"%s\" (seed %d unused) [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
+      fprintf(stderr, "zcom_mtrng: successfully loaded rng file \"%s\" (seed %d unused) [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
     }
 
   } else {

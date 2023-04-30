@@ -26,7 +26,7 @@ int main(void)
 {
   at_distr_t distr[1];
   at_mb_t mb[1];
-  int verbose = 0;
+  at_bool_t verbose = 0;
   double boltz = 1.0;
 
   at_distr__cfg_init(distr, NULL, boltz, verbose);

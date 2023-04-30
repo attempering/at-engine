@@ -16,9 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ADAPTIVE_TEMPERING__SRC_H__
-#define ADAPTIVE_TEMPERING__SRC_H__
+#ifndef AT_PARAMS_STEP__DEF_H__
+#define AT_PARAMS_STEP__DEF_H__
 
-#include "at/at__src.h"
+#include "../../context/at_context__def.h"
+
+typedef struct at_params_step_t_ {
+  at_bool_t is_first_step;
+  at_bool_t is_last_step;
+  at_bool_t do_log;
+  at_bool_t flush_output;
+} at_params_step_t;
+
 
 #endif

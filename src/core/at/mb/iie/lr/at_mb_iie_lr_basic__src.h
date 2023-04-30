@@ -31,7 +31,7 @@
 
 
 /* global initialization */
-void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_mb_t *mb, zcom_cfg_t *cfg, int verbose)
+void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_mb_t *mb, zcom_cfg_t *cfg, at_bool_t verbose)
 {
   lr->mb = mb;
   lr->zerofiller = zf;
@@ -39,7 +39,7 @@ void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_m
   /* frac_min: minimum acceptable coefficient during left/right combination */
   lr->frac_min = 0.0;
   if (0 != zcom_cfg__get(cfg, &lr->frac_min, "mbest_fracmin", "%lf")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->iie->lr->frac_min = 0.0, key: mbest_fracmin\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->iie->lr->frac_min = 0.0, key: mbest_fracmin\n");
   }
 
 
@@ -48,14 +48,14 @@ void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_m
    * For the Ising model, it can restrain the magnitude */
   lr->cv_shift_max = 1.0;
   if (0 != zcom_cfg__get(cfg, &lr->cv_shift_max, "mbest_cvshiftmax", "%lf")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->iie->lr->cv_shift_max = 1.0, key: mbest_cvshiftmax\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->iie->lr->cv_shift_max = 1.0, key: mbest_cvshiftmax\n");
   }
 
 
   lr->min_size = AT_MB_IIE_LR__DEFAULT_MIN_SIZE;
   if (0 != zcom_cfg__get(cfg, &lr->min_size, "mbest_min_size", "%lf")) {
     if (verbose) {
-      fprintf(stderr, "assuming default: mb->iie->lr->min_size = %lf, key: mbest_min_size\n",
+      fprintf(stderr, "Info: assuming default mb->iie->lr->min_size = %lf, key: mbest_min_size\n",
           AT_MB_IIE_LR__DEFAULT_MIN_SIZE);
     }
   }

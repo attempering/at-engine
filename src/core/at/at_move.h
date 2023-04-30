@@ -21,6 +21,13 @@
 
 #include "at_basic.h"
 
-int at__move(at_t *at, at_llong_t step, at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush);
+int at__move(at_t *at,
+             at_llong_t step,
+             at_bool_t is_first_step,
+             at_bool_t is_last_step,
+             at_bool_t do_log,
+             at_bool_t flush_output);
+
+int at__step(at_t *at, at_llong_t step, at_params_step_t *step_params);
 
 #endif

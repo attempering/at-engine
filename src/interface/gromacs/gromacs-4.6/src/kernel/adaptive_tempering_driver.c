@@ -21,8 +21,8 @@
 
 
 
-#define ADAPTIVE_TEMPERING_FOR_GROMACS 1
-#include "adaptive_tempering_core/adaptive_tempering__src.h"
+#define AT__GROMACS 1
+#include "adaptive_tempering_core/at-engine__src.h"
 
 
 

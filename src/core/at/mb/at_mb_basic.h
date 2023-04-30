@@ -34,7 +34,7 @@ int at_mb__cfg_init(
     double boltz,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int verbose);
+    at_bool_t verbose);
 
 void at_mb__finish(at_mb_t *mb);
 

@@ -19,6 +19,8 @@
 #ifndef AT_DISTR_WEIGHTS__DEF_H__
 #define AT_DISTR_WEIGHTS__DEF_H__
 
+#include "../../context/at_context__def.h"
+
 typedef struct at_distr_weights_t_ {
 
   double    beta_min;

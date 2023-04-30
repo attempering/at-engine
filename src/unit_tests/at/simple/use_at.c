@@ -18,22 +18,22 @@
 
 /* Simplest program of using the at module */
 #ifdef HEADER_ONLY
-#include "at/at__src.h"
+#include "at-engine__src.h"
 #else
-#include "at/at.h"
+#include "at-engine.h"
 #endif
 
 int main(void)
 {
   at_llong_t step = 0, nsteps = 500000;
 
-  at_t* at = at__open("at.cfg", FALSE, TRUE, 1.0, 0.01, 0, 0);
+  at_t* at = at__open("at.cfg", AT__FALSE, AT__TRUE, NULL, AT__FALSE);
 
-  at_driver_langevin_rng__reset(at->driver->langevin->rng, 1234);
+  //at_driver_langevin_rng__reset(at->driver->langevin->rng, 1234);
 
   for (step = 1; step <= nsteps; step++) {
     at->energy = 0.0;
-    at__move(at, step, (step == 1), (step == nsteps), TRUE, FALSE);
+    at__step(at, step, NULL);
   }
 
   at__close(at);

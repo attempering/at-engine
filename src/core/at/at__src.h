@@ -25,20 +25,10 @@
  * so that we can determine whether `real` should be
  * defined or not depending on whether the context is
  * GROMACS */
-#include "utils/context/at_utils_context.h"
-
-
-
-/* source code of zcom modules */
-#ifdef ADAPTIVE_TEMPERING_FOR_GROMACS
-  #define ZCOM__HAVE_REAL 1
-#endif
-
-#include "../zcom/zcom__src.h"
 
 #include "at.h"
 
-
+#include "params/at_params__src.h"
 #include "utils/at_utils__src.h"
 #include "distr/at_distr__src.h"
 #include "mb/at_mb__src.h"

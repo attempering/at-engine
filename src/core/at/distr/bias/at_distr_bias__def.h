@@ -19,6 +19,8 @@
 #ifndef AT_DISTR_BIAS__DEF_H__
 #define AT_DISTR_BIAS__DEF_H__
 
+#include "../../context/at_context__def.h"
+
 /* high-temperature bias
 
   H = kappa* H0 + epsilon * H1

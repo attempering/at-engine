@@ -30,13 +30,21 @@
 
 
 
-int at_distr__cfg_init(at_distr_t *distr, zcom_cfg_t *cfg, double boltz, int verbose)
+int at_distr__cfg_init(at_distr_t *distr, zcom_cfg_t *cfg, double boltz, at_bool_t verbose)
 {
   distr->boltz = boltz;
 
-  at_distr_domain__cfg_init(distr->domain, cfg, verbose);
-  at_distr_weights__cfg_init(distr->weights, distr->domain, cfg, verbose);
-  at_distr_bias__cfg_init(distr->bias, cfg, verbose);
+  if (at_distr_domain__cfg_init(distr->domain, cfg, verbose) != 0) {
+    return -1;
+  }
+
+  if (at_distr_weights__cfg_init(distr->weights, distr->domain, cfg, verbose) != 0) {
+    return -1;
+  }
+
+  if (at_distr_bias__cfg_init(distr->bias, cfg, verbose) != 0) {
+    return -1;
+  }
 
   return 0;
 }

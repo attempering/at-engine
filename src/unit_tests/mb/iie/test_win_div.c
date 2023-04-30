@@ -20,7 +20,7 @@
 
 
 //#define AT_MB_DBG__ 1
-#include "at/at__src.h"
+#include "at-engine__src.h"
 
 
 
@@ -38,7 +38,7 @@ long ntimes = 100000;
 void init_mb_object(at_distr_t *distr, at_mb_t *mb)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
-  int verbose = 0;
+  at_bool_t verbose = 0;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);
   at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);

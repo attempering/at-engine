@@ -41,6 +41,7 @@ typedef struct at_mb_iie_et_item_cache_t_ {
 
 
 typedef struct at_mb_iie_et_item_t_ {
+  int ib;
 
   double value; /* the value of et */
 

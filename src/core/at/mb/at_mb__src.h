@@ -20,11 +20,6 @@
 #define AT_MB__SRC_H__
 
 
-
-/* external dependencies */
-#include "../../zcom/zcom__src.h"
-
-
 /* simple accumulator */
 #include "sm/at_mb_sm__src.h"
 

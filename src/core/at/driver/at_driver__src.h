@@ -37,7 +37,7 @@ int at_driver__cfg_init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int verbose)
+    at_bool_t verbose)
 {
   at_driver_langevin__cfg_init(
     driver->langevin, distr, mb,
@@ -46,12 +46,12 @@ int at_driver__cfg_init(
   /* nsttemp: frequency of tempering, 0: disable, -1: only ns */
   driver->nsttemp = -1;
   if (zcom_cfg__get(cfg, &driver->nsttemp, "nsttemp", "%d") != 0) {
-    if (verbose) fprintf(stderr, "assuming default: driver->nsttemp = -1, key: nsttemp\n");
+    if (verbose) fprintf(stderr, "Info: assuming default driver->nsttemp = -1, key: nsttemp\n");
   }
 
   driver->move_repeats = 1;
   if (zcom_cfg__get(cfg, &driver->move_repeats, "move_repeats", "%d") != 0) {
-    if (verbose) fprintf(stderr, "assuming default: driver->move_repeats = 1, key: move_repeats\n");
+    if (verbose) fprintf(stderr, "Info: assuming default driver->move_repeats = 1, key: move_repeats\n");
   }
 
   return 0;

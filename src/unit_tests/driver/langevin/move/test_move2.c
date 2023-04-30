@@ -26,7 +26,7 @@
 
 
 //#define AT_MB_DBG__ 1
-#include "at/at__src.h"
+#include "at-engine__src.h"
 #include "veritools/utilities/histogram/histogram.h"
 #include "zcom/zcom__src.h"
 
@@ -56,7 +56,7 @@ double custom_integrate_func(at_mb_t *mb, double beta_old, double beta_new)
 void init_distr_mb_langevin_objects(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
-  int verbose = 0;
+  at_bool_t verbose = 0;
   double boltz = 1.0;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);

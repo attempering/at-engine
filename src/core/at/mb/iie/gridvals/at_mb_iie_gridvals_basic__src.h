@@ -39,7 +39,7 @@ static void at_mb_iie_gridvals_item__clear(at_mb_iie_gridvals_item_t *item)
 
 
 void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
-    zcom_cfg_t *cfg, int verbose)
+    zcom_cfg_t *cfg, at_bool_t verbose)
 {
   int i, n = mb->distr->domain->n;
 

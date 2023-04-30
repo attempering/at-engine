@@ -25,7 +25,7 @@
 
 #include "../../utils/at_utils.h"
 
-void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb, zcom_cfg_t *cfg, int verbose);
+void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb, zcom_cfg_t *cfg, at_bool_t verbose);
 
 void at_mb_iie__finish(at_mb_iie_t *iie);
 

@@ -31,7 +31,7 @@
 #include "../../../zcom/cfg/cfg.h"
 
 
-int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int verbose)
+int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_t verbose)
 {
   at_distr_domain_t *domain = mb->distr->domain;
   at_distr_weights_t *w = mb->distr->weights;
@@ -44,13 +44,13 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int verb
   /* shk_window_adjusted: adjust shrink according to temperature window width */
   shk->window_adjusted = 1;
   if (0 != zcom_cfg__get(cfg, &shk->window_adjusted, "shrink_mbin_adjust", "%d")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->shk->window_adjusted = 1, key: shrink_mbin_adjust\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->shk->window_adjusted = 1, key: shrink_mbin_adjust\n");
   }
 
   /* shk_max: initial and maximal shrink (adjusted) */
   shk->max = 0.01;
   if (0 != zcom_cfg__get(cfg, &shk->max, "shrink0", "%lf")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->shk->max = 0.01, key: shrink0\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->shk->max = 0.01, key: shrink0\n");
   }
   if ( !(shk->max < 0.9 && shk->max >= 0.0) ) {
     fprintf(stderr, "shk->max: failed validation: mb->shk->max < 0.9 && shk->max >= 0.0\n");
@@ -77,7 +77,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int verb
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   shk->mode = 1;
   if (0 != zcom_cfg__get(cfg, &shk->mode, "shrink_mode", "%d")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->shk->mode = 1, key: shrink_mode\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->shk->mode = 1, key: shrink_mode\n");
   }
   if ( !(shk->mode >= 0 && shk->mode <= 2) ) {
     fprintf(stderr, "shk->mode: failed validation: mb->shk->mode >= 0 && shk->mode <= 2\n");
@@ -88,20 +88,20 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int verb
   /* shk_min: minimal value for enforcing acc. sampling */
   shk->min = 0.0;
   if (0 != zcom_cfg__get(cfg, &shk->min, "shrinkmin", "%lf")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->shk->min = 0.0, key: shrinkmin\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->shk->min = 0.0, key: shrinkmin\n");
   }
 
   /* shk_stop: stop shrinking after this number of steps */
   shk->stop = -1;
   if (0 != zcom_cfg__get(cfg, &shk->stop, "shrinkstop", "%d")) {
-    if (verbose) fprintf(stderr, "assuming default: mb->shk->stop = -1, key: shrinkstop\n");
+    if (verbose) fprintf(stderr, "Info: assuming default mb->shk->stop = -1, key: shrinkstop\n");
   }
 
   /* shk_amp: amp t^(-exp) */
   shk->amp = 0.1;
   if (shk->mode >= 1) {
     if (0 != zcom_cfg__get(cfg, &shk->amp, "shrinkamp", "%lf")) {
-      if (verbose) fprintf(stderr, "assuming default: mb->shk->amp = 0.1, key: shrinkamp\n");
+      if (verbose) fprintf(stderr, "Info: assuming default mb->shk->amp = 0.1, key: shrinkamp\n");
     }
   }
 
@@ -109,7 +109,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, int verb
   shk->exp = 1.0;
   if (shk->mode >= 2) {
     if (0 != zcom_cfg__get(cfg, &shk->exp, "shrinkexp", "%lf")) {
-      if (verbose) fprintf(stderr, "assuming default: mb->shk->exp = 1.0, key: shrinkexp\n");
+      if (verbose) fprintf(stderr, "Info: assuming default mb->shk->exp = 1.0, key: shrinkexp\n");
     }
   }
 

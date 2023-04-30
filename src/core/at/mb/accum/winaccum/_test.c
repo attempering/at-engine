@@ -17,20 +17,22 @@
  */
 
 // gcc -g _test.c -lm && valgrind ./a.out
-#include "../../../zcom/zcom__src.h"
 
 
 #include "../../../distr/at_distr__src.h"
-#include "../../sm/mb_sm__src.h"
-#include "../../win/mb_win__src.h"
-#include "../../shk/mb_shk__src.h"
-#include "mb_accum_winaccum__src.h"
+#include "../../../utils/at_utils__src.h"
+#include "../../sm/at_mb_sm__src.h"
+#include "../../win/at_mb_win__src.h"
+#include "../../shk/at_mb_shk__src.h"
+#include "at_mb_accum_winaccum__src.h"
+#include "../../../../zcom/zcom__src.h"
 
 
 
 static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double bmin, double bmax, double bdel)
 {
   int i, n;
+  double boltz = 1.0;
 
   at_distr__cfg_init(distr, NULL, boltz, 1);
   at_distr_domain__init_simple(distr->domain, bmin, bmax, bdel);

@@ -30,7 +30,7 @@ int at_eh__cfg_init(at_eh_t *eh,
     at_mb_t *mb, zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int verbose);
+    at_bool_t verbose);
 
 /* clear data */
 void at_eh__clear(at_eh_t *eh);

@@ -44,8 +44,8 @@ int at_driver_langevin_move__check_min_visits(
   int ib = at_mb__beta_to_index(mb, beta_old, 0);
 
   if (ib >= 0 && ib < langevin->distr->domain->n) {
-    //fprintf(stderr, "%d %g %g\n", ib, mb->visits[ib], langevin->bin_min_visits);
     if (mb->visits[ib] < langevin->bin_min_visits) {
+      //fprintf(stderr, "%d %g %g\n", ib, mb->visits[ib], langevin->bin_min_visits);
       return 0;
     }
   }

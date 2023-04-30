@@ -16,9 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ADAPTIVE_TEMPERING_H__
-#define ADAPTIVE_TEMPERING_H__
+#ifndef AT_PARAMS__DEF_H__
+#define AT_PARAMS__DEF_H__
 
-#include "at/at.h"
+
+#include "sys/at_params_sys__def.h"
+
+#include "step/at_params_step__def.h"
+
+
 
 #endif

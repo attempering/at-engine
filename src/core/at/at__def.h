@@ -23,9 +23,10 @@
 
 /* this header needs to be placed before zcom modules
  * so that we can determine whether `real` should be defined or not */
-#include "utils/context/at_utils_context.h"
+#include "context/at_context__def.h"
 
 
+#include "params/at_params__def.h"
 #include "utils/at_utils__def.h"
 #include "distr/at_distr__def.h"
 #include "mb/at_mb__def.h"
@@ -38,6 +39,8 @@ typedef struct at_t_ {
   double    beta;             // current beta
 
   double    energy;           // current coupling energy
+
+  at_params_sys_t sys_params[1];
 
   at_distr_t    distr[1];     // distribution
 

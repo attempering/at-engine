@@ -39,7 +39,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   win->bwmod = 1;
 
   if (0 != zcom_cfg__get(cfg, &win->bwmod, "mbest_mbin_mode", "%d")) {
-    fprintf(stderr, "assuming default: win->bwmod = 1, key: mbest_mbin_mode\n");
+    fprintf(stderr, "Info: assuming default win->bwmod = 1, key: mbest_mbin_mode\n");
   }
 
   zcom_util__exit_if ( !(win->bwmod >= 0 && win->bwmod <= 2),
@@ -50,8 +50,10 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     /* bwdel: delta lnT */
     win->bwdel = 0.05;
 
-    zcom_util__exit_if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf"),
-        "missing var: win->bwdel, key: mbest_delta_lnT, fmt: %%lf\n");
+    if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf")) {
+      fprintf(stderr, "Warning: missing var: win->bwdel, key: mbest_delta_lnT, fmt: %%lf\n");
+      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    }
 
     zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 1.0)),
         "win->bwdel: failed validation: win->bwdel %g > %g, domain->bdel %g /pow(domain->bmin %g , 1.0)\n",
@@ -62,8 +64,10 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     /* bwdel: delta beta */
     win->bwdel = 0.02;
 
-    zcom_util__exit_if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf"),
-        "missing var: win->bwdel, key: mbest_delta_beta, fmt: %%lf\n");
+    if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf")) {
+      fprintf(stderr, "Warning: missing var: win->bwdel, key: mbest_delta_beta, fmt: %%lf\n");
+      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    }
 
     zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 0.0)),
         "win->bwdel: failed validation: win->bwdel > domain->bdel/pow(domain->bmin, 0.0)\n");
@@ -74,8 +78,10 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     /* bwdel: delta kT */
     win->bwdel = 0.1;
 
-    zcom_util__exit_if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf"),
-        "missing var: win->bwdel, key: mbest_delta_kT, fmt: %%lf\n");
+    if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf")) {
+        fprintf(stderr, "Warning: missing var: win->bwdel, key: mbest_delta_kT, fmt: %%lf\n");
+        fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    }
 
     zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 2.0)),
         "win->bwdel: failed validation: win->bwdel > domain->bdel/pow(domain->bmin, 2.0)\n");

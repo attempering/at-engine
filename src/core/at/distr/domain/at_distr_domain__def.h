@@ -20,6 +20,8 @@
 #define AT_DISTR_DOMAIN__DEF_H__
 
 
+#include "../../context/at_context__def.h"
+
 typedef struct at_distr_domain_t_
 {
   double    bmin;     /* minimal beta (highest temperature) */

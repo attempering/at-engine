@@ -27,7 +27,7 @@ typedef struct zcom_cfg_t_ zcom_cfg_t;
 
 
 void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
-    zcom_cfg_t *cfg, int verbose);
+    zcom_cfg_t *cfg, at_bool_t verbose);
 
 void at_mb_iie_gridvals__clear(at_mb_iie_gridvals_t *gridvals);
 

@@ -18,7 +18,7 @@
 
 //#define ENABLE_MINICST 1
 
-#include "adaptive_tempering__src.h"
+#include "at-engine__src.h"
 
 
 #ifdef ENABLE_MINICST
@@ -51,14 +51,14 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
     at_bool_t is_first_step = (step == 1);
     at_bool_t is_last_step = (step == nsteps);
     at_bool_t is_tempering_step = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
-    at_bool_t flush_output = FALSE;
+    at_bool_t flush_output = AT__FALSE;
 
     //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
 
     if (is_tempering_step) {
       at->energy = epot;
 
-      at__move(at, step, is_first_step, is_last_step, TRUE, flush_output);
+      at__move(at, step, is_first_step, is_last_step, AT__TRUE, flush_output);
 
       //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
       //getchar();
@@ -100,9 +100,8 @@ void run_minicst_md(at_t* at, at_llong_t nsteps)
 
 int main(int argc, char** argv)
 {
-  int suffix = 0; /* sequence ID for multiple runs */
   const char* fn_cfg = "at.cfg";
-  int verbose = 0;
+  at_bool_t verbose = 0;
 
   if (argc > 1) {
     fn_cfg = argv[1];
@@ -110,9 +109,9 @@ int main(int argc, char** argv)
   }
 
   //remove("TRACE0");
-  remove("atdata0/log.dat");
+  remove("atdata/log.dat");
 
-  at_t* at = at__open(fn_cfg, FALSE, TRUE, boltz, epot_dt, suffix, verbose);
+  at_t* at = at__open(fn_cfg, AT__FALSE, AT__TRUE, NULL, verbose);
   at__manifest(at);
 
   if (use_minicst) { // simplified CST for reference

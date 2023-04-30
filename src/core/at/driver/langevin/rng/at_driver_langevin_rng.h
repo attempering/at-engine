@@ -30,7 +30,7 @@ void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int verbose);
+    at_bool_t verbose);
 
 void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng);
 

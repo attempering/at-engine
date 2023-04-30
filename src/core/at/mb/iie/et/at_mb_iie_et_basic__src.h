@@ -41,7 +41,7 @@ static void at_mb_iie_et_item__clear(at_mb_iie_et_item_t *item)
 
 
 
-void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, int verbose)
+void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, at_bool_t verbose)
 {
   int i;
 
@@ -55,12 +55,13 @@ void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, in
 
   for (i = 0; i < et->n; i++) {
     at_mb_iie_et_item__clear(et->items + i);
+    et->items[i].ib = i;
   }
 
-  et->cache_params->enabled = 1;
+  et->cache_params->enabled = 0;
   if (0 != zcom_cfg__get(cfg, &et->cache_params->enabled, "et_cache_enabled", "%d")) {
     if (verbose) {
-      fprintf(stderr, "assuming default: mb->iie->et->cache_params->enabled = %d, key: et_cache_enabled\n",
+      fprintf(stderr, "Info: assuming default mb->iie->et->cache_params->enabled = %d, key: et_cache_enabled\n",
           et->cache_params->enabled);
     }
   }
@@ -68,7 +69,7 @@ void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, in
   et->cache_params->lifespan = 10.0;
   if (0 != zcom_cfg__get(cfg, &et->cache_params->lifespan, "et_cache_lifespan", "%lf")) {
     if (verbose) {
-      fprintf(stderr, "assuming default: mb->iie->et->cache_params->lifespan = %lf, key: et_cache_lifespan\n",
+      fprintf(stderr, "Info: assuming default mb->iie->et->cache_params->lifespan = %lf, key: et_cache_lifespan\n",
           et->cache_params->lifespan);
     }
   }
@@ -76,7 +77,7 @@ void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, in
   et->cache_params->min_visits = 100.0;
   if (0 != zcom_cfg__get(cfg, &et->cache_params->min_visits, "et_cache_min_visits", "%lf")) {
     if (verbose) {
-      fprintf(stderr, "assuming default: mb->iie->et->cache_params->min_visits = %lf, key: et_cache_min_visits\n",
+      fprintf(stderr, "Info: assuming default mb->iie->et->cache_params->min_visits = %lf, key: et_cache_min_visits\n",
           et->cache_params->min_visits);
     }
   }

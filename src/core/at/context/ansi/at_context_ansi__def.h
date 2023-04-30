@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_CONTEXT_H__
-#define AT_UTILS_CONTEXT_H__
+#ifndef AT_CONTEXT_ANSI__DEF_H__
+#define AT_CONTEXT_ANSI__DEF_H__
 
 
 /* This module defines the programming context:
@@ -28,60 +28,8 @@
 */
 
 
-#ifdef ADAPTIVE_TEMPERING_FOR_GROMACS
+/* ANSI context, need to define `at_bool_t` and AT__TRUE and AT__FALSE */
 
-  /* GROMACS context */
-
-  #ifdef HAVE_CONFIG_H
-  #include <config.h>
-  #endif
-
-  #ifdef GMX_LIB_MPI
-  #include <mpi.h>
-  #endif
-  #ifdef GMX_THREAD_MPI
-  #include "tmpi.h"
-  #endif
-
-  #include "typedefs.h"
-  #include "physics.h"
-  #include "types/simple.h"
-
-  typedef gmx_bool at_bool_t;
-
-#else
-
-  /* ANSI context, need to define `at_bool_t` and `real` */
-
-  typedef int at_bool_t;
-
-  #ifndef FALSE
-  #define FALSE 0
-  #endif
-
-  #ifndef TRUE
-  #define TRUE 1
-  #endif
-
-#endif /* defined(ADAPTIVE_TEMPERING_FOR_GROMACS) */
-
-
-/* define a long long int type */
-#ifndef AT_INT32_ONLY
-typedef long long  at_llong_t;
-#define at_llong_pfmt "%lld"
-#else
-typedef long at_llong_t;
-#define at_llong_pfmt "%ld"
-#endif
-
-
-
-#ifndef AT_MPI
-  #ifdef GMX_MPI
-  #define AT_MPI 1
-  #endif
-#endif
-
+typedef int at_bool_t;
 
 #endif

@@ -9,11 +9,7 @@ def prepend_at(root, prefix):
                 continue
             old_path = os.path.join(dir, file)
 
-            if file.startswith(prefix + prefix):
-                new_path = os.path.join(dir, file[len(prefix):])
-                #print(old_path, new_path)
-                #input()
-            elif not file.startswith(prefix):
+            if not file.startswith(prefix):
                 new_path = os.path.join(dir, prefix + file)
             else:
                 new_path = old_path
@@ -34,13 +30,6 @@ def modify_include_line(line, prefix, prefix_exclusions):
         x = path.split("/")
 
         for prefix_ex in prefix_exclusions:
-            if prefix_ex in x:
-                if x[-1].startswith(prefix):
-                    x[-1] = x[-1][len(prefix):]
-                    new_path = '/'.join(x)
-                    new_line = '#include "%s"\n' % new_path
-                    return new_line
-
             if x[-1].startswith(prefix_ex):
                 return line
 

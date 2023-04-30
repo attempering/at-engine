@@ -103,6 +103,11 @@ double at_mb_iie_et__calc_et(at_mb_iie_t *iie, int ib)
   item->imbalance = lr->imbalance;
   item->quality = lr->success && lr->quality;
 
+  //static long count = 0;
+  //if (++count % 1000000 == 0) {
+    //fprintf(stderr, "__calc_et() called %ld times\n", count);
+  //}
+
   return et_val;
 }
 

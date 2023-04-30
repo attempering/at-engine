@@ -27,14 +27,19 @@
 
 
 
-int at__move(at_t *at, at_llong_t step, at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush)
+int at__move(at_t *at,
+             at_llong_t step,
+             at_bool_t is_first_step,
+             at_bool_t is_last_step,
+             at_bool_t do_log,
+             at_bool_t flush_output)
 {
   double invwf = 1.0, temp1, temp2, Eav = 0.0, neg_dlnwf_dbeta;
   int ib, rep;
 
   temp1 = at__beta_to_temp(at, at->beta);
 
-  ib = at_mb__beta_to_index(at->mb, at->beta, 1);
+  ib = at_distr__beta_to_index(at->distr, at->beta, 1);
 
   /* update energy data, change at->beta */
   /* repeat several times to change the temperature */
@@ -52,13 +57,38 @@ int at__move(at_t *at, at_llong_t step, at_bool_t bfirst, at_bool_t blast, at_bo
 
   temp2 = at__beta_to_temp(at, at->beta);
 
-  if (at__do_every(step, at->mb->nstrefresh, 0, blast)) {
+  if (at__do_every(step, at->mb->nstrefresh, 0, is_last_step)) {
     at_mb__refresh_et(at->mb, 1);
   }
 
-  at__output(at, step, ib, invwf, temp1, temp2, Eav, bfirst, blast, btr, bflush);
+  at__output(at, step, ib, invwf, temp1, temp2, Eav,
+             is_first_step,
+             is_last_step,
+             do_log,
+             flush_output);
 
   return 0;
+}
+
+
+int at__step(at_t *at, at_llong_t step, at_params_step_t *step_params)
+{
+  at_params_step_t stock_step_params[1] = {{
+    AT__FALSE, // is_first_step
+    AT__FALSE, // is_last_step
+    AT__FALSE, // do_log
+    AT__FALSE  // flush_output
+  }};
+
+  if (step_params == NULL) {
+    step_params = stock_step_params;
+  }
+
+  return at__move(at, step,
+                  step_params->is_first_step,
+                  step_params->is_last_step,
+                  step_params->do_log,
+                  step_params->flush_output);
 }
 
 

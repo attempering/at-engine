@@ -31,13 +31,13 @@ void at__output(at_t *at, at_llong_t step,
 
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values */
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix,
-    double boltz, double md_time_step, int verbose);
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, const at_params_sys_t *sys_params, at_bool_t verbose);
+
 
 at_t *at__open(const char *cfg_fn,
     at_bool_t is_continuation, at_bool_t open_log,
-    double boltz, double md_time_step, int suffix,
-    int verbose);
+    const at_params_sys_t *sys_params,
+    at_bool_t verbose);
 
 void at__finish(at_t *at);
 

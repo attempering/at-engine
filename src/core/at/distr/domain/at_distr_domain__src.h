@@ -60,7 +60,7 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
 
 
 int at_distr_domain__cfg_init(at_distr_domain_t *domain,
-    zcom_cfg_t *cfg, int verbose)
+    zcom_cfg_t *cfg, at_bool_t verbose)
 {
   int i;
 
@@ -68,9 +68,8 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->bmin = 0.2;
   if (0 != zcom_cfg__get(cfg, &domain->bmin, "beta_min", "%lf")) {
-    fprintf(stderr, "missing var: distr->domain->bmin, key: beta_min, fmt: %%lf\n");
+    fprintf(stderr, "Warning: missing var: distr->domain->bmin, key: beta_min, fmt: %%lf, assuming %g\n", domain->bmin);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
   }
 
   if ( !(domain->bmin >= 0.0) ) {
@@ -83,9 +82,8 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->bmax = 0.4;
   if (0 != zcom_cfg__get(cfg, &domain->bmax, "beta_max", "%lf")) {
-    fprintf(stderr, "missing var: distr->domain->bmax, key: beta_max, fmt: %%lf\n");
+    fprintf(stderr, "Warning: missing var: distr->domain->bmax, key: beta_max, fmt: %%lf, assuming %g\n", domain->bmax);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
   }
 
   //printf("domain->bmin %g, domain->bmax %g\n", domain->bmin, domain->bmax); getchar();
@@ -98,12 +96,11 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   }
 
   /* bdel: bin size of beta */
-  domain->bdel = 0.01;
+  domain->bdel = 0.005;
 
   if (0 != zcom_cfg__get(cfg, &domain->bdel, "beta_del", "%lf")) {
-    fprintf(stderr, "missing var: distr->domain->bdel, key: beta_del, fmt: %%lf\n");
+    fprintf(stderr, "Warning: missing var: distr->domain->bdel, key: beta_del, fmt: %%lf, assuming %g\n", domain->bdel);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
   }
 
   if ( !(domain->bdel > 1e-6) ) {
@@ -114,6 +111,10 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   /* n: number of temperature bins */
   domain->n = (int)((domain->bmax - domain->bmin)/domain->bdel - 1e-5) + 1;
+
+  //fprintf(stderr, "domain->n %d\n", domain->n);
+  //getchar();
+
   /* barr: temperature array */
   if ((domain->barr = (double *) calloc((domain->n + 2), sizeof(double))) == NULL) {
     fprintf(stderr, "no memory! var: distr->domain->barr, type: double\n");

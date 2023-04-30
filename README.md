@@ -16,11 +16,11 @@ its and is compatible with GROMACS 4.6.
 A typical simulation goes like this:
 
 ```C
-at_t* at = at__open("at.cfg", FALSE, TRUE, boltz, md_dt, 0);
+at_t* at = at__open("at.cfg", AT__FALSE, AT__TRUE, boltz, md_dt, 0);
 
 for (step = 1; step <= nsteps; step++) {
   at->energy = 0.0;
-  at__move(at, step, (step == 1), (step == nsteps), TRUE, FALSE);
+  at__move(at, step, NULL);
 }
 
 at__close(at);

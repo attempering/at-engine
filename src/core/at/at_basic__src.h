@@ -25,6 +25,7 @@
 
 #include "../zcom/zcom.h"
 
+#include "params/at_params.h"
 #include "utils/at_utils.h"
 #include "distr/at_distr.h"
 #include "mb/at_mb.h"
@@ -34,11 +35,11 @@
 
 
 double at__beta_to_temp(const at_t *at, double beta) {
-    return at_utils__beta_to_temp(at->utils, beta);
+    return 1.0/(beta * at->sys_params->boltz);
 }
 
 double at__temp_to_beta(const at_t *at, double temp) {
-    return at_utils__temp_to_beta(at->utils, temp);
+    return 1.0/(temp * at->sys_params->boltz);
 }
 
 
@@ -116,7 +117,7 @@ void at__output(at_t *at, at_llong_t step,
 
         zcom_log__printf(log,
             "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
-            step * at->utils->md_time_step, ib, t2 - t1,
+            step * at->sys_params->md_time_step, ib, t2 - t1,
             at->energy, Eav, at->beta, t1, invw);
         zcom_log__printf(log, "\n");
       }
@@ -155,22 +156,26 @@ static void at__set_init_beta(at_t *at)
 
 
 
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md_time_step, int verbose)
+int at__cfg_init(at_t *at, zcom_cfg_t *cfg, const at_params_sys_t *sys_params, at_bool_t verbose)
 {
   const char *data_dir;
   zcom_ssm_t *ssm;
 
-  at_utils__cfg_init(at->utils, cfg, boltz, md_time_step, isuffix, verbose);
+  at_params_sys__init(at->sys_params, sys_params, verbose);
 
-  data_dir = at->utils->data_dir;
+  at_utils__cfg_init(at->utils, cfg, at->sys_params->data_dir, verbose);
+
+  data_dir = at->sys_params->data_dir;
   ssm = at->utils->ssm;
 
-  at_distr__cfg_init(at->distr, cfg, boltz, verbose);
+  if (at_distr__cfg_init(at->distr, cfg, at->sys_params->boltz, verbose) != 0) {
+    return -1;
+  }
 
   at__set_init_beta(at);
 
   /* handler for multiple-bin estimator */
-  at_mb__cfg_init(at->mb, at->distr, cfg, boltz, ssm, data_dir, verbose);
+  at_mb__cfg_init(at->mb, at->distr, cfg, at->sys_params->boltz, ssm, data_dir, verbose);
 
   at_driver__cfg_init(at->driver, at->distr, at->mb, cfg, ssm, data_dir, verbose);
 
@@ -188,7 +193,7 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, int isuffix, double boltz, double md
  * if possible, initial values are taken from configuration
  * file `cfg`, otherwise default values are assumed */
 static at_t *at__cfg_open(const char *cfg_filename,
-    double boltz, double md_time_step, int isuffix, int verbose)
+    const at_params_sys_t *sys_params, at_bool_t verbose)
 {
   zcom_cfg_t *cfg;
   at_t *at;
@@ -202,7 +207,7 @@ static at_t *at__cfg_open(const char *cfg_filename,
       "Fatal: no memory for a new object of at_t\n");
 
   /* call low level function */
-  zcom_util__exit_if (at__cfg_init(at, cfg, isuffix, boltz, md_time_step, verbose) != 0,
+  zcom_util__exit_if (at__cfg_init(at, cfg, sys_params, verbose) != 0,
     "at_t: error while reading configuration file %s\n", cfg_filename);
 
   fprintf(stderr, "Successfully loaded configuration file %s\n", cfg_filename);
@@ -218,16 +223,13 @@ at_t *at__open(
     const char *zcom_cfg_fn,
     at_bool_t is_continuation,
     at_bool_t open_log,
-    double boltz,
-    double time_step,
-    int suffix,
-    int verbose)
+    const at_params_sys_t *sys_params,
+    at_bool_t verbose)
 {
   at_t *at;
 
   /* this will also initialize settings for member objects such as at->mb */
-  at = at__cfg_open((zcom_cfg_fn != NULL) ? zcom_cfg_fn : "at.cfg",
-      boltz, time_step, suffix, verbose);
+  at = at__cfg_open(zcom_cfg_fn, sys_params, verbose);
 
   zcom_util__exit_if(at == NULL, "failed to load configuration file.\n");
 

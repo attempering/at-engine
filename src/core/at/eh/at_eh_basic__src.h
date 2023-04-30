@@ -27,7 +27,7 @@
 
 
 int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm, const char *data_dir, int verbose)
+    zcom_ssm_t *ssm, const char *data_dir, at_bool_t verbose)
 {
   int i;
   at_distr_t *distr = mb->distr;
@@ -38,7 +38,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
   if (0 != zcom_cfg__get(cfg, &eh->mode, "ehist_mode", "%d")) {
-    if (verbose) fprintf(stderr, "assuming default: eh->mode = 0, key: ehist_mode\n");
+    if (verbose) fprintf(stderr, "Info: assuming default eh->mode = 0, key: ehist_mode\n");
   }
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
     fprintf(stderr, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
@@ -50,7 +50,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->skip = 10;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->skip, "ehist_skip", "%d")) {
-      fprintf(stderr, "assuming default: eh->skip = 10, key: ehist_skip\n");
+      fprintf(stderr, "Info: assuming default eh->skip = 10, key: ehist_skip\n");
     }
     if ( !(eh->skip > 0) ) {
       fprintf(stderr, "eh->skip: failed validation: eh->skip > 0\n");
@@ -63,7 +63,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->bwmod = 1;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->bwmod, "ehist_mbin_mode", "%d")) {
-      fprintf(stderr, "assuming default: eh->bwmod = 1, key: ehist_mbin_mode\n");
+      fprintf(stderr, "Info: assuming default eh->bwmod = 1, key: ehist_mbin_mode\n");
     }
     if ( !(eh->bwmod >= 0 && eh->bwmod <= 2) ) {
       fprintf(stderr, "eh->bwmod: failed validation: eh->bwmod >= 0 && eh->bwmod <= 2\n");
@@ -121,7 +121,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->min = -12.6e4;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->min, "ehist_min", "%lf")) {
-      fprintf(stderr, "assuming default: eh->min = -12.6e4, key: ehist_min\n");
+      fprintf(stderr, "Info: assuming default eh->min = -12.6e4, key: ehist_min\n");
     }
   }
 
@@ -129,7 +129,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->max = -9.0e4;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->max, "ehist_max", "%lf")) {
-      fprintf(stderr, "assuming default: eh->max = -9.0e4, key: ehist_max\n");
+      fprintf(stderr, "Info: assuming default eh->max = -9.0e4, key: ehist_max\n");
     }
     if ( !(eh->max > eh->min) ) {
       fprintf(stderr, "eh->max: failed validation: eh->max > eh->min\n");
@@ -142,7 +142,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->del = 20.0;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->del, "ehist_del", "%lf")) {
-      fprintf(stderr, "assuming default: eh->del = 20.0, key: ehist_del\n");
+      fprintf(stderr, "Info: assuming default eh->del = 20.0, key: ehist_del\n");
     }
     if ( !(eh->del > 0) ) {
       fprintf(stderr, "eh->del: failed validation: eh->del > 0\n");
@@ -157,7 +157,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->binary = 1;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->binary, "ehist_binary", "%d")) {
-      fprintf(stderr, "assuming default: eh->binary = 1, key: ehist_binary\n");
+      fprintf(stderr, "Info: assuming default eh->binary = 1, key: ehist_binary\n");
     }
   }
 
@@ -165,7 +165,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->nst_save = 100000;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->nst_save, "nsthist", "%d")) {
-      fprintf(stderr, "assuming default: eh->nst_save = 100000, key: nsthist\n");
+      fprintf(stderr, "Info: assuming default eh->nst_save = 100000, key: nsthist\n");
     }
   }
 
@@ -174,7 +174,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     char *fn_eh = "hist.dat";
     if (0 != zcom_cfg__get(cfg, &fn_eh, "ehist_file", "%s")) {
-      fprintf(stderr, "assuming default: eh->file = \"%s\", key: ehist_file\n", fn_eh);
+      fprintf(stderr, "Info: assuming default eh->file = \"%s\", key: ehist_file\n", fn_eh);
     }
     eh->file = at_utils__make_output_filename(ssm, data_dir, fn_eh);
   }
@@ -184,7 +184,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     char *fn_eh_mb = "hist_mb.dat";
     if (0 != zcom_cfg__get(cfg, &fn_eh_mb, "ehist_mbin_file", "%s")) {
-      fprintf(stderr, "assuming default: eh->rfile = \"%s\", key: ehist_mbin_file\n", fn_eh_mb);
+      fprintf(stderr, "Info: assuming default eh->rfile = \"%s\", key: ehist_mbin_file\n", fn_eh_mb);
     }
     eh->rfile = at_utils__make_output_filename(ssm, data_dir, fn_eh_mb);
   }
@@ -248,7 +248,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     unsigned i = 1;
     if (0 != zcom_cfg__get(cfg, &i, "ehist_addahalf", "%u")) {
-      fprintf(stderr, "assuming default: AT_EH_ADDAHALF = 1, key: ehist_addahalf\n");
+      fprintf(stderr, "Info: assuming default AT_EH_ADDAHALF = 1, key: ehist_addahalf\n");
     }
     if ( !(i == 0 || i == 1) ) {
       fprintf(stderr, "AT_EH_ADDAHALF: failed validation: i == 0 || i == 1\n");
@@ -266,7 +266,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     unsigned i = 0;
     if (0 != zcom_cfg__get(cfg, &i, "ehist_keepedge", "%u")) {
-      fprintf(stderr, "assuming default: AT_EH_KEEPEDGE = 0, key: ehist_keepedge\n");
+      fprintf(stderr, "Info: assuming default AT_EH_KEEPEDGE = 0, key: ehist_keepedge\n");
     }
     if ( !(i == 0 || i == 1) ) {
       fprintf(stderr, "AT_EH_KEEPEDGE: failed validation: i == 0 || i == 1\n");
@@ -284,7 +284,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     unsigned i = 0;
     if (0 != zcom_cfg__get(cfg, &i, "ehist_nozeroes", "%u")) {
-      fprintf(stderr, "assuming default: AT_EH_NOZEROES = 0, key: ehist_nozeroes\n");
+      fprintf(stderr, "Info: assuming default AT_EH_NOZEROES = 0, key: ehist_nozeroes\n");
     }
     if ( !(i == 0 || i == 1) ) {
       fprintf(stderr, "AT_EH_NOZEROES: failed validation: i == 0 || i == 1\n");

@@ -32,7 +32,7 @@ int at_driver_langevin__cfg_init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int verbose);
+    at_bool_t verbose);
 
 void at_driver_langevin__clear(at_driver_langevin_t *langevin);
 

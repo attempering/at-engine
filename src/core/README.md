@@ -13,3 +13,5 @@ The refactored adaptive tempering code.
   * self-contained, can perform basic simulated tempering simulation.
   * portable, written in ANSI C
   * functions are named in snake case convention
+
+* [zcom](zcom): common utilities

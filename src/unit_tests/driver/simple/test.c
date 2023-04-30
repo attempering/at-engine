@@ -16,10 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "at/context/at_context__def.h"
 #include "at/mb/at_mb__src.h"
 #include "at/distr/at_distr__src.h"
 #include "at/utils/at_utils__src.h"
 #include "at/driver/at_driver__src.h"
+#include "zcom/zcom__src.h"
 
 
 int main(void)
@@ -28,7 +30,7 @@ int main(void)
   at_mb_t mb[1];
   at_driver_t driver[1];
   zcom_cfg_t *cfg = NULL;
-  int verbose = 0;
+  at_bool_t verbose = 0;
   double boltz = 1.0;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);

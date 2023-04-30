@@ -36,7 +36,7 @@ plot "beta_hist_0.dat" u 1:3 w l, "beta_hist_1.dat" u 1:3 w l, exp(-((x-0.3)/0.0
 */
 
 //#define AT_MB_DBG__ 1
-#include "at/at__src.h"
+#include "at-engine__src.h"
 #include "veritools/utilities/histogram/histogram.h"
 
 
@@ -53,7 +53,7 @@ int nsteps = 100000;
 void init_distr_mb_langevin_objects(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
-  int verbose = 0;
+  at_bool_t verbose = 0;
   double boltz = 1.0;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);

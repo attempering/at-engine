@@ -33,7 +33,7 @@ int at_driver__cfg_init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    int verbose);
+    at_bool_t verbose);
 
 void at_driver__finish(at_driver_t *driver);
 

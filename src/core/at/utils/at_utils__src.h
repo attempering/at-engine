@@ -19,8 +19,6 @@
 #ifndef AT_UTILS__SRC_H__
 #define AT_UTILS__SRC_H__
 
-#include "../../zcom/zcom__src.h"
-
 #include "sys/at_utils_sys__src.h"
 #include "at_utils_misc__src.h"
 
