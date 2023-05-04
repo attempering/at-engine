@@ -76,9 +76,9 @@ def update_copyright_dir(root, copyright_info, excluded_dirs):
             update_copyright(path, copyright)
 
 copyright_info = {
-    "author": "C. Zhang",
+    "author": "AT-Engine Developers",
     "year": "2010-2023",
-    "description": "",
+    "description": "Specialized version of the zcom library for common routines",
 }
 
 
