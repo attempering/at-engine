@@ -22,12 +22,11 @@
 #include "at_basic.h"
 
 int at__move(at_t *at,
-             at_llong_t step,
-             at_bool_t is_first_step,
-             at_bool_t is_last_step,
-             at_bool_t do_log,
-             at_bool_t flush_output);
+             const at_params_step_t *step_params);
 
-int at__step(at_t *at, at_llong_t step, at_params_step_t *step_params);
+// convenience wrapper of at__move()
+int at__step(at_t *at,
+             at_llong_t step,
+             at_params_step_t *step_params);
 
 #endif

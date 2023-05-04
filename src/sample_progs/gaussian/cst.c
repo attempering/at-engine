@@ -43,25 +43,29 @@ at_llong_t nsteps = 5000000;
 void run_cst_md(at_t* at, mdsys_t* mdsys, at_llong_t nsteps)
 {
   at_llong_t step = 0;
+  at_params_step_t step_params[1];
 
   zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
   for (step = 1; step <= nsteps; step++) {
-    at_bool_t is_first_step = (step == 1);
-    at_bool_t is_last_step = (step == nsteps);
     at_bool_t is_tempering_step = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
-    at_bool_t flush_output = AT__FALSE;
 
     mdsys__step(mdsys, at->beta);
 
     //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
     if (is_tempering_step) {
+
       at->energy = mdsys->epot;
 
-      at__move(at, step, is_first_step, is_last_step, AT__TRUE, flush_output);
+      step_params->step = step;
+      step_params->is_first_step = (step == 1);
+      step_params->is_last_step = (step == nsteps);
+      step_params->flush_output = AT__FALSE;
+
+      at__move(at, step_params);
 
       //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
       //getchar();
@@ -110,7 +114,6 @@ int main(int argc, char** argv)
 {
   const char* fn_cfg = "at.cfg";
   mdsys_t* mdsys;
-  at_bool_t verbose = 0;
 
   if (argc > 1) {
     fn_cfg = argv[1];
@@ -120,7 +123,7 @@ int main(int argc, char** argv)
   //remove("TRACE0");
   remove("atdata/log.dat");
 
-  at_t* at = at__open(fn_cfg, AT__FALSE, AT__TRUE, NULL, verbose);
+  at_t* at = at__open(fn_cfg, NULL, 0);
   //at__manifest(at);
 
   mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->bmin, at->distr->domain->bmax, boltz);

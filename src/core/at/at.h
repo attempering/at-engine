@@ -28,6 +28,7 @@
 #include "driver/at_driver.h"
 
 #include "at_basic.h"
+#include "at_misc.h"
 #include "at_move.h"
 
 #endif

@@ -35,7 +35,7 @@ typedef struct at_mb_accum_winaccum_item_t_ {
 typedef struct at_mb_accum_winaccum_t_ {
   int n;
   unsigned flags;
-  at_mb_win_t *win; // reference handler
+  at_mb_win_t *win; // reference handle
   at_mb_accum_winaccum_item_t *items;
 } at_mb_accum_winaccum_t;
 

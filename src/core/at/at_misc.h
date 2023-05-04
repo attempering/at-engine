@@ -16,27 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Simplest program of using the at module */
-#ifdef HEADER_ONLY
-#include "at-engine__src.h"
-#else
-#include "at-engine.h"
+#ifndef AT_MISC_H__
+#define AT_MISC_H__
+
+#include "at__def.h"
+
+int at__load_data(at_t *at, at_bool_t is_continuation);
+
+at_bool_t at__do_on_step(
+    const at_params_step_t *step_params,
+    at_llong_t nst,
+    at_bool_t do_on_first_step);
+
+void at__output(at_t *at,
+    const at_params_step_t *step_params,
+    int ib, double invw, double t1, double t2, double av_energy);
+
+
 #endif
 
-int main(void)
-{
-  at_llong_t step = 0, nsteps = 500000;
-
-  at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
-
-  //at_driver_langevin_rng__reset(at->driver->langevin->rng, 1234);
-
-  for (step = 1; step <= nsteps; step++) {
-    at->energy = 0.0;
-    at__step(at, step, NULL);
-  }
-
-  at__close(at);
-
-  return 0;
-}

@@ -35,11 +35,15 @@ ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn)
   if (fn == NULL) {
     fn = "LOG";
   }
+
   log->fname = fn;
   log->flags = 0;
   log->flags |= ZCOM_LOG__APPEND;
+
   return log;
 }
+
+
 
 ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, char *fmt, ...)
 {
@@ -68,6 +72,8 @@ ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, char *fmt, ...)
   return 0;
 }
 
+
+
 ZCOM__INLINE void zcom_log__close(zcom_log_t *log)
 {
   if (log == NULL) {
@@ -81,6 +87,7 @@ ZCOM__INLINE void zcom_log__close(zcom_log_t *log)
 
   free(log);
 }
+
 
 
 /* close & reopen log file to make sure that stuff is written to disk */
@@ -98,12 +105,6 @@ ZCOM__INLINE int zcom_log__hard_flush(zcom_log_t *log)
   return 0;
 }
 
-#if defined(ZCOM__HAVE_VAM) && defined(NEED_WTRACE)
-ZCOM__STRCLS zcom_log_t log_stock_[1] = {{ NULL, "TRACE", 0 }};
-#define wtrace(fmt, ...) { \
-  if (fmt) zcom_log__printf(log_stock_, fmt, ##__VA_ARGS__); \
-  else if (log_stock_->fp) { fclose(log_stock_->fp); log_stock_->fname = NULL; } }
-#endif
 
 
 #endif

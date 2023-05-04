@@ -22,6 +22,7 @@
 #include "../../context/at_context__def.h"
 
 typedef struct at_params_step_t_ {
+  at_llong_t step;
   at_bool_t is_first_step;
   at_bool_t is_last_step;
   at_bool_t do_log;

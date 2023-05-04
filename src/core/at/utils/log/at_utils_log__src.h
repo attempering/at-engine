@@ -75,17 +75,6 @@ void at_utils_log__finish(at_utils_log_t *log)
 }
 
 
-void at_utils_log__open_file(at_utils_log_t *log)
-{
-  log->log = zcom_log__open(log->filename);
-}
-
-void at_utils_log__close_file(at_utils_log_t *log)
-{
-  if (log->log) {
-    zcom_log__close(log->log);
-  }
-}
 
 void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest)
 {
@@ -93,5 +82,54 @@ void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest)
 
   fprintf(manifest->fp, "utils->log->fname: char *, %s\n", log->filename);
 }
+
+
+
+
+void at_utils_log__open_file(at_utils_log_t *log)
+{
+  log->log = zcom_log__open(log->filename);
+}
+
+
+void at_utils_log__close_file(at_utils_log_t *log)
+{
+  if (log->log) {
+    zcom_log__close(log->log);
+    log->log = NULL;
+  }
+}
+
+
+
+// decide whether to write log at this step
+at_bool_t at_utils_log__decide_do_log(at_utils_log_t *log,
+    const at_params_step_t *step_params)
+{
+  int nst_log = log->nst_log;
+  at_bool_t do_log;
+
+  // whether to write the log file
+  if (nst_log > 0) {
+
+    do_log = (step_params->step % nst_log == 0)
+           || step_params->is_first_step
+           || step_params->is_last_step;
+
+  } else if (nst_log < 0) {
+    // logging is disabled if at->nst_log < 0
+    do_log = AT__FALSE;
+  } else {
+    // do it according to the variable do_log
+    do_log = step_params->do_log;
+  }
+
+  return do_log;
+}
+
+
+
+
+
 
 #endif

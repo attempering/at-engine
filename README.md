@@ -16,7 +16,7 @@ its and is compatible with GROMACS 4.6.
 A typical simulation goes like this:
 
 ```C
-at_t* at = at__open("at.cfg", AT__FALSE, AT__TRUE, boltz, md_dt, 0);
+at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
 
 for (step = 1; step <= nsteps; step++) {
   at->energy = 0.0;

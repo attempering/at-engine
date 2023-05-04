@@ -21,7 +21,7 @@
 
 /* integral-identity-based estimators */
 
-/* handler for missing bin values */
+/* handle for missing bin values */
 #include "zerofiller/at_mb_iie_zerofiller.h"
 
 /* left-right estimator */

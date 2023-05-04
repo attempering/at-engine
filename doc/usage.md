@@ -13,7 +13,7 @@ Several usage examples are included [sample programs](../src/sample_progs).
 
 int main()
 {
-  at_t* at = at__open("at.cfg", AT__FALSE, AT__TRUE, NULL, AT__FALSE);
+  at_t* at = at__open("at.cfg", NULL, 0);
 
   for (step = 1; step <= nsteps; step++) {
     at->energy = ...;

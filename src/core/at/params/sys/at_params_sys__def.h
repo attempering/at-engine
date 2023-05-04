@@ -24,9 +24,20 @@
 typedef struct at_params_sys_t_ {
   double boltz;
   double md_time_step;
+
+  at_bool_t is_continuation; // continue from a previous run
+
   int id;
+  
+  // append the id to the data directory
+  // e.g., data_dir would be "atdata0", "atdata1", ... instead of "atdata"
   at_bool_t multi_sims;
+
+  // name of the data directory,
+  // to be constructed from the program
   char data_dir[64];
+
+
 } at_params_sys_t;
 
 

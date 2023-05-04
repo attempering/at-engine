@@ -37,8 +37,11 @@ void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, const char *data_dir
   }
 
   utils->ssm = zcom_ssm__open();
+
   at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, data_dir, verbose);
+
   at_utils_log__cfg_init(utils->log, cfg, utils->ssm, data_dir, verbose);
+
   utils->inited = 1;
 }
 
@@ -47,10 +50,13 @@ void at_utils__finish(at_utils_t *utils)
 {
   at_utils_log__finish(utils->log);
   at_utils_manifest__finish(utils->manifest);
+
   if (utils->inited) {
     zcom_ssm__close(utils->ssm);
     utils->ssm = NULL;
+    utils->inited = 0;
   }
+
 }
 
 void at_utils__manifest(at_utils_t *utils)
@@ -58,6 +64,7 @@ void at_utils__manifest(at_utils_t *utils)
   FILE *fp = utils->manifest->fp;
 
   at_utils_manifest__manifest(utils->manifest);
+
   at_utils_log__manifest(utils->log, utils->manifest);
 
   fprintf(fp, "utils->temp_thermostat: double, %g\n", utils->temp_thermostat);

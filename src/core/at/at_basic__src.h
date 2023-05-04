@@ -77,69 +77,6 @@ int at__load_data(at_t *at, at_bool_t is_continuation)
 
 
 
-/* don't write at the first step; write at the last step */
-int at__do_every(at_llong_t step, int nst, at_bool_t bfirst, at_bool_t blast)
-{
-  return !bfirst && (blast || (nst > 0 && step % nst == 0));
-}
-
-
-
-/* write various output files */
-void at__output(at_t *at, at_llong_t step,
-          int ib, double invw, double t1, double t2, double Eav,
-          at_bool_t is_first_step, at_bool_t is_last_step,
-          at_bool_t do_log, at_bool_t flush_output)
-{
-  if (at->utils->log->inited) {
-
-    zcom_log_t *log = at->utils->log->log;
-
-    if (log != NULL) {
-
-      int nst_log = at->utils->log->nst_log;
-
-      // whether to write the log file
-      if (nst_log > 0) {
-        do_log = (step % nst_log == 0) || is_first_step || is_last_step;
-      } else if (nst_log < 0) {
-        // logging is disabled if at->nst_log < 0
-        do_log = 0;
-      }
-
-      if (do_log) {
-
-        if(flush_output) {
-          log->flags |= ZCOM_LOG__FLUSH_AFTER;
-        } else {
-          log->flags ^= ZCOM_LOG__FLUSH_AFTER;
-        }
-
-        zcom_log__printf(log,
-            "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f",
-            step * at->sys_params->md_time_step, ib, t2 - t1,
-            at->energy, Eav, at->beta, t1, invw);
-        zcom_log__printf(log, "\n");
-      }
-    }
-  }
-
-  if (at__do_every(step, at->mb->nst_save_av, is_first_step, is_last_step)) { /* save averages */
-    at_mb__write(at->mb, at->driver->langevin, at->beta);
-    at_mb__write_ze_file(at->mb, NULL);
-    at_driver_langevin_rng__save(at->driver->langevin->rng);
-  }
-
-  if (at->eh->mode != 0) { 
-    if (at__do_every(step, at->eh->nst_save, is_first_step, is_last_step)) { /* save energy histograms */
-      at_eh__write(at->eh);
-      at_eh__reconstruct(at->eh, NULL);
-    }
-  }
-
-}
-
-
 static void at__set_init_beta(at_t *at)
 {
   /* make the initial temperature = temp_thermostat */
@@ -156,10 +93,14 @@ static void at__set_init_beta(at_t *at)
 
 
 
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, const at_params_sys_t *sys_params, at_bool_t verbose)
+int at__cfg_init(at_t *at,
+    zcom_cfg_t *cfg,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags)
 {
   const char *data_dir;
   zcom_ssm_t *ssm;
+  at_bool_t verbose = flags & AT__INIT_VERBOSE;
 
   at_params_sys__init(at->sys_params, sys_params, verbose);
 
@@ -174,7 +115,7 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, const at_params_sys_t *sys_params, a
 
   at__set_init_beta(at);
 
-  /* handler for multiple-bin estimator */
+  /* handle for multiple-bin estimator */
   at_mb__cfg_init(at->mb, at->distr, cfg, at->sys_params->boltz, ssm, data_dir, verbose);
 
   at_driver__cfg_init(at->driver, at->distr, at->mb, cfg, ssm, data_dir, verbose);
@@ -189,11 +130,12 @@ int at__cfg_init(at_t *at, zcom_cfg_t *cfg, const at_params_sys_t *sys_params, a
 
 
 
-/* return a pointer of an initialized at_t
+/* return a pointer of an initialized at_t object
  * if possible, initial values are taken from configuration
- * file `cfg`, otherwise default values are assumed */
-static at_t *at__cfg_open(const char *cfg_filename,
-    const at_params_sys_t *sys_params, at_bool_t verbose)
+ * file `cfg_filename`, otherwise default values are assumed */
+at_t *at__open(const char *cfg_filename,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags)
 {
   zcom_cfg_t *cfg;
   at_t *at;
@@ -207,43 +149,27 @@ static at_t *at__cfg_open(const char *cfg_filename,
       "Fatal: no memory for a new object of at_t\n");
 
   /* call low level function */
-  zcom_util__exit_if (at__cfg_init(at, cfg, sys_params, verbose) != 0,
+  zcom_util__exit_if (at__cfg_init(at, cfg, sys_params, flags) != 0,
     "at_t: error while reading configuration file %s\n", cfg_filename);
 
   fprintf(stderr, "Successfully loaded configuration file %s\n", cfg_filename);
 
-  /* close handle to configuration file */
+  /* close the handle to the configuration file */
   zcom_cfg__close(cfg);
 
-  return at;
-}
-
-
-at_t *at__open(
-    const char *zcom_cfg_fn,
-    at_bool_t is_continuation,
-    at_bool_t open_log,
-    const at_params_sys_t *sys_params,
-    at_bool_t verbose)
-{
-  at_t *at;
-
-  /* this will also initialize settings for member objects such as at->mb */
-  at = at__cfg_open(zcom_cfg_fn, sys_params, verbose);
-
-  zcom_util__exit_if(at == NULL, "failed to load configuration file.\n");
-
   /* we only load previous data if it's continuation */
-  if (at__load_data(at, is_continuation) != 0) {
+  if (at__load_data(at, sys_params->is_continuation) != 0) {
     fprintf(stderr, "Warning: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 
-  if (open_log) {
-    at_utils_log__open_file(at->utils->log);
-  }
+  // no need to do so, the log file will be open upon the first time of writing
+  //if (flags & AT__INIT_OPENLOG) {
+  //  at_utils_log__open_file(at->utils->log);
+  //}
 
   return at;
 }
+
 
 
 

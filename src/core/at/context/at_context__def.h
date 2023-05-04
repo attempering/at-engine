@@ -59,4 +59,7 @@ typedef long at_llong_t;
 #endif
 
 
+typedef unsigned at_flags_t;
+
+
 #endif

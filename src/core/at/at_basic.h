@@ -21,23 +21,30 @@
 
 #include "at__def.h"
 
+
+double at__beta_to_temp(const at_t *at, double beta);
+
+double at__temp_to_beta(const at_t *at, double temp);
+
+
 int at__load_data(at_t *at, at_bool_t is_continuation);
 
-int at__do_every(at_llong_t step, int nst, at_bool_t bfirst, at_bool_t blast);
 
-void at__output(at_t *at, at_llong_t step,
-    int ib, double invw, double t1, double t2, double Eav,
-    at_bool_t bfirst, at_bool_t blast, at_bool_t btr, at_bool_t bflush);
+#define AT__INIT_VERBOSE 0x0001
+//#define AT__INIT_OPENLOG 0x0002
+
 
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values */
-int at__cfg_init(at_t *at, zcom_cfg_t *cfg, const at_params_sys_t *sys_params, at_bool_t verbose);
-
-
-at_t *at__open(const char *cfg_fn,
-    at_bool_t is_continuation, at_bool_t open_log,
+int at__cfg_init(at_t *at,
+    zcom_cfg_t *cfg,
     const at_params_sys_t *sys_params,
-    at_bool_t verbose);
+    at_flags_t flags);
+
+
+at_t *at__open(const char *cfg_filename,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags);
 
 void at__finish(at_t *at);
 
@@ -46,9 +53,6 @@ void at__close(at_t *at);
 
 int at__manifest(at_t *at);
 
-double at__beta_to_temp(const at_t *at, double beta);
 
-double at__temp_to_beta(const at_t *at, double temp);
 
 #endif
-

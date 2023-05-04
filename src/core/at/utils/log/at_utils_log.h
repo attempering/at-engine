@@ -20,6 +20,7 @@
 #define AT_UTILS_LOG_H__
 
 #include "at_utils_log__def.h"
+#include "../../params/at_params__def.h"
 
 
 void at_utils_log__cfg_init(at_utils_log_t *log,
@@ -35,5 +36,9 @@ void at_utils_log__close_file(at_utils_log_t *log);
 void at_utils_log__finish(at_utils_log_t *log);
 
 void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest);
+
+at_bool_t at_utils_log__decide_do_log(at_utils_log_t *log,
+    const at_params_step_t *step_params);
+
 
 #endif
