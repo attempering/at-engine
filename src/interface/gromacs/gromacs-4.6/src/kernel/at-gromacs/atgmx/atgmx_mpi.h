@@ -16,14 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ADAPTIVE_TEMPERING_DRIVER_H__
-#define ADAPTIVE_TEMPERING_DRIVER_H__
+#ifndef ATGMX_MPI_H__
+#define ATGMX_MPI_H__
+#ifdef GMX_MPI
+
+#include "atgmx.h"
+
+#include "at-engine/at-engine.h"
+#include "context/atgmx_context.h"
 
 
 
-#define AT__GROMACS 1
-#include "adaptive_tempering_core/at-engine.h"
+int atgmx__init_mpi(atgmx_t *atgmx, MPI_Comm comm);
 
 
 
+#endif /* defined(GMX_MPI) */
 #endif

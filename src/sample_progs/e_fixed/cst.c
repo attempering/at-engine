@@ -46,14 +46,13 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
 
   zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
-  //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
+  //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
   for (step = 1; step <= nsteps; step++) {
-    at_bool_t is_tempering_step = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
 
-    //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
+    //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index);
 
-    if (is_tempering_step) {
+    if (at__do_tempering(at, step)) {
       step_params->step = step;
       step_params->is_first_step = (step == 1);
       step_params->is_last_step = (step == nsteps);
@@ -63,7 +62,7 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
       
       at__move(at, step_params);
 
-      //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index);
+      //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index);
       //getchar();
     }
 

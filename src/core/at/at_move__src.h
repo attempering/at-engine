@@ -28,18 +28,42 @@
 
 
 
+void at__update_force_scale(at_t *at)
+{
+  at->force_scale = at->beta / at__temp_to_beta(at, at->utils->temp_thermostat);
+}
+
+
+at_bool_t at__do_tempering(at_t *at, at_llong_t step)
+{
+  int nst_temp = at->driver->nsttemp;
+
+  if (nst_temp > 0 && (step % nst_temp == 0)) {
+    return AT__TRUE;
+  } else if (nst_temp <= 0) {
+    return AT__TRUE;
+  }
+
+  return AT__FALSE;
+}
+
+
+
+
 int at__move(at_t *at, const at_params_step_t *step_params)
 {
-  double invwf = 1.0, temp1, temp2, av_energy = 0.0, neg_dlnwf_dbeta;
-  int ib, rep;
+  double invwf = 1.0;
+  double temp_before, temp_after;
+  double av_energy = 0.0, neg_dlnwf_dbeta;
+  int ib, repeat;
 
-  temp1 = at__beta_to_temp(at, at->beta);
+  temp_before = at__beta_to_temp(at, at->beta);
 
   ib = at_distr__beta_to_index(at->distr, at->beta, 1);
 
   /* update energy data, change at->beta */
   /* repeat several times to change the temperature */
-  for (rep = 0; rep < at->driver->move_repeats; rep++) {
+  for (repeat = 0; repeat < at->driver->move_repeats; repeat++) {
     /* 1. deposit the current energy and temperature */
     at_mb__add(at->mb, at->energy, at->beta, &ib, &invwf, &neg_dlnwf_dbeta);
 
@@ -51,13 +75,15 @@ int at__move(at_t *at, const at_params_step_t *step_params)
         ib, invwf, neg_dlnwf_dbeta, &av_energy);
   }
 
-  temp2 = at__beta_to_temp(at, at->beta);
+  temp_after = at__beta_to_temp(at, at->beta);
+
+  at__update_force_scale(at);
 
   if (at__do_on_step(step_params, at->mb->nstrefresh, AT__TRUE)) {
     at_mb__refresh_et(at->mb, 1);
   }
 
-  at__output(at, step_params, ib, invwf, temp1, temp2, av_energy);
+  at__output(at, step_params, ib, invwf, temp_before, temp_after, av_energy);
 
   return 0;
 }

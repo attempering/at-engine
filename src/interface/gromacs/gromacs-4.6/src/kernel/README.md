@@ -7,9 +7,9 @@ the continuous-temperature simulated tempering code.
 The code name is, however, 'adaptive tempering',
 to be consistent with the legacy code.
 
-[adaptive_tempering_driver.c](adaptive_tempering_driver.c)
+[atgmx_driver.c](adaptive_tempering_driver.c)
 and
-[adaptive_tempering_driver.h](adaptive_tempering_driver.h)
+[atgmx_driver.h](adaptive_tempering_driver.h)
 provide the source code and header of module
 in the traditional sense.
 

@@ -2,6 +2,8 @@
 
 import os, re
 
+
+
 def dir_is_excluded(dir, excluded_dirs):
     dir_els = dir.split("/")
     for excluded_dir in excluded_dirs:
@@ -10,14 +12,12 @@ def dir_is_excluded(dir, excluded_dirs):
     return False
 
 
-
-
 def check_ifndef_file(path, file):
     s = open(path).readlines()
     
     found = False
     
-    tag_expected = file.upper().replace('.', '_') + '__'
+    tag_expected = file.upper().replace('.', '_').replace('-', '_') + '__'
 
     for i, line in enumerate(s):
         if line.startswith('#ifndef'):

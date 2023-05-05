@@ -50,13 +50,12 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, at_llong_t nsteps)
   //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
   for (step = 1; step <= nsteps; step++) {
-    at_bool_t is_tempering_step = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
 
     mdsys__step(mdsys, at->beta);
 
     //fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
-    if (is_tempering_step) {
+    if (at__do_tempering(at, step)) {
 
       at->energy = mdsys->epot;
 

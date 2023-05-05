@@ -123,39 +123,6 @@ int at__cfg_init(at_t *at,
   /* energy histogram */
   at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, verbose);
 
-  at->energy = 0.0;
-
-  return 0;
-}
-
-
-
-/* return a pointer of an initialized at_t object
- * if possible, initial values are taken from configuration
- * file `cfg_filename`, otherwise default values are assumed */
-at_t *at__open(const char *cfg_filename,
-    const at_params_sys_t *sys_params,
-    at_flags_t flags)
-{
-  zcom_cfg_t *cfg;
-  at_t *at;
-
-  /* open configuration file */
-  zcom_util__exit_if((cfg = zcom_cfg__open(cfg_filename)) == NULL,
-      "at_t: cannot open configuration file %s.\n", cfg_filename);
-
-  /* allocate memory for at_t */
-  zcom_util__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
-      "Fatal: no memory for a new object of at_t\n");
-
-  /* call low level function */
-  zcom_util__exit_if (at__cfg_init(at, cfg, sys_params, flags) != 0,
-    "at_t: error while reading configuration file %s\n", cfg_filename);
-
-  fprintf(stderr, "Successfully loaded configuration file %s\n", cfg_filename);
-
-  /* close the handle to the configuration file */
-  zcom_cfg__close(cfg);
 
   /* we only load previous data if it's continuation */
   if (at__load_data(at, sys_params->is_continuation) != 0) {
@@ -166,6 +133,54 @@ at_t *at__open(const char *cfg_filename,
   //if (flags & AT__INIT_OPENLOG) {
   //  at_utils_log__open_file(at->utils->log);
   //}
+
+  at->energy = 0.0;
+
+  return 0;
+}
+
+
+
+int at__init(at_t *at,
+    const char *cfg_filename,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags)
+{
+  zcom_cfg_t *cfg = NULL;
+
+  if (cfg_filename != NULL) {
+    /* open configuration file */
+    zcom_util__exit_if((cfg = zcom_cfg__open(cfg_filename)) == NULL,
+        "at_t: cannot open configuration file %s.\n", cfg_filename);
+  }
+
+  /* call low level function */
+  zcom_util__exit_if (at__cfg_init(at, cfg, sys_params, flags) != 0,
+      "at_t: error while reading configuration file %s\n",
+      (cfg_filename ? cfg_filename : "NULL") );
+
+  if (cfg_filename != NULL) {
+    fprintf(stderr, "Successfully loaded configuration file %s\n", cfg_filename);
+  }
+
+  return 0;
+}
+
+
+
+at_t *at__open(const char *cfg_filename,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags)
+{
+  at_t *at;
+
+  /* allocate memory for at_t */
+  zcom_util__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
+      "Fatal: no memory for a new object of at_t\n");
+
+  /* call low level function */
+  zcom_util__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
+    "at_t: error while reading configuration file %s\n", cfg_filename);
 
   return at;
 }

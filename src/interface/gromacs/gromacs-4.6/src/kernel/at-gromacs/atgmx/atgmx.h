@@ -16,14 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ADAPTIVE_TEMPERING_DRIVER_C__
-#define ADAPTIVE_TEMPERING_DRIVER_C__
+#ifndef ATGMX_H__
+#define ATGMX_H__
 
+#include "atgmx__def.h"
+#include "context/atgmx_context.h"
 
-
-#define AT__GROMACS 1
-#include "adaptive_tempering_core/at-engine__src.h"
-
+#include "at-engine/at-engine.h"
+#include "atgmx_utils.h"
+#include "atgmx_mpi.h"
+#include "atgmx_basic.h"
 
 
 #endif

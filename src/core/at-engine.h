@@ -19,6 +19,9 @@
 #ifndef AT_ENGINE_H__
 #define AT_ENGINE_H__
 
+#include "at-engine__def.h"
+
 #include "at/at.h"
+#include "zcom/zcom.h"
 
 #endif

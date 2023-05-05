@@ -16,21 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MOVE_H__
-#define AT_MOVE_H__
+#ifndef ATGMX_UTILS_H__
+#define ATGMX_UTILS_H__
 
-#include "at_basic.h"
+#include "atgmx.h"
 
-void at__update_force_scale(at_t *at);
+#include "at-engine/at-engine.h"
+#include "context/atgmx_context.h"
 
-at_bool_t at__do_tempering(at_t *at, at_llong_t step);
 
-int at__move(at_t *at,
-             const at_params_step_t *step_params);
+/* to be used as a replacement of opt2fn(),
+ * it will replace the file extension from .mdp to .cfg */
+char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[]);
 
-// convenience wrapper of at__move()
-int at__step(at_t *at,
-             at_llong_t step,
-             at_params_step_t *step_params);
+at_bool_t atgmx__do_tempering(atgmx_t *atgmx, at_llong_t step,
+    at_bool_t is_ns_step, at_bool_t is_last_step);
+
+int atgmx__move(atgmx_t *atgmx,
+    gmx_enerdata_t *enerd,
+    at_llong_t step,
+    at_bool_t is_first_step,
+    at_bool_t is_last_step,
+    at_bool_t has_global_stats,
+    at_bool_t is_xtc_step,
+    at_bool_t is_ns_step,
+    t_commrec *cr);
+
+void atgmx__scale_force(atgmx_t *atgmx,
+    rvec f[], t_mdatoms *mdatoms);
 
 #endif

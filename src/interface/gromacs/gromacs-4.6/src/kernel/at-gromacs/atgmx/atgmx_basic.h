@@ -16,27 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "../src/kernel/adaptive_tempering_driver.h"
+#ifndef ATGMX_BASIC_H__
+#define ATGMX_BASIC_H__
 
-int main(void)
-{
-  at_llong_t step = 0, nsteps = 1;
-  at_bool_t verbose = 1;
-  at_t at[1];
+#include "atgmx.h"
 
-  //at_t* at = at__open("at.cfg", AT__FALSE, AT__TRUE, NULL, verbose);
-  if (at__cfg_init(at, NULL, NULL, verbose) != 0) {
-    return -1;
-  }
+#include "at-engine/at-engine.h"
+#include "context/atgmx_context.h"
 
-/*
-  for (step = 1; step <= nsteps; step++) {
-    at->energy = 0.0;
-    at__step(at, step, NULL);
-  }
-*/
+int atgmx__init(
+    atgmx_t *atgmx,
+    const char *fn_cfg,
+    t_inputrec *ir,
+    t_commrec *cr,
+    at_bool_t is_continuation,
+    at_flags_t flags);
 
-  at__finish(at);
+void atgmx__finish(atgmx_t *atgmx);
 
-  return 0;
-}
+#endif

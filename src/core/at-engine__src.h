@@ -19,6 +19,8 @@
 #ifndef AT_ENGINE__SRC_H__
 #define AT_ENGINE__SRC_H__
 
+#include "at-engine__def.h"
+
 #include "at/at__src.h"
 #include "zcom/zcom__src.h"
 

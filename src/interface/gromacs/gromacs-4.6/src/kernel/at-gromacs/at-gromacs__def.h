@@ -16,21 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MOVE_H__
-#define AT_MOVE_H__
+#ifndef AT_GROMACS__DEF_H__
+#define AT_GROMACS__DEF_H__
 
-#include "at_basic.h"
-
-void at__update_force_scale(at_t *at);
-
-at_bool_t at__do_tempering(at_t *at, at_llong_t step);
-
-int at__move(at_t *at,
-             const at_params_step_t *step_params);
-
-// convenience wrapper of at__move()
-int at__step(at_t *at,
-             at_llong_t step,
-             at_params_step_t *step_params);
+#include "atgmx/atgmx__def.h"
 
 #endif

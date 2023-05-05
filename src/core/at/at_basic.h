@@ -41,7 +41,15 @@ int at__cfg_init(at_t *at,
     const at_params_sys_t *sys_params,
     at_flags_t flags);
 
+/* wrapper of at__cfg_init() */
+int at__init(at_t *at,
+    const char *cfg_filename,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags);
 
+/* return a pointer of an initialized at_t object
+ * if possible, initial values are taken from configuration
+ * file `cfg_filename`, otherwise default values are assumed */
 at_t *at__open(const char *cfg_filename,
     const at_params_sys_t *sys_params,
     at_flags_t flags);

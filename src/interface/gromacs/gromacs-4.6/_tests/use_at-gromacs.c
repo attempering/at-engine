@@ -16,21 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MOVE_H__
-#define AT_MOVE_H__
+#include "../src/kernel/at-gromacs/at-gromacs.h"
 
-#include "at_basic.h"
+int main(void)
+{
+  at_llong_t step = 0, nsteps = 1;
+  atgmx_t atgmx[1];
+  t_commrec cr[1];
+  t_inputrec ir[1];
+  at_bool_t from_cpt = AT__FALSE;
 
-void at__update_force_scale(at_t *at);
+  atgmx__init(atgmx, "at.cfg", ir, cr, from_cpt, AT__INIT_VERBOSE);
 
-at_bool_t at__do_tempering(at_t *at, at_llong_t step);
+  atgmx__finish(atgmx);
 
-int at__move(at_t *at,
-             const at_params_step_t *step_params);
-
-// convenience wrapper of at__move()
-int at__step(at_t *at,
-             at_llong_t step,
-             at_params_step_t *step_params);
-
-#endif
+  return 0;
+}

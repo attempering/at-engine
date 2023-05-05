@@ -30,11 +30,11 @@
    static is the only way to avoid naming conflict in this case.
 
    In case that this file is included multiple times,
-   ZCOM_XFUNCS should be defined before the first inclusion,
+   ZCOM__EXPORT_FUNCS should be defined before the first inclusion,
    otherwise it won't be effective in deciding storage classes.
  */
 #ifndef ZCOM__STRCLS
-  #ifndef ZCOM_XFUNCS
+  #ifndef ZCOM__EXPORT_FUNCS
     #define ZCOM__STRCLS static
   #else
     #define ZCOM__STRCLS

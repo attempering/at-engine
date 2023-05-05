@@ -36,9 +36,11 @@
 
 typedef struct at_t_ {
 
+  double    energy;           // current coupling energy
+
   double    beta;             // current beta
 
-  double    energy;           // current coupling energy
+  double    force_scale;      // for force scaling
 
   at_params_sys_t sys_params[1];
 

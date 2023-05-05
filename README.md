@@ -1,4 +1,4 @@
-# Kernel code for adaptive tempering
+# Kernel code for AT-Engine
 
 ## Overview
 
@@ -66,7 +66,7 @@ The zero-filling mechanism is now added.
 
 [Test case: Gaussian energy model](src/sample_progs/gaussian)
 
-[GROMACS plugin](src/interface/gromacs/4.6/src/kernel/adaptive_tempering)
+[GROMACS plugin](src/interface/gromacs/gromacs-4.6/src/kernel/)
 
 The adaptive tempering algorithm is the main engine that drives
 the temperature transitions in the multiple-canonical ensemble.
@@ -88,3 +88,4 @@ the temperature transitions in the multiple-canonical ensemble.
 
 * Sample test cases using the API offered by the kernel files
   are collected in the [sample_progs](sample_progs) directory.
+
