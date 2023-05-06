@@ -99,7 +99,8 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   domain->bdel = 0.005;
 
   if (0 != zcom_cfg__get(cfg, &domain->bdel, "beta_del", "%lf")) {
-    fprintf(stderr, "Warning: missing var: distr->domain->bdel, key: beta_del, fmt: %%lf, assuming %g\n", domain->bdel);
+    fprintf(stderr, "Warning: missing var: distr->domain->bdel, key: beta_del, fmt: %%lf, assuming %g\n",
+        domain->bdel);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -151,6 +152,8 @@ void at_distr_domain__finish(at_distr_domain_t *domain)
 void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest)
 {
   FILE *fp = manifest->fp;
+
+  //fprintf(stderr, "fp %p\n", manifest->fp); exit(1);
 
   /* bdel: bin size of beta */
   fprintf(fp, "distr->domain->bdel: double, %g\n", domain->bdel);

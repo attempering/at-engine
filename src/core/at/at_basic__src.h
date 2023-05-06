@@ -117,7 +117,7 @@ int at__cfg_init(at_t *at,
 
 
   /* we only load previous data if it's continuation */
-  if (at__load_data(at, sys_params->is_continuation) != 0) {
+  if (at__load_data(at, at->sys_params->is_continuation) != 0) {
     fprintf(stderr, "Warning: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 

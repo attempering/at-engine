@@ -26,10 +26,16 @@ int main(void)
   zcom_cfg_t *cfg = NULL;
   at_utils_manifest_t manifest[1];
   double boltz = 1.0;
+  at_bool_t verbose = AT__TRUE;
 
-  at_distr__cfg_init(distr, cfg, boltz, 1);
+  at_utils_manifest__cfg_init(manifest, cfg, NULL, NULL, verbose);
+  at_utils_manifest__open_file(manifest);
+
+  at_distr__cfg_init(distr, cfg, boltz, verbose);
   at_distr__manifest(distr, manifest);
   at_distr__finish(distr);
+
+  at_utils_manifest__finish(manifest);
 
   return 0;
 }

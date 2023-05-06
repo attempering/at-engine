@@ -25,12 +25,14 @@
 
 int main(void)
 {
-  at_llong_t step = 0, nsteps = 500000;
+  at_llong_t step = 0, nsteps = 100;
   double epot = 0.0;
+  const char *fn_cfg = NULL; // "at.cfg";
 
-  at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
+  at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 
   //at_driver_langevin_rng__reset(at->driver->langevin->rng, 1234);
+  at__manifest(at);
 
   for (step = 1; step <= nsteps; step++) {
     at__step(at, epot, step, NULL);
