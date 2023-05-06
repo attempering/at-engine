@@ -64,5 +64,5 @@ def check_ifndef_dir(root, excluded_dirs):
             check_ifndef_file(path, file)
 
 
-check_ifndef_dir(".", excluded_dirs=["_backup", "gmxmock", "zcom"])
+check_ifndef_dir(".", excluded_dirs=["_backup", "gmxmock", "zcom", "tests"])
 

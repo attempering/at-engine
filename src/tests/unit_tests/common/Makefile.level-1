@@ -1,0 +1,26 @@
+CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
+CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
+LM = -lm
+
+srcs = $(wildcard *.c)
+bins = $(patsubst %.c, %.exe, $(srcs))
+bins_dbg = $(patsubst %.c, %_d.exe, $(srcs))
+dep_srcs =
+deps = $(dep_srcs) \
+       $(wildcard *.h) \
+			 $(wildcard ../../core/at/*.h) \
+			 $(wildcard ../../core/at/*/*.h) \
+			 $(wildcard ../../core/at/*/*/*.h) \
+       Makefile
+includes = -I../../core
+
+bins: $(bins)
+
+$(bins): %.exe : %.c $(deps)
+	$(CC) $(includes) $< $(dep_srcs) -o $@ $(LM)
+
+$(bins_dbg): %_d.exe : %.c $(deps)
+	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
+
+clean::
+	$(RM) $(bins) $(bins_dbg) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* log.dat cst.dat gmon.out data/*

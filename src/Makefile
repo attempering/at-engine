@@ -1,9 +1,5 @@
 bins::
-	$(MAKE) $@ -C unit_tests
-	$(MAKE) $@ -C sample_progs
-	$(MAKE) $@ -C interface
+	$(MAKE) $@ -C tests
 
 clean::
-	$(MAKE) $@ -C unit_tests
-	$(MAKE) $@ -C sample_progs
-	$(MAKE) $@ -C interface
+	$(MAKE) $@ -C tests
