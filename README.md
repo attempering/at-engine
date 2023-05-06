@@ -63,7 +63,7 @@ The zero-filling mechanism is now added.
 
 ## For developers
 
-[Test case: Gaussian energy model](src/sample_progs/gaussian)
+[Test case: Gaussian energy model](src/tests/sample_progs/gaussian)
 
 [GROMACS plugin](src/interface/gromacs/gromacs-4.6/src/kernel/)
 
@@ -86,4 +86,5 @@ the temperature transitions in the multiple-canonical ensemble.
   code.
 
 * Sample test cases using the API offered by the kernel files
-  are collected in the [sample_progs](sample_progs) directory.
+  are collected in the [sample_progs](src/tests/sample_progs) directory.
+
