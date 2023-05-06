@@ -19,8 +19,7 @@ A typical simulation goes like this:
 at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
 
 for (step = 1; step <= nsteps; step++) {
-  at->energy = 0.0;
-  at__move(at, step, NULL);
+  at__step(at, energy, step, NULL);
 }
 
 at__close(at);
@@ -88,4 +87,3 @@ the temperature transitions in the multiple-canonical ensemble.
 
 * Sample test cases using the API offered by the kernel files
   are collected in the [sample_progs](sample_progs) directory.
-

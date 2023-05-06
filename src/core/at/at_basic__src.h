@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include "at_basic.h"
+#include "at_misc.h"
 
 #include "../zcom/zcom.h"
 
@@ -32,15 +33,6 @@
 #include "driver/at_driver.h"
 #include "eh/at_eh.h"
 
-
-
-double at__beta_to_temp(const at_t *at, double beta) {
-    return 1.0/(beta * at->sys_params->boltz);
-}
-
-double at__temp_to_beta(const at_t *at, double temp) {
-    return 1.0/(temp * at->sys_params->boltz);
-}
 
 
 /* load previous data */

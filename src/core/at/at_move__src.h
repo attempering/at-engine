@@ -90,8 +90,9 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 
 
 
-int at__step(at_t *at, at_llong_t step, at_params_step_t *step_params)
+int at__step(at_t *at, double energy, at_llong_t step, at_params_step_t *step_params)
 {
+  // default parameters
   at_params_step_t stock_step_params[1] = {{
     0,
     AT__FALSE, // is_first_step
@@ -104,7 +105,10 @@ int at__step(at_t *at, at_llong_t step, at_params_step_t *step_params)
     step_params = stock_step_params;
   }
 
+
   step_params->step = step;
+
+  at->energy = energy;
 
   return at__move(at, step_params);
 }

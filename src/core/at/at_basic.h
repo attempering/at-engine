@@ -22,11 +22,6 @@
 #include "at__def.h"
 
 
-double at__beta_to_temp(const at_t *at, double beta);
-
-double at__temp_to_beta(const at_t *at, double temp);
-
-
 int at__load_data(at_t *at, at_bool_t is_continuation);
 
 

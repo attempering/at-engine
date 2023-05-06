@@ -16,8 +16,7 @@ int main()
   at_t* at = at__open("at.cfg", NULL, 0);
 
   for (step = 1; step <= nsteps; step++) {
-    at->energy = ...;
-    at__step(at, step, NULL);
+    at__step(at, energy, step, NULL);
   }
 
   at__close(at);

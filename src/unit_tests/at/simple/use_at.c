@@ -26,14 +26,14 @@
 int main(void)
 {
   at_llong_t step = 0, nsteps = 500000;
+  double epot = 0.0;
 
   at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
 
   //at_driver_langevin_rng__reset(at->driver->langevin->rng, 1234);
 
   for (step = 1; step <= nsteps; step++) {
-    at->energy = 0.0;
-    at__step(at, step, NULL);
+    at__step(at, epot, step, NULL);
   }
 
   at__close(at);

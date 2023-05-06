@@ -30,6 +30,7 @@ int at__move(at_t *at,
 
 // convenience wrapper of at__move()
 int at__step(at_t *at,
+             double energy,
              at_llong_t step,
              at_params_step_t *step_params);
 

@@ -21,6 +21,13 @@
 
 #include "at__def.h"
 
+
+double at__beta_to_temp(const at_t *at, double beta);
+
+double at__temp_to_beta(const at_t *at, double temp);
+
+void at__set_energy(at_t *at, double energy);
+
 int at__load_data(at_t *at, at_bool_t is_continuation);
 
 at_bool_t at__do_on_step(
