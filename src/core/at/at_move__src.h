@@ -34,6 +34,7 @@ void at__update_force_scale(at_t *at)
 }
 
 
+
 at_bool_t at__do_tempering(at_t *at, at_llong_t step)
 {
   int nst_temp = at->driver->nsttemp;
@@ -46,7 +47,6 @@ at_bool_t at__do_tempering(at_t *at, at_llong_t step)
 
   return AT__FALSE;
 }
-
 
 
 
@@ -111,6 +111,14 @@ int at__step(at_t *at, double energy, at_llong_t step, at_params_step_t *step_pa
   at->energy = energy;
 
   return at__move(at, step_params);
+}
+
+
+
+double at__get_move_acceptance_ratio(
+    const at_t *at)
+{
+  return at_driver_langevin_move__get_acceptance_ratio(at->driver->langevin);
 }
 
 

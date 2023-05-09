@@ -155,6 +155,8 @@ int at__init(at_t *at,
     fprintf(stderr, "Successfully loaded configuration file %s\n", cfg_filename);
   }
 
+  at->cfg = cfg;
+
   return 0;
 }
 
@@ -182,7 +184,7 @@ at_t *at__open(const char *cfg_filename,
 
 
 
-void at__finish(at_t *at)
+void at__finish(at_t *at, at_flags_t flags)
 {
   at_eh__finish(at->eh);
 
@@ -194,13 +196,17 @@ void at__finish(at_t *at)
 
   at_utils__finish(at->utils);
 
+  if (flags & AT__FINISH_CLOSE_CFG) {
+    zcom_cfg__close(at->cfg);
+  }
+
   memset(at, 0, sizeof(*at));
 }
 
 
 void at__close(at_t *at)
 {
-  at__finish(at);
+  at__finish(at, AT__FINISH_CLOSE_CFG);
   free(at);
 }
 

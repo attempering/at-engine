@@ -46,17 +46,17 @@ typedef struct at_t_ {
 
   at_params_sys_t sys_params[1];
 
-  at_distr_t    distr[1];     // distribution
+  at_distr_t      distr[1];     // distribution
 
-  at_mb_t       mb[1];        // multiple-bin estimator
+  at_mb_t         mb[1];        // multiple-bin estimator
 
-  at_driver_t   driver[1];    // Langevin equation
+  at_driver_t     driver[1];    // Langevin equation
 
-  at_eh_t       eh[1];        // energy histogram
+  at_eh_t         eh[1];        // energy histogram
 
-  at_utils_t    utils[1];     // utilities and everything else
+  at_utils_t      utils[1];     // utilities and everything else
 
-  zcom_cfg_t    *cfg;
+  zcom_cfg_t      *cfg;
 
 } at_t;
 

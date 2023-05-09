@@ -33,14 +33,15 @@ double boltz = 1.0;
 int use_minicst = 0;
 uint32_t langevin_seed = 1234;
 
-double sigma = 10.0;     /* standard deviation of energy distributions */
+double sigma = 100.0;     /* standard deviation of energy distributions */
 double epot_dt = 0.01;   /* equilibration rate, larger value means the system is able to equilibrate faster */
-at_llong_t nsteps = 500; // 5000000;
+at_llong_t nsteps = 5000000;
 
 void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 {
   at_llong_t step = 0;
   at_params_step_t step_params[1];
+  double acc;
 
   zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
@@ -73,6 +74,10 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
       // exit(1);
     }
   }
+
+  acc = at__get_move_acceptance_ratio(at);
+
+  fprintf(stderr, "Acceptance ratio: %g%%\n", acc*100.0);
 }
 
 #ifdef ENABLE_MINICST

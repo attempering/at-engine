@@ -34,4 +34,7 @@ int at__step(at_t *at,
              at_llong_t step,
              at_params_step_t *step_params);
 
+double at__get_move_acceptance_ratio(
+    const at_t *at);
+
 #endif

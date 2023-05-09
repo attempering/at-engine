@@ -29,6 +29,9 @@ int at__load_data(at_t *at, at_bool_t is_continuation);
 //#define AT__INIT_OPENLOG 0x0002
 
 
+#define AT__FINISH_CLOSE_CFG  0x0010
+
+
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values */
 int at__cfg_init(at_t *at,
@@ -49,7 +52,7 @@ at_t *at__open(const char *cfg_filename,
     const at_params_sys_t *sys_params,
     at_flags_t flags);
 
-void at__finish(at_t *at);
+void at__finish(at_t *at, at_flags_t flags);
 
 /* close a pointer to at_t */
 void at__close(at_t *at);

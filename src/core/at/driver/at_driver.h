@@ -37,7 +37,9 @@ int at_driver__cfg_init(
 
 void at_driver__finish(at_driver_t *driver);
 
-void at_driver__manifest(const at_driver_t *driver, at_utils_manifest_t *manifest);
+void at_driver__manifest(
+    const at_driver_t *driver,
+    at_utils_manifest_t *manifest);
 
 
 #endif
