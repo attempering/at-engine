@@ -5,6 +5,7 @@ bins::
 	$(MAKE) $@ -C driver
 
 clean::
+	$(MAKE) $@ -C zcom
 	$(MAKE) $@ -C at
 	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb

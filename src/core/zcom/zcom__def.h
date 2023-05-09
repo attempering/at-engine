@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM__DEF_H__
-#define ZCOM__DEF_H__
+#ifndef ZCOM__DEF_H___
+#define ZCOM__DEF_H___
 
 #include "def/def.h"
 #include "ssm/ssm__def.h"

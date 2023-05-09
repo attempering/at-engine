@@ -20,5 +20,6 @@
 #define AT_ENGINE__DEF_H__
 
 #include "at/at__def.h"
+#include "zcom/zcom__def.h"
 
 #endif
