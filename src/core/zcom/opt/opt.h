@@ -20,29 +20,8 @@
 #define ZCOM__OPT_H__
 
 
-#include <stdio.h>
+#include "opt__def.h"
 
-#include "../def/def.h"
-#include "../util/util.h"
-
-/* option either from arguments or configuration */
-typedef struct zcom_opt_t_ {
-  int isopt; /* is option or argument */
-  char ch; /* single letter option flag */
-  const char *sflag; /* long string flag */
-  const char *key; /* key */
-
-  const char *val; /* raw string from command line */
-  const char *desc; /* description */
-  const char *fmt; /* sscanf format */
-  const char *pfmt; /* printf format, NULL: to guess */
-  void *ptr; /* address to the target variable */
-  unsigned flags;
-} zcom_opt_t;
-
-#define ZCOM_OPT__MANDATORY     0x0001  /* a mandatory argument or option */
-#define ZCOM_OPT__SWITCH        0x0002  /* an option is a switch */
-#define ZCOM_OPT__SET           0x0004  /* an argument/option is set */
 
 /* translate string values to actual ones through sscanf() */
 ZCOM__INLINE int zcom_opt__getval(zcom_opt_t *o, zcom_ssm_t *m);

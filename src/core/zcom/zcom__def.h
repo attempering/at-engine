@@ -16,18 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM_H__
-#define ZCOM_H__
-
-#include "zcom__def.h"
+#ifndef ZCOM__DEF_H__
+#define ZCOM__DEF_H__
 
 #include "def/def.h"
-#include "util/util.h"
-#include "endn/endn.h"
-#include "ssm/ssm.h"
-#include "opt/opt.h"
-#include "cfg/cfg.h"
-#include "log/log.h"
-#include "rng/rng.h"
+#include "ssm/ssm__def.h"
+#include "opt/opt__def.h"
+#include "cfg/cfg__def.h"
+#include "log/log__def.h"
+#include "rng/rng__def.h"
 
 #endif

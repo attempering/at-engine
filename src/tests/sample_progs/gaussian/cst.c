@@ -37,7 +37,7 @@ uint32_t langevin_seed = 1234;
 
 double sigma = 10.0; /* standard deviation of energy distributions */
 double epot_dt = 0.01; /* equilibration rate, larger value means the system is able to equilibrate faster */
-at_llong_t nsteps = 5000000;
+at_llong_t nsteps = 500; // 5000000;
 
 
 void run_cst_md(at_t* at, mdsys_t* mdsys, at_llong_t nsteps)
@@ -62,6 +62,7 @@ void run_cst_md(at_t* at, mdsys_t* mdsys, at_llong_t nsteps)
       step_params->step = step;
       step_params->is_first_step = (step == 1);
       step_params->is_last_step = (step == nsteps);
+      step_params->do_log = AT__FALSE;
       step_params->flush_output = AT__FALSE;
 
       at__move(at, step_params);

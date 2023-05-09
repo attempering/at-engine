@@ -20,41 +20,7 @@
 #define ZCOM__SSM_H__
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-
-#include "../def/def.h"
-
-
-
-enum {
-  ZCOM_SSM__TASK_CONCAT = 1,
-  ZCOM_SSM__TASK_DELETE = 2,
-};
-
-enum {
-  ZCOM_SSM__DEFAULT_HASH_BITS = 8,
-  ZCOM_SSM__DEFAULT_BLOCK_SIZE = 256,
-};
-
-typedef struct zcom_ssm__ss_llist_node_t_ {
-  size_t size;
-  char *s;
-  struct zcom_ssm__ss_llist_node_t_ *next;
-} zcom_ssm__ss_llist_node_t;
-
-typedef zcom_ssm__ss_llist_node_t zcom_ssm__ss_llist_t;
-
-
-typedef struct zcom_ssm_t_ {
-  int hash_bits;
-  size_t hash_size;
-  size_t block_size; /* minimum number of bytes */
-  zcom_ssm__ss_llist_t *base_; /* base_[0..bash_size-1]*/
-} zcom_ssm_t;
-
+#include "ssm__def.h"
 
 
 ZCOM__STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size);

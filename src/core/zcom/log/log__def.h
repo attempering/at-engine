@@ -16,18 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM_H__
-#define ZCOM_H__
+#ifndef ZCOM__LOG__DEF_H__
+#define ZCOM__LOG__DEF_H__
 
-#include "zcom__def.h"
 
-#include "def/def.h"
-#include "util/util.h"
-#include "endn/endn.h"
-#include "ssm/ssm.h"
-#include "opt/opt.h"
-#include "cfg/cfg.h"
-#include "log/log.h"
-#include "rng/rng.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+
+#include "../def/def.h"
+
+typedef struct zcom_log_t_ {
+  FILE *fp;
+  const char *fname;
+  unsigned flags;
+} zcom_log_t;
+
+#define ZCOM_LOG__OUTPUT_SCREEN   0x01
+#define ZCOM_LOG__FLUSH_AFTER     0x02
+#define ZCOM_LOG__NO_OUTPUT_FILE  0x10
+#define ZCOM_LOG__APPEND          0x80
 
 #endif

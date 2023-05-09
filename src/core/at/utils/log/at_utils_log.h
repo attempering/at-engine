@@ -29,7 +29,7 @@ void at_utils_log__cfg_init(at_utils_log_t *log,
     const char *data_dir,
     at_bool_t verbose);
 
-void at_utils_log__open_file(at_utils_log_t *log);
+zcom_log_t *at_utils_log__open_file(at_utils_log_t *log);
 
 void at_utils_log__close_file(at_utils_log_t *log);
 

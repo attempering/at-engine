@@ -32,6 +32,8 @@
 #include "mb/at_mb__def.h"
 #include "eh/at_eh__def.h"
 #include "driver/at_driver__def.h"
+#include "../zcom/zcom__def.h"
+
 
 
 typedef struct at_t_ {
@@ -53,6 +55,8 @@ typedef struct at_t_ {
   at_eh_t       eh[1];        // energy histogram
 
   at_utils_t    utils[1];     // utilities and everything else
+
+  zcom_cfg_t    *cfg;
 
 } at_t;
 

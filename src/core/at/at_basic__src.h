@@ -170,6 +170,8 @@ at_t *at__open(const char *cfg_filename,
   zcom_util__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
       "Fatal: no memory for a new object of at_t\n");
 
+  at->cfg = NULL;
+
   /* call low level function */
   zcom_util__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
     "at_t: error while reading configuration file %s\n", cfg_filename);

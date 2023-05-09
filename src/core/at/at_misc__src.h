@@ -85,8 +85,10 @@ static void at__write_log(at_t *at,
     zcom_log_t *zcom_log = log->log;
 
     if (zcom_log == NULL) {
-      at_utils_log__open_file(log);
+      zcom_log = at_utils_log__open_file(log);
     }
+
+    //fprintf(stderr, "step params %p, zcom_log %p\n", step_params, zcom_log);
 
     if(step_params->flush_output) {
       zcom_log->flags |= ZCOM_LOG__FLUSH_AFTER;

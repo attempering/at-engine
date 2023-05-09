@@ -86,9 +86,11 @@ void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest)
 
 
 
-void at_utils_log__open_file(at_utils_log_t *log)
+zcom_log_t *at_utils_log__open_file(at_utils_log_t *log)
 {
   log->log = zcom_log__open(log->filename);
+
+  return log->log;
 }
 
 

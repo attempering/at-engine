@@ -19,61 +19,7 @@
 #ifndef ZCOM__RNG_H__
 #define ZCOM__RNG_H__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
-
-
-#include "../def/def.h"
-
-
-/* Including <inttypes.h> automatically includes also <stdint.h>  */
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
-  #include <inttypes.h>
-#elif defined(_MSC_VER) || defined(__BORLANDC__)
-  typedef unsigned uint32_t;
-  typedef unsigned __int64 uint64_t;
-#else
-  #include <inttypes.h>
-#endif
-
-#ifndef PRIu32
-  #if (defined(_MSC_VER) && (_MSC_VER >= 1300)) || defined(__BORLANDC__)
-    #define PRIu32 "I32u"
-  #else
-    #define PRIu32 "u"
-  #endif
-#endif
-
-#ifndef PRIu64
-  #if defined(_MSC_VER) || defined(__BORLANDC__)
-    #define PRIu64 "I64u"
-  #else
-    #define PRIu64 "llu"
-  #endif
-#endif
-
-
-
-
-
-
-/* Mersenne Twister was developed by Makoto Matsumoto and Takuji Nishimura */
-#define ZCOM_RNG__MT_N 624
-#define ZCOM_RNG__MT_M 397
-#define ZCOM_RNG__MT_UMASK 0x80000000UL /* most significant w-r bits */
-#define ZCOM_RNG__MT_LMASK 0x7fffffffUL /* least significant r bits */
-
-
-typedef struct zcom_mtrng_t_ {
-  int index; /* index of `arr` */
-  uint32_t arr[ZCOM_RNG__MT_N];
-  int loaded;
-} zcom_mtrng_t;
-
-
+#include "rng__def.h"
 
 /* save the current mt state to file */
 ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname);
