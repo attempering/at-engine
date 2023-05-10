@@ -39,6 +39,9 @@
 /* mb_io_binary__src.h is included within */
 #include "io/at_mb_io__src.h"
 
+/* Legacy IO routines */
+#include "io_legacy/at_mb_io_legacy__src.h"
+
 /* integral-identity estimators */
 #include "iie/at_mb_iie__src.h"
 

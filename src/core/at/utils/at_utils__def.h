@@ -26,7 +26,7 @@ typedef struct at_utils_t_
 {
   int inited;
   at_utils_manifest_t manifest[1];
-  at_utils_trace_t log[1];
+  at_utils_trace_t trace[1];
   double temp_thermostat;
   zcom_ssm_t *ssm;
 } at_utils_t;

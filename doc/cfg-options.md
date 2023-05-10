@@ -548,7 +548,7 @@ scheme.
 
   Default: 1.
 
-* `nstrefresh`: frequency (in the number of MD steps) of recalculating Et for all temperatures
+* ``: frequency (in the number of MD steps) of recalculating Et for all temperatures
 
   Default: 10000.
 

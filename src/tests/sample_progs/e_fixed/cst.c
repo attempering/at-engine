@@ -52,7 +52,8 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
 
     //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index);
 
-    if (at__do_tempering(at, step)) {
+    if (at__do_tempering_on_step(at, step, AT__TRUE))
+    {
       step_params->step = step;
       step_params->is_first_step = (step == 1);
       step_params->is_last_step = (step == nsteps);

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_IO__SRC_H__
-#define AT_MB_IO__SRC_H__
+#ifndef AT_MB_IO_LEGACY__SRC_H__
+#define AT_MB_IO_LEGACY__SRC_H__
 
 
 
@@ -29,16 +29,16 @@
 #include "../at_mb_basic.h"
 
 /* include the source code of sub-modules */
-#include "at_mb_io_binary__src.h"
+#include "at_mb_io_legacy_binary__src.h"
 
 
 
 
-int at_mb__read(at_mb_t *mb, double *beta)
+int at_mb__read_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double *beta)
 {
   int ret, version;
 
-  ret = at_mb__read_binary(mb, beta, mb->av_file, &version);
+  ret = at_mb__read_binary_legacy(mb, langevin, beta, mb->av_file, &version);
 
   if (ret != 0) {
     fprintf(stderr, "cannot load at_mb_t data from %s\n", mb->av_file);
@@ -53,9 +53,9 @@ int at_mb__read(at_mb_t *mb, double *beta)
 
 
 
-int at_mb__write(at_mb_t *mb, double beta)
+int at_mb__write_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double beta)
 {
-  return at_mb__write_binary(mb, beta, mb->av_file, 1);
+  return at_mb__write_binary_legacy(mb, langevin, beta, mb->av_file, 1);
 }
 
 

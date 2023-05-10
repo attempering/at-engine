@@ -16,25 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* binary IO routines for at_mb_t */
-#ifndef AT_MB_IO_BINARY_H__
-#define AT_MB_IO_BINARY_H__
+#ifndef AT_IO_H___
+#define AT_IO_H___
 
-#include "../at_mb__def.h"
-#include "../../driver/langevin/at_driver_langevin.h"
+#include "at__def.h"
 
 
-/* read at_mb_t data as binary */
-int at_mb__read_binary(
-    at_mb_t *mb,
-    const char *fname,
-    int *pver);
+at_bool_t at__do_output_on_step(
+    const at_params_step_t *step_params,
+    at_llong_t nst,
+    at_bool_t do_on_first_step);
 
+void at__output(at_t *at,
+    const at_params_step_t *step_params);
 
-/* write at_mb_t data as binary */
-int at_mb__write_binary(
-    at_mb_t *mb,
-    const char *fname,
-    int ver);
+int at__load_data(at_t *at, at_bool_t is_continuation);
+
 
 #endif

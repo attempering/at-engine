@@ -22,8 +22,8 @@
 #include "at_driver_langevin__def.h"
 #include "../../utils/at_utils.h"
 
-int at_driver_langevin__read_binary(at_driver_langevin_t *langevin, FILE *fp, int endn);
+int at_driver_langevin__read_binary_legacy(at_driver_langevin_t *langevin, FILE *fp, int endn);
 
-int at_driver_langevin__write_binary(at_driver_langevin_t *langevin, FILE *fp);
+int at_driver_langevin__write_binary_legacy(at_driver_langevin_t *langevin, FILE *fp);
 
 #endif

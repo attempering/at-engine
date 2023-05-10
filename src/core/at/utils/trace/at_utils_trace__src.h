@@ -80,7 +80,7 @@ void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *mani
 {
   fprintf(manifest->fp, "utils->trace->nst_trace: int, %4d\n", trace->nst_trace);
 
-  fprintf(manifest->fp, "utils->trace->fname: char *, %s\n", trace->filename);
+  fprintf(manifest->fp, "utils->trace->filename: char *, %s\n", trace->filename);
 }
 
 
@@ -105,32 +105,29 @@ void at_utils_trace__close_file(at_utils_trace_t *trace)
 
 
 // decide whether to write trace at this step
-at_bool_t at_utils_trace__decide_do_log(at_utils_trace_t *trace,
+at_bool_t at_utils_trace__decide_do_trace(at_utils_trace_t *trace,
     const at_params_step_t *step_params)
 {
   int nst_trace = trace->nst_trace;
-  at_bool_t do_log;
+  at_bool_t do_trace;
 
   // whether to write the trace file
   if (nst_trace > 0) {
 
-    do_log = (step_params->step % nst_trace == 0)
+    do_trace = (step_params->step % nst_trace == 0)
            || step_params->is_first_step
            || step_params->is_last_step;
 
   } else if (nst_trace < 0) {
     // logging is disabled if at->nst_trace < 0
-    do_log = AT__FALSE;
+    do_trace = AT__FALSE;
   } else {
-    // do it according to the variable do_log
-    do_log = step_params->do_log;
+    // do it according to the variable do_trace
+    do_trace = step_params->do_trace;
   }
 
-  return do_log;
+  return do_trace;
 }
-
-
-
 
 
 

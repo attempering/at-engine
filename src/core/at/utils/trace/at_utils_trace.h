@@ -37,7 +37,7 @@ void at_utils_trace__finish(at_utils_trace_t *trace);
 
 void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *manifest);
 
-at_bool_t at_utils_trace__decide_do_log(at_utils_trace_t *trace,
+at_bool_t at_utils_trace__decide_do_trace(at_utils_trace_t *trace,
     const at_params_step_t *step_params);
 
 

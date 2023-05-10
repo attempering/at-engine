@@ -44,6 +44,9 @@
 /* IO routines */
 #include "io/at_mb_io.h"
 
+/* Legacy IO routines */
+#include "io_legacy/at_mb_io_legacy.h"
+
 /* integral-identity-based estimators */
 #include "iie/at_mb_iie.h"
 

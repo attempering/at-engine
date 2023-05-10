@@ -54,15 +54,14 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
     // fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
-    if (at__do_tempering(at, step))
+    if (at__do_tempering_on_step(at, step, AT__TRUE))
     {
-
       at->energy = mdsys->epot;
 
       step_params->step = step;
       step_params->is_first_step = (step == 1);
       step_params->is_last_step = (step == nsteps);
-      step_params->do_log = AT__FALSE;
+      step_params->do_trace = AT__FALSE;
       step_params->flush_output = AT__FALSE;
 
       at__move(at, step_params);

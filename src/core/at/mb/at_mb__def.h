@@ -41,7 +41,7 @@ typedef struct at_mb_t_ {
 
   unsigned  flags;    /* combination of flags */
 
-  int       nstrefresh;   /* interval of recalculating et for all temperature */
+  int       nst_refresh;  /* interval of recalculating et for all temperature */
   int       nst_save_av;  /* interval of writing mbav and ze files */
   int       av_binary;    /* use binary format in mbav file */
   char      *av_file;     /* name of mbav file */

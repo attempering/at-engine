@@ -29,8 +29,8 @@
  * it will replace the file extension from .mdp to .cfg */
 char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[]);
 
-at_bool_t atgmx__do_tempering(atgmx_t *atgmx, at_llong_t step,
-    at_bool_t is_ns_step, at_bool_t is_last_step);
+at_bool_t atgmx__do_tempering_on_step(atgmx_t *atgmx, at_llong_t step,
+    at_bool_t is_ns_step);
 
 int atgmx__move(atgmx_t *atgmx,
     gmx_enerdata_t *enerd,

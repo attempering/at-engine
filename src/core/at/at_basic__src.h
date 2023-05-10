@@ -35,40 +35,6 @@
 
 
 
-/* load previous data */
-int at__load_data(at_t *at, at_bool_t is_continuation)
-{
-  at_mb_t *mb = at->mb;
-  int load_data;
-
-  if (!is_continuation) { /* initial run */
-    return 0;
-  }
-
-  load_data = is_continuation;
-  if (load_data) {
-     /* read previous at_mb_t data */
-    if (at_mb__read(mb, at->driver->langevin, &at->beta) != 0) {
-      fprintf(stderr, "cannot load mb data from %s\n", mb->av_file);
-      return 1;
-    }
-
-    at_mb__write_ze_file(mb, "ze_init.dat");
-
-    /* read previous energy histogram data */
-    if (at_eh__read(at->eh) != 0) {
-      fprintf(stderr, "cannot load energy histogram from %s\n", at->eh->file);
-      return 2;
-    }
-  }
-
-  fprintf(stderr, "successfully load previous data\n");
-
-  return 0;
-}
-
-
-
 static void at__set_init_beta(at_t *at)
 {
   /* make the initial temperature = temp_thermostat */

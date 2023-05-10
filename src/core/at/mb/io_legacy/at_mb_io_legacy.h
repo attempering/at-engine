@@ -16,25 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* binary IO routines for at_mb_t */
-#ifndef AT_MB_IO_BINARY_H__
-#define AT_MB_IO_BINARY_H__
-
-#include "../at_mb__def.h"
-#include "../../driver/langevin/at_driver_langevin.h"
+/* multiple-bin estimators of thermodynamical quantities */
+#ifndef AT_MB_IO_LEGACY_H__
+#define AT_MB_IO_LEGACY_H__
 
 
-/* read at_mb_t data as binary */
-int at_mb__read_binary(
-    at_mb_t *mb,
-    const char *fname,
-    int *pver);
+#include "at_mb_io_binary.h"
+
+#include "../../utils/at_utils.h"
+#include "../../driver/at_driver.h"
 
 
-/* write at_mb_t data as binary */
-int at_mb__write_binary(
-    at_mb_t *mb,
-    const char *fname,
-    int ver);
+/* load previous mb data */
+int at_mb__read_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double *beta);
+
+/* prepare and write mb data  */
+int at_mb__write_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double beta);
 
 #endif

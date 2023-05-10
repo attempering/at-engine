@@ -53,7 +53,7 @@ ERR:
 
 
 
-int at_driver_langevin__write_binary(at_driver_langevin_t *langevin, FILE *fp)
+int at_driver_langevin__write_binary_legacy(at_driver_langevin_t *langevin, FILE *fp)
 {
   /* rate */
   double rate = (langevin->total > 1.0) ? (langevin->rejects/langevin->total) : 0.0;

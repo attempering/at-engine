@@ -134,9 +134,9 @@ int at_mb__cfg_init(
 
   at_mb_win__cfg_init(mb->win, cfg, mb);
 
-  /* nstrefresh: interval of recalculating et for all temperatures */
-  mb->nstrefresh = 10000;
-  if (0 != zcom_cfg__get(cfg, &mb->nstrefresh, "nstrefresh", "%d")) {
+  /* nst_refresh: interval of recalculating et for all temperatures */
+  mb->nst_refresh = 10000;
+  if (0 != zcom_cfg__get(cfg, &mb->nst_refresh, "nstrefresh", "%d")) {
     IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->nstrefresh = 10000, key: nstrefresh\n");
   }
 
@@ -265,8 +265,8 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 
   at_mb_win__manifest(mb->win, manifest);
 
-  /* nstrefresh: interval of recalculating et for all temperature */
-  fprintf(fp, "mb->nstrefresh: int, %4d\n", mb->nstrefresh);
+  /* nst_refresh: interval of recalculating et for all temperature */
+  fprintf(fp, "mb->nst_refresh: int, %4d\n", mb->nst_refresh);
 
   /* nst_save_av: interval of writing mbav and ze files */
   fprintf(fp, "mb->nst_save_av: int, %4d\n", mb->nst_save_av);

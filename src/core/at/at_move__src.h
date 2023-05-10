@@ -35,17 +35,30 @@ void at__update_force_scale(at_t *at)
 
 
 
-at_bool_t at__do_tempering(at_t *at, at_llong_t step)
+at_bool_t at__do_tempering_on_step(at_t *at, at_llong_t step, at_bool_t value_on_neg_nst_temp)
 {
   int nst_temp = at->driver->nsttemp;
 
   if (nst_temp > 0 && (step % nst_temp == 0)) {
     return AT__TRUE;
   } else if (nst_temp <= 0) {
-    return AT__TRUE;
+    return value_on_neg_nst_temp;
   }
 
   return AT__FALSE;
+}
+
+
+
+/* write various output files */
+static void at__output2(at_t *at,
+          const at_params_step_t *step_params,
+          int ib, double invw, double t1, double t2,
+          double av_energy)
+{
+  at__write_trace(at, step_params, ib, invw, t1, t2, av_energy);
+
+  at__output(at, step_params);
 }
 
 
@@ -77,13 +90,15 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 
   temp_after = at__beta_to_temp(at, at->beta);
 
+  // update at->force_scale according to the new at->beta
   at__update_force_scale(at);
 
-  if (at__do_on_step(step_params, at->mb->nstrefresh, AT__TRUE)) {
+  // refresh Et
+  if (at__do_output_on_step(step_params, at->mb->nst_refresh, AT__TRUE)) {
     at_mb__refresh_et(at->mb, 1);
   }
 
-  at__output(at, step_params, ib, invwf, temp_before, temp_after, av_energy);
+  at__output2(at, step_params, ib, invwf, temp_before, temp_after, av_energy);
 
   return 0;
 }
@@ -97,7 +112,7 @@ int at__step(at_t *at, double energy, at_llong_t step, at_params_step_t *step_pa
     0,
     AT__FALSE, // is_first_step
     AT__FALSE, // is_last_step
-    AT__FALSE, // do_log
+    AT__FALSE, // do_trace
     AT__FALSE  // flush_output
   }};
 

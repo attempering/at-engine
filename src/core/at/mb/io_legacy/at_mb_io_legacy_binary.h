@@ -17,23 +17,27 @@
  */
 
 /* binary IO routines for at_mb_t */
-#ifndef AT_MB_IO_BINARY_H__
-#define AT_MB_IO_BINARY_H__
+#ifndef AT_MB_IO_LEGACY_BINARY_H__
+#define AT_MB_IO_LEGACY_BINARY_H__
 
 #include "../at_mb__def.h"
 #include "../../driver/langevin/at_driver_langevin.h"
 
 
 /* read at_mb_t data as binary */
-int at_mb__read_binary(
+int at_mb__read_binary_legacy(
     at_mb_t *mb,
+    at_driver_langevin_t *langevin,
+    double *beta,
     const char *fname,
     int *pver);
 
 
 /* write at_mb_t data as binary */
-int at_mb__write_binary(
+int at_mb__write_binary_legacy(
     at_mb_t *mb,
+    at_driver_langevin_t *langevin,
+    double beta,
     const char *fname,
     int ver);
 

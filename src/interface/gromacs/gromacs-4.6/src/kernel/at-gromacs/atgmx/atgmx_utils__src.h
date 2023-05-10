@@ -33,19 +33,23 @@ char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[])
 
   for (i = 0; i < nfile; i++) {
 
-    if (strcmp(opt, fnm[i].opt) == 0) { /* a match is found */
-      char *fname = fnm[i].fns[0], *p;
+    if (strcmp(opt, fnm[i].opt) == 0) { // a match is found
+      char *fname = fnm[i].fns[0];
 
+      /*
       if (fnm[i].ftp == efCFG) {
-        /* modify the extension from .mdp to .cfg */
-        if (strcmp(fname, "grompp.mdp") == 0) { /* replace the default name by NULL */
-          return NULL; /* we do not have default name for .cfg files */
+        char *p;
+
+        // modify the extension from .mdp to .cfg
+        if (strcmp(fname, "grompp.mdp") == 0) { // replace the default name by NULL
+          return NULL; // we do not have default name for .cfg files
         } else if ((p = strstr(fname, ".cfg.mdp")) != NULL) {
           p[4] = '\0';
         } else if ((p = strstr(fname, ".mdp")) != NULL) {
           strcpy(p, ".cfg");
         }
       }
+      */
 
       return fname;
     }
@@ -80,20 +84,20 @@ static void atgmx__update_force_scale(atgmx_t *atgmx, t_commrec *cr)
 
 
 
-at_bool_t atgmx__do_tempering(atgmx_t *atgmx, at_llong_t step,
-    at_bool_t is_ns_step, at_bool_t is_last_step)
+at_bool_t atgmx__do_tempering_on_step(atgmx_t *atgmx, at_llong_t step,
+    at_bool_t is_ns_step)
 {
   if (!atgmx->enabled) {
     return AT__FALSE;
   }
 
   int nsttemp = atgmx->at->driver->nsttemp;
-  at_bool_t do_tempering = (nsttemp > 0) || is_ns_step || is_last_step;
+  at_bool_t do_tempering;
 
   if (nsttemp > 0) {
-    if ((step % nsttemp) != 0 && !is_last_step) {
-      do_tempering = AT__FALSE; /* if nsttemp is set, do tempering at a regular interval */
-    }
+    do_tempering = (step % nsttemp) == 0;
+  } else {
+    do_tempering = is_ns_step;
   }
 
   return do_tempering;
@@ -141,37 +145,47 @@ int atgmx__move(atgmx_t *atgmx,
     at_bool_t is_ns_step,
     t_commrec *cr)
 {
-  at_bool_t do_tempering, dirty;
+  at_bool_t do_tempering;
+  at_params_step_t step_params[1];
 
-  do_tempering = atgmx__do_tempering(atgmx, step, is_ns_step, is_last_step);
+  step_params->step = (at_llong_t) step;
+  step_params->is_first_step = is_first_step;
+  step_params->is_last_step = is_last_step;
+  step_params->do_trace = is_xtc_step;
+  step_params->flush_output = AT__FALSE;
 
-  if (!do_tempering) {
-    return 0;
+  do_tempering = atgmx__do_tempering_on_step(atgmx, step,
+      is_ns_step);
+
+  if (do_tempering) {
+
+    at_bool_t dirty = PAR(cr) && !has_global_stats;
+
+    /* summarize the relevant energy */
+    atgmx__sum_energy(atgmx, enerd->term, cr, step, dirty);
+
+    /* change temperature, and regularly write output files */
+    if (MASTER(cr)) {
+
+      // calling at__move()
+      zcom_util__exit_if(0 != at__move(atgmx->at, step_params),
+          "#%d, step = " at_llong_pfmt ", error during moving master\n",
+          cr->nodeid, step);
+    }
+
+    // update atgmx->at->force_scale
+    atgmx__update_force_scale(atgmx, cr);
+
+  } else {
+
+    // not doing tempering, we may need to output
+    // if tempering is done, output tasks are already
+    // considered in at__move()
+    if (MASTER(cr)) {
+      at__output(atgmx->at, step_params);
+    }
+
   }
-
-  /* no tempering during prerun, temperature is fixed */
-
-  dirty = PAR(cr) && !has_global_stats;
-
-  /* calculate H0, H1 and Ea */
-  atgmx__sum_energy(atgmx, enerd->term, cr, step, dirty);
-
-  /* change temperature, and regularly write output files */
-  if (MASTER(cr)) {
-    at_params_step_t step_params[1];
-
-    step_params->step = (at_llong_t) step;
-    step_params->is_first_step = is_first_step;
-    step_params->is_last_step = is_last_step;
-    step_params->do_log = is_xtc_step;
-    step_params->flush_output = AT__FALSE;
-
-    zcom_util__exit_if(0 != at__move(atgmx->at, step_params),
-        "#%d, step = " at_llong_pfmt ", error during moving master\n",
-        cr->nodeid, step);
-  }
-
-  atgmx__update_force_scale(atgmx, cr); /* change scale */
 
   return 0;
 }
@@ -182,19 +196,19 @@ void atgmx__scale_force(atgmx_t *atgmx,
     rvec f[], t_mdatoms *mdatoms)
 {
   int k;
-  real scl;
+  real scale;
 
   if (!atgmx->enabled) {
     return;
   }
 
   /* scale the force */
-  scl = (real) atgmx->at->force_scale;
+  scale = (real) atgmx->at->force_scale;
 
   for (k = mdatoms->start; k < mdatoms->start + mdatoms->homenr; k++) {
-    f[k][0] *= scl;
-    f[k][1] *= scl;
-    f[k][2] *= scl;
+    f[k][0] *= scale;
+    f[k][1] *= scale;
+    f[k][2] *= scale;
   }
 }
 

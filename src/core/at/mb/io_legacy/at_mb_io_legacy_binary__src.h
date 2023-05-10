@@ -17,8 +17,8 @@
  */
 
 /* binary IO routines for at_mb_t */
-#ifndef AT_MB_IO_BINARY__SRC_H__
-#define AT_MB_IO_BINARY__SRC_H__
+#ifndef AT_MB_IO_LEGACY_BINARY__SRC_H__
+#define AT_MB_IO_LEGACY_BINARY__SRC_H__
 
 #include "at_mb_io_binary.h"
 
@@ -32,8 +32,10 @@
 
 
 
-static int at_mb__read_binary_low_level(
+static int at_mb__read_binary_legacy_low_level(
     at_mb_t *mb,
+    at_driver_langevin_t *langevin,
+    double *beta,
     FILE *fp, int ver, int endn)
 {
   int itmp;
@@ -47,6 +49,7 @@ static int at_mb__read_binary_low_level(
 
   /* clear data before reading */
   at_mb__clear(mb);
+  at_driver_langevin__clear(langevin);
 
   /* n: number of temperature bins */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
@@ -119,6 +122,26 @@ static int at_mb__read_binary_low_level(
     goto ERR;
   }
 
+  {
+    /* beta: current value of beta */
+    if (zcom_endn__fread(beta, sizeof(*beta), 1, fp, endn) != 1) {
+      fprintf(stderr, "error in reading beta\n");
+      goto ERR;
+    }
+
+    if ( !(*beta >= domain->bmin && *beta <= domain->bmax) ) {
+      fprintf(stderr, "beta: failed validation: beta >= mb->bmin && beta <= mb->bmax\n");
+      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    if (*beta > domain->bmax - 1e-5) {
+      *beta = domain->bmax - 1e-5;
+    } else if (*beta < domain->bmin + 1e-5) {
+      *beta = domain->bmin + 1e-5;
+    }
+
+  }
 
 
   /* total_visits: total number of visits, number of tempering */
@@ -135,6 +158,10 @@ static int at_mb__read_binary_low_level(
   /* shk_base: current generic shrink amplitude */
   if (zcom_endn__fread(&mb->shk->base, sizeof(mb->shk->base), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading mb->shk_base\n");
+    goto ERR;
+  }
+
+  if (at_driver_langevin__read_binary_legacy(langevin, fp, endn) != 0) {
     goto ERR;
   }
 
@@ -161,13 +188,16 @@ static int at_mb__read_binary_low_level(
 
 ERR:
   at_mb__clear(mb);
+  at_driver_langevin__clear(langevin);
   return -1;
 }
 
 
 
-int at_mb__read_binary(
+int at_mb__read_binary_legacy(
     at_mb_t *mb,
+    at_driver_langevin_t *langevin, 
+    double *beta,
     const char *fname,
     int *pver)
 {
@@ -209,7 +239,7 @@ int at_mb__read_binary(
   }
 
   /* call low level read function for members */
-  i = at_mb__read_binary_low_level(mb, fp, ver, endn);
+  i = at_mb__read_binary_legacy_low_level(mb, langevin, beta, fp, ver, endn);
 
   fclose(fp);
   return i;
@@ -220,8 +250,10 @@ ERR:
 
 
 
-static int at_mb__write_binary_low_level(
+static int at_mb__write_binary_legacy_low_level(
     at_mb_t *mb,
+    at_driver_langevin_t *langevin,
+    double beta,
     FILE *fp, int ver)
 {
   if (mb == NULL) {
@@ -270,6 +302,13 @@ static int at_mb__write_binary_low_level(
     goto ERR;
   }
 
+  {
+    /* beta: current value of beta */
+    if (zcom_endn__fwrite(&beta, sizeof(beta), 1, fp, 1) != 1) {
+      fprintf(stderr, "error in writing mb->beta\n");
+      goto ERR;
+    }
+  }
 
   /* total_visits: total number of visits, number of tempering */
   if (zcom_endn__fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
@@ -279,6 +318,10 @@ static int at_mb__write_binary_low_level(
   /* shk_base: current generic shrink amplitude */
   if (zcom_endn__fwrite(&mb->shk->base, sizeof(mb->shk->base), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->shk->base\n");
+    goto ERR;
+  }
+
+  if (at_driver_langevin__write_binary_legacy(langevin, fp) != 0) {
     goto ERR;
   }
 
@@ -308,8 +351,10 @@ ERR:
 
 
 
-int at_mb__write_binary(
+int at_mb__write_binary_legacy(
     at_mb_t *mb,
+    at_driver_langevin_t *langevin,
+    double beta,
     const char *fname,
     int ver)
 {
@@ -339,7 +384,7 @@ int at_mb__write_binary(
   }
 
   /* call low level write function for members */
-  i = at_mb__write_binary_low_level(mb, fp, ver);
+  i = at_mb__write_binary_legacy_low_level(mb, langevin, beta, fp, ver);
 
   fclose(fp);
   return i;

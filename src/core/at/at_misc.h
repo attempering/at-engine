@@ -28,16 +28,13 @@ double at__temp_to_beta(const at_t *at, double temp);
 
 void at__set_energy(at_t *at, double energy);
 
-int at__load_data(at_t *at, at_bool_t is_continuation);
-
-at_bool_t at__do_on_step(
+at_bool_t at__do_output_on_step(
     const at_params_step_t *step_params,
     at_llong_t nst,
     at_bool_t do_on_first_step);
 
 void at__output(at_t *at,
-    const at_params_step_t *step_params,
-    int ib, double invw, double t1, double t2, double av_energy);
+    const at_params_step_t *step_params);
 
 
 #endif

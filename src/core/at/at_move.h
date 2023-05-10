@@ -23,7 +23,7 @@
 
 void at__update_force_scale(at_t *at);
 
-at_bool_t at__do_tempering(at_t *at, at_llong_t step);
+at_bool_t at__do_tempering_on_step(at_t *at, at_llong_t step, at_bool_t value_on_neg_nst_temp);
 
 int at__move(at_t *at,
              const at_params_step_t *step_params);
