@@ -23,4 +23,4 @@ $(bins_dbg): %_d.exe : %.c $(deps)
 	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
 clean::
-	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ hist*.bin *manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* log.dat cst.dat gmon.out rng.dat data/* atdata*
+	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ hist*.bin *manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat cst.dat gmon.out rng.dat data/* atdata*

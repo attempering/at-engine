@@ -42,7 +42,7 @@ int atgmx__init(
     at_bool_t is_continuation,
     at_flags_t flags)
 {
-  if (fn_cfg == NULL) {
+  if (fn_cfg != NULL) {
     atgmx->enabled = AT__TRUE;
   } else {
     atgmx->enabled = AT__FALSE;
@@ -59,9 +59,6 @@ int atgmx__init(
     sys_params->is_continuation = is_continuation;
 
     at__init(atgmx->at, fn_cfg, sys_params, flags);
-    atgmx->is_master = AT__TRUE;
-  } else {
-    atgmx->is_master = AT__FALSE;
   }
 
 #ifdef GMX_MPI
@@ -73,6 +70,8 @@ int atgmx__init(
     atgmx__init_mpi(atgmx, PAR(cr) ? cr->mpi_comm_mygroup : MPI_COMM_NULL);
   }
 #endif
+
+  atgmx->is_master = (MASTER(cr) ? AT__TRUE : AT__FALSE);
 
   atgmx__update_thermostat_temperatures(atgmx, ir);
 
@@ -86,7 +85,7 @@ int atgmx__init(
 void atgmx__finish(atgmx_t *atgmx)
 {
   if (atgmx->enabled && atgmx->is_master) {
-    at__finish(atgmx->at);
+    at__finish(atgmx->at, 0);
   }
 }
 

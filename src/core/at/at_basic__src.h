@@ -123,7 +123,7 @@ int at__cfg_init(at_t *at,
 
   // no need to do so, the log file will be open upon the first time of writing
   //if (flags & AT__INIT_OPENLOG) {
-  //  at_utils_log__open_file(at->utils->log);
+  //  at_utils_trace__open_file(at->utils->log);
   //}
 
   at->energy = 0.0;

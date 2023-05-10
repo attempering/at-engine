@@ -74,18 +74,18 @@ static void at__write_log(at_t *at,
     int ib, double invw, double t1, double t2,
     double av_energy)
 {
-  at_utils_log_t *log = at->utils->log;
+  at_utils_trace_t *log = at->utils->log;
 
   zcom_util__exit_if (!log->inited,
       "log is not initialized!\n");
 
-  at_bool_t do_log = at_utils_log__decide_do_log(log, step_params);
+  at_bool_t do_log = at_utils_trace__decide_do_log(log, step_params);
 
   if (do_log) {
     zcom_log_t *zcom_log = log->log;
 
     if (zcom_log == NULL) {
-      zcom_log = at_utils_log__open_file(log);
+      zcom_log = at_utils_trace__open_file(log);
     }
 
     //fprintf(stderr, "step params %p, zcom_log %p\n", step_params, zcom_log);

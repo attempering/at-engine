@@ -16,17 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_LOG__DEF_H__
-#define AT_UTILS_LOG__DEF_H__
+#ifndef AT_UTILS_TRACE_H__
+#define AT_UTILS_TRACE_H__
 
-#include "../../../zcom/zcom.h"
+#include "at_utils_trace__def.h"
+#include "../../params/at_params__def.h"
 
-typedef struct at_utils_log_t_
-{
-  int inited;
-  char *filename;
-  int nst_log;
-  zcom_log_t *log;
-} at_utils_log_t;
+
+void at_utils_trace__cfg_init(at_utils_trace_t *trace,
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    at_bool_t verbose);
+
+zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace);
+
+void at_utils_trace__close_file(at_utils_trace_t *trace);
+
+void at_utils_trace__finish(at_utils_trace_t *trace);
+
+void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *manifest);
+
+at_bool_t at_utils_trace__decide_do_log(at_utils_trace_t *trace,
+    const at_params_step_t *step_params);
+
 
 #endif

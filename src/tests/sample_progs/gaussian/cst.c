@@ -123,7 +123,7 @@ int main(int argc, char **argv)
   }
 
   // remove("TRACE0");
-  remove("atdata/log.dat");
+  remove("atdata/trace.dat");
 
   at_t *at = at__open(fn_cfg, NULL, 0);
   // at__manifest(at);

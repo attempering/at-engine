@@ -23,7 +23,7 @@
 #include "at_utils_misc.h"
 
 #include "manifest/at_utils_manifest.h"
-#include "log/at_utils_log.h"
+#include "trace/at_utils_trace.h"
 
 #include "at_utils_basic.h"
 

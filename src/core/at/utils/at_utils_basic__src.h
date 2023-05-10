@@ -22,8 +22,8 @@
 
 
 #include "at_utils_basic.h"
-#include "log/at_utils_log.h"
 #include "manifest/at_utils_manifest.h"
+#include "trace/at_utils_trace.h"
 #include "../../zcom/zcom.h"
 
 
@@ -40,7 +40,7 @@ void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, const char *data_dir
 
   at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, data_dir, verbose);
 
-  at_utils_log__cfg_init(utils->log, cfg, utils->ssm, data_dir, verbose);
+  at_utils_trace__cfg_init(utils->log, cfg, utils->ssm, data_dir, verbose);
 
   utils->inited = 1;
 }
@@ -48,7 +48,7 @@ void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, const char *data_dir
 
 void at_utils__finish(at_utils_t *utils)
 {
-  at_utils_log__finish(utils->log);
+  at_utils_trace__finish(utils->log);
   at_utils_manifest__finish(utils->manifest);
 
   if (utils->inited) {
@@ -65,7 +65,7 @@ void at_utils__manifest(at_utils_t *utils)
 
   at_utils_manifest__manifest(utils->manifest);
 
-  at_utils_log__manifest(utils->log, utils->manifest);
+  at_utils_trace__manifest(utils->log, utils->manifest);
 
   fprintf(fp, "utils->temp_thermostat: double, %g\n", utils->temp_thermostat);
 }
