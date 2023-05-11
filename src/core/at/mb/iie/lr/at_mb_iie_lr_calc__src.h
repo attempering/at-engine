@@ -246,6 +246,9 @@ double at_mb_iie_lr__balance_moments(at_mb_iie_lr_t *lr)
   im = lr->jb - lr->js;
   ip = lr->jt - lr->jb;
 
+  //printf("im %d, ip %d, %s:%d\n", im, ip, __FILE__, __LINE__);
+  //getchar();
+
 #ifdef MB_DBG__
   printf("im %d, ip %d\n", im, ip);
 #endif

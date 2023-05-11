@@ -25,7 +25,7 @@
 
 
 
-int at_driver_langevin__read_binary(at_driver_langevin_t *langevin, FILE *fp, int endn)
+int at_driver_langevin__read_binary_legacy(at_driver_langevin_t *langevin, FILE *fp, int endn)
 {
   /* rate */
   double rate = 0.0;
@@ -74,5 +74,47 @@ ERR:
 
   return 1;
 }
+
+
+
+int at_driver_langevin__read(at_driver_langevin_t *langevin)
+{
+  const char *fn = langevin->file;
+  FILE *fp = fopen(fn, "r");
+
+  if (fp == NULL) {
+    return -1;
+  }
+
+  if (fscanf(fp, "%lf%lf", &langevin->total, &langevin->rejects) == 2) {
+    langevin->total = 0.0;
+    langevin->rejects = 0.0;
+  }
+
+  fclose(fp);
+
+  return 0;
+}
+
+
+
+int at_driver_langevin__write(at_driver_langevin_t *langevin)
+{
+  const char *fn = langevin->file;
+  FILE *fp = fopen(fn, "w");
+  double ar;
+
+  if (fp == NULL) {
+    return -1;
+  }
+
+  ar = 1.0 - langevin->rejects/langevin->total;
+  fprintf(fp, "%.0f %.0f %g\n", langevin->total, langevin->rejects, ar);
+
+  fclose(fp);
+
+  return 0;
+}
+
 
 #endif

@@ -37,7 +37,6 @@ static int at_mb__read_binary_low_level(
     FILE *fp, int ver, int endn)
 {
   int itmp;
-  at_distr_domain_t *domain = mb->distr->domain;
 
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to at_mb__read_binary_low_level\n");
@@ -86,16 +85,6 @@ static int at_mb__read_binary_low_level(
     }
   }
 
-  /* flags: combination of flags */
-  if (zcom_endn__fread(&mb->flags, sizeof(mb->flags), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->flags\n");
-    goto ERR;
-  }
-  /* use_winaccum */
-  if (zcom_endn__fread(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->use_winaccum\n");
-    goto ERR;
-  }
   /* cnt_int: number of additional integer variables to be written to binary file */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
@@ -249,16 +238,6 @@ static int at_mb__write_binary_low_level(
     }
   }
 
-  /* flags: combination of flags */
-  if (zcom_endn__fwrite(&mb->flags, sizeof(mb->flags), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->flags\n");
-    goto ERR;
-  }
-  /* use_winaccum */
-  if (zcom_endn__fwrite(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->use_winaccum\n");
-    goto ERR;
-  }
   /* cnt_int: number of additional integer variables to be written to binary file */
   if (zcom_endn__fwrite(&mb->cnt_int, sizeof(mb->cnt_int), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->cnt_int\n");

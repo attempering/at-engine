@@ -87,7 +87,7 @@ void mb_mock_exact_moments(at_mb_t *mb)
     sm->se3 = 0;
   }
 
-  mb->flags &= ~MB_USE_WIN_ACCUM;
+  mb->use_win_accum = AT__FALSE;
 }
 
 

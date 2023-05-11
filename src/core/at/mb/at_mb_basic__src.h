@@ -28,6 +28,8 @@
 
 #include "iie/at_mb_iie.h"
 
+#include "accum/at_mb_accum.h"
+
 
 #include "../../zcom/zcom.h"
 #include "../utils/at_utils.h"
@@ -61,75 +63,30 @@ int at_mb__cfg_init(
 
   mb->boltz = boltz;
 
-  /* flags: combination of flags */
-  mb->flags = 0;
-
-  /* MB_USE_WIN_ACCUM: use adaptive averaging */
-  i = 1;
-  if (0 != zcom_cfg__get(cfg, &i, "mbest_damp", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default MB_USE_WIN_ACCUM = 1, key: mbest_damp\n");
-  }
-  zcom_util__exit_if ( !(i == 0 || i == 1),
-      "MB_USE_WIN_ACCUM: failed validation: i == 0 || i == 1\n");
-
-  if (i) {
-    mb->flags |= MB_USE_WIN_ACCUM;
-  } else {
-    mb->flags &= ~MB_USE_WIN_ACCUM;
-  }
-
   //printf("mb->flags %u\n", mb->flags); getchar();
 
-  /* MB_CV: compute heat capacity */
-  i = 1;
-  if (0 != zcom_cfg__get(cfg, &i, "mbest_needcv", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default MB_CV = 1, key: mbest_needcv\n");
-  }
-  zcom_util__exit_if ( !(i == 0 || i == 1),
-      "MB_CV: failed validation: i == 0 || i == 1\n");
-  if (i) {
-    mb->flags |= MB_CV;
-  } else {
-    mb->flags &= ~MB_CV;
+  /* compute heat capacity */
+  mb->need_cv = 1;
+  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest_needcv", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->need_cv = 1, key: mbest_needcv\n");
   }
 
-  /* MB_SYMWIN: use symmetric windows */
-  i = 1;
-  if (0 != zcom_cfg__get(cfg, &i, "mbest_sym_mbin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default MB_SYMWIN = 1, key: mbest_sym_mbin\n");
-  }
-  zcom_util__exit_if ( !(i == 0 || i == 1),
-      "MB_SYMWIN: failed validation: i == 0 || i == 1\n");
-  if (i) {
-    mb->flags |= MB_SYMWIN;
-  } else {
-    mb->flags &= ~MB_SYMWIN;
+  /* use symmetric windows */
+  mb->use_sym_wins = 1;
+  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest_sym_mbin", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->use_sym_wins = 1, key: mbest_sym_mbin\n");
   }
 
-  /* MB_SINGLE_BIN: use single bin estimator */
-  i = 0;
-  if (0 != zcom_cfg__get(cfg, &i, "mbest_single_bin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default MB_SINGLE_BIN = 0, key: mbest_single_bin\n");
-  }
-  zcom_util__exit_if ( !(i == 0 || i == 1),
-      "MB_SINGLE_BIN: failed validation: i == 0 || i == 1\n");
-  if (i) {
-    mb->flags |= MB_SINGLE_BIN;
-  } else {
-    mb->flags &= ~MB_SINGLE_BIN;
+  /* force the single bin estimator */
+  mb->use_single_bin = 0;
+  if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest_single_bin", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->use_single_bin = 0, key: mbest_single_bin\n");
   }
 
-  /* MB_VERBOSE: being verbose */
-  i = 1;
-  if (0 != zcom_cfg__get(cfg, &i, "mbest_verbose", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default MB_VERBOSE = 1, key: mbest_verbose\n");
-  }
-  zcom_util__exit_if ( !(i == 0 || i == 1),
-      "MB_VERBOSE: failed validation: i == 0 || i == 1\n");
-  if (i) {
-    mb->flags |= MB_VERBOSE;
-  } else {
-    mb->flags &= ~MB_VERBOSE;
+  /* being verbose */
+  mb->verbose = 1;
+  if (0 != zcom_cfg__get(cfg, &mb->verbose, "mbest_verbose", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->verbose = 1, key: mbest_verbose\n");
   }
 
   at_mb_win__cfg_init(mb->win, cfg, mb);
@@ -168,6 +125,8 @@ int at_mb__cfg_init(
       IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->ze_file = \"%s\", key: ze_file\n", fn_ze);
     }
     mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
+
+    mb->ze_init_file = at_utils__make_output_filename(ssm, data_dir, "ze-init.dat");
   }
 
   /* wze_reps: number of iterations before writing ze file */
@@ -196,7 +155,7 @@ int at_mb__cfg_init(
 
   at_mb_iie__cfg_init(mb->iie, mb, cfg, verbose);
 
-  at_mb_accum__init(mb->accum, distr->domain->n, mb->win, mb->flags);
+  at_mb_accum__cfg_init(mb->accum, distr->domain->n, mb->win, cfg, verbose);
 
   at_mb_shk__cfg_init(mb->shk, cfg, mb, verbose);
 
@@ -240,28 +199,21 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 {
   FILE *fp = manifest->fp;
 
-  /* flags: combination of flags */
-  fprintf(fp, "mb->flags: unsigned, 0x%X\n", mb->flags);
+  /* compute heat capacity */
+  fprintf(fp, "mb->need_cv (mbest_needcv): %s\n",
+      (mb->need_cv ? "on" : "off"));
 
-  /* MB_USE_WIN_ACCUM: use adaptive averaging */
-  fprintf(fp, "mb->flags & MB_USE_WIN_ACCUM (0x%X, mbest_damp): %s\n",
-    MB_USE_WIN_ACCUM, (mb->flags & MB_USE_WIN_ACCUM) ? "on" : "off");
+  /* use symmetrical window */
+  fprintf(fp, "mb->use_sym_wins (mbest_sym_mbin): %s\n",
+      (mb->use_sym_wins ? "on" : "off"));
 
-  /* MB_CV: compute heat capacity */
-  fprintf(fp, "mb->flags & MB_CV (0x%X, mbest_needcv): %s\n",
-    MB_CV, (mb->flags & MB_CV) ? "on" : "off");
+  /* use single bin estimator */
+  fprintf(fp, "mb->use_single_bin (mbest_single_bin): %s\n",
+      (mb->use_single_bin ? "on" : "off"));
 
-  /* MB_SYMWIN: use symmetrical window */
-  fprintf(fp, "mb->flags & MB_SYMWIN (0x%X, mbest_sym_mbin): %s\n",
-    MB_SYMWIN, (mb->flags & MB_SYMWIN) ? "on" : "off");
-
-  /* MB_SINGLE_BIN: use single bin estimator */
-  fprintf(fp, "mb->flags & MB_SINGLE_BIN (0x%X, mbest_single_bin): %s\n",
-    MB_SINGLE_BIN, (mb->flags & MB_SINGLE_BIN) ? "on" : "off");
-
-  /* MB_VERBOSE: being verbose */
-  fprintf(fp, "mb->flags & MB_VERBOSE (0x%X, mbest_verbose): %s\n",
-    MB_VERBOSE, (mb->flags & MB_VERBOSE) ? "on" : "off");
+  /* being verbose */
+  fprintf(fp, "mb->verbose (mbest_verbose): %s\n",
+      (mb->verbose ? "on" : "off"));
 
   at_mb_win__manifest(mb->win, manifest);
 

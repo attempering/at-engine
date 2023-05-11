@@ -50,7 +50,7 @@ static int at_mb_iie_et__cache_applicable(at_mb_iie_et_cache_params_t *cache_par
   // If the plain accumulator is active, the window visits must be counted
   // from the plain accumulator bin by bin,
   // Consider to disable the cache in this case if necessary.
-  //return iie->accum->use_winaccum;
+  //return iie->accum->winaccum->enabled;
 
 }
 
@@ -112,7 +112,7 @@ static int at_mb_iie_et_item_cache__deposit(
     tag = at_mb_iie_et_item_cache__get_tag(iie, ib);
   }
 
-  //fprintf(stderr, "%d items %p\n", iie->accum->use_winaccum, iie->accum->winaccum->items);
+  //fprintf(stderr, "%d items %p\n", iie->accum->winaccum->enabled, iie->accum->winaccum->items);
   double expires = tag + iie->et->cache_params->lifespan;
 
   // the cache value can be something unsuccessful
@@ -140,7 +140,9 @@ double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib)
     et->cache_hit = 1;
 
     if (at_mb_iie_et__debug__ >= 1) {
-      double et_val = 0; //at_mb_iie_et__calc_et(iie, ib);
+      double et_val = 0;
+      // for testing, set
+      // et_val = at_mb_iie_et__calc_et(iie, ib);
       double tag = at_mb_iie_et_item_cache__get_tag(iie, ib);
       fprintf(stderr, "at_mb_iie_et__calc_et_cached(), %s:%d\n", __FILE__, __LINE__);
       fprintf(stderr, "  ib %d\n", ib);

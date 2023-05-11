@@ -42,11 +42,16 @@ typedef struct at_eh_t_
   int       *it;        /* indices for temperature windows (higher) */
   unsigned   flags;
   at_mb_t      *mb;        /* associated at_mb_t object */
+
+  at_bool_t keep_margins;
+  at_bool_t add_half_ebin;
+  at_bool_t no_zeros;
+
 } at_eh_t;
 
-/* IO flags */
-#define   AT_EH_ADDAHALF    0x00010000    /* add a half energy bin width in output */
-#define   AT_EH_KEEPEDGE    0x00020000    /* keep zero edge at sides */
-#define   AT_EH_NOZEROES    0x00040000    /* do not output zeroes */
+/* Legacy IO flags */
+#define   AT_EH__ADD_HALF_EBIN  0x00010000    /* add a half energy bin width in output */
+#define   AT_EH__KEEP_MARGINS   0x00020000    /* keep zero edge at sides */
+#define   AT_EH__NO_ZEROS       0x00040000    /* do not output zeroes */
 
 #endif

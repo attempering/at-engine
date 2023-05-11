@@ -125,14 +125,12 @@ static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
 
 void at_mb_iie_gridvals__calc_cv(at_mb_t *mb)
 {
-  int i, need_cv;
+  int i;
   double beta, e_var;
   at_mb_iie_lr_t *lr = mb->iie->lr;
   at_mb_iie_gridvals_t *gridvals = mb->iie->gridvals;
 
-  need_cv = (mb->flags & MB_CV);
-
-  if (!need_cv) {
+  if (!mb->need_cv) {
     return;
   }
 

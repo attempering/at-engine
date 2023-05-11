@@ -66,6 +66,10 @@ static double at_driver_langevin_move__calc_et_iie(
     fprintf(stderr, "\n");
   }
 
+  //fprintf(stderr, "iie %p, %s:%d\n", iie, __FILE__, __LINE__);
+  //fprintf(stderr, "lr %p, %s:%d\n", lr, __FILE__, __LINE__);
+  //getchar();
+
   if (lr->success && lr->quality) {
     return et;
   } else {

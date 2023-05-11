@@ -26,4 +26,8 @@ int at_driver_langevin__read_binary_legacy(at_driver_langevin_t *langevin, FILE 
 
 int at_driver_langevin__write_binary_legacy(at_driver_langevin_t *langevin, FILE *fp);
 
+int at_driver_langevin__read(at_driver_langevin_t *langevin);
+
+int at_driver_langevin__write(at_driver_langevin_t *langevin);
+
 #endif

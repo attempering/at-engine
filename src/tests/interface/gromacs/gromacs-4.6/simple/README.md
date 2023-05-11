@@ -2,5 +2,5 @@
 
 ```sh
 make
-valgrind ./test.exe
+valgrind --leak-check=full ./test.exe
 ```

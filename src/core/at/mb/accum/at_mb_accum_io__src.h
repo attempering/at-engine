@@ -59,8 +59,7 @@ void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *mani
     }
   }
 
-  /* use_winaccum */
-  fprintf(fp, "mb->accum->use_winaccum: int, %4d\n", accum->use_winaccum);
+  at_mb_accum_winaccum__manifest(accum->winaccum, manifest);
 
   /* win_total: total of sum.s over a multiple-bine temperature window */
   at_utils_manifest__print_double_arr(manifest, accum->win_total, accum->n, "mb->accum->win_total");

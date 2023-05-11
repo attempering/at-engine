@@ -100,6 +100,14 @@ int at_driver_langevin__cfg_init(
   // initialize the random number generator
   at_driver_langevin_rng__cfg_init(langevin->rng, cfg, ssm, data_dir, verbose);
 
+  {
+    char *fn = "langevin.dat";
+    if (0 != zcom_cfg__get(cfg, &langevin->file, "langevin_file", "%s")) {
+      if (verbose) fprintf(stderr, "Info: assuming default langevin->file = \"%s\", key: langevin_file\n", fn);
+    }
+    langevin->file = at_utils__make_output_filename(ssm, data_dir, fn);
+  }
+
   return 0;
 }
 

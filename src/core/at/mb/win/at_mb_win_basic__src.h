@@ -127,7 +127,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->jt_bin[i] = 0;
   }
 
-  at_mb_win__make_windows_for_bin_estimators(n, mb->flags & MB_SYMWIN,
+  at_mb_win__make_windows_for_bin_estimators(n, mb->use_sym_wins,
       win->js_grid_unres, win->jt_grid_unres,
       win->js_bin, win->jt_bin);
 

@@ -24,6 +24,15 @@
 #include "../../driver/langevin/at_driver_langevin.h"
 
 
+/* legacy flags */
+#define   AT_MB__USE_WIN_ACCUM       0x00000001    /* use adaptive averaging */
+#define   AT_MB__NEED_CV             0x00000002    /* compute heat capacity */
+#define   AT_MB__USE_SYM_WINS        0x00000004    /* use symmetrical windows */
+#define   AT_MB__USE_SINGLE_BIN      0x00000020    /* use the single-bin estimator */
+#define   AT_MB__VERBOSE             0x00001000    /* be verbose */
+
+
+
 /* read at_mb_t data as binary */
 int at_mb__read_binary_legacy(
     at_mb_t *mb,

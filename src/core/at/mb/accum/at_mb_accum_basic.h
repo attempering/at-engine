@@ -24,6 +24,7 @@
 #include "../at_mb__def.h"
 #include "../win/at_mb_win.h"
 #include "../shk/at_mb_shk.h"
+#include "../../../zcom/zcom.h"
 #include <stdio.h>
 
 
@@ -38,7 +39,8 @@ void at_mb_accum__add(at_mb_accum_t *accum, int j, double invwf, double e, int d
 
 void at_mb_accum__calc_win_total(at_mb_accum_t *accum);
 
-void at_mb_accum__init(at_mb_accum_t *accum, int n, at_mb_win_t *win, unsigned flags);
+void at_mb_accum__cfg_init(at_mb_accum_t *accum, int n, at_mb_win_t *win,
+    zcom_cfg_t *cfg, at_bool_t verbose);
 
 void at_mb_accum__clear(at_mb_accum_t *accum);
 

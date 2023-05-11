@@ -28,9 +28,9 @@
 
 
 /* load previous mb data */
-int at_mb__read(at_mb_t *mb, at_driver_langevin_t *langevin, double *beta);
+int at_mb__read(at_mb_t *mb);
 
 /* prepare and write mb data  */
-int at_mb__write(at_mb_t *mb, at_driver_langevin_t *langevin, double beta);
+int at_mb__write(at_mb_t *mb);
 
 #endif

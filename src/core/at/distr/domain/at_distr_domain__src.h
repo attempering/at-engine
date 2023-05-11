@@ -50,6 +50,11 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
   domain->bmin = bmin;
   domain->bmax = bmax;
   domain->bdel = bdel;
+
+  if (domain->barr != NULL) {
+    free(domain->barr);
+  }
+
   domain->barr = calloc(n+1, sizeof(double));
 
   for (i = 0; i <= n; i++) {
@@ -117,14 +122,15 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   //getchar();
 
   /* barr: temperature array */
-  if ((domain->barr = (double *) calloc((domain->n + 2), sizeof(double))) == NULL) {
+  if ((domain->barr = (double *) calloc((domain->n + 1), sizeof(double))) == NULL) {
     fprintf(stderr, "no memory! var: distr->domain->barr, type: double\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
-  for (i = 0; i < domain->n+1; i++)
+  for (i = 0; i < domain->n+1; i++) {
     domain->barr[i] = domain->bmin + i * domain->bdel;
+  }
 
   /* check beta array */
   if ( !(at_distr_domain__check_barr(domain) == 0) ) {
@@ -146,7 +152,11 @@ ERR:
 
 void at_distr_domain__finish(at_distr_domain_t *domain)
 {
-  if (domain->barr != NULL) free(domain->barr);
+  //fprintf(stderr, "barr %p %s:%d\n", domain->barr, __FILE__, __LINE__);
+  if (domain->barr != NULL) {
+    free(domain->barr);
+    domain->barr = NULL;
+  }
 }
 
 void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest)

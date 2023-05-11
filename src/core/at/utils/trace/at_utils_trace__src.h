@@ -46,18 +46,6 @@ void at_utils_trace__cfg_init(at_utils_trace_t *trace,
   if (zcom_cfg__get(cfg, &trace->nst_trace, "nsttrace", "%d")) {
     if (verbose) fprintf(stderr, "Info: assuming default utils->trace->nst_trace = -1, key: nsttrace\n");
   }
-  
-  {
-    char *fn_trace = "trace.dat";
-
-    /* trace_file: name of trace file */
-    if (zcom_cfg__get(cfg, &fn_trace, "trace_file", "%s"))
-    {
-      if (verbose) fprintf(stderr, "Info: assuming default utils->trace->trace_file = \"%s\", key: trace_file\n", fn_trace);
-    }
-
-    //fprintf(stderr, "trace file %s => %s\n", fn_trace, at->trace_file);getchar();
-  }
 
   // do not open trace file yet, at__open_log();
   trace->log = NULL;

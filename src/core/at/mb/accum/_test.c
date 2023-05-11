@@ -19,13 +19,13 @@
 // gcc -g _test.c -lm && valgrind --leak-check=full ./a.out
 
 
-#include "../../../distr/at_distr__src.h"
-#include "../../../utils/at_utils__src.h"
-#include "../../sm/at_mb_sm__src.h"
-#include "../../win/at_mb_win__src.h"
-#include "../../shk/at_mb_shk__src.h"
-#include "at_mb_accum_winaccum__src.h"
-#include "../../../../zcom/zcom__src.h"
+#include "../../distr/at_distr__src.h"
+#include "../../utils/at_utils__src.h"
+#include "../sm/at_mb_sm__src.h"
+#include "../win/at_mb_win__src.h"
+#include "../shk/at_mb_shk__src.h"
+#include "at_mb_accum__src.h"
+#include "../../../zcom/zcom__src.h"
 
 
 
@@ -54,17 +54,16 @@ static void mock_mb__finish(at_mb_t *mb)
 int main()
 {
   at_distr_t distr[1];
-  at_mb_accum_winaccum_t winaccum[1];
+  at_mb_accum_t accum[1];
   at_mb_win_t win[1];
   at_mb_t mb[1];
-
 
   mock_mb__init(distr, mb, 0.2, 0.4, 0.001);
 
   at_mb_win__cfg_init(win, NULL, mb);
-  at_mb_accum_winaccum__cfg_init(winaccum, mb->distr->domain->n, win, NULL, AT__TRUE);
+  at_mb_accum__cfg_init(accum, mb->distr->domain->n, win, NULL, AT__TRUE);
 
-  at_mb_accum_winaccum__finish(winaccum);
+  at_mb_accum__finish(accum);
   at_mb_win__finish(win);
 
   mock_mb__finish(mb);

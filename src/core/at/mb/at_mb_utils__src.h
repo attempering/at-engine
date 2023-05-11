@@ -88,7 +88,6 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
     int *pib, double *pinvwf, double *neg_dlnwf_dbeta)
 {
   double invwf, f = 1.0, neg_df_dbeta = 0.0;
-  int bCv = mb->flags & MB_CV;
 
   int j = at_mb__beta_to_index(mb, beta, 1);
 
@@ -111,7 +110,7 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
     *pinvwf = invwf;
   }
 
-  at_mb_accum__add(mb->accum, j, invwf, e, bCv, mb->shk, mb->total_visits);
+  at_mb_accum__add(mb->accum, j, invwf, e, mb->need_cv, mb->shk, mb->total_visits);
 
 }
 

@@ -34,7 +34,8 @@
 typedef struct at_mb_iie_t_ {
 
   int n; /* == distr->domain->n */
-  unsigned flags; /* == mb->flags */
+
+  at_bool_t use_single_bin;
 
   at_mb_iie_lr_t lr[1];
 

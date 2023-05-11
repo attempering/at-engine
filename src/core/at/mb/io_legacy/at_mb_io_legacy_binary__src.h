@@ -20,7 +20,7 @@
 #ifndef AT_MB_IO_LEGACY_BINARY__SRC_H__
 #define AT_MB_IO_LEGACY_BINARY__SRC_H__
 
-#include "at_mb_io_binary.h"
+#include "at_mb_io_legacy_binary.h"
 
 /* implementation headers */
 #include "../at_mb_basic.h"
@@ -90,15 +90,21 @@ static int at_mb__read_binary_legacy_low_level(
   }
 
   /* flags: combination of flags */
-  if (zcom_endn__fread(&mb->flags, sizeof(mb->flags), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->flags\n");
-    goto ERR;
+  {
+    unsigned flags;
+
+    if (zcom_endn__fread(&flags, sizeof(flags), 1, fp, endn) != 1) {
+      fprintf(stderr, "error in reading flags\n");
+      goto ERR;
+    }
   }
+
   /* use_winaccum */
-  if (zcom_endn__fread(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->use_winaccum\n");
+  if (zcom_endn__fread(&mb->accum->winaccum->enabled, sizeof(mb->accum->winaccum->enabled), 1, fp, endn) != 1) {
+    fprintf(stderr, "error in reading mb->accum->winaccum->enabled\n");
     goto ERR;
   }
+
   /* cnt_int: number of additional integer variables to be written to binary file */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
     fprintf(stderr, "error in reading itmp\n");
@@ -281,16 +287,42 @@ static int at_mb__write_binary_legacy_low_level(
     }
   }
 
-  /* flags: combination of flags */
-  if (zcom_endn__fwrite(&mb->flags, sizeof(mb->flags), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->flags\n");
-    goto ERR;
+  {
+    unsigned flags = 0;
+
+    if (mb->accum->winaccum->enabled) {
+      flags |= AT_MB__USE_WIN_ACCUM;
+    }
+
+    if (mb->need_cv) {
+      flags |= AT_MB__NEED_CV;
+    }
+
+    if (mb->use_sym_wins) {
+      flags |= AT_MB__USE_SYM_WINS;
+    }
+
+    if (mb->use_single_bin) {
+      flags |= AT_MB__USE_SINGLE_BIN;
+    }
+
+    if (mb->verbose) {
+      flags |= AT_MB__VERBOSE;
+    }
+
+    /* flags: combination of flags */
+    if (zcom_endn__fwrite(&flags, sizeof(flags), 1, fp, 1) != 1) {
+      fprintf(stderr, "error in writing flags\n");
+      goto ERR;
+    }
   }
+
   /* use_winaccum */
-  if (zcom_endn__fwrite(&mb->accum->use_winaccum, sizeof(mb->accum->use_winaccum), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->use_winaccum\n");
+  if (zcom_endn__fwrite(&mb->accum->winaccum->enabled, sizeof(mb->accum->winaccum->enabled), 1, fp, 1) != 1) {
+    fprintf(stderr, "error in writing mb->accum->winaccum->enabled\n");
     goto ERR;
   }
+
   /* cnt_int: number of additional integer variables to be written to binary file */
   if (zcom_endn__fwrite(&mb->cnt_int, sizeof(mb->cnt_int), 1, fp, 1) != 1) {
     fprintf(stderr, "error in writing mb->cnt_int\n");

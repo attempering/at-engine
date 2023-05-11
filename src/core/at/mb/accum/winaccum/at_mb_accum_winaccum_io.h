@@ -26,7 +26,8 @@
 #include "../../shk/at_mb_shk.h"
 #include <stdio.h>
 
-void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum, FILE *fp, int arrmax);
+void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
+    at_utils_manifest_t *manifest);
 
 int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp, int endn);
 

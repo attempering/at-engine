@@ -24,6 +24,7 @@
 
 #include "langevin/at_driver_langevin__src.h"
 
+#include "../utils/at_utils.h"
 #include "../distr/at_distr.h"
 #include "../mb/at_mb.h"
 #include "../../zcom/zcom.h"
@@ -78,6 +79,18 @@ void at_driver__manifest(
 
   fprintf(fp, "driver->move_repeats: int, %d\n", driver->move_repeats);
 
+}
+
+
+int at_driver__read(at_driver_t *driver)
+{
+  return at_driver_langevin__read(driver->langevin);
+}
+
+
+int at_driver__write(at_driver_t *driver)
+{
+  return at_driver_langevin__write(driver->langevin);
 }
 
 

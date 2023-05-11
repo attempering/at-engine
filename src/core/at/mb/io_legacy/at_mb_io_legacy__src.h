@@ -23,7 +23,7 @@
 
 /* IO routines for at_mb_t */
 
-#include "at_mb_io.h"
+#include "at_mb_io_legacy.h"
 
 /* implementation dependent headers */
 #include "../at_mb_basic.h"

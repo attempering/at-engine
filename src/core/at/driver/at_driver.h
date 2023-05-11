@@ -41,5 +41,8 @@ void at_driver__manifest(
     const at_driver_t *driver,
     at_utils_manifest_t *manifest);
 
+int at_driver__read(at_driver_t *driver);
+
+int at_driver__write(at_driver_t *driver);
 
 #endif

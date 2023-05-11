@@ -361,9 +361,18 @@ Multiple-bin estimator settings share the prefix of `mbest_`
   * 0: disabled, asymmetric.
   * 1: enabled, symmetric.
 
-  Variable: `mb->flags & MB_SYMWIN`.
+  Variable: `mb->use_sym_wins`.
 
   Default: 1.
+
+* `mbest_single_bin`: force the single-bin estimator.
+
+  * 0: disabled.
+  * 1: enabled.
+
+  Variable: `mb->use_single_bin`.
+
+  Default: 0.
 
 #### II.G.2. Averaging behavior
 
@@ -470,7 +479,7 @@ scheme.
 
   Conditions: 0 or 1.
 
-  Variable: `mb->flags & MB_DAMP`
+  Variable: `mb->accum->winaccum->enabled`
 
   Default: 1.
 
@@ -526,7 +535,7 @@ scheme.
   * 0: disabled, no Cv
   * 1: enabled, Cv
 
-  Variable: `mb->flags & MB_CV`.
+  Variable: `mb->need_cv`.
 
   Default: 1
 
@@ -544,7 +553,7 @@ scheme.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_VERBOSE`.
+  Variable: `mb->verbose`.
 
   Default: 1.
 
@@ -602,7 +611,7 @@ The trace file outputs the current potential energy and temperature every few st
 
 * `trace_file`: name of the trace file.
 
-  Variable: `at->trace_file`.
+  Variable: `at->utils->trace->filename`.
 
   Default: "trace.dat" (legacy: "TRACE").
 
@@ -616,7 +625,7 @@ The trace file outputs the current potential energy and temperature every few st
   * 0:  writing the log file only in steps of outputting the .xtc file
   * any positive integer: write log file this number of steps.
 
-  Variable: `at->nsttrace`.
+  Variable: `at->utils->trace->nst_trace`.
 
   Default: -1 (disabled).
 
@@ -700,7 +709,7 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_AT_EH_ADDAHALF`
+  Variable: `eh->keep_half_ebin`
 
   Default: 1.
 
@@ -709,7 +718,7 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_AT_EH_KEEPEDGE`
+  Variable: `eh->keep_margins`
 
   Default: 0.
 
@@ -719,7 +728,7 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `mb->flags & MB_AT_EH_NOZEROES`
+  Variable: `eh->no_zeros`
 
   Default: 0.
 

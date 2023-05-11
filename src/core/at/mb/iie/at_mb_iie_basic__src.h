@@ -35,7 +35,7 @@ void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
     zcom_cfg_t *cfg, at_bool_t verbose)
 {
   iie->n = mb->distr->domain->n;
-  iie->flags = mb->flags;
+  iie->use_single_bin = mb->use_single_bin;
   iie->win = mb->win;
   iie->accum = mb->accum;
 
@@ -43,6 +43,7 @@ void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
   at_mb_iie_lr__cfg_init(iie->lr, iie->zf, mb, cfg, verbose);
   at_mb_iie_et__cfg_init(iie->et, mb, cfg, verbose);
   at_mb_iie_gridvals__cfg_init(iie->gridvals, mb, cfg, verbose);
+
 }
 
 

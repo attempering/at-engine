@@ -33,16 +33,11 @@ typedef struct at_mb_accum_t_ {
   /* regular accumulators */
   at_mb_sm_t *sums;
 
-  /* for multiple bin averager */
-  int use_winaccum;
-
   double *win_total; /* total of sum.s over a multiple-bin temperature window */
 
   at_mb_accum_winaccum_t winaccum[1];
 
   at_mb_win_t *win; /* reference to mb->win */
-
-  unsigned flags;
 
 } at_mb_accum_t;
 

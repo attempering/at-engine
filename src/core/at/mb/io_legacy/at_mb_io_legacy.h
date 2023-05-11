@@ -21,7 +21,7 @@
 #define AT_MB_IO_LEGACY_H__
 
 
-#include "at_mb_io_binary.h"
+#include "at_mb_io_legacy_binary.h"
 
 #include "../../utils/at_utils.h"
 #include "../../driver/at_driver.h"

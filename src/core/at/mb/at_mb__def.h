@@ -39,13 +39,18 @@ typedef struct at_mb_t_ {
 
   //int       n;        /* same as distr->domain->n */
 
-  unsigned  flags;    /* combination of flags */
+  at_bool_t use_win_accum;
+  at_bool_t use_single_bin;
+  at_bool_t use_sym_wins;
+  at_bool_t need_cv;
+  at_bool_t verbose;
 
   int       nst_refresh;  /* interval of recalculating et for all temperature */
   int       nst_save_av;  /* interval of writing mbav and ze files */
   int       av_binary;    /* use binary format in mbav file */
   char      *av_file;     /* name of mbav file */
   char      *ze_file;     /* name of ze file */
+  char      *ze_init_file; /* name of the initially-loaded ze file */
   int       wze_reps;     /* number of iterations before writing ze file */
   double    *visits;      /* number of visits */
   double    total_visits; /* total number of visits, number of tempering */
@@ -67,13 +72,6 @@ typedef struct at_mb_t_ {
   int       cnt_dbl;  /* number of additional double variables to be written to binary file */
 
 } at_mb_t;
-
-#define   MB_USE_WIN_ACCUM       0x00000001    /* use adaptive averaging */
-#define   MB_CV         0x00000002    /* compute heat capacity */
-#define   MB_SYMWIN     0x00000004    /* use symmetrical windows */
-#define   MB_SINGLE_BIN 0x00000020    /* use the single-bin estimator */
-#define   MB_VERBOSE    0x00001000    /* be verbose */
-
 
 
 #endif

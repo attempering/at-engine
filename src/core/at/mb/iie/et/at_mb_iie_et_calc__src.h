@@ -57,17 +57,26 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
   int js, jt;
   at_mb_iie_lr_t *lr = iie->lr;
 
+  //fprintf(stderr, "lr %p, %s:%d\n", lr, __FILE__, __LINE__);
+
   js = iie->win->js_bin[ib];
   jt = iie->win->jt_bin[ib];
 
   zcom_util__exit_if (js < 0 || js >= jt || jt > iie->n,
       "invalid indices: js %d, jt %d, ib = %d/%d", js, jt, ib, iie->n);
 
+  //fprintf(stderr, "ib %d, js %d, jt %d; %s:%d\n", ib, js, jt, __FILE__, __LINE__);
+
   // handle the degenerative cases:
   // window contains a single bin only,
   // or the caller explicitly requests the single-bin version
-  if ((iie->flags & MB_SINGLE_BIN) || jt == js + 1) {
-    return at_mb_iie_et__calc_et_single_bin(iie, ib);
+  if (iie->use_single_bin || jt == js + 1) {
+    double et;
+    //fprintf(stderr, "using single-bin estimator %d, js %d, jt %d; %s:%d\n", iie->use_single_bin, js, jt, __FILE__, __LINE__);
+    et = at_mb_iie_et__calc_et_single_bin(iie, ib);
+    lr->success = 1;
+    lr->quality = 1;
+    return et;
   }
 
   at_mb_iie_lr__init_instance(lr, MB_IIE_LR__TYPE_BIN, win_div,
@@ -76,10 +85,8 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
   /* collect moments from the left & right windows */
   at_mb_iie_lr__collect_moments(lr);
 
-#ifdef MB_DBG__
-  fprintf(stderr, "ib %d, jb %d, js %d, jt %d; t1 %g %g, tb %g\n", ib, jb, js, jt, t1[0], t1[1], tb);
-  fprintf(stderr, "s0 %g %g; s1/s0 %g %g\n", s0[0], s0[1], s1[0]/s0[0], s1[1]/s0[1]);
-#endif
+  //fprintf(stderr, "ib %d, js %d, jt %d, %s:%d\n", ib, js, jt, __FILE__, __LINE__);
+  //fprintf(stderr, "s0 %g, %g, %s:%d\n", lr->s0[0], lr->s0[1], __FILE__, __LINE__);
 
   /* compute the coefficients of linear combination and Et */
   return at_mb_iie_lr__balance_moments(lr);

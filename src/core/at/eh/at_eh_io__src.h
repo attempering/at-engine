@@ -110,17 +110,17 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   /* eh_it: indices for temperature windows (higher) */
   at_utils_manifest__print_int_arr(manifest, eh->it, eh->n + 1, "eh->it");
 
-  /* AT_EH_ADDAHALF: add a half energy bin width in output */
-  fprintf(fp, "eh->flags & AT_EH_ADDAHALF (0x%X, ehist_addahalf): %s\n",
-    AT_EH_ADDAHALF, (eh->flags & AT_EH_ADDAHALF) ? "on" : "off");
+  /* add a half energy bin width in output */
+  fprintf(fp, "eh->add_half_ebin (ehist_addahalf): %s\n",
+      (eh->add_half_ebin ? "on" : "off"));
 
-  /* AT_EH_KEEPEDGE: keep zero edge at sides */
-  fprintf(fp, "eh->flags & AT_EH_KEEPEDGE (0x%X, ehist_keepedge): %s\n",
-    AT_EH_KEEPEDGE, (eh->flags & AT_EH_KEEPEDGE) ? "on" : "off");
+  /* keep zero edge at sides */
+  fprintf(fp, "eh->keep_margins (ehist_keepedge): %s\n",
+      (eh->keep_margins ? "on" : "off"));
 
-  /* AT_EH_NOZEROES: do not output zeroes */
-  fprintf(fp, "eh->flags & AT_EH_NOZEROES (0x%X, ehist_nozeroes): %s\n",
-    AT_EH_NOZEROES, (eh->flags & AT_EH_NOZEROES) ? "on" : "off");
+  /* do not output zeroes */
+  fprintf(fp, "eh->no_zeros (ehist_nozeroes): %s\n",
+      (eh->no_zeros ? "on" : "off"));
 }
 
 #endif

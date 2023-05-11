@@ -74,8 +74,8 @@ void mb_mock_exact_moments(at_mb_t *mb)
   at_mb_sm_t *sm;
 
   // use the plain sums for simplicity
-  mb->flags &= ~MB_USE_WIN_ACCUM;
-  mb->accum->use_winaccum = 0;
+  mb->use_win_accum = AT__FALSE;
+  mb->accum->winaccum->enabled = AT__FALSE;
 
   for (i = 0; i < domain->n; i++) {
     sm = at_mb_accum__get_proper_sums(mb->accum, i, i);

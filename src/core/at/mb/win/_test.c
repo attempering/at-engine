@@ -33,7 +33,7 @@ static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double bmin, double bm
 
   mb->distr = distr;
 
-  mb->flags = MB_SYMWIN;
+  mb->use_sym_wins = AT__TRUE;
 }
 
 

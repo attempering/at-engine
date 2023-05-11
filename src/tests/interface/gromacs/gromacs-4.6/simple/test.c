@@ -18,14 +18,37 @@
 
 #include "at-gromacs/at-gromacs__src.h"
 
+
+
+void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
+{
+  cr->nodeid = 0;
+  cr->nnodes = 1;
+
+  cr->ms = NULL;
+
+  ir->delta_t = 0.002;
+
+  ir->opts.ngtc = 1;
+  ir->opts.ref_t = calloc(1, sizeof(real));
+  ir->opts.ref_t[0] = 300;
+
+  enerd->term[F_EPOT] = 0.0;
+}
+
+
+
 int main(void)
 {
-  at_llong_t step = 0, nsteps = 100;
+  at_llong_t step = 0, nsteps = 10;
   atgmx_t atgmx[1];
   t_commrec cr[1];
   t_inputrec ir[1];
   gmx_enerdata_t enerd[1];
   at_bool_t from_cpt = AT__FALSE;
+
+  // initialize GROMACS variables
+  init_gromacs_vars(cr, ir, enerd);
 
   atgmx__init(atgmx, "at.cfg", ir, cr, from_cpt, AT__INIT_VERBOSE);
 
@@ -36,13 +59,17 @@ int main(void)
     at_bool_t is_xtc_step = AT__TRUE;
     at_bool_t is_ns_step = AT__TRUE;
 
+    enerd->term[F_EPOT] = -10000.0;
+
     atgmx__move(atgmx, enerd, step,
-      is_first_step, is_last_step, has_global_stats,
-      is_xtc_step, is_ns_step,
-      cr);
+        is_first_step, is_last_step, has_global_stats,
+        is_xtc_step, is_ns_step,
+        cr);
   }
 
   atgmx__finish(atgmx);
+
+  free(ir->opts.ref_t);
 
   return 0;
 }

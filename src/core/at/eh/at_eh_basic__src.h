@@ -244,57 +244,24 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
         eh->bwmod, eh->bwdel, eh->is, eh->it);
   }
 
-  /* AT_EH_ADDAHALF: add a half energy bin width in output */
   if (eh->mode) {
-    unsigned i = 1;
-    if (0 != zcom_cfg__get(cfg, &i, "ehist_addahalf", "%u")) {
-      fprintf(stderr, "Info: assuming default AT_EH_ADDAHALF = 1, key: ehist_addahalf\n");
-    }
-    if ( !(i == 0 || i == 1) ) {
-      fprintf(stderr, "AT_EH_ADDAHALF: failed validation: i == 0 || i == 1\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-    if (i) {
-      eh->flags |= AT_EH_ADDAHALF;
-    } else {
-      eh->flags &= ~AT_EH_ADDAHALF;
-    }
-  }
 
-  /* AT_EH_KEEPEDGE: keep zero edge at sides */
-  if (eh->mode) {
-    unsigned i = 0;
-    if (0 != zcom_cfg__get(cfg, &i, "ehist_keepedge", "%u")) {
-      fprintf(stderr, "Info: assuming default AT_EH_KEEPEDGE = 0, key: ehist_keepedge\n");
+    /* add a half energy bin width in output */
+    eh->add_half_ebin = AT__TRUE;
+    if (0 != zcom_cfg__get(cfg, &eh->add_half_ebin, "ehist_addahalf", "%u")) {
+      fprintf(stderr, "Info: assuming default eh->add_a_half = 1, key: ehist_addahalf\n");
     }
-    if ( !(i == 0 || i == 1) ) {
-      fprintf(stderr, "AT_EH_KEEPEDGE: failed validation: i == 0 || i == 1\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-    if (i) {
-      eh->flags |= AT_EH_KEEPEDGE;
-    } else {
-      eh->flags &= ~AT_EH_KEEPEDGE;
-    }
-  }
 
-  /* AT_EH_NOZEROES: do not output zeroes */
-  if (eh->mode) {
-    unsigned i = 0;
-    if (0 != zcom_cfg__get(cfg, &i, "ehist_nozeroes", "%u")) {
-      fprintf(stderr, "Info: assuming default AT_EH_NOZEROES = 0, key: ehist_nozeroes\n");
+    /* keep zero margins */
+    eh->keep_margins = AT__FALSE;
+    if (0 != zcom_cfg__get(cfg, &eh->keep_margins, "ehist_keepedge", "%u")) {
+      fprintf(stderr, "Info: assuming default eh->keep_margins = 0, key: ehist_keepedge\n");
     }
-    if ( !(i == 0 || i == 1) ) {
-      fprintf(stderr, "AT_EH_NOZEROES: failed validation: i == 0 || i == 1\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-    if (i) {
-      eh->flags |= AT_EH_NOZEROES;
-    } else {
-      eh->flags &= ~AT_EH_NOZEROES;
+
+    /* do not output zeroes */
+    eh->no_zeros = 0;
+    if (0 != zcom_cfg__get(cfg, &eh->no_zeros, "ehist_nozeroes", "%u")) {
+      fprintf(stderr, "Info: assuming default eh->no_zeros = 0, key: ehist_nozeroes\n");
     }
   }
 

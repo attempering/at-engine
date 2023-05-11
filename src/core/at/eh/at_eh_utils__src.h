@@ -63,9 +63,9 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
         eh->rfile);
     return 1;
   }
-  full = mb->flags & AT_EH_KEEPEDGE;
-  keep0 = !(mb->flags & AT_EH_NOZEROES);
-  del = (mb->flags & AT_EH_ADDAHALF) ? 0.5 : 0; /* for continuous system */
+  full = eh->keep_margins;
+  keep0 = !eh->no_zeros;
+  del = (eh->add_half_ebin) ? 0.5 : 0; /* for continuous system */
   cols = eh->cnt;
   base = eh->min;
   inc = eh->del;

@@ -27,8 +27,15 @@
 
 
 
-void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum, FILE *fp, int arrmax)
+void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
+    at_utils_manifest_t *manifest)
 {
+  FILE *fp = manifest->fp;
+
+  /* use adaptive averaging */
+  fprintf(fp, "mb->accum->winaccum->enabled (mbest_damp): %s\n",
+      (winaccum->enabled ? "on" : "off"));
+
 }
 
 
@@ -37,6 +44,8 @@ int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp
 {
 
   int i;
+
+  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
 
   for (i = 0; i < winaccum->n; i++) {
 
@@ -58,6 +67,10 @@ ERR:
 int at_mb_accum_winaccum__write_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp)
 {
   int i;
+
+  if (!winaccum->enabled) return 0;
+
+  //fprintf(stderr, "winaccum->n %d, %s:%d\n", winaccum->n, __FILE__, __LINE__);
 
   for (i = 0; i < winaccum->n; i++) {
 

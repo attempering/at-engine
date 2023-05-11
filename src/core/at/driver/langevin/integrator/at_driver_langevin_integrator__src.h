@@ -148,7 +148,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
   at_mb_accum_t *accum = intgr->mb->accum;
   at_mb_sm_t *sm;
 
-  if (accum->use_winaccum) {
+  if (accum->winaccum->enabled) {
 
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = at_mb_accum_winaccum_item__get_sums(accum->winaccum->items + ib, ib);

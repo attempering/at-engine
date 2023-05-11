@@ -36,6 +36,8 @@ void at_mb_accum_winaccum__normalize(at_mb_accum_winaccum_t *winaccum, int i)
 {
   int i0, i1;
 
+  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
+
   if (i >= 0) {
     i0 = i1 = i;
   } else { /* normalize all estimators, if i < 0 */
@@ -60,6 +62,7 @@ void at_mb_accum_winaccum__add(
   //fprintf(stderr, "at_mb_accum_winaccum__add() winaccum %p\n", winaccum);
   //fprintf(stderr, "at_mb_accum_winaccum__add() win %p\n", winaccum->win);
   //getchar();
+  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
 
   int i, l;
   at_mb_win_t *win = winaccum->win;
@@ -89,6 +92,8 @@ void at_mb_accum_winaccum__calc_win_total(at_mb_accum_winaccum_t *winaccum, doub
 {
   int i;
 
+  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
+
   for (i = 0; i < winaccum->n; i++) {
     win_total[i] = at_mb_accum_winaccum_item__calc_total(winaccum->items + i);
   }
@@ -97,9 +102,13 @@ void at_mb_accum_winaccum__calc_win_total(at_mb_accum_winaccum_t *winaccum, doub
 
 
 
-void at_mb_accum_winaccum__init(at_mb_accum_winaccum_t *winaccum, int n, at_mb_win_t *win, unsigned flags)
+void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
+    int n, at_mb_win_t *win,
+    zcom_cfg_t *cfg, at_bool_t verbose)
 {
   int i;
+
+  //fprintf(stderr, "n %d, %s:%d\n", n, __FILE__, __LINE__);
 
   winaccum->n = n;
 
@@ -107,13 +116,24 @@ void at_mb_accum_winaccum__init(at_mb_accum_winaccum_t *winaccum, int n, at_mb_w
   zcom_util__exit_if (win == NULL,
       "at_mb_win_t *win is NULL\n");
 
-  winaccum->flags = flags;
+  winaccum->enabled = AT__TRUE;
+  if (0 != zcom_cfg__get(cfg, &winaccum->enabled, "mbest_damp", "%d")) {
+    if (verbose) fprintf(stderr, "Info: assuming default mb->accum->winaccum->enabled = 1, key: mbest_damp\n");
+  }
 
-  zcom_util__exit_if ((winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t))) == NULL,
-      "no memory! var: winaccum->items, type: at_mb_sm_t\n");
+  if (winaccum->enabled) {
 
-  for (i = 0; i < n; i++) {
-    at_mb_accum_winaccum_item__init(winaccum->items + i, i, winaccum->win);
+    zcom_util__exit_if ((winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t))) == NULL,
+        "no memory! var: winaccum->items, type: at_mb_sm_t\n");
+
+    for (i = 0; i < n; i++) {
+      at_mb_accum_winaccum_item__init(winaccum->items + i, i, winaccum->win);
+    }
+
+  } else {
+
+    winaccum->items = NULL;
+
   }
 
 }
@@ -122,6 +142,8 @@ void at_mb_accum_winaccum__init(at_mb_accum_winaccum_t *winaccum, int n, at_mb_w
 void at_mb_accum_winaccum__clear(at_mb_accum_winaccum_t *winaccum)
 {
   int i;
+
+  if (!winaccum->enabled) return;
 
   for (i = 0; i < winaccum->n; i++) {
     at_mb_accum_winaccum_item__clear(winaccum->items + i);
@@ -134,6 +156,8 @@ void at_mb_accum_winaccum__clear(at_mb_accum_winaccum_t *winaccum)
 void at_mb_accum_winaccum__finish(at_mb_accum_winaccum_t *winaccum)
 {
   int i;
+
+  if (!winaccum->enabled) return;
 
   for (i = 0; i < winaccum->n; i++) {
     at_mb_accum_winaccum_item__finish(winaccum->items+i);

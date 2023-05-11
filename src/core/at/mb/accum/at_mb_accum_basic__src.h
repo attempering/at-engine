@@ -50,7 +50,7 @@ at_mb_sm_t *at_mb_accum__get_proper_sums0_and_winaccum_item(
     at_mb_accum_winaccum_item_t **winaccum_item)
 {
 
-  if (accum->use_winaccum) {
+  if (accum->winaccum->enabled) {
 
     if (win_id == accum->n) {
       win_id = accum->n - 1;
@@ -86,7 +86,7 @@ at_mb_sm_t *at_mb_accum__get_proper_sums(at_mb_accum_t *accum, int win_id, int i
 
 double at_mb_accum__get_window_visits(at_mb_accum_t *accum, int win_id)
 {
-  if (accum->use_winaccum) {
+  if (accum->winaccum->enabled) {
     return accum->winaccum->items[win_id].visits;
   } else {
 
@@ -114,7 +114,7 @@ void at_mb_accum__add(at_mb_accum_t *accum, int ib, double invwf, double e, int 
   at_mb_sm__add(sm, invwf, e, do_2nd);
 
   // for the window accumulators
-  if (accum->use_winaccum) { /* add to damping data */
+  if (accum->winaccum->enabled) { /* add to damping data */
     at_mb_accum_winaccum__add(
         accum->winaccum, ib,
         invwf, e, do_2nd, shk, total_visits);
@@ -125,7 +125,7 @@ void at_mb_accum__add(at_mb_accum_t *accum, int ib, double invwf, double e, int 
 
 void at_mb_accum__calc_win_total(at_mb_accum_t *accum)
 {
-  if (accum->use_winaccum) {
+  if (accum->winaccum->enabled) {
     at_mb_accum_winaccum__calc_win_total(accum->winaccum, accum->win_total);
   } else {
 
@@ -149,15 +149,14 @@ void at_mb_accum__calc_win_total(at_mb_accum_t *accum)
 
 
 
-void at_mb_accum__init(at_mb_accum_t *accum, int n, at_mb_win_t *win, unsigned flags)
+void at_mb_accum__cfg_init(at_mb_accum_t *accum, int n, at_mb_win_t *win,
+    zcom_cfg_t *cfg, at_bool_t verbose)
 {
   int i;
 
   accum->n = n;
 
   accum->win = win;
-
-  accum->flags = flags;
 
   /* sums: normal data */
   zcom_util__exit_if ((accum->sums = (at_mb_sm_t *) calloc((accum->n + 1), sizeof(at_mb_sm_t))) == NULL,
@@ -167,11 +166,7 @@ void at_mb_accum__init(at_mb_accum_t *accum, int n, at_mb_win_t *win, unsigned f
     at_mb_sm__init(accum->sums+i);
   }
 
-  accum->use_winaccum = flags & MB_USE_WIN_ACCUM;
-
-  if (accum->use_winaccum) {
-    at_mb_accum_winaccum__init(accum->winaccum, n, win, flags);
-  }
+  at_mb_accum_winaccum__cfg_init(accum->winaccum, n, win, cfg, verbose);
 
   /* win_total: total of sum.s over a multiple-bin temperature window */
   zcom_util__exit_if ((accum->win_total = (double *) calloc(n, sizeof(double))) == NULL,
@@ -198,7 +193,7 @@ void at_mb_accum__clear(at_mb_accum_t *accum)
     accum->win_total[i] = 0.0;
   }
 
-  if (accum->use_winaccum) {
+  if (accum->winaccum->enabled) {
     at_mb_accum_winaccum__clear(accum->winaccum);
   }
 
@@ -212,7 +207,7 @@ void at_mb_accum__finish(at_mb_accum_t *accum)
 
   free(accum->win_total);
 
-  if (accum->use_winaccum) {
+  if (accum->winaccum->enabled) {
     //fprintf(stderr, "at_mb_accum__finish() %p %p\n", accum, accum->winaccum); getchar();
     at_mb_accum_winaccum__finish(accum->winaccum);
   }

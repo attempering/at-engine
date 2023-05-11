@@ -72,9 +72,11 @@ typedef struct at_driver_langevin_t_
 
   at_mb_integrate_func_t integrate_func;
 
-  at_distr_t *distr;
+  at_distr_t *distr; /* reference handle */
 
-  at_mb_t *mb;
+  at_mb_t *mb; /* reference handle */
+
+  char *file; /* IO file name */
 
 } at_driver_langevin_t;
 

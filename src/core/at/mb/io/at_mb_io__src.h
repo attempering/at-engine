@@ -34,11 +34,11 @@
 
 
 
-int at_mb__read(at_mb_t *mb, double *beta)
+int at_mb__read(at_mb_t *mb)
 {
   int ret, version;
 
-  ret = at_mb__read_binary(mb, beta, mb->av_file, &version);
+  ret = at_mb__read_binary(mb, mb->av_file, &version);
 
   if (ret != 0) {
     fprintf(stderr, "cannot load at_mb_t data from %s\n", mb->av_file);
@@ -53,9 +53,9 @@ int at_mb__read(at_mb_t *mb, double *beta)
 
 
 
-int at_mb__write(at_mb_t *mb, double beta)
+int at_mb__write(at_mb_t *mb)
 {
-  return at_mb__write_binary(mb, beta, mb->av_file, 1);
+  return at_mb__write_binary(mb, mb->av_file, 2);
 }
 
 

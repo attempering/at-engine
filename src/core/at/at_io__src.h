@@ -97,9 +97,9 @@ void at__output(at_t *at,
 {
   // to save mb and langevin data
   if (at__do_output_on_step(step_params, at->mb->nst_save_av, AT__FALSE)) {
-    //at_mb__write(at->mb);
-    //at_langevin__write(at->langevin);
-    at_mb__write_legacy(at->mb, at->driver->langevin, at->beta);
+    at_mb__write(at->mb);
+    at_driver__write(at->driver);
+    //at_mb__write_legacy(at->mb, at->driver->langevin, at->beta);
     at_mb__write_ze_file(at->mb, NULL);
     at_driver_langevin_rng__save(at->driver->langevin->rng);
   }
@@ -128,13 +128,27 @@ int at__load_data(at_t *at, at_bool_t is_continuation)
 
   load_data = is_continuation;
   if (load_data) {
-     /* read previous at_mb_t data */
-    if (at_mb__read(mb, at->driver->langevin, &at->beta) != 0) {
+    /* read previous at_mb_t data */
+    /*
+    if (at_mb__read_legacy(mb, at->driver->langevin, &at->beta) != 0) {
+      fprintf(stderr, "cannot load mb data from %s\n", mb->av_file);
+      return 1;
+    }
+    */
+
+    if (at_mb__read(mb) != 0) {
       fprintf(stderr, "cannot load mb data from %s\n", mb->av_file);
       return 1;
     }
 
-    at_mb__write_ze_file(mb, "ze_init.dat");
+    at_mb__write_ze_file(mb, mb->ze_init_file);
+
+
+
+    if (at_driver__read(at->driver) != 0) {
+      fprintf(stderr, "cannot load driver data from %s\n", at->driver->langevin->file);
+      return 1;
+    }
 
     /* read previous energy histogram data */
     if (at_eh__read(at->eh) != 0) {
