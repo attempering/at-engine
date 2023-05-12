@@ -10,3 +10,8 @@
 
 * [tests](tests) testing programs.
 
+## For developers
+
+[Test case: Gaussian energy model](tests/sample_progs/gaussian/cst.c)
+
+[GROMACS plugin](interface/gromacs)

@@ -32,9 +32,9 @@ Simulation parameters are provided in the configuration file `at.cfg`.
 A brief manual on the configuration file `at.cfg`
 is included under the [doc](doc) directory.
 
-## Improvements
+## New features
 
-Compared with the 2010 paper, the current code brings about
+Compared with the 2010 paper [1], the current code brings about
 a few key improvements on the overall accuracy and performance.
 
 * Metropolisation.  The Langevin equation used in the original
@@ -50,41 +50,11 @@ parameters `langevin_no_skip`, `langevin_bin_min_visits`
 are now added to prevent unreasonably large temperature transitions
 in early stages.
 
-* Caching of the estimated bin-averaged energy.  A caching
-mechanism is introduced to save recently computed results
-of the bin-averaged energy which is computed from an integral
-identity. The computation for the estimation can be a bit
-expensive, and the caching mechanism aims at alleviating the issue.
-
 * Zero-filler. The integral identity draws estimates from
 a window of bins. Sometimes the bin range contains missing data
 that needs to be filled in order for the identity to work proper.
 The zero-filling mechanism is now added.
 
-## For developers
+## References
 
-[Test case: Gaussian energy model](src/tests/sample_progs/gaussian)
-
-[GROMACS plugin](src/interface/gromacs/gromacs-4.6/src/kernel/)
-
-The adaptive tempering algorithm is the main engine that drives
-the temperature transitions in the multiple-canonical ensemble.
-
-### Things to know
-
-* Kernel files have been refactored in favor of a modular design.
-
-* Kernel files is a header-only library written in C.
-  The `xxx.h` files are the declarations,
-  the `xxx__src.h` files are implementations.
-  The latter can been included as header files,
-  or compiled as `.c` files
-
-* Kernel files can be compiled with an ANSI C compiler
-  without dependencies on external libraries.
-  They can also be compiled along with the rest of the GROMACS
-  code.
-
-* Sample test cases using the API offered by the kernel files
-  are collected in the [sample_progs](src/tests/sample_progs) directory.
-
+[1] C. Zhang, J. Ma, J. Chem. Phys. 132, 244101 (2010) [https://doi.org/10.1063/1.3435332](https://doi.org/10.1063/1.3435332)
