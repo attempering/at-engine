@@ -22,8 +22,23 @@
 
 void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
 {
-  cr->nodeid = 0;
-  cr->nnodes = 1;
+  int world_size = 1, world_rank = 0;
+
+#ifdef GMX_MPI
+  cr->mpi_comm_mygroup = MPI_COMM_WORLD;
+  cr->mpi_comm_mysim = MPI_COMM_WORLD;
+
+  // Get the number of processes
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+  // Get the rank of the process
+  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+  fprintf(stderr, "node %d/%d\n", world_rank, world_size);
+#endif
+
+  cr->nodeid = world_rank;
+  cr->nnodes = world_size;
 
   cr->ms = NULL;
 
@@ -37,8 +52,7 @@ void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
 }
 
 
-
-int main(void)
+int work(int argc, char **argv)
 {
   at_llong_t step = 0, nsteps = 10;
   atgmx_t atgmx[1];
@@ -52,8 +66,8 @@ int main(void)
 
   atgmx__init(atgmx, "at.cfg", ir, cr, from_cpt, AT__INIT_VERBOSE);
 
-  for (step = 0; step <= nsteps; step++) {
-    at_bool_t is_first_step = (step == 0);
+  for (step = 1; step <= nsteps; step++) {
+    at_bool_t is_first_step = (step == 1);
     at_bool_t is_last_step = (step == nsteps);
     at_bool_t has_global_stats = AT__TRUE;
     at_bool_t is_xtc_step = AT__TRUE;
@@ -65,11 +79,36 @@ int main(void)
         is_first_step, is_last_step, has_global_stats,
         is_xtc_step, is_ns_step,
         cr);
+
+    if (MASTER(cr)) {
+      printf("step %ld: beta %g\n", (long) step, atgmx->at->beta);
+    }
   }
 
   atgmx__finish(atgmx);
 
   free(ir->opts.ref_t);
+
+#ifdef GMX_MPI
+  MPI_Finalize();
+#endif
+
+  return 0;
+}
+
+
+int main(int argc, char **argv)
+{
+
+#ifdef GMX_LIB_MPI
+  MPI_Init(&argc, &argv);
+#endif
+
+#ifdef GMX_THREAD_MPI
+  tMPI_Init(&argc, &argv, &work);
+#endif
+
+  work(argc, argv);
 
   return 0;
 }

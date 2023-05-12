@@ -31,14 +31,14 @@ int atgmx__init_mpi(atgmx_t *atgmx, MPI_Comm comm)
   if (comm != MPI_COMM_NULL) {
     if (MPI_SUCCESS != MPI_Comm_size(comm, &mpi_size)) {
       fprintf(stderr, "cannot even get MPI size\n");
-      fprintf(stderr, "FILE: %s, LINE: %d\n", __FILE__, __LINE__);
+      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
   }
   if (mpi_size > 1) {
     if (MPI_SUCCESS != MPI_Comm_rank(comm, &mpi_rank)) {
       fprintf(stderr, "cannot get MPI rank\n");
-      fprintf(stderr, "FILE: %s, LINE: %d\n", __FILE__, __LINE__);
+      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
     if (MPI_SUCCESS != MPI_Bcast(atgmx, sizeof(*atgmx), MPI_BYTE, 0, comm)) {
