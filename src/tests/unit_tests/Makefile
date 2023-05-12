@@ -1,8 +1,10 @@
 bins::
+	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C driver
 
 clean::
+	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C driver
 
