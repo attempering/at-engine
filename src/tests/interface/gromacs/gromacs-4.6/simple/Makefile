@@ -8,13 +8,13 @@ bins_dbg = $(patsubst %.c, %_d.exe, $(srcs))
 dep_srcs =
 deps = $(dep_srcs) \
        $(wildcard *.h) \
-			 $(wildcard ../../../../../interface/gromacs/gromacs-4.6/src/kernel/at-gromacs/*.h) \
-			 $(wildcard ../../../../../interface/gromacs/gromacs-4.6/src/kernel/at-gromacs/*/*.h) \
-			 $(wildcard ../../../../../interface/gromacs/gromacs-4.6/src/kernel/at-gromacs/*/*/*.h) \
+			 $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*.h) \
+			 $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*.h) \
+			 $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*.h) \
        Makefile
-includes = -I../../../../../interface/gromacs/gromacs-4.6/src/kernel \
+includes = -I../../../../../interface/gromacs/gromacs-4.6/gmxroot/src/kernel \
            -I../../../../../interface/gromacs/gromacs-4.6/gmxmock/include \
-           -I../../../../../interface/gromacs/gromacs-4.6/include \
+           -I../../../../../interface/gromacs/gromacs-4.6/gmxroot/include \
 
 bins: $(bins)
 
