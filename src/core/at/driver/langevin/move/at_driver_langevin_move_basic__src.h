@@ -115,13 +115,14 @@ int at_driver_langevin_move__propose(
 
 
 
-int at_driver_langevin_move__moderate_stride(
+at_bool_t at_driver_langevin_move__moderate_stride(
     langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin)
 {
   int ib_old, ib_new, ib;
-  int moderated = 0;
+  at_bool_t moderated = 0;
   at_distr_domain_t *domain = langevin->distr->domain;
+  double frac = 0.01;
 
   if (!langevin->no_skip) {
     return moderated;
@@ -131,14 +132,19 @@ int at_driver_langevin_move__moderate_stride(
 
   ib_new = at_distr_domain__beta_to_index(domain, proposal->beta_new, 0);
 
+  proposal->ib_old = ib_old;
+  proposal->ib_new_prop = ib_new;
+  proposal->ib_new = ib_new;
+
   if (ib_new > ib_old) {
 
     for (ib = ib_old + 1; ib < ib_new && ib < domain->n; ib++) {
       // check if ib is an unvisited bin
       if (langevin->mb->visits[ib] <= 0.0) {
         // stop at the center of the unvisited bin
-        proposal->beta_new = domain->bmin + (ib + 0.5) * domain->bdel;
-        moderated = 1;
+        proposal->beta_new = domain->bmin + (ib + frac) * domain->bdel;
+        proposal->ib_new = ib;
+        moderated = AT__TRUE;
         break;
       }
     }
@@ -149,8 +155,9 @@ int at_driver_langevin_move__moderate_stride(
       // check if ib is an unvisited bin
       if (langevin->mb->visits[ib] <= 0.0) {
         // stop at the center of the unvisited bin
-        proposal->beta_new = domain->bmin + (ib + 0.5) * domain->bdel;
-        moderated = 1;
+        proposal->beta_new = domain->bmin + (ib + 1 - frac) * domain->bdel;
+        proposal->ib_new = ib;
+        moderated = AT__TRUE;
         break;
       }
     }
@@ -165,6 +172,10 @@ int at_driver_langevin_move__moderate_stride(
   //
   if (moderated) {
     proposal->kt_new = 1.0 / proposal->beta_new;
+  }
+
+  if (moderated && proposal->ib_new_prop == 0) {
+    fprintf(stderr, "a trip from %d to ib %d moderated to %d\n", ib_old, proposal->ib_new_prop, proposal->ib_new);
   }
 
   return moderated;

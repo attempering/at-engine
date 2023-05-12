@@ -45,6 +45,8 @@ const int at_driver_langevin_move_corrected__apply_dkt_max = 0;
 //  = ln --------------------------
 //         p(beta_old) beta_old^2
 //
+// This involves the energy-beta integral
+//
 
 static double at_driver_langevin_move__calc_lnp_ratio(
     at_driver_langevin_t *langevin,
@@ -187,7 +189,20 @@ static double at_driver_langevin_move__calc_lng_ratio(
 
 /* return if the new temperature proposed by the Langevin equation
  * should be accepted according to the Metropolisation rule */
-static int at_driver_langevin_move__accept(
+static at_bool_t at_driver_langevin_move__new_beta_out_of_range(
+    const langevin_move_proposal_t *proposal,
+    at_driver_langevin_t *langevin)
+{
+  at_distr_domain_t *domain = langevin->distr->domain;
+
+  return (proposal->beta_new >= domain->bmax
+       || proposal->beta_new < domain->bmin);
+}
+
+
+/* return if the new temperature proposed by the Langevin equation
+ * should be accepted according to the Metropolisation rule */
+static at_bool_t at_driver_langevin_move__accept(
     const langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin)
 {
@@ -200,17 +215,26 @@ static int at_driver_langevin_move__accept(
   double lng_ratio;
   double ln_fac;
   at_distr_domain_t *domain = langevin->distr->domain;
+  at_bool_t accepted = AT__FALSE;
 
-  if (proposal->beta_new > domain->bmax
-   || proposal->beta_new < domain->bmin) {
-    return 0;
-  }
+  //zcom_util__exit_if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin),
+  //    "out of boundary moves should have been filtered out\n");
+
+  // has been filtered out
+  //if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin)) {
+  //  return AT__FALSE;
+  //}
 
   ib_new = at_distr__beta_to_index(langevin->distr, proposal->beta_new, 0);
+
+  zcom_util__exit_if((ib_new < 0 || ib_new >= domain->n),
+      "bad ib_new %d\n", ib_new);
+
   invwf_new = at_distr__calc_inv_weight(langevin->distr,
       proposal->beta_new, &neg_dlnwf_dbeta_new, NULL, NULL);
 
   // ln [ p(kT_new) / p(kT_old) ]
+  // This involves the energy-beta integral
   lnp_ratio = at_driver_langevin_move__calc_lnp_ratio(
       langevin,
       proposal->beta_old, proposal->beta_new,
@@ -239,20 +263,41 @@ static int at_driver_langevin_move__accept(
   // min{1, exp(ln_fac)}
   if (ln_fac > 0) {
 
-    return 1;
+    accepted = AT__TRUE;
 
   } else {
 
     double r = zcom_mtrng__rand01(langevin->rng->mtrng);
 
     if (r < exp(ln_fac)) {
-      return 1;
-    } else {
-      return 0;
+      accepted = AT__TRUE;
     }
 
   }
 
+  /*
+  // the following code is used to debug the phenomenon of
+  // missing visits at the two boundary bins
+  if (proposal->ib_new == 0 || proposal->ib_new == domain->n-1) {
+    if (!accepted) {
+
+      double et_at_ib_new = at_driver_langevin_move__calc_et(
+            langevin,
+            proposal->ib_new,
+            proposal->current_energy,
+            at_driver_langevin_move_corrected__use_cheap_av_energy_for_backward_move);
+
+      fprintf(stderr,
+          "Info: rejected a trip to boundary %d => %d ~ %d, ln_fac %g lnp %g lng %g, "
+          "et@ib_new %g, current_energy %g\n",
+          proposal->ib_old, proposal->ib_new_prop, proposal->ib_new,
+          ln_fac, lnp_ratio, lng_ratio,
+          et_at_ib_new, proposal->current_energy);
+    }
+  }
+  */
+
+  return accepted;
 }
 
 
@@ -271,8 +316,8 @@ double at_driver_langevin__move_corrected(
   langevin_move_proposal_t proposal[1];
 
   double beta = beta_old;
-  int stride_moderated;
-  int accepted;
+  at_bool_t stride_moderated;
+  at_bool_t accepted;
 
   if (!at_driver_langevin_move__check_min_visits(langevin, mb, beta_old)) {
     return beta_old;
@@ -290,12 +335,20 @@ double at_driver_langevin__move_corrected(
       at_driver_langevin_move_corrected__apply_dkt_max,
       bin_av_energy);
 
-  stride_moderated = at_driver_langevin_move__moderate_stride(
-      proposal, langevin);
+  if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin)) {
+    accepted = AT__FALSE;
+  } else {
+    stride_moderated = at_driver_langevin_move__moderate_stride(
+        proposal, langevin);
 
-  // compute the acceptance ratio
-  accepted = at_driver_langevin_move__accept(
-      proposal, langevin);
+    // compute the acceptance ratio
+    accepted = at_driver_langevin_move__accept(
+        proposal, langevin);
+
+    //if (proposal->ib_new_prop == 0 || proposal->ib_new_prop == langevin->distr->domain->n-1) {
+    //  fprintf(stderr, "Info: a proposed boundary trip %d => %d ~ %d, accepted %d\n", proposal->ib_old, proposal->ib_new_prop, proposal->ib_new, accepted);
+    //}
+  }
 
   if (accepted) {
     beta = proposal->beta_new;

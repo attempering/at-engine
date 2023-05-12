@@ -58,9 +58,9 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
     goto ERR;
   }
 
-  /* shk_win_multiplier: array used of modulation shrinking factors */
-  if ((shk->win_multiplier = (double *) calloc(shk->n, sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: shk->win_multiplier, type: double\n");
+  /* shk_win_mul: array used of modulation shrinking factors */
+  if ((shk->win_mul = (double *) calloc(shk->n, sizeof(double))) == NULL) {
+    fprintf(stderr, "no memory! var: shk->win_mul, type: double\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -69,8 +69,8 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
     double beta_midpoint = 0.5*(domain->barr[i] + domain->barr[i+1]);
     double invwf = at_distr_weights__calc_inv_weight(w, beta_midpoint, NULL, NULL, NULL);
     int window_width = mb->win->jt_bin[i] - mb->win->js_bin[i];
-    shk->win_multiplier[i] = invwf * mb->win->max_win_bins / window_width;
-    //printf("shk ib %d, mul %g\n", i, shk->win_multiplier[i]);
+    shk->win_mul[i] = invwf * mb->win->max_win_bins / window_width;
+    //printf("shk ib %d, mul %g\n", i, shk->win_mul[i]);
   }
   //getchar();
 
@@ -123,8 +123,8 @@ ERR:
 
 
 void at_mb_shk__finish(at_mb_shk_t *shk) {
-  if (shk->win_multiplier != NULL) {
-    free(shk->win_multiplier);
+  if (shk->win_mul != NULL) {
+    free(shk->win_mul);
   }
 }
 
@@ -143,8 +143,8 @@ void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest)
   /* shk_max: initial and maximal shrink (adjusted) */
   fprintf(fp, "mb->shk->max: double, %g\n", shk->max);
 
-  /* shk_win_multiplier: array used of modulation shrinking factors */
-  at_utils_manifest__print_double_arr(manifest, shk->win_multiplier, shk->n, "mb->shk->win_multiplier");
+  /* shk_win_mul: array used of modulation shrinking factors */
+  at_utils_manifest__print_double_arr(manifest, shk->win_mul, shk->n, "mb->shk->win_mul");
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   fprintf(fp, "mb->shk->mode: int, %4d\n", shk->mode);
@@ -227,12 +227,12 @@ double at_mb_shk__calc_inv_gamma(at_mb_shk_t *shk, double total_visits, int ib)
   //fprintf(stderr, "shk_val %d %g\n", ib, shk_val);
 
   if (shk->window_adjusted) { /* multiply the gauge */
-    zcom_util__exit_if (shk->win_multiplier == NULL, "window multiplier is null\n");
+    zcom_util__exit_if (shk->win_mul == NULL, "window multiplier is null\n");
     zcom_util__exit_if (ib < 0 || ib >= shk->n, "index %d out of range\n", ib);
 
-    shk_val *= shk->win_multiplier[ib];
+    shk_val *= shk->win_mul[ib];
 
-    //fprintf(stderr, "shk_mul %d %g\n", ib, shk->win_multiplier[ib]); getchar();
+    //fprintf(stderr, "shk_mul %d %g\n", ib, shk->win_mul[ib]); getchar();
 
     if (shk_val > shk->max) {
       shk_val = shk->max;

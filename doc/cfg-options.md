@@ -221,25 +221,25 @@ The options are given below:
   * 0: disabled
   * 1: enabled
 
-  Variable: `at->bias->enabled`.
+  Variable: `at->distr->bias->enabled`.
 
   Default: 0.
 
 * `boost_Tref`: reference temperature
 
-  Variable: `at->bias->TH_Tref`.
+  Variable: `at->distr->bias->TH_Tref`.
 
   Default: 300.0 (unit is K).
 
 * `kappa0`: kappa0, magnitude of the original Hamiltonian
 
-  Variable: `at->bias->kappa0`.
+  Variable: `at->distr->bias->kappa0`.
 
   Default: 1.0.
 
 * `epsilon0`: epsilon0, magnitude of the bias potential
 
-  Variable: `at->bias->epsilon0`.
+  Variable: `at->distr->bias->epsilon0`.
 
   Default 0.0;
 
@@ -428,9 +428,9 @@ Thus, the quantity `shk` is gradually reduced in simulation.
 
 The basic formula for `shk` is given by
 
-  `shk = shk_base * shk_win_multiplier`.
+  `shk = shk_base * shk_win_mul`.
 
-The window multiplier `shk_win_multiplier` is inversely
+The window multiplier `shk_win_mul` is inversely
 proportional to the window width (or the number of bins
 contained within) and the ensemble weight (which is the
 probability density of the overall beta distribution).

@@ -112,15 +112,15 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
 
   /* add a half energy bin width in output */
   fprintf(fp, "eh->add_half_ebin (ehist_addahalf): %s\n",
-      (eh->add_half_ebin ? "on" : "off"));
+      (eh->add_half_ebin ? "true" : "false"));
 
   /* keep zero edge at sides */
   fprintf(fp, "eh->keep_margins (ehist_keepedge): %s\n",
-      (eh->keep_margins ? "on" : "off"));
+      (eh->keep_margins ? "true" : "false"));
 
   /* do not output zeroes */
   fprintf(fp, "eh->no_zeros (ehist_nozeroes): %s\n",
-      (eh->no_zeros ? "on" : "off"));
+      (eh->no_zeros ? "true" : "false"));
 }
 
 #endif

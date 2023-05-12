@@ -30,6 +30,7 @@ typedef struct at_distr_weights_t_ {
   int       mode;         /* mode 0: disable 1: Gaussian 2:exponential */
   double    ens_exp;      /* ensemble exponent of beta */
   double    beta0;        /* beta0 in Gaussian distribution */
+  double    sigma;        /* Gaussian width */
   double    inv_sigma2;   /* 1/sigma^2 in Gaussian distribution */
   double    c;            /* c in exponential distribution */
   double   *ens_w;        /* array of ensemble weights at bin boundaries */

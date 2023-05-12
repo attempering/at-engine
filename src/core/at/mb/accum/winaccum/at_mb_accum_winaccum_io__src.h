@@ -34,7 +34,7 @@ void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
 
   /* use adaptive averaging */
   fprintf(fp, "mb->accum->winaccum->enabled (mbest_damp): %s\n",
-      (winaccum->enabled ? "on" : "off"));
+      (winaccum->enabled ? "true" : "false"));
 
 }
 

@@ -69,7 +69,7 @@ void at_distr__manifest(const at_distr_t *distr, at_utils_manifest_t *manifest)
 
 
 
-int at_distr__beta_to_index(const at_distr_t *distr, double beta, int check)
+int at_distr__beta_to_index(const at_distr_t *distr, double beta, at_bool_t check)
 {
   return at_distr_domain__beta_to_index(distr->domain, beta, check);
 }

@@ -147,12 +147,17 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
   int ib;
   at_mb_accum_t *accum = intgr->mb->accum;
   at_mb_sm_t *sm;
+  double val;
 
   if (accum->winaccum->enabled) {
 
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = at_mb_accum_winaccum_item__get_sums(accum->winaccum->items + ib, ib);
-      intgr->vals[ib] = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+      val = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+      intgr->vals[ib] = val;
+      //if (val == 0.0) {
+      //  fprintf(stderr, "Warning: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
+      //}
     }
 
   } else {
@@ -161,10 +166,33 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
     // for better looping efficiency
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = accum->sums + ib;
-      intgr->vals[ib] = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+      val = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+      intgr->vals[ib] = val;
+      //if (val == 0.0) {
+      //  fprintf(stderr, "Warning: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
+      //}
     }
 
   }
+
+  // simple zero filling, assuming stride moderation
+  // so only the first or the last bin may yield the zero value
+  if (ib_begin < ib_end) {
+    if (intgr->vals[ib_begin] == 0.0) {
+      intgr->vals[ib_begin] = intgr->vals[ib_begin+1];
+    } else if (intgr->vals[ib_end] == 0.0) {
+      intgr->vals[ib_end] = intgr->vals[ib_end-1];
+    }
+  }
+
+  /*
+  // testing if zero filling
+  for (ib = ib_begin; ib <= ib_end; ib++) {
+    if (intgr->vals[ib] == 0.0) {
+      fprintf(stderr, "Warning: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, intgr->vals[ib]);
+    }
+  }
+  */
 
   return intgr->vals;
 }

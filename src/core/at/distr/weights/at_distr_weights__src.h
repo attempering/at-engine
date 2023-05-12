@@ -57,30 +57,25 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
 
   if(w->mode == 1)
   {
-    /* beta0 */
     if (0 != zcom_cfg__get(cfg, &w->beta0, "ensemble_beta0", "%lf")) {
       if (verbose) fprintf(stderr, "Info: assuming default distr->weights->beta0 = 0.5 * (w->bmax + w->bmin), key: ensemble_beta0\n");
     }
 
-    if (w->beta0 >= domain->bmax || w->beta0 <= domain->bmin)
-      fprintf(stderr, "WARNING: beta0 is not in the temperature range!\n");
-
-    /* sigma */
-    double sigma = 1.0;
-    if (0 != zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf")) {
+    w->sigma = 1.0;
+    if (0 != zcom_cfg__get(cfg, &w->sigma, "ensemble_sigma", "%lf")) {
       if (verbose) fprintf(stderr, "Info: assuming default distr->weights->sigma = 1.0, key: ensemble_sigma\n");
     }
 
-    if (sigma == 0)
-    {
-      fprintf(stderr, "ERROR: sigma cannot be zero!\n");
+    if (w->sigma <= 0) {
+      fprintf(stderr, "ERROR: sigma %lf is not positive!\n", w->sigma);
       goto ERR;
     }
-    w->inv_sigma2 = 1.0/sigma/sigma;
+
+    w->inv_sigma2 = 1.0/w->sigma/w->sigma;
+
   }
   else if(w->mode == 2)
   {
-    /* c */
     w->c = 0.0;
     if (0 != zcom_cfg__get(cfg, &w->c, "ensemble_c", "%lf")) {
       if (verbose) fprintf(stderr, "Info: assuming default distr->weights->c = 0.0, key: ensemble_c\n");
@@ -88,18 +83,18 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   }
   else if(w->mode != 0)
   {
-    fprintf(stderr, "invalid multicanonical ensemble parameter\n");
+    fprintf(stderr, "invalid ensemble mode\n");
     goto ERR;
   }
 
   /* ens_w: array of ensemble weights at bin boundaries */
-  if ((w->ens_w = (double *) calloc((w->n + 2), sizeof(double))) == NULL) {
+  if ((w->ens_w = (double *) calloc((w->n + 1), sizeof(double))) == NULL) {
     fprintf(stderr, "no memory! var: w->ens_w, type: double\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
-  for (i = 0; i < w->n+1; i++) {
+  for (i = 0; i <= w->n; i++) {
     double invw = at_distr_weights__calc_inv_weight(w, domain->barr[i], NULL, NULL, NULL);
     w->ens_w[i] = 1.0/invw;
   }
@@ -122,11 +117,9 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
   fprintf(fp, "distr->weights->mode: int, %d\n", w->mode);
   if(w->mode == 1)
   {
-    /* beta0 */
     fprintf(fp, "distr->weights->beta0: double, %g\n", w->beta0);
 
-    /* inv_sigma2 */
-    fprintf(fp, "distr->weights->inv_sigma2: double, %g\n", w->inv_sigma2);
+    fprintf(fp, "distr->weights->sigma: double, %g\n", w->sigma);
   }
   else if(w->mode == 2)
   {

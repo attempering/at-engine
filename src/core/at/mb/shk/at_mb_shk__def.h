@@ -47,9 +47,9 @@
 
   The basic formula for `shk` is given by
 
-  shk = shk_base * shk_win_multiplier.
+  shk = shk_base * shk_win_mul.
   
-  The window multiplier (shk_win_multiplier) is inversely
+  The window multiplier (shk_win_mul) is inversely
   proportional to the window width (or the number of bins
   contained within) and the ensemble weight (which is the
   probability density of the overall beta distribution).
@@ -102,7 +102,7 @@ typedef struct at_mb_shk_t_ {
 
   double    max;      /* initial and maximal shrink (adjusted) */
 
-  double   *win_multiplier;
+  double   *win_mul;
                       /* multipliers used to regularize the shrinking rate
                        * for windows of different sizes */
 

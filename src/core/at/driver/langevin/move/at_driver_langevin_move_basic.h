@@ -39,6 +39,9 @@ typedef struct langevin_move_proposal_t_ {
   double dkt;
   double kt_new;
   double beta_new;
+  int ib_old;
+  int ib_new_prop;
+  int ib_new;
 } langevin_move_proposal_t;
 
 

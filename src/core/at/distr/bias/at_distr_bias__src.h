@@ -28,7 +28,7 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
   bias->enabled = 0;
   if (zcom_cfg__get(cfg, &bias->enabled, "boost_mode", "%d") != 0)
   {
-    fprintf(stderr, "Info: assuming default bias->th_mode = 0, key: boost_mode\n");
+    fprintf(stderr, "Info: assuming default distr->bias->th_mode = 0, key: boost_mode\n");
   }
 
   if (bias->enabled) {
@@ -37,19 +37,19 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
     bias->TH_Tref = 300.0;
     if (zcom_cfg__get(cfg, &bias->TH_Tref, "boost_Tref", "%lf") != 0)
     {
-      fprintf(stderr, "Info: assuming default bias->th_Tref = 300.0, key: boost_Tref\n");
+      fprintf(stderr, "Info: assuming default distr->bias->th_Tref = 300.0, key: boost_Tref\n");
     }
 
     /* kappa0 */
     bias->kappa0 = 1.0;
     if (zcom_cfg__get(cfg, &bias->kappa0, "kappa0", "%lf") != 0) {
-      fprintf(stderr, "Info: assuming default bias->kappa0 = 1.0, key: kappa0\n");
+      fprintf(stderr, "Info: assuming default distr->bias->kappa0 = 1.0, key: kappa0\n");
     }
 
     /* epsilon0 */
     bias->epsilon0 = 0.0;
     if (zcom_cfg__get(cfg, &bias->epsilon0, "epsilon0", "%lf") != 0) {
-      fprintf(stderr, "Info: assuming default bias->epsilon0 = 0.0, key: epsilon0\n");
+      fprintf(stderr, "Info: assuming default distr->bias->epsilon0 = 0.0, key: epsilon0\n");
     }
 
   }
@@ -68,12 +68,12 @@ void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *m
 {
   FILE *fp = manifest->fp;
 
-  fprintf(fp, "bias->enabled: at_bool_t, %s\n", (bias->enabled ? "true" : "false"));
+  fprintf(fp, "distr->bias->enabled: at_bool_t, %s\n", (bias->enabled ? "true" : "false"));
 
   if (bias->enabled) {
-    fprintf(fp, "bias->th_Tref: double, %g\n", bias->TH_Tref);
-    fprintf(fp, "bias->kappa0: double, %g\n", bias->kappa0);
-    fprintf(fp, "bias->epsilon0: double, %g\n", bias->epsilon0);
+    fprintf(fp, "distr->bias->th_Tref: double, %g\n", bias->TH_Tref);
+    fprintf(fp, "distr->bias->kappa0: double, %g\n", bias->kappa0);
+    fprintf(fp, "distr->bias->epsilon0: double, %g\n", bias->epsilon0);
   }
 }
 

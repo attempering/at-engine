@@ -60,14 +60,15 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 
     ip = (i < n) ? i : (i-1); /* for quantities with no [n] */
 
-    fprintf(fp, " %22.10f %s %+10.6f %22.10e %22.10e %22.10e %22.10e",
-      mb->iie->et->items[ip].value, // 5
-      at_mb_iie_gridvals_item__quality_bits_to_string(&mb->iie->gridvals->items[i]), // 6 
-      0.0, // mb->iie->imbal[ip], // 7
-      mb->accum->sums[ip].s, // 8
-      mb->visits[ip], // 9
-      mb->shk->win_multiplier[ip], // 10
-      mb->accum->win_total[ip]);
+    fprintf(fp, " %22.10f %s %+10.6f %22.10e %22.10e %22.10e %22.10e %g",
+        mb->iie->et->items[ip].value, // 5
+        at_mb_iie_gridvals_item__quality_bits_to_string(&mb->iie->gridvals->items[i]), // 6 
+        0.0, // mb->iie->imbal[ip], // 7
+        mb->accum->sums[ip].s, // 8
+        mb->visits[ip], // 9
+        mb->shk->win_mul[ip], // 10
+        mb->accum->win_total[ip], // 11
+        mb->distr->weights->ens_w[ip]);
 
     fprintf(fp, "\n");
   }

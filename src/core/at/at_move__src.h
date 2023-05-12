@@ -50,19 +50,6 @@ at_bool_t at__do_tempering_on_step(at_t *at, at_llong_t step, at_bool_t value_on
 
 
 
-/* write various output files */
-static void at__output2(at_t *at,
-          const at_params_step_t *step_params,
-          int ib, double invw, double t1, double t2,
-          double av_energy)
-{
-  at__write_trace(at, step_params, ib, invw, t1, t2, av_energy);
-
-  at__output(at, step_params);
-}
-
-
-
 int at__move(at_t *at, const at_params_step_t *step_params)
 {
   double invwf = 1.0;
@@ -98,7 +85,9 @@ int at__move(at_t *at, const at_params_step_t *step_params)
     at_mb__refresh_et(at->mb, 1);
   }
 
-  at__output2(at, step_params, ib, invwf, temp_before, temp_after, av_energy);
+  at__write_trace(at, step_params, ib, invwf, temp_before, temp_after, av_energy);
+
+  at__output(at, step_params);
 
   return 0;
 }
@@ -108,13 +97,15 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 int at__step(at_t *at, double energy, at_llong_t step, at_params_step_t *step_params)
 {
   // default parameters
-  at_params_step_t stock_step_params[1] = {{
-    0,
-    AT__FALSE, // is_first_step
-    AT__FALSE, // is_last_step
-    AT__FALSE, // do_trace
-    AT__FALSE  // flush_output
-  }};
+  at_params_step_t stock_step_params[1] = {
+    {
+      0,
+      AT__FALSE, // is_first_step
+      AT__FALSE, // is_last_step
+      AT__FALSE, // do_trace
+      AT__FALSE  // flush_output
+    }
+  };
 
   if (step_params == NULL) {
     step_params = stock_step_params;

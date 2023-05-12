@@ -71,11 +71,30 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
   // window contains a single bin only,
   // or the caller explicitly requests the single-bin version
   if (iie->use_single_bin || jt == js + 1) {
-    double et;
-    //fprintf(stderr, "using single-bin estimator %d, js %d, jt %d; %s:%d\n", iie->use_single_bin, js, jt, __FILE__, __LINE__);
-    et = at_mb_iie_et__calc_et_single_bin(iie, ib);
-    lr->success = 1;
-    lr->quality = 1;
+    double et = at_mb_iie_et__calc_et_single_bin(iie, ib);
+
+#if 0
+    fprintf(stderr, "using single-bin estimator %d, ib %d, js %d, jt %d; et %g; %s:%d\n",
+        iie->use_single_bin, ib, js, jt, et, __FILE__, __LINE__);
+    if (iie->accum->winaccum->enabled) {
+      at_mb_accum_winaccum_item_t *wi;
+      at_mb_sm_t *sm0 = at_mb_accum__get_proper_sums0_and_winaccum_item(iie->accum, ib, &wi);
+      int j;
+      for (j = wi->js; j < wi->jt; j++) {
+        fprintf(stderr, "  %d %g %g\n", j, sm0[j].s, at_mb_sm__get_mean(sm0+j, 1e-6));
+      }
+    }
+    if (et == 0.0) exit(1);
+#endif
+
+    if (et != 0.0) {
+      lr->success = 1;
+      lr->quality = 1;
+    } else {
+      lr->success = 0;
+      lr->quality = 0;
+    }
+
     return et;
   }
 

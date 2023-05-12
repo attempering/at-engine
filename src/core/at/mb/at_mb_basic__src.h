@@ -201,19 +201,19 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 
   /* compute heat capacity */
   fprintf(fp, "mb->need_cv (mbest_needcv): %s\n",
-      (mb->need_cv ? "on" : "off"));
+      (mb->need_cv ? "true" : "false"));
 
   /* use symmetrical window */
   fprintf(fp, "mb->use_sym_wins (mbest_sym_mbin): %s\n",
-      (mb->use_sym_wins ? "on" : "off"));
+      (mb->use_sym_wins ? "true" : "false"));
 
   /* use single bin estimator */
   fprintf(fp, "mb->use_single_bin (mbest_single_bin): %s\n",
-      (mb->use_single_bin ? "on" : "off"));
+      (mb->use_single_bin ? "true" : "false"));
 
   /* being verbose */
   fprintf(fp, "mb->verbose (mbest_verbose): %s\n",
-      (mb->verbose ? "on" : "off"));
+      (mb->verbose ? "true" : "false"));
 
   at_mb_win__manifest(mb->win, manifest);
 

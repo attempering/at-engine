@@ -33,7 +33,7 @@ void at_distr__finish(at_distr_t *distr);
 
 void at_distr__manifest(const at_distr_t *distr, at_utils_manifest_t *manifest);
 
-int at_distr__beta_to_index(const at_distr_t *distr, double beta, int check);
+int at_distr__beta_to_index(const at_distr_t *distr, double beta, at_bool_t check);
 
 double at_distr__calc_inv_weight(const at_distr_t *distr, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
