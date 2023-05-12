@@ -56,8 +56,11 @@ ZCOM__INLINE void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed)
   }
 
   mtrng->arr[0] = seed & 0xffffffffUL;
-  for (k = 1; k < ZCOM_RNG__MT_N; k++) /* the final mask is for 64-bit machines */
+
+  for (k = 1; k < ZCOM_RNG__MT_N; k++) { /* the final mask is for 64-bit machines */
     mtrng->arr[k] = (1812433253UL * (mtrng->arr[k-1] ^ (mtrng->arr[k-1]>>30)) + k) & 0xffffffffUL;
+  }
+
   mtrng->index = ZCOM_RNG__MT_N; /* request for update */
 }
 

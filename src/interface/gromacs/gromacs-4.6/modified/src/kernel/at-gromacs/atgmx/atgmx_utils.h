@@ -45,4 +45,6 @@ int atgmx__move(atgmx_t *atgmx,
 void atgmx__scale_force(atgmx_t *atgmx,
     rvec f[], t_mdatoms *mdatoms);
 
+double atgmx__get_beta(const atgmx_t *atgmx);
+
 #endif

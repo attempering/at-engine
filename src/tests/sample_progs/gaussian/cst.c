@@ -19,14 +19,7 @@
 #define GAUSSIAN__USE_MDSYS_ALIASES__
 #include "veritools/models/gaussian-energy/gaussian.h"
 
-// #define ENABLE_MINICST 1
-
 #include "at-engine__src.h"
-
-#ifdef ENABLE_MINICST
-#define ZCOM_RNG__ 1
-#include "veritools/algorithms/minicst/minicst.h"
-#endif
 
 typedef long long at_llong_t;
 double boltz = 1.0;
@@ -45,14 +38,10 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
   zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
-  // fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
-
   for (step = 1; step <= nsteps; step++)
   {
 
     mdsys__step(mdsys, at->beta);
-
-    // fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
 
     if (at__do_tempering_on_step(at, step, AT__TRUE))
     {
@@ -66,9 +55,6 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
       at__move(at, step_params);
 
-      // fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
-      // getchar();
-
       // at_mb__write(at->mb, at->langevin);
       // exit(1);
     }
@@ -78,37 +64,6 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
   fprintf(stderr, "Acceptance ratio: %g%%\n", acc*100.0);
 }
-
-#ifdef ENABLE_MINICST
-void run_minicst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
-{
-  at_llong_t step = 0;
-  minicst_t *minicst = minicst__new(at->mb->distr->domain->bmin, at->mb->distr->domain->bmax, at->mb->distr->domain->n, at->driver->langevin->dt, at->driver->langevin->dTmax, langevin_seed);
-
-  // fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
-
-  for (step = 1; step <= nsteps; step++)
-  {
-    at_bool_t btr = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
-
-    mdsys__step(mdsys, at->beta);
-
-    // fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
-
-    if (btr)
-    {
-      at->energy = mdsys->epot;
-      minicst__add(minicst, at->beta, mdsys->epot);
-      minicst__move(minicst, &at->beta, mdsys->epot);
-      // fprintf(stderr, "%lld %g %g | %u %d | %g %g\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index, mdsys->x, mdsys->v);
-      // getchar();
-    }
-  }
-
-  minicst__save(minicst, "cst.dat");
-  minicst__delete(minicst);
-}
-#endif
 
 int main(int argc, char **argv)
 {
@@ -121,7 +76,6 @@ int main(int argc, char **argv)
     fprintf(stderr, "reading configuration file %s\n", fn_cfg);
   }
 
-  // remove("TRACE0");
   remove("atdata/trace.dat");
 
   at_t *at = at__open(fn_cfg, NULL, 0);
@@ -129,18 +83,7 @@ int main(int argc, char **argv)
 
   mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->bmin, at->distr->domain->bmax, boltz);
 
-  if (use_minicst)
-  { // simplified CST for reference
-#ifdef ENABLE_MINICST
-    run_minicst_md(at, mdsys, nsteps);
-#else
-    zcom_util__fatal("Please define ENABLE_MINICST and recompile the program\n");
-#endif
-  }
-  else
-  {
-    run_cst_md(at, mdsys, nsteps);
-  }
+  run_cst_md(at, mdsys, nsteps);
 
   fprintf(stderr, "CST simulation finished successfully.\n");
 

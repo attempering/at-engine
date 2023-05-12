@@ -52,5 +52,10 @@ void at__set_energy(at_t *at, double energy)
 }
 
 
+double at__get_beta(const at_t *at)
+{
+  return at->beta;
+}
+
 
 #endif

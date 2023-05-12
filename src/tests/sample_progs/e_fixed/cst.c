@@ -16,15 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-//#define ENABLE_MINICST 1
-
 #include "at-engine__src.h"
 
-
-#ifdef ENABLE_MINICST
-#define ZCOM_RNG__ 1
-#include "veritools/algorithms/minicst/minicst.h"
-#endif
 
 
 typedef long long at_llong_t;
@@ -46,11 +39,7 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
 
   zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
-  //fprintf(stderr, "0 %g %g | %u %d | %g %g\n", at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index, mdsys->x, mdsys->v);
-
   for (step = 1; step <= nsteps; step++) {
-
-    //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index);
 
     if (at__do_tempering_on_step(at, step, AT__TRUE))
     {
@@ -63,42 +52,11 @@ void run_cst_md(at_t* at, at_llong_t nsteps)
       
       at__move(at, step_params);
 
-      //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->energy, at->mtrng->arr[0], at->mtrng->index);
-      //getchar();
     }
 
   }
 
 }
-
-
-#ifdef ENABLE_MINICST
-void run_minicst_md(at_t* at, at_llong_t nsteps)
-{
-  at_llong_t step = 0;
-  minicst_t* minicst = minicst__new(at->mb->distr->domain->bmin, at->mb->distr->domain->bmax, at->mb->distr->domain->n, at->driver->langevin->dt, at->driver->langevin->dTmax, langevin_seed);
-
-  //fprintf(stderr, "0 %g %g | %u %d\n", at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
-
-  for (step = 1; step <= nsteps; step++) {
-    at_bool_t btr = (at->driver->nsttemp > 0 && (step % at->driver->nsttemp == 0)) || (at->driver->nsttemp <= 0);
-
-    //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
-
-    if (btr) {
-      at->energy = epot;
-      minicst__add(minicst, at->beta, epot);
-      minicst__move(minicst, &at->beta, epot);
-      //fprintf(stderr, "%lld %g %g | %u %d\n", step, at->beta, at->Ea, minicst->langevin->mtrng->arr[0], minicst->langevin->mtrng->index);
-      //getchar();
-    }
-  }
-
-  minicst__save(minicst, "cst.dat");
-  minicst__delete(minicst);
-}
-#endif
-
 
 
 int main(int argc, char** argv)
@@ -110,23 +68,12 @@ int main(int argc, char** argv)
     fprintf(stderr, "reading configuration file %s\n", fn_cfg);
   }
 
-  //remove("TRACE0");
   remove("atdata/trace.dat");
 
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
   at__manifest(at);
 
-  if (use_minicst) { // simplified CST for reference
-
-#ifdef ENABLE_MINICST
-    run_minicst_md(at, nsteps);
-#else
-    zcom_util__fatal("Please define ENABLE_MINICST and recompile the program\n");
-#endif
-
-  } else {
-    run_cst_md(at, nsteps);
-  }
+  run_cst_md(at, nsteps);
 
   fprintf(stderr, "CST simulation finished successfully.\n");
 

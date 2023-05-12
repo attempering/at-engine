@@ -18,6 +18,10 @@
 
 #include "at-gromacs/at-gromacs__src.h"
 
+// running a simple Gaussian energy model
+double sigma = 100.0;
+
+at_llong_t nsteps = 1000000;
 
 
 void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
@@ -54,17 +58,24 @@ void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
 
 int work(int argc, char **argv)
 {
-  at_llong_t step = 0, nsteps = 10;
+  at_llong_t step = 0;
   atgmx_t atgmx[1];
   t_commrec cr[1];
   t_inputrec ir[1];
   gmx_enerdata_t enerd[1];
   at_bool_t from_cpt = AT__FALSE;
+  zcom_mtrng_t rng[1];
 
   // initialize GROMACS variables
   init_gromacs_vars(cr, ir, enerd);
 
   atgmx__init(atgmx, "at.cfg", ir, cr, from_cpt, AT__INIT_VERBOSE);
+
+  zcom_mtrng__init_from_seed(rng, 12345);
+
+  if (MASTER(cr)) {
+    remove("atdata/trace.dat");
+  }
 
   for (step = 1; step <= nsteps; step++) {
     at_bool_t is_first_step = (step == 1);
@@ -72,16 +83,24 @@ int work(int argc, char **argv)
     at_bool_t has_global_stats = AT__TRUE;
     at_bool_t is_xtc_step = AT__TRUE;
     at_bool_t is_ns_step = AT__TRUE;
+    double epot = 0;
 
-    enerd->term[F_EPOT] = -10000.0;
+    if (MASTER(cr)) {
+      epot = -sigma * sigma * atgmx__get_beta(atgmx)
+          + sigma * zcom_mtrng__randgaus(rng);
+    } else {
+      epot = 0;
+    }
+
+    enerd->term[F_EPOT] = epot;
 
     atgmx__move(atgmx, enerd, step,
         is_first_step, is_last_step, has_global_stats,
         is_xtc_step, is_ns_step,
         cr);
 
-    if (MASTER(cr)) {
-      printf("step %ld: beta %g\n", (long) step, atgmx->at->beta);
+    if (MASTER(cr) && step % 1000 == 0) {
+      printf("step %ld: beta %g epot %g\n", (long) step, atgmx__get_beta(atgmx), epot);
     }
   }
 

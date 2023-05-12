@@ -213,4 +213,10 @@ void atgmx__scale_force(atgmx_t *atgmx,
 }
 
 
+double atgmx__get_beta(const atgmx_t *atgmx)
+{
+  return at__get_beta(atgmx->at);
+}
+
+
 #endif

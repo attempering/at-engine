@@ -28,6 +28,8 @@ double at__temp_to_beta(const at_t *at, double temp);
 
 void at__set_energy(at_t *at, double energy);
 
+double at__get_beta(const at_t *at);
+
 
 #endif
 
