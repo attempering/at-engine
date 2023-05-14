@@ -110,8 +110,9 @@ void at_mb_accum__add(at_mb_accum_t *accum, int ib, double invwf, double e, int 
 {
   // for the plain accumulators
   at_mb_sm_t *sm = at_mb_accum__get_sums(accum, ib);
-  //printf("%g %g %g %g\n", sm->s, sm->se, sm->se2, sm->se3);
   at_mb_sm__add(sm, invwf, e, do_2nd);
+
+  //fprintf(stderr, "ib %d, e %g, sm %g %g %g %g, %s:%d\n", ib, e, sm->s, sm->se, sm->se2, sm->se3, __FILE__, __LINE__);
 
   // for the window accumulators
   if (accum->winaccum->enabled) { /* add to damping data */

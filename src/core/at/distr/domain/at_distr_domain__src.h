@@ -182,7 +182,7 @@ int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta,
   int j;
 
   if (beta >= domain->beta_min) {
-    j = (int)((beta - domain->beta_min)/domain->beta_min);
+    j = (int)((beta - domain->beta_min)/domain->beta_del);
   } else {
     j = -1;
   }

@@ -27,6 +27,7 @@ double calc_weight_ref(double expo, double beta0, double sigma, double beta_max,
   double w = exp(-0.5*dx*dx);
   double b_rel = beta/beta_max;
   double f = pow(b_rel, -expo);
+  //fprintf(stderr, "beta %g, beta0 %g, sigma %g, w %g, f %g\n", beta, beta0, sigma, w, f);
 
   return f * w;
 }
@@ -75,14 +76,17 @@ void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
 int main(int argc, char **argv)
 {
   at_distr_t distr[1];
+  const char *cfg_fn = "at.cfg";
   zcom_cfg_t *cfg = NULL;
   at_utils_manifest_t manifest[1];
   double boltz = 1.0;
   at_bool_t verbose = AT__TRUE;
 
   if (argc > 1) {
-    cfg = zcom_cfg__open(argv[1]);
+    cfg_fn = argv[1];
   }
+
+  cfg = zcom_cfg__open(cfg_fn);
 
   at_utils_manifest__cfg_init(manifest, cfg, NULL, NULL, verbose);
   at_utils_manifest__open_file(manifest);

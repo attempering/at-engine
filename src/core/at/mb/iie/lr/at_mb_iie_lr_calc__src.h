@@ -89,6 +89,8 @@ static void at_mb_iie_lr__collect_raw_array(at_mb_iie_lr_t *lr, at_mb_iie_zerofi
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
     at_mb_sm_t *sm = lr->sm0 + j;
 
+    //dsffprintf(stderr, "j %d, sm->s %g, %s:%d\n", j, sm->s, __FILE__, __LINE__);
+
     /* skip an empty bin */
     if (sm->s < AT_MB_ACCUM_MIN_SIZE) {
 
@@ -134,6 +136,7 @@ void at_mb_iie_lr__collect_moments(at_mb_iie_lr_t *lr)
 
   at_mb_iie_zerofiller__fill_missing(zf, lr->js, lr->jt - 1);
 
+  // filling lr->s0[], lr->s1[], lr->t1[], lr->tb
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
 
     if (j < lr->jb) {

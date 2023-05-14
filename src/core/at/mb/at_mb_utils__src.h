@@ -79,7 +79,7 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 }
 
 
-int at_mb__beta_to_index(at_mb_t *mb, double beta, int check)
+int at_mb__beta_to_index(at_mb_t *mb, double beta, at_bool_t check)
 {
   return at_distr__beta_to_index(mb->distr, beta, check);
 }
@@ -90,11 +90,11 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
 {
   double invwf, f = 1.0, neg_df_dbeta = 0.0;
 
-  int j = at_mb__beta_to_index(mb, beta, 1);
+  int ib = at_mb__beta_to_index(mb, beta, AT__TRUE);
 
-  *pib = j;
+  *pib = ib;
 
-  mb->visits[j] += 1.0;
+  mb->visits[ib] += 1.0;
   mb->total_visits += 1.0;
 
   /* calculate the inverse ensemble weight
@@ -111,7 +111,7 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
     *pinvwf = invwf;
   }
 
-  at_mb_accum__add(mb->accum, j, invwf, e, mb->need_cv, mb->shk, mb->total_visits);
+  at_mb_accum__add(mb->accum, ib, invwf, e, mb->need_cv, mb->shk, mb->total_visits);
 
 }
 

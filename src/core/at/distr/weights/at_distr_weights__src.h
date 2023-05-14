@@ -51,7 +51,7 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   }
 
   /* default values */
-  w->beta0 = 0.5 * (w->beta_max + w->beta_min);
+  w->beta0 = 0.5 * (w->beta_min + w->beta_max);
   w->inv_sigma2 = 1.0;
   w->c = 0.0;
 

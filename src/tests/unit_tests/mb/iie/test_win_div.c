@@ -100,7 +100,7 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
     at_mb__add(mb, epot, beta, &ib, NULL, NULL);
 
     if (t % 10000 == 0) {
-      printf("%g%%%20s\r", 100.*t/ntimes, "");  
+      printf("%g%%%20s\r", 100.*t/ntimes, "");
     }
   }
 

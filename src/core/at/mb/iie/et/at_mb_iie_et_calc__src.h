@@ -76,21 +76,10 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
 
   // shortcut to the degenerative case of single-bin window
   if (iie->use_single_bin || jt == js + 1) {
-    double et = at_mb_iie_et__calc_et_single_bin(iie, ib, &lr->quality);
 
-#if 0
-    fprintf(stderr, "using single-bin estimator %d, ib %d, js %d, jt %d; et %g; %s:%d\n",
-        iie->use_single_bin, ib, js, jt, et, __FILE__, __LINE__);
-    if (iie->accum->winaccum->enabled) {
-      at_mb_accum_winaccum_item_t *wi;
-      at_mb_sm_t *sm0 = at_mb_accum__get_proper_sums0_and_winaccum_item(iie->accum, ib, &wi);
-      int j;
-      for (j = wi->js; j < wi->jt; j++) {
-        fprintf(stderr, "  %d %g %g\n", j, sm0[j].s, at_mb_sm__get_mean(sm0+j, 1e-6));
-      }
-    }
-    if (et == 0.0) exit(1);
-#endif
+    //fprintf(stderr, "using the single-bin estimator, ib %d, js %d, jt %d\n", ib, js, jt);
+
+    double et = at_mb_iie_et__calc_et_single_bin(iie, ib, &lr->quality);
 
     lr->imbalance = 0.0;
 
@@ -103,8 +92,13 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
   /* collect moments from the left & right windows */
   at_mb_iie_lr__collect_moments(lr);
 
-  //fprintf(stderr, "ib %d, js %d, jt %d, %s:%d\n", ib, js, jt, __FILE__, __LINE__);
-  //fprintf(stderr, "s0 %g, %g, %s:%d\n", lr->s0[0], lr->s0[1], __FILE__, __LINE__);
+  /*
+  fprintf(stderr, "ib %d, js %d, jt %d\n", ib, js, jt);
+  fprintf(stderr, "s0 %g, %g\n", lr->s0[0], lr->s0[1]);
+  fprintf(stderr, "s1 %g, %g\n", lr->s1[0], lr->s1[1]);
+  fprintf(stderr, "t1 %g, %g, tb %g\n", lr->t1[0], lr->t1[1], lr->tb);
+  fprintf(stderr, "Location %s:%d\n\n", __FILE__, __LINE__);
+  */
 
   /* compute the coefficients of linear combination and Et */
   return at_mb_iie_lr__balance_moments(lr);
