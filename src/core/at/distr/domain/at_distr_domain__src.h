@@ -197,5 +197,11 @@ int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta,
 
 
 
+double at_distr_domain__get_bin_center(const at_distr_domain_t *domain, int ib)
+{
+  return domain->beta_min + (ib + 0.5) * domain->beta_del;
+}
+
+
 
 #endif

@@ -35,6 +35,8 @@ void at_distr__manifest(const at_distr_t *distr, at_utils_manifest_t *manifest);
 
 int at_distr__beta_to_index(const at_distr_t *distr, double beta, at_bool_t check);
 
+double at_distr__get_bin_center(const at_distr_t *distr, int ib);
+
 double at_distr__calc_inv_weight(const at_distr_t *distr, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
 

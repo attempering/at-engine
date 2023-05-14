@@ -75,6 +75,11 @@ int at_distr__beta_to_index(const at_distr_t *distr, double beta, at_bool_t chec
 }
 
 
+double at_distr__get_bin_center(const at_distr_t *distr, int ib)
+{
+  return at_distr_domain__get_bin_center(distr->domain, ib);
+}
+
 
 double at_distr__calc_inv_weight(const at_distr_t *distr, double beta,
     double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta)

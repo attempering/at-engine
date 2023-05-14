@@ -89,7 +89,7 @@ static void at_mb_iie_lr__collect_raw_array(at_mb_iie_lr_t *lr, at_mb_iie_zerofi
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
     at_mb_sm_t *sm = lr->sm0 + j;
 
-    //dsffprintf(stderr, "j %d, sm->s %g, %s:%d\n", j, sm->s, __FILE__, __LINE__);
+    //fprintf(stderr, "j %d, sm->s %g, %s:%d\n", j, sm->s, __FILE__, __LINE__);
 
     /* skip an empty bin */
     if (sm->s < AT_MB_ACCUM_MIN_SIZE) {

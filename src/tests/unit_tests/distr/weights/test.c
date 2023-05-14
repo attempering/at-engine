@@ -47,7 +47,7 @@ void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
   zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf");
 
   for (i = 0; i < domain->n; i++) {
-    beta = domain->beta_min + (i + 0.5) * domain->beta_del;
+    beta = at_distr_domain__get_bin_center(domain, i);
 
     invwf = at_distr_weights__calc_inv_weight(weights, beta, NULL, NULL, NULL);
     w_calc = 1.0/invwf;

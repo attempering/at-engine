@@ -79,7 +79,7 @@ void mb_mock_exact_moments(at_mb_t *mb)
 
   for (i = 0; i < domain->n; i++) {
     sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
-    double beta = domain->beta_min + (i + 0.5) * domain->beta_del;
+    double beta = at_distr_domain__get_bin_center(domain, i);
     double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
     sm->s = 1.0;

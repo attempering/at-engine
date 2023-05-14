@@ -69,7 +69,7 @@ double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
     if (zcom_mtrng__rand01(mtrng) < fill_prob) {
 
       sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
-      double beta = domain->beta_min + (i + 0.5) * domain->beta_del;
+      double beta = at_distr_domain__get_bin_center(domain, i);
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
       sm->s = 1.0;

@@ -33,6 +33,8 @@
 /* to dump debugging details, set it to 1 */
 int at_driver_langevin_move__debug__ = 0;
 
+const double at_driver_langevin_move__stride_moderation_frac = 0.5;
+
 
 
 /* check if the minimum stay requirement has been met */
@@ -122,7 +124,7 @@ at_bool_t at_driver_langevin_move__moderate_stride(
   int ib_old, ib_new, ib;
   at_bool_t moderated = 0;
   at_distr_domain_t *domain = langevin->distr->domain;
-  double frac = 0.01;
+  const double frac = at_driver_langevin_move__stride_moderation_frac;
 
   if (!langevin->no_skip) {
     return moderated;

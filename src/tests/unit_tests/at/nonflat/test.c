@@ -38,7 +38,7 @@ double *get_expected_distr(at_t *at)
 
   w_tot = 0.0;
   for (i = 0; i < n; i++) {
-    double beta = domain->beta_min + domain->beta_del * (i + 0.5);
+    double beta = at_distr_domain__get_bin_center(domain, i);
     double w = 1.0/at_distr_weights__calc_inv_weight(at->distr->weights, beta, NULL, NULL, NULL);
     distr[i] = w;
     w_tot += w;
@@ -95,7 +95,7 @@ void test_distr(at_t *at)
       kl_div += hist_distr[i] * log(hist_distr[i]/expected_distr[i]);
     }
 
-    double beta = domain->beta_min + domain->beta_del * (i + 0.5);
+    double beta = at_distr_domain__get_bin_center(domain, i);
 
     fprintf(stderr, "%g %g %g\n", beta, expected_distr[i], hist_distr[i]);
   }
