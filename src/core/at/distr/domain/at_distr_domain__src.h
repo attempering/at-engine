@@ -41,15 +41,15 @@ static int at_distr_domain__check_barr(at_distr_domain_t *domain)
 
 
 void at_distr_domain__init_simple(at_distr_domain_t *domain,
-    double bmin, double bmax, double bdel)
+    double beta_min, double beta_max, double beta_del)
 {
   int i, n;
 
-  n = (int) ((bmax - bmin)/bdel + 0.5);
+  n = (int) ((beta_max - beta_min)/beta_del + 0.5);
   domain->n = n;
-  domain->bmin = bmin;
-  domain->bmax = bmax;
-  domain->bdel = bdel;
+  domain->beta_min = beta_min;
+  domain->beta_max = beta_max;
+  domain->beta_del = beta_del;
 
   if (domain->barr != NULL) {
     free(domain->barr);
@@ -58,7 +58,7 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
   domain->barr = calloc(n+1, sizeof(double));
 
   for (i = 0; i <= n; i++) {
-    domain->barr[i] = bmin + bdel * i;
+    domain->barr[i] = beta_min + beta_del * i;
   }
 }
 
@@ -69,54 +69,54 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 {
   int i;
 
-  /* read bmin and bmax from the configuration file */
+  /* read beta_min and beta_max from the configuration file */
 
-  domain->bmin = 0.2;
-  if (0 != zcom_cfg__get(cfg, &domain->bmin, "beta_min", "%lf")) {
-    fprintf(stderr, "Warning: missing var: distr->domain->bmin, key: beta_min, fmt: %%lf, assuming %g\n", domain->bmin);
+  domain->beta_min = 0.2;
+  if (0 != zcom_cfg__get(cfg, &domain->beta_min, "beta_min", "%lf")) {
+    fprintf(stderr, "Warning: missing var: distr->domain->beta_min, key: beta_min, fmt: %%lf, assuming %g\n", domain->beta_min);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
   }
 
-  if ( !(domain->bmin >= 0.0) ) {
-    fprintf(stderr, "domain->bmin: failed validation: distr->domain->bmin %g > 1e-6\n",
-        domain->bmin);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-
-  domain->bmax = 0.4;
-  if (0 != zcom_cfg__get(cfg, &domain->bmax, "beta_max", "%lf")) {
-    fprintf(stderr, "Warning: missing var: distr->domain->bmax, key: beta_max, fmt: %%lf, assuming %g\n", domain->bmax);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-  }
-
-  //printf("domain->bmin %g, domain->bmax %g\n", domain->bmin, domain->bmax); getchar();
-
-  if ( !(domain->bmax >= domain->bmin) ) {
-    fprintf(stderr, "distr->domain->bmax: failed validation: domain->bmax %g > domain->bmin %g\n",
-        domain->bmax, domain->bmin);
+  if ( !(domain->beta_min >= 0.0) ) {
+    fprintf(stderr, "domain->beta_min: failed validation: distr->domain->beta_min %g > 1e-6\n",
+        domain->beta_min);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
-  /* bdel: bin size of beta */
-  domain->bdel = 0.005;
 
-  if (0 != zcom_cfg__get(cfg, &domain->bdel, "beta_del", "%lf")) {
-    fprintf(stderr, "Warning: missing var: distr->domain->bdel, key: beta_del, fmt: %%lf, assuming %g\n",
-        domain->bdel);
+  domain->beta_max = 0.4;
+  if (0 != zcom_cfg__get(cfg, &domain->beta_max, "beta_max", "%lf")) {
+    fprintf(stderr, "Warning: missing var: distr->domain->beta_max, key: beta_max, fmt: %%lf, assuming %g\n", domain->beta_max);
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
   }
 
-  if ( !(domain->bdel > 1e-6) ) {
-    fprintf(stderr, "distr->domain->bdel: failed validation: domain->bdel > 1e-6\n");
+  //printf("domain->beta_min %g, domain->beta_max %g\n", domain->beta_min, domain->beta_max); getchar();
+
+  if ( !(domain->beta_max >= domain->beta_min) ) {
+    fprintf(stderr, "distr->domain->beta_max: failed validation: domain->beta_max %g > domain->beta_min %g\n",
+        domain->beta_max, domain->beta_min);
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
+  }
+
+  /* beta_del: bin size of beta */
+  domain->beta_del = 0.005;
+
+  if (0 != zcom_cfg__get(cfg, &domain->beta_del, "beta_del", "%lf")) {
+    fprintf(stderr, "Warning: missing var: distr->domain->beta_del, key: beta_del, fmt: %%lf, assuming %g\n",
+        domain->beta_del);
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+  }
+
+  if ( !(domain->beta_del > 1e-6) ) {
+    fprintf(stderr, "distr->domain->beta_del: failed validation: domain->beta_del > 1e-6\n");
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   /* n: number of temperature bins */
-  domain->n = (int)((domain->bmax - domain->bmin)/domain->bdel - 1e-5) + 1;
+  domain->n = (int)((domain->beta_max - domain->beta_min)/domain->beta_del - 1e-5) + 1;
 
   //fprintf(stderr, "domain->n %d\n", domain->n);
   //getchar();
@@ -129,7 +129,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   }
 
   for (i = 0; i < domain->n+1; i++) {
-    domain->barr[i] = domain->bmin + i * domain->bdel;
+    domain->barr[i] = domain->beta_min + i * domain->beta_del;
   }
 
   /* check beta array */
@@ -138,8 +138,8 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
     fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
-  /* fix bmax to a bin boundary */
-  domain->bmax = domain->bmin + domain->bdel * domain->n;
+  /* fix beta_max to a bin boundary */
+  domain->beta_max = domain->beta_min + domain->beta_del * domain->n;
 
   return 0;
 
@@ -165,8 +165,8 @@ void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifes
 
   //fprintf(stderr, "fp %p\n", manifest->fp); exit(1);
 
-  /* bdel: bin size of beta */
-  fprintf(fp, "distr->domain->bdel: double, %g\n", domain->bdel);
+  /* beta_del: bin size of beta */
+  fprintf(fp, "distr->domain->beta_del: double, %g\n", domain->beta_del);
 
   /* n: number of temperature bins */
   fprintf(fp, "distr->domain->n: int, %4d\n", domain->n);
@@ -181,15 +181,15 @@ int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta,
 {
   int j;
 
-  if (beta >= domain->bmin) {
-    j = (int)((beta - domain->bmin)/domain->bdel);
+  if (beta >= domain->beta_min) {
+    j = (int)((beta - domain->beta_min)/domain->beta_min);
   } else {
     j = -1;
   }
 
   if (check) {
     zcom_util__exit_if (j < 0 || j >= domain->n, "beta = %d, %g, range = (%g, %g, %g)\n",
-        j, beta, domain->bmin, domain->bdel, domain->bmax);
+        j, beta, domain->beta_min, domain->beta_del, domain->beta_max);
   }
 
   return j;

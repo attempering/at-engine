@@ -74,7 +74,7 @@ void at_mb_iie_lr__init_instance(at_mb_iie_lr_t *lr,
   lr->tb = 0.0;
 
   lr->imbalance = 0.0;
-  lr->success = 0;
+  lr->quality = 0;
 }
 
 
@@ -234,7 +234,6 @@ double at_mb_iie_lr__balance_moments(at_mb_iie_lr_t *lr)
 
   cm = cp = 1.0;
 
-  lr->success = 0;
   lr->quality = 0;
 
   /* if there isn't enough data points in the entire window
@@ -550,7 +549,6 @@ FALLBACK:
     }
 
     lr->imbalance = (cm - cp) / (cm + cp);
-    lr->success = 1;
 
     // we need to recompute renorm_den as the cm and cp
     // may have been changed in the fallback case

@@ -29,13 +29,13 @@
 
 
 
-static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double bmin, double bmax, double bdel)
+static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double beta_min, double beta_max, double beta_del)
 {
   int i, n;
   double boltz = 1.0;
 
   at_distr__cfg_init(distr, NULL, boltz, 1);
-  at_distr_domain__init_simple(distr->domain, bmin, bmax, bdel);
+  at_distr_domain__init_simple(distr->domain, beta_min, beta_max, beta_del);
 
   mb->distr = distr;
 

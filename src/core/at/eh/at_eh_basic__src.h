@@ -80,8 +80,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if ( !(eh->bwdel > distr->domain->bdel/pow(distr->domain->bmin, 1.0)) ) {
-      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > mb->bdel/pow(mb->bmin, 1.0)\n");
+    if ( !(eh->bwdel > distr->domain->beta_del/distr->domain->beta_min) ) {
+      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del/beta_min\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -95,8 +95,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if ( !(eh->bwdel > distr->domain->bdel/pow(distr->domain->bmin, 0.0)) ) {
-      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > mb->bdel/pow(mb->bmin, 0.0)\n");
+    if ( !(eh->bwdel > distr->domain->beta_del) ) {
+      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -110,8 +110,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
-    if ( !(eh->bwdel > distr->domain->bdel/pow(distr->domain->bmin, 2.0)) ) {
-      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > mb->bdel/pow(mb->bmin, 2.0)\n");
+    if ( !(eh->bwdel > distr->domain->beta_del/pow(distr->domain->beta_min, 2.0)) ) {
+      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del/beta_min^2\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -240,7 +240,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
 
     // windows for the reconstructed energy histograms
     at_mb_win__make_unres_windows_for_grid_estimators(
-        distr->domain->n, distr->domain->barr, distr->domain->bdel,
+        distr->domain->n, distr->domain->barr, distr->domain->beta_del,
         eh->bwmod, eh->bwdel, eh->is, eh->it);
   }
 

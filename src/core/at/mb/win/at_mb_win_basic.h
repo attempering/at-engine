@@ -34,7 +34,7 @@
  * Such windows are not designed to work with the window-accumulator module.
  */
 void at_mb_win__make_unres_windows_for_grid_estimators(
-    int n, const double *barr, double bdel,
+    int n, const double *barr, double beta_del,
     int bw_mod, double bw_del,
     int *js_grid_raw, int *jt_grid_raw);
 

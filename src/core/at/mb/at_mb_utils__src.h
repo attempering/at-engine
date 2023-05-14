@@ -117,13 +117,12 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
 
 
 
-void at_mb__refresh_et(at_mb_t *mb, int reps)
+void at_mb__refresh_et(at_mb_t *mb)
 {
-  int i, rep;
+  int i;
 
-  for (rep = 0; rep < reps; rep++) {
-    for (i = 0; i < mb->distr->domain->n; i++)
-      at_mb_iie_et__calc_et(mb->iie, i);
+  for (i = 0; i < mb->distr->domain->n; i++) {
+    at_mb_iie_et__calc_et(mb->iie, i, NULL);
   }
 }
 

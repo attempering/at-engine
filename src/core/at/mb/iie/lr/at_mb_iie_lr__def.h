@@ -188,8 +188,7 @@ typedef struct at_mb_iie_lr_t_ {
 
   /* output results */
   double imbalance; /* difference between the left and right coefficients */
-  int quality; /* the result is good */
-  int success; /* the function returns */
+  int quality; /* whether the result is good */
 
   at_mb_t *mb;
   at_mb_iie_zerofiller_t *zerofiller;

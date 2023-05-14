@@ -66,8 +66,8 @@ double at_driver_langevin__move_simple(
   at_driver_langevin_move__moderate_stride(
       proposal, langevin);
 
-  if (proposal->beta_new < domain->bmax
-   && proposal->beta_new > domain->bmin) {
+  if (proposal->beta_new < domain->beta_max
+   && proposal->beta_new > domain->beta_min) {
     beta = proposal->beta_new;
   } else {
     beta = proposal->beta_old;

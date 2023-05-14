@@ -79,7 +79,7 @@ void mb_mock_exact_moments(at_mb_t *mb)
 
   for (i = 0; i < domain->n; i++) {
     sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
-    double beta = domain->bmin + (i + 0.5) * domain->bdel;
+    double beta = domain->beta_min + (i + 0.5) * domain->beta_del;
     double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
     sm->s = 1.0;
@@ -97,7 +97,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
 {
   at_distr_domain_t *domain = mb->distr->domain;
   int step;
-  double beta_c = (domain->bmin + domain->bmax) * 0.5;
+  double beta_c = (domain->beta_min + domain->beta_max) * 0.5;
   double beta = beta_c;
   double erg = -beta * (gaussian_sigma * gaussian_sigma);
   double beta_sigma = 1.0 / gaussian_sigma;
@@ -115,12 +115,12 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
 
   zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
 
-  hist_beta_min = fmax(domain->bmin, beta - 5*beta_sigma);
-  hist_beta_max = fmin(domain->bmax, beta + 5*beta_sigma);
+  hist_beta_min = fmax(domain->beta_min, beta - 5*beta_sigma);
+  hist_beta_max = fmin(domain->beta_max, beta + 5*beta_sigma);
 
-  histogram__init(hist, hist_beta_min, hist_beta_max, domain->bdel*0.1);
+  histogram__init(hist, hist_beta_min, hist_beta_max, domain->beta_del*0.1);
 
-  fprintf(stderr, "beta %g (%g, %g)\n", beta, domain->bmin, domain->bmax);
+  fprintf(stderr, "beta %g (%g, %g)\n", beta, domain->beta_min, domain->beta_max);
 
   at_mb_sm__init(sm_beta);
 

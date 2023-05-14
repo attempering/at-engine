@@ -34,7 +34,7 @@ typedef struct at_mb_sm_t_ at_mb_sm_t;
  * Note that the calculated value is a bin-averaged one,
  * not one at either boundary of the bin.
  * */
-double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib);
+double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib, int *quality);
 
 
 void at_mb_iie_et_item_cache__clear(at_mb_iie_et_item_cache_t *cache);

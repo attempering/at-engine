@@ -25,7 +25,9 @@ typedef struct at_mb_t_ at_mb_t;
 
 typedef struct at_mb_iie_et_item_cache_t_ {
 
-  double value;
+  /* do we need this field?
+     It should be the same as at_mb_iie_et_item_t.value */
+  //double value;
 
   /* if the tags are the same, it means the raw data
    * the integral identity draw from have not changed
@@ -33,7 +35,7 @@ typedef struct at_mb_iie_et_item_cache_t_ {
    * we can set it to be total number of visits to
    * the window accumulator.
    * */
-  double tag;
+  double visits;
 
   double expires;
 

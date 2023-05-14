@@ -53,28 +53,28 @@ static double at_driver_langevin_move__calc_et_iie(
     double def_val)
 {
   at_mb_iie_t *iie = langevin->mb->iie;
-  at_mb_iie_lr_t *lr = iie->lr;
-  double et = at_mb_iie_et__calc_et_cached(iie, ib);
+  int quality = 0;
+  double et = at_mb_iie_et__calc_et_cached(iie, ib, &quality);
 
   if (at_driver_langevin_move__debug__ >= 2) {
     fprintf(stderr, "at_driver_langevin_move__calc_et_iie() %s:%d\n", __FILE__, __LINE__);
     fprintf(stderr, "  et %g (default %g)\n", et, def_val);
     fprintf(stderr, "  ib %d\n", (int) ib);
-    fprintf(stderr, "  success %d, quality %d\n", lr->success, lr->quality);
+    fprintf(stderr, "  quality %d\n", quality);
     fprintf(stderr, "  cache enabled %d, hit %d\n",
         iie->et->cache_params->enabled, iie->et->cache_hit);
     fprintf(stderr, "\n");
   }
 
   //if ((ib == 0 || ib == iie->et->n - 1) && et == 0.0) {
-  //  fprintf(stderr, "Info: boundary ib %d value is zero, success %d, quality %d\n", ib, lr->success, lr->quality);
+  //  fprintf(stderr, "Info: boundary ib %d value is zero, quality %d\n", ib, lr->quality);
   //}
 
   //fprintf(stderr, "iie %p, %s:%d\n", iie, __FILE__, __LINE__);
   //fprintf(stderr, "lr %p, %s:%d\n", lr, __FILE__, __LINE__);
   //getchar();
 
-  if (lr->success && lr->quality) {
+  if (quality) {
     return et;
   } else {
     return def_val;

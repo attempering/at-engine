@@ -26,9 +26,9 @@ typedef struct at_driver_langevin_zerofiller_t_ at_driver_langevin_zerofiller_t;
 /* parameters for the integrator */
 typedef struct at_driver_langevin_integrator_t_ {
   int n; /* same as distr->domain->n */
-  double    beta_min; /* same as distr->domain->bmin */
-  double    beta_max; /* same as distr->domain->bmax */
-  double    beta_del; /* same as distr->domain->bdel */
+  double    beta_min; /* same as distr->domain->beta_min */
+  double    beta_max; /* same as distr->domain->beta_max */
+  double    beta_del; /* same as distr->domain->beta_del */
 
   int       sgn;
   double    beta_begin;

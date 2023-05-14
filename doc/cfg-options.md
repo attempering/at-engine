@@ -74,19 +74,21 @@ and `T = 600K` a value of about `beta = 0.2045`.
 
 * `beta_min`: minimal reciprocal temperature
 
-  Variable: `at->mb->bmin`.
+  Variable: `at->distr->domain->beta_min`.
 
   Default: none.
 
 * `beta_max`: maximal reciprocal temperature
 
-  Variable: `at->mb->bmax`.
+  Variable: `at->distr->domain->beta_max`.
 
   Default: none.
 
 * `beta_del`: bin width of the reciprocal temperature
 
   Conditions: > 1e-6.
+
+  Variable: `at->distr->domain->beta_del`.
 
   Default: 0.0001.
 
@@ -171,7 +173,7 @@ Options:
 
     Conditions: applicable only to `ensemble_mode == 1`
 
-    Default: `0.5 * (mb->bmax + mb->bmin)`.
+    Default: `0.5 * (beta_min + beta_max)`.
 
   * `ensemble_sigma`:
 
@@ -333,21 +335,21 @@ Multiple-bin estimator settings share the prefix of `mbest_`
   * `mbest_delta_lnT`: half window width in terms of `d(lnT)`,
       only applicable for `mbest_mbin_mode == 1`.
 
-    Conditions: `mb->bwdel > mb->bdel/mb->bmin`
+    Conditions: `mb->bwdel > beta_del/beta_max`
 
     Default: 0.05 (in terms of percentage of T).
 
   * `mbest_delta_beta`: half window width in terms of `beta`,
       only applicable for `mbest_mbin_mode == 0`.
 
-    Conditions: `mb->bwdel > mb->del`.
+    Conditions: `mb->bwdel > beta_del`.
 
     Default: 0.02 (in terms of beta).
 
   * `mbest_delta_kT`: half window width in terms of `kT`,
       only applicable for `mbest_mbin_mode == 2`.
 
-    Conditions: `mb->bwdel > mb->del/pow(mb->bmin, 2.0)`
+    Conditions: `mb->bwdel > beta_del/pow(m, 2.0)`
 
     Default: 0.1 (in terms of kT = 1.0/beta).
 

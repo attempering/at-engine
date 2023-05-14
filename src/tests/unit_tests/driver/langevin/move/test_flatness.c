@@ -78,7 +78,7 @@ void mb_mock_exact_moments(at_mb_t *mb)
 
   for (i = 0; i < domain->n; i++) {
     sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
-    double beta = domain->bmin + (i + 0.5) * domain->bdel;
+    double beta = domain->beta_min + (i + 0.5) * domain->beta_del;
     double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
     sm->s = 1.0;
@@ -97,7 +97,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
 {
   at_distr_domain_t *domain = mb->distr->domain;
   int step;
-  double beta_c = (domain->bmin + domain->bmax) * 0.5;
+  double beta_c = (domain->beta_min + domain->beta_max) * 0.5;
   double beta = beta_c;
   double energy;
   int ib;
@@ -111,7 +111,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
 
   zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
 
-  fprintf(stderr, "beta %g (%g, %g)\n", beta, domain->bmin, domain->bmax);
+  fprintf(stderr, "beta %g (%g, %g)\n", beta, domain->beta_min, domain->beta_max);
 
   for (step = 0; step < nsteps; step++) {
 

@@ -60,7 +60,7 @@ void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
     at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
 
     if (zcom_mtrng__rand01(mtrng) < fill_prob) {
-      double beta = domain->bmin + (i + 0.5) * domain->bdel;
+      double beta = domain->beta_min + (i + 0.5) * domain->beta_del;
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
       sm->s = 1.0;
@@ -88,7 +88,7 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
   at_distr_domain_t *domain = mb->distr->domain;
 
   for (t = 1; t <= ntimes; t++) {
-    double beta = domain->bmin + zcom_mtrng__rand01(rng) * (domain->bmax - domain->bmin);
+    double beta = domain->beta_min + zcom_mtrng__rand01(rng) * (domain->beta_max - domain->beta_min);
 
     /* for the Gaussian energy model
      * Ec = - sigma^2 beta
@@ -126,7 +126,7 @@ static int test_iie(at_mb_t *mb, double tol)
     fprintf(stderr, "\n# Testing integral-identity estimator for bin %d:\n", ib);
 
     // beta at the center of the bin
-    double beta = domain->bmin + (ib + 0.5) * domain->bdel;
+    double beta = domain->beta_min + (ib + 0.5) * domain->beta_del;
 
     // reference energy of the Gaussian energy model
     double et_ref = -beta * (gaussian_sigma * gaussian_sigma);

@@ -21,11 +21,11 @@
 #include "zcom/zcom__src.h"
 
 
-double calc_weight_ref(double expo, double beta0, double sigma, double bmax, double beta)
+double calc_weight_ref(double expo, double beta0, double sigma, double beta_max, double beta)
 {
   double dx = (beta - beta0) / sigma;
   double w = exp(-0.5*dx*dx);
-  double b_rel = beta/bmax;
+  double b_rel = beta/beta_max;
   double f = pow(b_rel, -expo);
 
   return f * w;
@@ -46,12 +46,12 @@ void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
   zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf");
 
   for (i = 0; i < domain->n; i++) {
-    beta = domain->bmin + (i + 0.5) * domain->bdel;
+    beta = domain->beta_min + (i + 0.5) * domain->beta_del;
 
     invwf = at_distr_weights__calc_inv_weight(weights, beta, NULL, NULL, NULL);
     w_calc = 1.0/invwf;
 
-    w_ref = calc_weight_ref(expo, beta0, sigma, domain->bmax, beta);
+    w_ref = calc_weight_ref(expo, beta0, sigma, domain->beta_max, beta);
 
     err = fabs(w_calc - w_ref);
     if (err > max_err) {

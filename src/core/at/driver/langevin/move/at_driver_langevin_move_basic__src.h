@@ -142,7 +142,7 @@ at_bool_t at_driver_langevin_move__moderate_stride(
       // check if ib is an unvisited bin
       if (langevin->mb->visits[ib] <= 0.0) {
         // stop at the center of the unvisited bin
-        proposal->beta_new = domain->bmin + (ib + frac) * domain->bdel;
+        proposal->beta_new = domain->beta_min + (ib + frac) * domain->beta_del;
         proposal->ib_new = ib;
         moderated = AT__TRUE;
         break;
@@ -155,7 +155,7 @@ at_bool_t at_driver_langevin_move__moderate_stride(
       // check if ib is an unvisited bin
       if (langevin->mb->visits[ib] <= 0.0) {
         // stop at the center of the unvisited bin
-        proposal->beta_new = domain->bmin + (ib + 1 - frac) * domain->bdel;
+        proposal->beta_new = domain->beta_min + (ib + 1 - frac) * domain->beta_del;
         proposal->ib_new = ib;
         moderated = AT__TRUE;
         break;

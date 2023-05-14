@@ -82,7 +82,7 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 
   // refresh Et
   if (at__do_output_on_step(step_params, at->mb->nst_refresh, AT__TRUE)) {
-    at_mb__refresh_et(at->mb, 1);
+    at_mb__refresh_et(at->mb);
   }
 
   at__write_trace(at, step_params, ib, invwf, temp_before, temp_after, av_energy);

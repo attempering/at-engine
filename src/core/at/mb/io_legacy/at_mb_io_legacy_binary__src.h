@@ -135,16 +135,16 @@ static int at_mb__read_binary_legacy_low_level(
       goto ERR;
     }
 
-    if ( !(*beta >= domain->bmin && *beta <= domain->bmax) ) {
-      fprintf(stderr, "beta: failed validation: beta >= mb->bmin && beta <= mb->bmax\n");
+    if ( !(*beta >= domain->beta_min && *beta <= domain->beta_max) ) {
+      fprintf(stderr, "beta: failed validation: beta >= beta_min && beta <= beta_max\n");
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
 
-    if (*beta > domain->bmax - 1e-5) {
-      *beta = domain->bmax - 1e-5;
-    } else if (*beta < domain->bmin + 1e-5) {
-      *beta = domain->bmin + 1e-5;
+    if (*beta > domain->beta_max - 1e-5) {
+      *beta = domain->beta_max - 1e-5;
+    } else if (*beta < domain->beta_min + 1e-5) {
+      *beta = domain->beta_min + 1e-5;
     }
 
   }

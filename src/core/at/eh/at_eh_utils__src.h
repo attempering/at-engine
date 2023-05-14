@@ -69,7 +69,7 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
   cols = eh->cnt;
   base = eh->min;
   inc = eh->del;
-  db = distr->domain->bdel;
+  db = distr->domain->beta_del;
 
   /* build lnZ */
   for (iie->gridvals->items[0].lnz = 0.0, ib = 0; ib < n; ib++) {

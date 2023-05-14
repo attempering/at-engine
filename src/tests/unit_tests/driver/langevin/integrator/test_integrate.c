@@ -69,7 +69,7 @@ double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
     if (zcom_mtrng__rand01(mtrng) < fill_prob) {
 
       sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
-      double beta = domain->bmin + (i + 0.5) * domain->bdel;
+      double beta = domain->beta_min + (i + 0.5) * domain->beta_del;
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
       sm->s = 1.0;
@@ -109,8 +109,8 @@ static int test_integrate(at_mb_t *mb, at_driver_langevin_t *langevin, double fi
 
   at_driver_langevin_integrator__init(intgr, mb->distr, mb, 1);
 
-  double beta1 = domain->bmin * 0.7 + domain->bmax * 0.3;
-  double beta2 = domain->bmin * 0.2 + domain->bmax * 0.8;
+  double beta1 = domain->beta_min * 0.7 + domain->beta_max * 0.3;
+  double beta2 = domain->beta_min * 0.2 + domain->beta_max * 0.8;
   int i, ib1, ib2;
 
   double integral = at_driver_langevin_integrator__integrate(intgr, beta1, beta2);

@@ -25,7 +25,7 @@
 
 /* simple initialization, used for testing programs */
 void at_distr_domain__init_simple(at_distr_domain_t *domain,
-    double bmin, double bmax, double bdel);
+    double beta_min, double beta_max, double beta_del);
 
 int at_distr_domain__cfg_init(at_distr_domain_t *domain,
     zcom_cfg_t *cfg, at_bool_t verbose);

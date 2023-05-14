@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   at_t *at = at__open(fn_cfg, NULL, 0);
   // at__manifest(at);
 
-  mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->bmin, at->distr->domain->bmax, boltz);
+  mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->beta_min, at->distr->domain->beta_max, boltz);
 
   run_cst_md(at, mdsys, nsteps);
 

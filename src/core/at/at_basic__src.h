@@ -39,12 +39,13 @@ static void at__set_init_beta(at_t *at)
 {
   /* make the initial temperature = temp_thermostat */
   double beta = at__temp_to_beta(at, at->utils->temp_thermostat);
+  at_distr_domain_t *domain = at->distr->domain;
 
-  if (beta >= at->distr->domain->bmin
-   && beta <= at->distr->domain->bmax) {
+  if (beta >= domain->beta_min
+   && beta <= domain->beta_max) {
     at->beta = beta;
   } else {
-    at->beta = 0.5 * (at->distr->domain->bmin + at->distr->domain->bmax);
+    at->beta = 0.5 * (domain->beta_min + domain->beta_max);
   }
   fprintf(stderr, "initial beta %g\n", at->beta);
 }

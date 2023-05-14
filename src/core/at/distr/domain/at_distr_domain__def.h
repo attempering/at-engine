@@ -24,9 +24,9 @@
 
 typedef struct at_distr_domain_t_
 {
-  double    bmin;     /* minimal beta (highest temperature) */
-  double    bmax;     /* maximal beta (lowest temperature) */
-  double    bdel;     /* bin size of beta */
+  double    beta_min; /* minimal beta (highest temperature) */
+  double    beta_max; /* maximal beta (lowest temperature) */
+  double    beta_del; /* bin size of beta */
   int       n;        /* number of temperature bins */
   double    *barr;    /* temperature array */
 } at_distr_domain_t;

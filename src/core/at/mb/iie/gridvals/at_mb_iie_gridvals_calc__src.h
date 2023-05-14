@@ -88,7 +88,7 @@ static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
 {
   double x;
   int j, jx, lr_id;
-  double bdel = lr->mb->distr->domain->bdel;
+  double beta_del = lr->mb->distr->domain->beta_del;
 
   if (0 > lr->js || lr->js >= lr->jt || lr->jt > lr->mb->distr->domain->n) {
     fprintf(stderr, "bad window [%d, %d)", lr->js, lr->jt);
@@ -117,8 +117,8 @@ static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
     lr->t1[lr_id] += x * (j - jx + 0.5);
   }
 
-  lr->t1[0] *= -bdel;
-  lr->t1[1] *= -bdel;
+  lr->t1[0] *= -beta_del;
+  lr->t1[1] *= -beta_del;
 }
 
 
@@ -196,7 +196,7 @@ void at_mb_iie_gridvals__calc_lnz(at_mb_t *mb)
   for (i = 0; i < iie->n; i++) {
     ++item;
 
-    double et = at_mb_iie_et__calc_et(iie, i);
+    double et = at_mb_iie_et__calc_et(iie, i, NULL);
 
     item->lnz = gridvals->items[i].lnz + et * (domain->barr[i] - domain->barr[i+1]);
 

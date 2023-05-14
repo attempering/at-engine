@@ -37,14 +37,21 @@
 
 /* compute the estimated energy et of the given ib
  * using the single-bin estimator */
-static double at_mb_iie_et__calc_et_single_bin(at_mb_iie_t *iie, int ib)
+static double at_mb_iie_et__calc_et_single_bin(at_mb_iie_t *iie, int ib, int *quality)
 {
   at_mb_sm_t *sm;
 
   /* choose windowed accumulator sums or plain sums */
   sm = at_mb_accum__get_proper_sums(iie->accum, ib, ib);
 
-  return at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+  if (sm->s > AT_MB_ACCUM_MIN_SIZE) {
+    *quality = 1;
+    return sm->se / sm->s;
+  } else {
+    *quality = 0;
+    return 0.0;
+  }
+
 }
 
 
@@ -67,11 +74,9 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
 
   //fprintf(stderr, "ib %d, js %d, jt %d; %s:%d\n", ib, js, jt, __FILE__, __LINE__);
 
-  // handle the degenerative cases:
-  // window contains a single bin only,
-  // or the caller explicitly requests the single-bin version
+  // shortcut to the degenerative case of single-bin window
   if (iie->use_single_bin || jt == js + 1) {
-    double et = at_mb_iie_et__calc_et_single_bin(iie, ib);
+    double et = at_mb_iie_et__calc_et_single_bin(iie, ib, &lr->quality);
 
 #if 0
     fprintf(stderr, "using single-bin estimator %d, ib %d, js %d, jt %d; et %g; %s:%d\n",
@@ -87,13 +92,7 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
     if (et == 0.0) exit(1);
 #endif
 
-    if (et != 0.0) {
-      lr->success = 1;
-      lr->quality = 1;
-    } else {
-      lr->success = 0;
-      lr->quality = 0;
-    }
+    lr->imbalance = 0.0;
 
     return et;
   }
@@ -113,7 +112,7 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
 
 
 
-double at_mb_iie_et__calc_et(at_mb_iie_t *iie, int ib)
+double at_mb_iie_et__calc_et(at_mb_iie_t *iie, int ib, int *quality)
 {
   double et_val;
   at_mb_iie_lr_t *lr = iie->lr;
@@ -127,7 +126,11 @@ double at_mb_iie_et__calc_et(at_mb_iie_t *iie, int ib)
 
   item->value = et_val;
   item->imbalance = lr->imbalance;
-  item->quality = lr->success && lr->quality;
+  item->quality = lr->quality;
+
+  if (quality != NULL) {
+    *quality = item->quality;
+  }
 
   //static long count = 0;
   //if (++count % 1000000 == 0) {

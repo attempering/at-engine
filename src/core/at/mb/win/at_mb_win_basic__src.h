@@ -55,9 +55,9 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     }
 
-    zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 1.0)),
-        "win->bwdel: failed validation: win->bwdel %g > %g, domain->bdel %g /pow(domain->bmin %g , 1.0)\n",
-        win->bwdel, domain->bdel/pow(domain->bmin, 1.0), domain->bdel, domain->bmin);
+    zcom_util__exit_if ( !(win->bwdel > domain->beta_del/domain->beta_min),
+        "win->bwdel: failed validation: win->bwdel %g > %g, domain->beta_del %g /(domain->beta_min %g)\n",
+        win->bwdel, domain->beta_del/domain->beta_min, domain->beta_del, domain->beta_min);
   }
 
   if (win->bwmod == 0) {
@@ -69,8 +69,8 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
       fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     }
 
-    zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 0.0)),
-        "win->bwdel: failed validation: win->bwdel > domain->bdel/pow(domain->bmin, 0.0)\n");
+    zcom_util__exit_if ( !(win->bwdel > domain->beta_del),
+        "win->bwdel: failed validation: win->bwdel > domain->beta_del\n");
   }
 
 
@@ -83,8 +83,8 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
         fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
     }
 
-    zcom_util__exit_if ( !(win->bwdel > domain->bdel/pow(domain->bmin, 2.0)),
-        "win->bwdel: failed validation: win->bwdel > domain->bdel/pow(domain->bmin, 2.0)\n");
+    zcom_util__exit_if ( !(win->bwdel > domain->beta_del/pow(domain->beta_min, 2.0)),
+        "win->bwdel: failed validation: win->bwdel > domain->beta_del/domain->beta_min^2\n");
   }
 
 
@@ -102,7 +102,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->jt_grid_unres[i] = 0;
   }
 
-  at_mb_win__make_unres_windows_for_grid_estimators(n, domain->barr, domain->bdel,
+  at_mb_win__make_unres_windows_for_grid_estimators(n, domain->barr, domain->beta_del,
       win->bwmod, win->bwdel,
       win->js_grid_unres, win->jt_grid_unres);
 

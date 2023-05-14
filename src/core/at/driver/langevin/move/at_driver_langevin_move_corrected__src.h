@@ -195,8 +195,8 @@ static at_bool_t at_driver_langevin_move__new_beta_out_of_range(
 {
   at_distr_domain_t *domain = langevin->distr->domain;
 
-  return (proposal->beta_new >= domain->bmax
-       || proposal->beta_new < domain->bmin);
+  return (proposal->beta_new >= domain->beta_max
+       || proposal->beta_new < domain->beta_min);
 }
 
 

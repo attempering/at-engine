@@ -40,9 +40,9 @@ int at_driver_langevin_integrator__init(
   intgr->mb = mb;
 
   intgr->n = domain->n;
-  intgr->beta_min = domain->bmin;
-  intgr->beta_max = domain->bmax;
-  intgr->beta_del = domain->bdel;
+  intgr->beta_min = domain->beta_min;
+  intgr->beta_max = domain->beta_max;
+  intgr->beta_del = domain->beta_del;
 
   intgr->use_zerofiller = use_zerofiller;
 

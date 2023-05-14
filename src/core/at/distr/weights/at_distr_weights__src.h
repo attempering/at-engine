@@ -34,8 +34,8 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
 {
   int i;
 
-  w->beta_min = domain->bmin;
-  w->beta_max = domain->bmax;
+  w->beta_min = domain->beta_min;
+  w->beta_max = domain->beta_max;
   w->n = domain->n;
 
   /* ens_exp: ensemble exponent of beta */
@@ -58,7 +58,7 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   if(w->mode == 1)
   {
     if (0 != zcom_cfg__get(cfg, &w->beta0, "ensemble_beta0", "%lf")) {
-      if (verbose) fprintf(stderr, "Info: assuming default distr->weights->beta0 = 0.5 * (w->bmax + w->bmin), key: ensemble_beta0\n");
+      if (verbose) fprintf(stderr, "Info: assuming default distr->weights->beta0 = 0.5 * (w->beta_max + w->beta_min), key: ensemble_beta0\n");
     }
 
     w->sigma = 1.0;

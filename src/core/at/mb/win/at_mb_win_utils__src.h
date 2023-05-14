@@ -28,7 +28,7 @@
 
 
 void at_mb_win__make_unres_windows_for_grid_estimators(
-    int n, const double *barr, double bdel,
+    int n, const double *barr, double beta_del,
     int bwmod, double bwdel,
     int *js_grid_unres, int *jt_grid_unres)
 {
@@ -50,7 +50,7 @@ void at_mb_win__make_unres_windows_for_grid_estimators(
         break;
     }
 
-    idel = (int)(dbeta/bdel + 0.5);
+    idel = (int)(dbeta/beta_del + 0.5);
 
     /* although idel = 0 should be fine */
     if (idel < 1) {
