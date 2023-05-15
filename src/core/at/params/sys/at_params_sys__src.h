@@ -40,7 +40,7 @@ void at_params_sys__init(at_params_sys_t *inited, const at_params_sys_t *user, a
   }
 
   if (verbose) {
-    fprintf(stderr, "datadir: %s\n", inited->data_dir);
+    fprintf(stderr, "at-info: datadir: %s\n", inited->data_dir);
   }
 }
 

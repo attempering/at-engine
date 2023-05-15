@@ -40,7 +40,7 @@ static int at_mb__read_binary_low_level(
 
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to at_mb__read_binary_low_level\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
@@ -55,7 +55,7 @@ static int at_mb__read_binary_low_level(
   if (itmp != mb->distr->domain->n) {
     fprintf(stderr, "mb->distr->domain->n mismatch, expect: %d, read: %d, pos: %#lx\n",
         mb->distr->domain->n, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* m: maximal number of bins in a window */
@@ -66,7 +66,7 @@ static int at_mb__read_binary_low_level(
   if (itmp != mb->win->max_win_bins) {
     fprintf(stderr, "mb->m mismatch, expect: %d, read: %d, pos: %#lx\n",
         mb->win->max_win_bins, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -80,7 +80,7 @@ static int at_mb__read_binary_low_level(
     }
     if ( !(mb_order == 1) ) {
       fprintf(stderr, "mb->order: failed validation: mb_order == 1\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
   }
@@ -93,7 +93,7 @@ static int at_mb__read_binary_low_level(
   if (itmp != mb->cnt_int) {
     fprintf(stderr, "mb->cnt_int mismatch, expect: %d, read: %d, pos: %#lx\n",
         mb->cnt_int, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* cnt_dbl: number of additional double variables to be written to binary file */
@@ -104,7 +104,7 @@ static int at_mb__read_binary_low_level(
   if (itmp != mb->cnt_dbl) {
     fprintf(stderr, "mb->cnt_dbl mismatch, expect: %d, read: %d, pos: %#lx\n",
         mb->cnt_dbl, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -117,7 +117,7 @@ static int at_mb__read_binary_low_level(
   }
   if ( !(mb->total_visits > 0) ) {
     fprintf(stderr, "mb->total_visits: failed validation: mb->total_visits > 0\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -168,7 +168,7 @@ int at_mb__read_binary(
 
   if ((fp = fopen(fname, "rb")) == NULL) {
     fprintf(stderr, "cannot read binary file [%s].\n", fname);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
@@ -176,7 +176,7 @@ int at_mb__read_binary(
   if ((endn = zcom_endn__rmatchi(&itmp, sizeof(int), fp)) < 0) {
     fprintf(stderr, "itmp 0x%X cannot match sizeof(int) 0x%X\n",
         (unsigned) itmp, (unsigned) sizeof(int));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
@@ -186,7 +186,7 @@ int at_mb__read_binary(
   if (itmp != (int) sizeof(double)) {
     fprintf(stderr, "(int) sizeof(double) mismatch, expect: %d, read: %d, pos: %#lx\n",
         (int) sizeof(double), itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if (zcom_endn__fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
@@ -215,7 +215,7 @@ static int at_mb__write_binary_low_level(
 {
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to at_mb__write_binary_low_level\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* n: number of temperature bins */
@@ -298,7 +298,7 @@ int at_mb__write_binary(
 
   if ((fp = fopen(fname, "wb")) == NULL) {
     fprintf(stderr, "cannot write binary file [%s].\n", fname);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 

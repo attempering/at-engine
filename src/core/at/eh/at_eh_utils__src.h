@@ -33,10 +33,10 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
     int ie = (int)((e - eh->min)/eh->del);
 
     if (e > eh->max_real) {
-      fprintf(stderr, "Warning: at->eh: energy point overflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
+      fprintf(stderr, "at-warning: at->eh: energy point overflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
       eh->max_real = e;
     } else if (e < eh->min_real) {
-      fprintf(stderr, "Warning: at->eh: energy point underflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
+      fprintf(stderr, "at-warning: at->eh: energy point underflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
       eh->min_real = e;
     }
 

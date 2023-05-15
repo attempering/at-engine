@@ -39,7 +39,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   win->bwmod = 1;
 
   if (0 != zcom_cfg__get(cfg, &win->bwmod, "mbest_mbin_mode", "%d")) {
-    fprintf(stderr, "Info: assuming default win->bwmod = 1, key: mbest_mbin_mode\n");
+    fprintf(stderr, "at-info: assuming default win->bwmod = 1, key: mbest_mbin_mode\n");
   }
 
   zcom_util__exit_if ( !(win->bwmod >= 0 && win->bwmod <= 2),
@@ -51,12 +51,11 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.05;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf")) {
-      fprintf(stderr, "Warning: missing var: win->bwdel, key: mbest_delta_lnT, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "at-info: assuming default win->bwdel = %g, key: mbest_delta_lnT, fmt: %%lf\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del/domain->beta_min),
-        "win->bwdel: failed validation: win->bwdel %g > %g, domain->beta_del %g /(domain->beta_min %g)\n",
+        "at->error: win->bwdel: failed validation: win->bwdel %g > %g, domain->beta_del %g /(domain->beta_min %g)\n",
         win->bwdel, domain->beta_del/domain->beta_min, domain->beta_del, domain->beta_min);
   }
 
@@ -65,12 +64,11 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.02;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf")) {
-      fprintf(stderr, "Warning: missing var: win->bwdel, key: mbest_delta_beta, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "at-info: assuming default win->bwdel = %g, key: mbest_delta_beta, fmt: %%lf\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del),
-        "win->bwdel: failed validation: win->bwdel > domain->beta_del\n");
+        "at->error: win->bwdel: failed validation: win->bwdel > domain->beta_del\n");
   }
 
 
@@ -79,24 +77,23 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.1;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf")) {
-        fprintf(stderr, "Warning: missing var: win->bwdel, key: mbest_delta_kT, fmt: %%lf\n");
-        fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+        fprintf(stderr, "at-info: assuming default win->bwdel = %g, key: mbest_delta_kT, fmt: %%lf\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del/pow(domain->beta_min, 2.0)),
-        "win->bwdel: failed validation: win->bwdel > domain->beta_del/domain->beta_min^2\n");
+        "at->error: win->bwdel: failed validation: win->bwdel > domain->beta_del/domain->beta_min^2\n");
   }
 
 
   zcom_util__exit_if ((win->js_grid_unres = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      "no memory! var: domain->js_grid_unres, type: int\n");
+      "at->error: no memory! var: domain->js_grid_unres, type: int\n");
 
   for (i = 0; i <= n; i++) {
     win->js_grid_unres[i] = 0;
   }
 
   zcom_util__exit_if ((win->jt_grid_unres = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      "no memory! var: win->jt_grid_unres, type: int\n");
+      "at->error: no memory! var: win->jt_grid_unres, type: int\n");
 
   for (i = 0; i <= n; i++) {
     win->jt_grid_unres[i] = 0;
@@ -114,14 +111,14 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   // for the next calloc line
 
   zcom_util__exit_if ((win->js_bin = (int *) calloc((unsigned) n, sizeof(int))) == NULL,
-      "no memory! var: win->js_bin, type: int\n");
+      "at->error: no memory! var: win->js_bin, type: int\n");
 
   for (i = 0; i < n; i++) {
     win->js_bin[i] = 0;
   }
 
   zcom_util__exit_if ((win->jt_bin = (int *) calloc((unsigned) n, sizeof(int))) == NULL,
-    "no memory! var: win->jt_bin, type: int\n");
+    "at->error: no memory! var: win->jt_bin, type: int\n");
 
   for (i = 0; i < n; i++) {
     win->jt_bin[i] = 0;
@@ -144,14 +141,14 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   }
 
   zcom_util__exit_if ((win->js_grid_res = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      "no memory! var: mb->js_grid_res, type: int\n");
+      "at->error: no memory! var: mb->js_grid_res, type: int\n");
 
   for (i = 0; i <= n; i++) {
     win->js_grid_res[i] = 0;
   }
 
   zcom_util__exit_if ((win->jt_grid_res = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      "no memory! var: win->jt_grid_res, type: int\n");
+      "at->error: no memory! var: win->jt_grid_res, type: int\n");
 
   for (i = 0; i <= n; i++) {
     win->jt_grid_res[i] = 0;

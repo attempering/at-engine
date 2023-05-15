@@ -288,7 +288,7 @@ static at_bool_t at_driver_langevin_move__accept(
             at_driver_langevin_move_corrected__use_cheap_av_energy_for_backward_move);
 
       fprintf(stderr,
-          "Info: rejected a trip to boundary %d => %d ~ %d, ln_fac %g lnp %g lng %g, "
+          "at-info: rejected a trip to boundary %d => %d ~ %d, ln_fac %g lnp %g lng %g, "
           "et@ib_new %g, current_energy %g\n",
           proposal->ib_old, proposal->ib_new_prop, proposal->ib_new,
           ln_fac, lnp_ratio, lng_ratio,
@@ -346,7 +346,7 @@ double at_driver_langevin__move_corrected(
         proposal, langevin);
 
     //if (proposal->ib_new_prop == 0 || proposal->ib_new_prop == langevin->distr->domain->n-1) {
-    //  fprintf(stderr, "Info: a proposed boundary trip %d => %d ~ %d, accepted %d\n", proposal->ib_old, proposal->ib_new_prop, proposal->ib_new, accepted);
+    //  fprintf(stderr, "at-info: a proposed boundary trip %d => %d ~ %d, accepted %d\n", proposal->ib_old, proposal->ib_new_prop, proposal->ib_new, accepted);
     //}
   }
 

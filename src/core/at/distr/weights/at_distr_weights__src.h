@@ -41,13 +41,13 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   /* ens_exp: ensemble exponent of beta */
   w->ens_exp = 1.0;
   if (0 != zcom_cfg__get(cfg, &w->ens_exp, "ensemble_factor", "%lf")) {
-    if (verbose) fprintf(stderr, "Info: assuming default distr->weights->ens_exp = 1.0, key: ensemble_factor\n");
+    if (verbose) fprintf(stderr, "at-info: assuming default distr->weights->ens_exp = 1.0, key: ensemble_factor\n");
   }
 
   /* flat ensemble mode */
   w->mode = 0;
   if (0 != zcom_cfg__get(cfg, &w->mode, "ensemble_mode", "%d")) {
-    if (verbose) fprintf(stderr, "Info: assuming default distr->weights->mode = 0, key: ensemble_mode\n");
+    if (verbose) fprintf(stderr, "at-info: assuming default distr->weights->mode = 0, key: ensemble_mode\n");
   }
 
   /* default values */
@@ -58,12 +58,12 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   if(w->mode == 1)
   {
     if (0 != zcom_cfg__get(cfg, &w->beta0, "ensemble_beta0", "%lf")) {
-      if (verbose) fprintf(stderr, "Info: assuming default distr->weights->beta0 = 0.5 * (w->beta_max + w->beta_min), key: ensemble_beta0\n");
+      if (verbose) fprintf(stderr, "at-info: assuming default distr->weights->beta0 = 0.5 * (w->beta_max + w->beta_min), key: ensemble_beta0\n");
     }
 
     w->sigma = 1.0;
     if (0 != zcom_cfg__get(cfg, &w->sigma, "ensemble_sigma", "%lf")) {
-      if (verbose) fprintf(stderr, "Info: assuming default distr->weights->sigma = 1.0, key: ensemble_sigma\n");
+      if (verbose) fprintf(stderr, "at-info: assuming default distr->weights->sigma = 1.0, key: ensemble_sigma\n");
     }
 
     if (w->sigma <= 0) {
@@ -78,7 +78,7 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   {
     w->c = 0.0;
     if (0 != zcom_cfg__get(cfg, &w->c, "ensemble_c", "%lf")) {
-      if (verbose) fprintf(stderr, "Info: assuming default distr->weights->c = 0.0, key: ensemble_c\n");
+      if (verbose) fprintf(stderr, "at-info: assuming default distr->weights->c = 0.0, key: ensemble_c\n");
     }
   }
   else if(w->mode != 0)
@@ -89,8 +89,8 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
 
   /* ens_w: array of ensemble weights at bin boundaries */
   if ((w->ens_w = (double *) calloc((w->n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: w->ens_w, type: double\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: w->ens_w, type: double\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 

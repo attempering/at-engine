@@ -41,7 +41,7 @@ int at_driver_langevin__read_binary_legacy(at_driver_langevin_t *langevin, FILE 
   }
   if ( !((langevin->rejects=langevin->total*rate) >= 0.0) ) {
     fprintf(stderr, "langevin->total: failed validation: (langevin->rejects=langevin->total*rate) >= 0.0\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 

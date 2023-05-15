@@ -66,7 +66,7 @@ int at_mb_sm__init(at_mb_sm_t* sm)
 {
   if (sm == NULL) {
     fprintf(stderr, "null pointer to at_mb_sm_t\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -120,7 +120,7 @@ int at_mb_sm__read_binary(at_mb_sm_t *sm, FILE *fp, int endn)
 {
   if (sm == NULL) {
     fprintf(stderr, "passing null pointer to at_mb_sm__read_binary\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* clear data before reading */
@@ -158,7 +158,7 @@ int at_mb_sm__write_binary(at_mb_sm_t *sm, FILE *fp)
 {
   if (sm == NULL) {
     fprintf(stderr, "passing null pointer to at_mb_sm__write_binary\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* s */

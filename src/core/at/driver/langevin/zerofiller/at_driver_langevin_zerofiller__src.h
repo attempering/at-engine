@@ -36,8 +36,8 @@ int at_driver_langevin_zerofiller__init(
   zf->n = n;
 
   if ((zf->w = (double *) calloc((n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: zf->w, type: double\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: zf->w, type: double\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
@@ -46,8 +46,8 @@ int at_driver_langevin_zerofiller__init(
   }
 
   if ((zf->vals = (double *) calloc((n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "no memory! var: zf->vals, type: double\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: zf->vals, type: double\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
@@ -56,8 +56,8 @@ int at_driver_langevin_zerofiller__init(
   }
 
   if ((zf->has_vals = (int *) calloc((n + 1), sizeof(int))) == NULL) {
-    fprintf(stderr, "no memory! var: zf->has_vals, type: int\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: zf->has_vals, type: int\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
@@ -67,8 +67,8 @@ int at_driver_langevin_zerofiller__init(
 
 
   if ((zf->ib_from_left = (int *) calloc((n + 1), sizeof(int))) == NULL) {
-    fprintf(stderr, "no memory! var: zf->ib_from_left, type: int\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: zf->ib_from_left, type: int\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 
@@ -78,8 +78,8 @@ int at_driver_langevin_zerofiller__init(
 
 
   if ((zf->ib_from_right = (int *) calloc((n + 1), sizeof(int))) == NULL) {
-    fprintf(stderr, "no memory! var: zf->ib_from_right, type: int\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: zf->ib_from_right, type: int\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
 

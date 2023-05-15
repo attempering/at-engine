@@ -38,7 +38,7 @@ ZCOM__INLINE int zcom_opt__getval(zcom_opt_t *o, zcom_ssm_t *m)
     }
 
     if (1 != sscanf(o->val, fmt, o->ptr)) {
-      fprintf(stderr, "Error: unable to convert a value for [%s] as fmt [%s], raw string: [%s]\n",
+      fprintf(stderr, "zcom-error: unable to convert a value for [%s] as fmt [%s], raw string: [%s]\n",
           o->desc, fmt, o->val);
       return 1;
     }

@@ -33,15 +33,16 @@ typedef struct langevin_move_proposal_t_ {
   double current_energy;
   double invwf;
   double time_step;
-  double beta_old;
   double kt_old;
   double dkt_deterministic;
   double dkt;
   double kt_new;
+  double beta_old;
   double beta_new;
+  double beta_new_prop;
   int ib_old;
-  int ib_new_prop;
   int ib_new;
+  int ib_new_prop;
 } langevin_move_proposal_t;
 
 

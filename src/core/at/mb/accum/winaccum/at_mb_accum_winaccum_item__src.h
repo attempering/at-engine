@@ -167,7 +167,7 @@ int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FI
   if (itmp != i) {
     fprintf(stderr, "i mismatch, expect: %d, read: %d, pos: %#lx\n",
         i, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -179,7 +179,7 @@ int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FI
     if (itmp != j) {
       fprintf(stderr, "j mismatch, expect: %d, read: %d, pos: %#lx\n",
           j, itmp, (unsigned long) ftell(fp));
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
 
@@ -187,7 +187,7 @@ int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FI
 
     if (0 != at_mb_sm__read_binary(sm, fp, endn)) {
       fprintf(stderr, "error reading object winaccum->items->sums i %d j %d\n", i, j);
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
   }
@@ -223,7 +223,7 @@ int at_mb_accum_winaccum_item__write_binary(at_mb_accum_winaccum_item_t *item, F
 
     if (0 != at_mb_sm__write_binary(sm, fp)) {
       fprintf(stderr, "error writing object winaccum->items->sums i %d j %d\n", i, j);
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
   }

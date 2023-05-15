@@ -35,7 +35,7 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
 
   if (eh == NULL) {
     fprintf(stderr, "passing null pointer to eh_read_binary_low\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* clear data before reading */
@@ -49,7 +49,7 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
   if (itmp != eh->n) {
     fprintf(stderr, "eh->n mismatch, expect: %d, read: %d, pos: %#lx\n",
         eh->n, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* eh_cnt: number of energy bins */
@@ -60,7 +60,7 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
   if (itmp != eh->cnt) {
     fprintf(stderr, "eh->cnt mismatch, expect: %d, read: %d, pos: %#lx\n",
         eh->cnt, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* eh_min: minimal energy */
@@ -71,7 +71,7 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
   if (fabs(dtmp - eh->min) > 1e-5) {
     fprintf(stderr, "eh->min mismatch, expect: %g, read: %g, pos: %#lx\n",
         eh->min, dtmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* eh_del: energy bin size */
@@ -82,12 +82,12 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
   if (fabs(dtmp - eh->del) > 1e-5) {
     fprintf(stderr, "eh->del mismatch, expect: %g, read: %g, pos: %#lx\n",
         eh->del, dtmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if ( !(eh->del > 0) ) {
     fprintf(stderr, "eh->del: failed validation: eh->del > 0\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* eh_his: energy histogram data */
@@ -110,7 +110,7 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
     if ( !(jmin >= 0 && jmin < eh->cnt) ) {
       fprintf(stderr, "eh->his: base index %d out of boudary [0, eh->cnt=%d)\n",
           jmin, eh->cnt);
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
     if (zcom_endn__fread(&size, sizeof(size), 1, fp, endn) != 1) {
@@ -120,7 +120,7 @@ static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)
     if ( !(size > 0 && jmin + size <= eh->cnt) ) {
       fprintf(stderr, "eh->his: invalid size %d, jmin=%d, [0, eh->cnt=%d)\n",
           size, jmin, eh->cnt);
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
     if ((size > 0)
@@ -147,12 +147,12 @@ int at_eh__read_binary(at_eh_t *eh, const char *fname, int *pver)
   if ( !(eh->mode > 0) ) return 0;
   if ( !(eh->mode == 1) ) {
     fprintf(stderr, "at_eh__read_binary: failed validation: eh->mode == 1\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
   if ((fp = fopen(fname, "rb")) == NULL) {
     fprintf(stderr, "cannot read binary file [%s].\n", fname);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
@@ -160,7 +160,7 @@ int at_eh__read_binary(at_eh_t *eh, const char *fname, int *pver)
   if ((endn = zcom_endn__rmatchi(&itmp, sizeof(int), fp)) < 0) {
     fprintf(stderr, "itmp 0x%X cannot match sizeof(int) 0x%X\n",
         (unsigned) itmp, (unsigned) sizeof(int));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
@@ -170,7 +170,7 @@ int at_eh__read_binary(at_eh_t *eh, const char *fname, int *pver)
   if (itmp != (int) sizeof(double)) {
     fprintf(stderr, "(int) sizeof(double) mismatch, expect: %d, read: %d, pos: %#lx\n",
         (int) sizeof(double), itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if (zcom_endn__fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
@@ -198,7 +198,7 @@ static int eh_write_binary_low(at_eh_t *eh, FILE *fp, int ver)
 
   if (eh == NULL) {
     fprintf(stderr, "passing null pointer to eh_write_binary_low\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
@@ -262,12 +262,12 @@ int at_eh__write_binary(at_eh_t *eh, const char *fname, int ver)
   if ( !(eh->mode > 0) ) return 0;
   if ( !(eh->mode == 1) ) {
     fprintf(stderr, "at_eh__write_binary: failed validation: eh->mode == 1\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
   if ((fp = fopen(fname, "wb")) == NULL) {
     fprintf(stderr, "cannot write binary file [%s].\n", fname);
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 

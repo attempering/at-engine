@@ -47,8 +47,8 @@ void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
 
   gridvals->items = NULL;
   if ((gridvals->items = (at_mb_iie_gridvals_item_t *) calloc((n + 1), sizeof(at_mb_iie_gridvals_item_t))) == NULL) {
-    fprintf(stderr, "no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
-    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "at->error: no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
   for (i = 0; i <= n; i++) {

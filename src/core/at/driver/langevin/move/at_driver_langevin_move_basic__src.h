@@ -135,6 +135,7 @@ at_bool_t at_driver_langevin_move__moderate_stride(
   ib_new = at_distr_domain__beta_to_index(domain, proposal->beta_new, 0);
 
   proposal->ib_old = ib_old;
+  proposal->beta_new_prop = proposal->beta_new;
   proposal->ib_new_prop = ib_new;
   proposal->ib_new = ib_new;
 
@@ -177,7 +178,10 @@ at_bool_t at_driver_langevin_move__moderate_stride(
   }
 
   if (moderated && proposal->ib_new_prop == 0) {
-    fprintf(stderr, "a trip from %d to ib %d moderated to %d\n", ib_old, proposal->ib_new_prop, proposal->ib_new);
+    fprintf(stderr, "at-info: at->driver->langevin->move: a trip from %g (%d) to %g (%d) moderated to %g (%d)\n",
+        proposal->beta_old, ib_old,
+        proposal->beta_new_prop, proposal->ib_new_prop,
+        proposal->beta_new, proposal->ib_new);
   }
 
   return moderated;
