@@ -60,7 +60,7 @@ The following options are possibly among the most important ones.
 * `ensemble_factor`, `ensemble_mode`
 * `Tdt`
 
-## II. Core parameters
+## II. Basic tempering parameters
 
 ### II.A. Temperature range and binning
 
@@ -138,8 +138,6 @@ The `w(beta)` factor is given by this equation:
 * `ensemble_factor`: ensemble exponent for beta.
   d(beta) / beta^{ensemble_factor}
 
-  Variable: `mb->ens_exp`
-
   Default: 1.0.
 
 #### II.C.2. `f(beta)`
@@ -179,8 +177,6 @@ Options:
 
     Conditions: applicable only to `ensemble_mode == 1`
 
-    Variable: `mb->inv_sigma2 = 1/(sigma*sigma)`
-
     Default: 1.0.
 
 * Type 2 options:
@@ -188,8 +184,6 @@ Options:
   * `ensemble_c`: the value of c in the exponential beta distribution
 
     Conditions: applicable only to `ensemble_mode == 2`
-
-    Variable: `mb->ensemble_c`
 
     Default: 0.0.
 
@@ -266,13 +260,9 @@ The Langevin equation is the engine that drives the temperature transitions.
 
 * `Tdt`: time step for integrating the Langevin equation, `dt` in the above equation.
 
-  Variable: `mb->lgv_dt`.
-
   Default: 1e-5.
 
 * `dTmax`: threshold to clamp the maximum temperature change in a single application of the Langevin equation.
-
-  Variable: `mb->lgv_dTmax`.
 
   Default: 25.0
 
@@ -281,21 +271,11 @@ The Langevin equation is the engine that drives the temperature transitions.
   The Langevin equation for tempering will be repeated
     this number of times in a tempering step.
 
-  Variable: `at->mvreps`.
-
   Default: 1.
 
 ### II.G. Multiple-bin estimator settings
 
 Multiple-bin estimator settings share the prefix of `mbest_`
-
-* `mbest_order`: order (deprecated, can be missing)
-
-  Conditions: must be 1.
-
-  Variable: `mb->order`.
-
-  Default: 1.
 
 #### II.G.1. Window construction settings
 
@@ -303,8 +283,6 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
   * 0: disabled
   * 1: enabled
-
-  Variable: `mb->flags & MB_ONEBIN`
 
   Default: 0.
 
@@ -322,15 +300,11 @@ Multiple-bin estimator settings share the prefix of `mbest_`
   * 2: d(kT) mode, meaning that the window size (in `Delta beta` is proportional to the value of `kT = 1/beta`.
   This means the averaging window at 600K is twice as large as the window at 300K.
 
-  Variable: `mb->bwmod`
-
   Default: 1
 
 * `mbest_delta_xxx`: window size.
 
   The following options are all mapped to a single variable `mb->bwdel`.
-
-  Variable: `mb->bwdel`.
 
   * `mbest_delta_lnT`: half window width in terms of `d(lnT)`,
       only applicable for `mbest_mbin_mode == 1`.
@@ -363,16 +337,12 @@ Multiple-bin estimator settings share the prefix of `mbest_`
   * 0: disabled, asymmetric.
   * 1: enabled, symmetric.
 
-  Variable: `mb->use_sym_wins`.
-
   Default: 1.
 
 * `mbest_single_bin`: force the single-bin estimator.
 
   * 0: disabled.
   * 1: enabled.
-
-  Variable: `mb->use_single_bin`.
 
   Default: 0.
 
@@ -490,43 +460,29 @@ scheme.
   * 0: disabled.
   * 1: enabled.
 
-  Variable: `mb->shk_winadj`.
-
   Default: 1.
 
 * `shrink0`:
-
-  Variable: `mb->shk_max`.
 
   Default: 0.01.
 
 * `shrink_mode`:
 
-  Variable: `mb->shk_mode`.
-
   Default: 1.
 
 * `shrinkmin`:
-
-  Variable: `mb->shk_min`.
 
   Default: 0.0.
 
 * `shrinkstop`:
 
-  Variable: `mb->shk_stop`.
-
   Default: -1.
 
 * `shrinkamp`:
 
-  Variable: `mb->shk_amp`.
-
   Default: 0.1.
 
 * `shrinkexp`:
-
-  Variable: `mb->shk_exp`.
 
   Default: 1.0.
 
@@ -537,25 +493,12 @@ scheme.
   * 0: disabled, no Cv
   * 1: enabled, Cv
 
-  Variable: `mb->need_cv`.
-
-  Default: 1
-
-* `mbest_sbcorr`: include energy fluctuation correction due to a small bin width for the internal energy
-
-  * 0: disabled
-  * 1: enabled
-
-  Variable: `mb->flags & MB_SBCORR`.
-
   Default: 1
 
 * `mbest_verbose`: being verbose
 
   * 0: disabled
   * 1: enabled
-
-  Variable: `mb->verbose`.
 
   Default: 1.
 
@@ -574,8 +517,6 @@ scheme.
 * `nstav`: frequency of writing averager files.
 
   The files written include `ze_file`, `rng_file`, `mbav_file`.
-
-  Variable: `mb->av_nstsave`.
 
   Default: 10000.
 
@@ -609,8 +550,6 @@ The trace file outputs the current potential energy and temperature every few st
 
 * `trace_file`: name of the trace file.
 
-  Variable: `at->utils->trace->filename`.
-
   Default: "trace.dat" (legacy: "TRACE").
 
   Remarks: by default, this file is always appended instead of rewritten.
@@ -622,8 +561,6 @@ The trace file outputs the current potential energy and temperature every few st
   * -1: disable the log file
   * 0:  writing the log file only in steps of outputting the .xtc file
   * any positive integer: write log file this number of steps.
-
-  Variable: `at->utils->trace->nst_trace`.
 
   Default: -1 (disabled).
 
@@ -673,8 +610,6 @@ The following set of options apply to behaviors to this functionality.
 
 * `nsthist` frequency of writing energy histogram data to file
 
-  Variable: `mb->eh_nstsave`.
-
   Default: 100000.
 
   Remarks: a negative or 0 value disable this feature.
@@ -707,16 +642,12 @@ The following set of options apply to behaviors to this functionality.
   * 0: disabled
   * 1: enabled
 
-  Variable: `eh->keep_half_ebin`
-
   Default: 1.
 
 * `ehist_keepedge` whether to truncated bins of zero number of visits on both sides of the energy histogram before writing them to file.
 
   * 0: disabled
   * 1: enabled
-
-  Variable: `eh->keep_margins`
 
   Default: 0.
 
@@ -725,8 +656,6 @@ The following set of options apply to behaviors to this functionality.
 
   * 0: disabled
   * 1: enabled
-
-  Variable: `eh->no_zeros`
 
   Default: 0.
 
@@ -740,13 +669,9 @@ The following set of options apply to behaviors to this functionality.
 
   This file is always written in the text format.
 
-  Variable: `mb->eh_rfile`.
-
-  Default: (legacy file name "HMB").
+  Default: "hist-mb.dat" (legacy file name "HMB").
 
 * `ehist_skip` number of temperatures to skip over when writing the reconstructed energy histogram.
-
-  Variable: `mb->eh_skip`.
 
 ##### Energy histogram, reweighed histogram, beta distribution
 
@@ -758,15 +683,11 @@ Beta windowing methods
   * 1: lnT mode
   * 2: kT mode
 
-  Variable: `mb->eh_bwmod`.
-
   Conditions: 0, 1, or 2.
   
   Default: 1.
 
 * `ehist_delta_xxx`
-
-  Variable: `mb->eh_bwdel`.
 
   * `ehist_delta_beta`
 

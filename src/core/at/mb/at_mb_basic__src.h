@@ -68,25 +68,25 @@ int at_mb__cfg_init(
   /* compute heat capacity */
   mb->need_cv = 1;
   if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest_needcv", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->need_cv = 1, key: mbest_needcv\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mbest_needcv\n");
   }
 
   /* use symmetric windows */
   mb->use_sym_wins = 1;
   if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest_sym_mbin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->use_sym_wins = 1, key: mbest_sym_mbin\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mbest_sym_mbin\n");
   }
 
   /* force the single bin estimator */
   mb->use_single_bin = 0;
   if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest_single_bin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->use_single_bin = 0, key: mbest_single_bin\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_single_bin = 0, key: mbest_single_bin\n");
   }
 
   /* being verbose */
   mb->verbose = 1;
   if (0 != zcom_cfg__get(cfg, &mb->verbose, "mbest_verbose", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->verbose = 1, key: mbest_verbose\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->verbose = 1, key: mbest_verbose\n");
   }
 
   at_mb_win__cfg_init(mb->win, cfg, mb);
@@ -94,26 +94,26 @@ int at_mb__cfg_init(
   /* nst_refresh: interval of recalculating et for all temperatures */
   mb->nst_refresh = 10000;
   if (0 != zcom_cfg__get(cfg, &mb->nst_refresh, "nstrefresh", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->nstrefresh = 10000, key: nstrefresh\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nstrefresh = 10000, key: nstrefresh\n");
   }
 
   /* nst_save_av: interval of writing mbav and ze files */
   mb->nst_save_av = 10000;
   if (0 != zcom_cfg__get(cfg, &mb->nst_save_av, "nstav", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->nst_save_av = 10000, key: nstav\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nst_save_av = 10000, key: nstav\n");
   }
 
   /* av_binary: use binary format in mbav file */
   mb->av_binary = AT__TRUE;
   if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav_binary", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->av_binary = 1, key: mbav_binary\n");
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_binary = 1, key: mbav_binary\n");
   }
 
   /* av_file: name of mbav file */
   {
     char *fn_mb = "mb.dat";
     if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav_file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->av_file = \"%s\", key: mbav_file\n", fn_mb);
+      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_file = \"%s\", key: mbav_file\n", fn_mb);
     }
     mb->av_file = at_utils__make_output_filename(ssm, data_dir, fn_mb);
   }
@@ -122,7 +122,7 @@ int at_mb__cfg_init(
   {
     char *fn_ze = "ze.dat";
     if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze_file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "at-info: assuming default mb->ze_file = \"%s\", key: ze_file\n", fn_ze);
+      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->ze_file = \"%s\", key: ze_file\n", fn_ze);
     }
     mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
 

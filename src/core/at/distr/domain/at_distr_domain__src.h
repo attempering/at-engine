@@ -73,7 +73,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->beta_min = 0.2;
   if (0 != zcom_cfg__get(cfg, &domain->beta_min, "beta_min", "%lf")) {
-    fprintf(stderr, "at-warning: missing var: distr->domain->beta_min, key: beta_min, fmt: %%lf, assuming %g\n", domain->beta_min);
+    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_min, key: beta_min, fmt: %%lf, assuming %g\n", domain->beta_min);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -87,7 +87,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->beta_max = 0.4;
   if (0 != zcom_cfg__get(cfg, &domain->beta_max, "beta_max", "%lf")) {
-    fprintf(stderr, "at-warning: missing var: distr->domain->beta_max, key: beta_max, fmt: %%lf, assuming %g\n", domain->beta_max);
+    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_max, key: beta_max, fmt: %%lf, assuming %g\n", domain->beta_max);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -104,7 +104,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   domain->beta_del = 0.005;
 
   if (0 != zcom_cfg__get(cfg, &domain->beta_del, "beta_del", "%lf")) {
-    fprintf(stderr, "at-warning: missing var: distr->domain->beta_del, key: beta_del, fmt: %%lf, assuming %g\n",
+    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_del, key: beta_del, fmt: %%lf, assuming %g\n",
         domain->beta_del);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }

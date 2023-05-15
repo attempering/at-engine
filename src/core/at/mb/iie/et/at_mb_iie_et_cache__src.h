@@ -176,7 +176,7 @@ double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib, int *quality)
     et->cache_hit = 1;
 
     if ((ib == 0 || ib == et->n - 1) && item->value == 0.0) {
-      fprintf(stderr, "at-warning: cache hit, ib %d but value is zero\n", ib);
+      fprintf(stderr, "Warning@at: cache hit, ib %d but value is zero\n", ib);
       getchar();
     }
 
@@ -209,7 +209,7 @@ double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib, int *quality)
     et->cache_hit = 0;
 
     //if ((ib == 0 || ib == et->n - 1) && item->cache->value == 0.0) {
-    //  fprintf(stderr, "at-info: cache miss, ib %d but value is zero, item->quality %d\n", ib, item->quality);
+    //  fprintf(stderr, "Info@at: cache miss, ib %d but value is zero, item->quality %d\n", ib, item->quality);
     //  getchar();
     //}
 

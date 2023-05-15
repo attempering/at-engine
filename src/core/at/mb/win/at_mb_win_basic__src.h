@@ -39,7 +39,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   win->bwmod = 1;
 
   if (0 != zcom_cfg__get(cfg, &win->bwmod, "mbest_mbin_mode", "%d")) {
-    fprintf(stderr, "at-info: assuming default win->bwmod = 1, key: mbest_mbin_mode\n");
+    fprintf(stderr, "Info@at: assuming default win->bwmod = 1, key: mbest_mbin_mode\n");
   }
 
   zcom_util__exit_if ( !(win->bwmod >= 0 && win->bwmod <= 2),
@@ -51,7 +51,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.05;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_lnT", "%lf")) {
-      fprintf(stderr, "at-info: assuming default win->bwdel = %g, key: mbest_delta_lnT, fmt: %%lf\n", win->bwdel);
+      fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest_delta_lnT, fmt: %%lf\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del/domain->beta_min),
@@ -64,7 +64,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.02;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_beta", "%lf")) {
-      fprintf(stderr, "at-info: assuming default win->bwdel = %g, key: mbest_delta_beta, fmt: %%lf\n", win->bwdel);
+      fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest_delta_beta, fmt: %%lf\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del),
@@ -77,7 +77,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.1;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest_delta_kT", "%lf")) {
-        fprintf(stderr, "at-info: assuming default win->bwdel = %g, key: mbest_delta_kT, fmt: %%lf\n", win->bwdel);
+        fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest_delta_kT, fmt: %%lf\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del/pow(domain->beta_min, 2.0)),

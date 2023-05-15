@@ -156,7 +156,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
       val = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
       intgr->vals[ib] = val;
       //if (val == 0.0) {
-      //  fprintf(stderr, "at-warning: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
+      //  fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
       //}
     }
 
@@ -169,7 +169,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
       val = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
       intgr->vals[ib] = val;
       //if (val == 0.0) {
-      //  fprintf(stderr, "at-warning: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
+      //  fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
       //}
     }
 
@@ -189,7 +189,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
   // testing if zero filling
   for (ib = ib_begin; ib <= ib_end; ib++) {
     if (intgr->vals[ib] == 0.0) {
-      fprintf(stderr, "at-warning: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, intgr->vals[ib]);
+      fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, intgr->vals[ib]);
     }
   }
   */

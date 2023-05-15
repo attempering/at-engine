@@ -118,7 +118,7 @@ void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
 
   winaccum->enabled = AT__TRUE;
   if (0 != zcom_cfg__get(cfg, &winaccum->enabled, "mbest_damp", "%d")) {
-    if (verbose) fprintf(stderr, "at-info: assuming default mb->accum->winaccum->enabled = 1, key: mbest_damp\n");
+    if (verbose) fprintf(stderr, "Info@at: assuming default mb->accum->winaccum->enabled = 1, key: mbest_damp\n");
   }
 
   if (winaccum->enabled) {

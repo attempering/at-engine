@@ -47,7 +47,7 @@ static void at__set_init_beta(at_t *at)
   } else {
     at->beta = 0.5 * (domain->beta_min + domain->beta_max);
   }
-  fprintf(stderr, "at-info: initial beta %g\n", at->beta);
+  fprintf(stderr, "Info@at: initial beta %g\n", at->beta);
 }
 
 
@@ -85,7 +85,7 @@ int at__cfg_init(at_t *at,
 
   /* we only load previous data if it's continuation */
   if (at__load_data(at, at->sys_params->is_continuation) != 0) {
-    fprintf(stderr, "at-warning: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
+    fprintf(stderr, "Warning@at: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 
   // no need to do so, the log file will be open upon the first time of writing
@@ -119,7 +119,7 @@ int at__init(at_t *at,
       (cfg_filename ? cfg_filename : "NULL") );
 
   if (cfg_filename != NULL) {
-    fprintf(stderr, "at-info: successfully loaded configuration file %s\n", cfg_filename);
+    fprintf(stderr, "Info@at: successfully loaded configuration file %s\n", cfg_filename);
   }
 
   at->cfg = cfg;
