@@ -38,6 +38,8 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
   zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
+  mdsys__set_energy_at_beta(mdsys, at->beta);
+
   for (step = 1; step <= nsteps; step++)
   {
 
@@ -53,6 +55,7 @@ void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
       step_params->do_trace = AT__FALSE;
       step_params->flush_output = AT__FALSE;
 
+      //printf("step %ld, energy %g\n", (long) step, at->energy);
       at__move(at, step_params);
 
       // at_mb__write(at->mb, at->langevin);
@@ -79,7 +82,8 @@ int main(int argc, char **argv)
   remove("atdata/trace.dat");
 
   at_t *at = at__open(fn_cfg, NULL, 0);
-  // at__manifest(at);
+
+  at__manifest(at);
 
   mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->beta_min, at->distr->domain->beta_max, boltz);
 

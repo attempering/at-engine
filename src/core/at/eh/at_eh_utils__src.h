@@ -40,7 +40,7 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
       eh->min_real = e;
     }
 
-    if (ie >= 0 && ie < eh->cnt) { /* no invw for histogram */
+    if (ie >= 0 && ie < eh->cnt) {
       eh->his[ib*eh->cnt+ie] += 1.0;
     }
 
