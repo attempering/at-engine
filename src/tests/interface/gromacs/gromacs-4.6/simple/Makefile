@@ -20,6 +20,10 @@ deps = $(dep_srcs) \
        $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*.h) \
        $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*.h) \
        $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*/*/*.h) \
        Makefile
 includes = -I../../../../../interface/gromacs/gromacs-4.6/gmxroot/src/kernel \
            -I../../../../../interface/gromacs/gromacs-4.6/gmxmock/include \

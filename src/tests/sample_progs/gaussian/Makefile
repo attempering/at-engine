@@ -10,6 +10,10 @@ deps = $(dep_srcs) \
        $(wildcard *.h) \
        $(wildcard ../../../core/*.h) \
        $(wildcard ../../../core/*/*.h) \
+       $(wildcard ../../../core/*/*/*.h) \
+       $(wildcard ../../../core/*/*/*/*.h) \
+       $(wildcard ../../../core/*/*/*/*/*.h) \
+       $(wildcard ../../../core/*/*/*/*/*/*.h) \
        Makefile
 includes = -I../../../core -I../../../external -I../../../external/veritools
 
