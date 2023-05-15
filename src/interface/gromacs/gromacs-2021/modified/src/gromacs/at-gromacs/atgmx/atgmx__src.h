@@ -16,10 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -Wall -Wno-unused-function -DGMX_VERSION=40607 -I../../../../gmxroot/include -I../../../../gmxmock/include _test.c -lm
-#include "at-gromacs__src.h"
+#ifndef ATGMX__SRC_H__
+#define ATGMX__SRC_H__
 
-int main(void)
-{
-  return 0;
-}
+
+#include "atgmx.h"
+
+#include "at-engine/at-engine__src.h"
+#include "atgmx_utils__src.h"
+#include "atgmx_mpi__src.h"
+#include "atgmx_basic__src.h"
+
+
+#endif

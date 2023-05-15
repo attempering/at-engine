@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -Wall -Wno-unused-function -DGMX_VERSION=40607 -I../../../../gmxroot/include -I../../../../gmxmock/include _test.c -lm
+// g++ --std=c++17 -fopenmp -Wall -Wno-unused-function -DGMX_VERSION=20210007 -I../../../../gmxroot/src -I../../../../gmxroot/src/gromacs/gmxlib -I../../../../gmxroot/src/gromacs/mdlib -I../../../../gmxroot/src/gromacs/utility -I../../../../gmxroot/src/gromacs/math -I../../../../gmxroot/src/external -I../../../../gmxmock/include _test.cpp ../../../../gmxmock/src/gmxmock.cpp -lm
 #include "at-gromacs__src.h"
 
 int main(void)

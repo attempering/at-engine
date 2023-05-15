@@ -111,7 +111,7 @@ int at_mb__cfg_init(
 
   /* av_file: name of mbav file */
   {
-    char *fn_mb = "mb.dat";
+    char *fn_mb = (char *) "mb.dat";
     if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav_file", "%s")) {
       IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_file = \"%s\", key: mbav_file\n", fn_mb);
     }
@@ -120,7 +120,7 @@ int at_mb__cfg_init(
 
   /* ze_file: name of ze file */
   {
-    char *fn_ze = "ze.dat";
+    char *fn_ze = (char *) "ze.dat";
     if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze_file", "%s")) {
       IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->ze_file = \"%s\", key: ze_file\n", fn_ze);
     }

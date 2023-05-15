@@ -16,10 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -Wall -Wno-unused-function -DGMX_VERSION=40607 -I../../../../gmxroot/include -I../../../../gmxmock/include _test.c -lm
-#include "at-gromacs__src.h"
+#ifndef AT_GROMACS__DEF_H__
+#define AT_GROMACS__DEF_H__
 
-int main(void)
-{
-  return 0;
-}
+#include "atgmx/atgmx__def.h"
+
+#endif

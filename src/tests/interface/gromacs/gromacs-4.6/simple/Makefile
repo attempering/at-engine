@@ -1,7 +1,8 @@
-CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
-CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
-CC_MPI = mpicc -O3 -g -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation -DGMX_MPI -DGMX_LIB_MPI
-CC_TMPI = gcc -O3 -g -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation -DGMX_MPI -DGMX_THREAD_MPI -DTHREAD_PTHREADS -DHAVE_UNISTD_H -DHAVE_SCHED_H
+CC_OPTIONS = -Wall -Wno-unused-function -Wno-stringop-truncation -DGMX_VERSION=40607
+CC = gcc -O3 -g $(CC_OPTIONS)
+CC_DBG = gcc -O0 -g -pg $(CC_OPTIONS)
+CC_MPI = mpicc -O3 -g $(CC_OPTIONS) -DGMX_MPI -DGMX_LIB_MPI
+CC_TMPI = gcc -O3 -g $(CC_OPTIONS) -DGMX_MPI -DGMX_THREAD_MPI -DTHREAD_PTHREADS -DHAVE_UNISTD_H -DHAVE_SCHED_H
 LM = -lm
 
 srcs = $(wildcard *.c)

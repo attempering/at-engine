@@ -55,7 +55,7 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
     free(domain->barr);
   }
 
-  domain->barr = calloc(n+1, sizeof(double));
+  domain->barr = (double *) calloc(n+1, sizeof(double));
 
   for (i = 0; i <= n; i++) {
     domain->barr[i] = beta_min + beta_del * i;

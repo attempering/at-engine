@@ -53,7 +53,7 @@ void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
     const char *data_dir,
     at_bool_t verbose)
 {
-  rng->filename = "rng.dat";
+  rng->filename = (char *) "rng.dat";
   if (zcom_cfg__get(cfg, &rng->filename, "rng_file", "%s") != 0)
   {
     if (verbose) fprintf(stderr, "Info@at: assuming default langevin->rng->filename = \"rng.dat\", key: rng_file\n");

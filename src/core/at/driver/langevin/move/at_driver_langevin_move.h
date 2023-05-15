@@ -68,6 +68,6 @@ double at_driver_langevin_move__get_acceptance_ratio(
     const at_driver_langevin_t *langevin);
 
 
-int at_driver_langevin_move__debug__;
+extern int at_driver_langevin_move__debug__;
 
 #endif

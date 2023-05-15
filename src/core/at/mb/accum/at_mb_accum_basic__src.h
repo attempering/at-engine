@@ -68,6 +68,7 @@ at_mb_sm_t *at_mb_accum__get_proper_sums0_and_winaccum_item(
 
   }
 
+  return NULL; // impossible to reach here
 }
 
 
@@ -101,6 +102,7 @@ double at_mb_accum__get_window_visits(at_mb_accum_t *accum, int win_id)
 
   }
 
+  return 0.0; // impossible to reach here
 }
 
 

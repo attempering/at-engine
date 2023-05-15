@@ -316,7 +316,7 @@ double at_driver_langevin__move_corrected(
   langevin_move_proposal_t proposal[1];
 
   double beta = beta_old;
-  at_bool_t stride_moderated;
+  at_bool_t stride_moderated = AT__FALSE;
   at_bool_t accepted;
 
   if (!at_driver_langevin_move__check_min_visits(langevin, mb, beta_old)) {

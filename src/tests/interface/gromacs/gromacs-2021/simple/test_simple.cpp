@@ -16,10 +16,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -Wall -Wno-unused-function -DGMX_VERSION=40607 -I../../../../gmxroot/include -I../../../../gmxmock/include _test.c -lm
-#include "at-gromacs__src.h"
+#include "at-gromacs/at-gromacs__src.h"
 
-int main(void)
+int work(int argc, char **argv)
 {
+  int world_size = 1, world_rank = 0;
+
+#ifdef GMX_MPI
+  // Get the number of processes
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+  // Get the rank of the process
+  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+#endif
+
+  printf("node %d/%d\n", world_rank, world_size);
+
+#ifdef GMX_MPI
+  MPI_Finalize();
+#endif
+
+  return 0;
+}
+
+int main(int argc, char **argv)
+{
+#ifdef GMX_LIB_MPI
+  MPI_Init(&argc, &argv);
+#endif
+
+#ifdef GMX_THREAD_MPI
+  tMPI_Init(&argc, &argv, &work);
+#endif
+
+  work(argc, argv);
+
   return 0;
 }

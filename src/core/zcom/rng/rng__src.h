@@ -38,7 +38,7 @@ ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname)
   }
   fprintf(fp, "MTSEED\n%d\n", mtrng->index);
   for (k = 0; k < ZCOM_RNG__MT_N; k++) {
-    fprintf(fp, "%"PRIu32"\n", mtrng->arr[k]);
+    fprintf(fp, "%" PRIu32 "\n", mtrng->arr[k]);
   }
   fclose(fp);
 
@@ -94,7 +94,7 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
         mtrng->index = ZCOM_RNG__MT_N; /* request updating */
       }
       for (z = 1, k = 0; k < ZCOM_RNG__MT_N; k++) {
-        if (fscanf(fp, "%"PRIu32, &mtrng->arr[k]) != 1) {
+        if (fscanf(fp, "%" PRIu32, &mtrng->arr[k]) != 1) {
           break;
         }
         if (mtrng->arr[k] != 0) {

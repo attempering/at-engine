@@ -207,7 +207,7 @@ int at_mb_win__init_bin2wins(at_mb_win_t *win)
   int i, j;
   at_mb_win_ids_t *wj;
 
-  zcom_util__exit_if ((win->bin2wins = calloc(n, sizeof(*win->bin2wins))) == NULL,
+  zcom_util__exit_if ((win->bin2wins = (at_mb_win_ids_t *) calloc(n, sizeof(*win->bin2wins))) == NULL,
       "no memory for win->bin2wins of size %d", n);
 
   at_mb_win__calc_window_counts(win);

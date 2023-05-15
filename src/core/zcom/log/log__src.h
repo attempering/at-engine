@@ -45,7 +45,7 @@ ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn)
 
 
 
-ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, char *fmt, ...)
+ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
 {
   va_list args;
 

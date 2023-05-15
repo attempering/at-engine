@@ -222,6 +222,7 @@ double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib, int *quality)
     return et_val;
   }
 
+  return 0.0; // impossible to reach here
 }
 
 

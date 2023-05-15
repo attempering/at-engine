@@ -66,7 +66,7 @@ int at_driver_langevin_move__propose(
     double *bin_av_energy);
 
 /* moderate the stride in the beta space */
-int at_driver_langevin_move__moderate_stride(
+at_bool_t at_driver_langevin_move__moderate_stride(
     langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin);
 
