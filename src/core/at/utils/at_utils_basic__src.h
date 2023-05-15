@@ -61,13 +61,11 @@ void at_utils__finish(at_utils_t *utils)
 
 void at_utils__manifest(at_utils_t *utils)
 {
-  FILE *fp = utils->manifest->fp;
-
   at_utils_manifest__manifest(utils->manifest);
 
   at_utils_trace__manifest(utils->trace, utils->manifest);
 
-  fprintf(fp, "utils->temp_thermostat: double, %g\n", utils->temp_thermostat);
+  at_utils_manifest__print_double(utils->manifest, utils->temp_thermostat, "utils->temp_thermostat", "T0");
 }
 
 

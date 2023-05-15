@@ -19,12 +19,9 @@
 #ifndef AT_EH_IO_BINARY__SRC_H__
 #define AT_EH_IO_BINARY__SRC_H__
 
-#include "at_eh_io.h"
-#include "at_eh_basic.h"
-
-#include <stdio.h>
-
-#include "../../zcom/zcom.h"
+#include "at_eh_io_binary.h"
+#include "../../at_eh_basic.h"
+#include "../../../../zcom/zcom.h"
 
 
 static int eh_read_binary_low(at_eh_t *eh, FILE *fp, int ver, int endn)

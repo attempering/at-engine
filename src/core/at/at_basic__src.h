@@ -182,9 +182,15 @@ int at__manifest(at_t *at)
 {
   at_utils_manifest_t *manifest = at->utils->manifest;
 
-  FILE *fp = at_utils_manifest__open_file(manifest);
+  at_utils_manifest__open_file(manifest);
+
+  //FILE *fp = at_utils_manifest__open_file(manifest);
 
   //fprintf(stderr, "at %p, manifest %p, fp %p (%s)\n", at, manifest, fp, manifest->filename);
+
+  at_utils_manifest__print_double(manifest, at->beta, "beta", NULL);
+
+  at_utils_manifest__print_double(manifest, at->energy, "energy", NULL);
 
   at_utils__manifest(at->utils);
 
@@ -192,15 +198,9 @@ int at__manifest(at_t *at)
 
   at_mb__manifest(at->mb, manifest);
 
-  if (at->eh->mode != 0) {
-    at_eh__manifest(at->eh, manifest);
-  }
-
   at_driver__manifest(at->driver, manifest);
 
-  fprintf(fp, "at->beta: double, %g\n", at->beta);
-
-  fprintf(fp, "at->energy: double, %g\n", at->energy);
+  at_eh__manifest(at->eh, manifest);
 
   //fprintf(stderr, "fp %p %p, error %d\n", fp, manifest->fp, ferror(fp)); getchar();
 

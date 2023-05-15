@@ -108,23 +108,16 @@ ERR:
 
 void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
 
-  /* ens_exp: ensemble exponent of beta */
-  fprintf(fp, "distr->weights->ens_exp: double, %g\n", w->ens_exp);
+  at_utils_manifest__print_double(manifest, w->ens_exp, "distr->weights->ens_exp", "ensemble_factor");
 
-  /* mode */
-  fprintf(fp, "distr->weights->mode: int, %d\n", w->mode);
-  if(w->mode == 1)
-  {
-    fprintf(fp, "distr->weights->beta0: double, %g\n", w->beta0);
+  at_utils_manifest__print_int(manifest, w->mode, "distr->weights->mode", "ensemble_mode");
 
-    fprintf(fp, "distr->weights->sigma: double, %g\n", w->sigma);
-  }
-  else if(w->mode == 2)
-  {
-    /* c */
-    fprintf(fp, "distr->weights->c: double, %g\n", w->c);
+  if (w->mode == 1) {
+    at_utils_manifest__print_double(manifest, w->beta0, "distr->weights->beta0", "ensemble_beta0");
+    at_utils_manifest__print_double(manifest, w->sigma, "distr->weights->sigma", "ensemble_sigma");
+  } else if (w->mode == 2) {
+    at_utils_manifest__print_double(manifest, w->c, "distr->weights->c", "ensemble_c");
   }
 
   /* ens_w: array of ensemble weights at bin boundaries */

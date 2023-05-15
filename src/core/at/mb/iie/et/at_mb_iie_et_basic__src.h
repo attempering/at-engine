@@ -107,13 +107,13 @@ void at_mb_iie_et__clear(at_mb_iie_et_t *et)
 
 void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
+  at_utils_manifest__print_bool(manifest, et->cache_params->enabled, "mb->iie->et->cache_params->enabled", "et_cache_enabled");
 
-  fprintf(fp, "mb->iie->et->cache_params->enabled: double, %d\n", et->cache_params->enabled);
+  if (et->cache_params->enabled) {
+    at_utils_manifest__print_double(manifest, et->cache_params->lifespan, "mb->iie->et->cache_params->lifespan", "et_cache_lifespan");
 
-  fprintf(fp, "mb->iie->et->cache_params->lifespan: double, %g\n", et->cache_params->lifespan);
-
-  fprintf(fp, "mb->iie->et->cache_params->min_visits: double, %g\n", et->cache_params->min_visits);
+    at_utils_manifest__print_double(manifest, et->cache_params->min_visits, "mb->iie->et->cache_params->min_visits", "et_cache_min_visits");
+  }
 }
 
 

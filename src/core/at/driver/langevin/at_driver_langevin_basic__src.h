@@ -131,23 +131,19 @@ void at_driver_langevin__finish(at_driver_langevin_t *langevin)
 
 void at_driver_langevin__manifest(const at_driver_langevin_t *langevin, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
+  at_utils_manifest__print_double(manifest, langevin->dt, "driver->langevin->dt", "Tdt");
 
-  fprintf(fp, "driver->langevin->dt: double, %g\n", langevin->dt);
+  at_utils_manifest__print_double(manifest, langevin->dTmax, "driver->langevin->dTmax", "dTmax");
 
-  fprintf(fp, "driver->langevin->dTmax: double, %g\n", langevin->dTmax);
+  at_utils_manifest__print_double(manifest, langevin->rejects, "driver->langevin->rejects", NULL);
 
-  fprintf(fp, "driver->langevin->rejects: double, %g\n", langevin->rejects);
+  at_utils_manifest__print_double(manifest, langevin->total, "driver->langevin->total", NULL);
 
-  fprintf(fp, "driver->langevin->total: double, %g\n", langevin->total);
+  at_utils_manifest__print_bool(manifest, langevin->corrected, "driver->langevin->corrected", "langevin_corrected");
 
-  fprintf(fp, "driver->langevin->corrected: int, %d\n", langevin->corrected);
+  at_utils_manifest__print_bool(manifest, langevin->no_skip, "driver->langevin->no_skip", "langevin_no_skip");
 
-  fprintf(fp, "driver->langevin->no_skip: int, %d\n", langevin->no_skip);
-
-  fprintf(fp, "driver->langevin->bin_min_visits: double, %lf\n", langevin->bin_min_visits);
-
-  fprintf(fp, "driver->langevin->integrate_func: %p\n", langevin->integrate_func);
+  at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "driver->langevin->bin_min_visits", "langevin_bin_min_visits");
 }
 
 

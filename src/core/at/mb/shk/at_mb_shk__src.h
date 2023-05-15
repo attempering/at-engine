@@ -132,36 +132,34 @@ void at_mb_shk__finish(at_mb_shk_t *shk) {
 
 void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
+  /* current generic shrink amplitude */
+  at_utils_manifest__print_double(manifest, shk->base, "mb->shk->base", NULL);
 
-  /* shk_base: current generic shrink amplitude */
-  fprintf(fp, "mb->shk->base: double, %g\n", shk->base);
+  /* adjust shrink according to temperature window width */
+  at_utils_manifest__print_bool(manifest, shk->window_adjusted, "mb->shk->window_adjusted", "shrink_mbin_adjust");
 
-  /* shk_window_adjusted: adjust shrink according to temperature window width */
-  fprintf(fp, "mb->shk->window_adjusted: int, %4d\n", shk->window_adjusted);
+  /* initial and maximal shrink (adjusted) */
+  at_utils_manifest__print_double(manifest, shk->max, "mb->shk->max", "shrink0");
 
-  /* shk_max: initial and maximal shrink (adjusted) */
-  fprintf(fp, "mb->shk->max: double, %g\n", shk->max);
-
-  /* shk_win_mul: array used of modulation shrinking factors */
+  /* array used of modulation shrinking factors */
   at_utils_manifest__print_double_arr(manifest, shk->win_mul, shk->n, "mb->shk->win_mul");
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
-  fprintf(fp, "mb->shk->mode: int, %4d\n", shk->mode);
+  at_utils_manifest__print_int(manifest, shk->mode, "mb->shk->mode", "shrink_mode");
 
   /* shk_min: minimal value for enforcing acc. sampling */
-  fprintf(fp, "mb->shk->min: double, %g\n", shk->min);
+  at_utils_manifest__print_double(manifest, shk->min, "mb->shk->min", "shrinkmin");
 
   /* shk_stop: stop shrinking after this number of steps */
-  fprintf(fp, "mb->shk->stop: int, %4d\n", shk->stop);
+  at_utils_manifest__print_int(manifest, shk->stop, "mb->shk->stop", "shrinkstop");
 
   if (shk->mode >= 1) {
     /* shk_amp: amp t^(-exp) */
-    fprintf(fp, "mb->shk->amp: double, %g\n", shk->amp);
+    at_utils_manifest__print_double(manifest, shk->amp, "mb->shk->amp", "shrinkamp");
   }
   if (shk->mode >= 2) {
     /* shk_exp: amp t^(-exp) */
-    fprintf(fp, "mb->shk->exp: double, %g\n", shk->exp);
+    at_utils_manifest__print_double(manifest, shk->exp, "mb->shk->exp", "shrinkexp");
   }
 }
 

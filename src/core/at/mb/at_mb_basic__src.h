@@ -104,7 +104,7 @@ int at_mb__cfg_init(
   }
 
   /* av_binary: use binary format in mbav file */
-  mb->av_binary = 1;
+  mb->av_binary = AT__TRUE;
   if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav_binary", "%d")) {
     IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->av_binary = 1, key: mbav_binary\n");
   }
@@ -127,12 +127,6 @@ int at_mb__cfg_init(
     mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
 
     mb->ze_init_file = at_utils__make_output_filename(ssm, data_dir, "ze-init.dat");
-  }
-
-  /* wze_reps: number of iterations before writing ze file */
-  mb->wze_reps = 5;
-  if (0 != zcom_cfg__get(cfg, &mb->wze_reps, "mbest_wze_reps", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info: assuming default mb->wze_reps = 5, key: mbest_wze_reps\n");
   }
 
   /* visits: number of visits */
@@ -197,49 +191,40 @@ void at_mb__clear(at_mb_t *mb)
 
 void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
-
   /* compute heat capacity */
-  fprintf(fp, "mb->need_cv (mbest_needcv): %s\n",
-      (mb->need_cv ? "true" : "false"));
+  at_utils_manifest__print_bool(manifest, mb->need_cv, "mb->need_cv", "mbest_needcv");
 
   /* use symmetrical window */
-  fprintf(fp, "mb->use_sym_wins (mbest_sym_mbin): %s\n",
-      (mb->use_sym_wins ? "true" : "false"));
+  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "mb->use_sym_wins", "mbest_needcv");
 
   /* use single bin estimator */
-  fprintf(fp, "mb->use_single_bin (mbest_single_bin): %s\n",
-      (mb->use_single_bin ? "true" : "false"));
+  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "mb->use_single_bin", "mbest_needcv");
 
   /* being verbose */
-  fprintf(fp, "mb->verbose (mbest_verbose): %s\n",
-      (mb->verbose ? "true" : "false"));
+  at_utils_manifest__print_bool(manifest, mb->verbose, "mb->verbose", "mbest_verbose");
 
   at_mb_win__manifest(mb->win, manifest);
 
-  /* nst_refresh: interval of recalculating et for all temperature */
-  fprintf(fp, "mb->nst_refresh: int, %4d\n", mb->nst_refresh);
+  /* interval of recalculating et for all temperature */
+  at_utils_manifest__print_int(manifest, mb->nst_refresh, "mb->nst_refresh", "nstrefresh");
 
-  /* nst_save_av: interval of writing mbav and ze files */
-  fprintf(fp, "mb->nst_save_av: int, %4d\n", mb->nst_save_av);
+  /* interval of writing mbav and ze files */
+  at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "nstav");
 
-  /* av_binary: use binary format in mbav file */
-  fprintf(fp, "mb->av_binary: int, %4d\n", mb->av_binary);
+  /* use binary format in mbav file */
+  at_utils_manifest__print_bool(manifest, mb->av_binary, "mb->av_binary", "mbav_binary");
 
-  /* av_file: name of mbav file */
-  fprintf(fp, "mb->av_file: char *, %s\n", mb->av_file);
+  /* name of mbav file */
+  at_utils_manifest__print_str(manifest, mb->av_file, "mb->av_file", "mbav_file");
 
-  /* ze_file: name of ze file */
-  fprintf(fp, "mb->ze_file: char *, %s\n", mb->ze_file);
+  /* name of ze file */
+  at_utils_manifest__print_str(manifest, mb->ze_file, "mb->ze_file", "ze_file");
 
-  /* wze_reps: number of iterations before writing ze file */
-  fprintf(fp, "mb->wze_reps: int, %4d\n", mb->wze_reps);
-
-  /* visits: number of visits */
+  /* number of visits */
   at_utils_manifest__print_double_arr(manifest, mb->visits, mb->distr->domain->n, "mb->visits");
 
-  /* total_visits: total number of visits, number of tempering */
-  fprintf(fp, "mb->total_visits: double, %g\n", mb->total_visits);
+  /* total number of visits, number of tempering */
+  at_utils_manifest__print_double(manifest, mb->total_visits, "mb->total_visits", NULL);
 
   at_mb_shk__manifest(mb->shk, manifest);
 
@@ -247,11 +232,12 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 
   at_mb_accum__manifest(mb->accum, manifest);
 
-  /* cnt_int: number of additional integer variables to be written to binary file */
-  fprintf(fp, "mb->cnt_int: int, %4d\n", mb->cnt_int);
+  /* number of additional integer variables to be written to binary file */
+  at_utils_manifest__print_int(manifest, mb->cnt_int, "mb->cnt_int", NULL);
 
-  /* cnt_dbl: number of additional double variables to be written to binary file */
-  fprintf(fp, "mb->cnt_dbl: int, %4d\n", mb->cnt_dbl);
+  /* number of additional double variables to be written to binary file */
+  at_utils_manifest__print_int(manifest, mb->cnt_dbl, "mb->cnt_dbl", NULL);
+
 }
 
 

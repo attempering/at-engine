@@ -16,26 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DISTR_BIAS__DEF_H__
-#define AT_DISTR_BIAS__DEF_H__
+#ifndef AT_EH_IO__SRC_H__
+#define AT_EH_IO__SRC_H__
 
-#include "../../context/at_context__def.h"
+#include "at_eh_io.h"
+#include "../at_eh_basic.h"
 
-/* high-temperature bias
+/* include the source code of sub-modules */
+#include "binary/at_eh_io_binary__src.h"
 
-  H = kappa* H0 + epsilon * H1
-  kappa = 1-(T-Tref)*(1-kappa0)/(Tmax-Tref) if T>Tref; kappa=1 if T<Tref
-  epsilon= epsilon0*(T-Tref)/(Tmax-Tref) if T>Tref; epsilon=0 if T<Tref
+#include "../../../zcom/zcom.h"
 
-*/
-typedef struct at_distr_bias_t_
+int at_eh__read(at_eh_t *eh)
 {
-  int       enabled;
-  double    ref_temp;
-#ifdef AT__PCST_COMPAT
-  double    *kappa, *epsilon;
-  double    kappa0, epsilon0;
-#endif
-} at_distr_bias_t;
+  int ret = 0, version;
+
+  if (eh != NULL && eh->mode != 0) {
+    ret = at_eh__read_binary(eh, eh->file, &version);
+  }
+
+  return ret;
+}
+
+
+
+int at_eh__write(at_eh_t *eh)
+{
+  int ret = 0;
+  const int version = 0;
+
+  if (eh != NULL && eh->mode != 0) {
+    ret = at_eh__write_binary(eh, eh->file, version);
+  }
+
+  return ret;
+}
+
+
 
 #endif

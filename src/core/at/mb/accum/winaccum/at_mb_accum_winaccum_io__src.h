@@ -30,11 +30,9 @@
 void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
     at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
 
   /* use adaptive averaging */
-  fprintf(fp, "mb->accum->winaccum->enabled (mbest_damp): %s\n",
-      (winaccum->enabled ? "true" : "false"));
+  at_utils_manifest__print_bool(manifest, winaccum->enabled, "mb->accum->winaccum->enabled", "mbest_damp");
 
 }
 

@@ -33,7 +33,7 @@ typedef struct at_eh_t_
   double     del;       /* energy bin size */
   int        cnt;       /* number of energy bins */
   int        binary;    /* use binary format for IO */
-  int        nst_save;   /* interval of writing histogram files */
+  int        nst_save;  /* interval of writing histogram files */
   char      *file;      /* name of IO file */
   char      *rfile;     /* name of reconstructed energy histogram */
   double    *his;       /* energy histogram data */
@@ -41,11 +41,14 @@ typedef struct at_eh_t_
   int       *is;        /* indices for temperature windows (lower) */
   int       *it;        /* indices for temperature windows (higher) */
   unsigned   flags;
-  at_mb_t      *mb;        /* associated at_mb_t object */
+  at_mb_t    *mb;       /* associated at_mb_t object */
 
   at_bool_t keep_margins;
   at_bool_t add_half_ebin;
   at_bool_t no_zeros;
+
+  double min_real;
+  double max_real;
 
 } at_eh_t;
 

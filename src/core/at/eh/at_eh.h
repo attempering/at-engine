@@ -30,6 +30,6 @@
 #include "at_eh_utils.h"
 
 /* IO routines */
-#include "at_eh_io.h"
+#include "io/at_eh_io.h"
 
 #endif

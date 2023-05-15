@@ -161,17 +161,14 @@ void at_distr_domain__finish(at_distr_domain_t *domain)
 
 void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
+  at_utils_manifest__print_double(manifest, domain->beta_min, "distr->domain->beta_min", "beta_min");
 
-  //fprintf(stderr, "fp %p\n", manifest->fp); exit(1);
+  at_utils_manifest__print_double(manifest, domain->beta_max, "distr->domain->beta_max", "beta_max");
 
-  /* beta_del: bin size of beta */
-  fprintf(fp, "distr->domain->beta_del: double, %g\n", domain->beta_del);
+  at_utils_manifest__print_double(manifest, domain->beta_del, "distr->domain->beta_del", "beta_del");
 
-  /* n: number of temperature bins */
-  fprintf(fp, "distr->domain->n: int, %4d\n", domain->n);
+  at_utils_manifest__print_int(manifest, domain->n, "distr->domain->n", NULL);
 
-  /* barr: temperature array */
   at_utils_manifest__print_double_arr(manifest, domain->barr, domain->n+1, "distr->domain->barr");
 }
 

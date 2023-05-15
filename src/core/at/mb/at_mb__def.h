@@ -47,11 +47,10 @@ typedef struct at_mb_t_ {
 
   int       nst_refresh;  /* interval of recalculating et for all temperature */
   int       nst_save_av;  /* interval of writing mbav and ze files */
-  int       av_binary;    /* use binary format in mbav file */
+  at_bool_t av_binary;    /* use binary format in mbav file */
   char      *av_file;     /* name of mbav file */
   char      *ze_file;     /* name of ze file */
   char      *ze_init_file; /* name of the initially-loaded ze file */
-  int       wze_reps;     /* number of iterations before writing ze file */
   double    *visits;      /* number of visits */
   double    total_visits; /* total number of visits, number of tempering */
 

@@ -36,6 +36,18 @@ void at_utils_manifest__finish(at_utils_manifest_t *manifest);
 
 void at_utils_manifest__manifest(at_utils_manifest_t *manifest);
 
+void at_utils_manifest__print_int(at_utils_manifest_t *manifest,
+    int value, const char *var, const char *cfg_key);
+
+void at_utils_manifest__print_double(at_utils_manifest_t *manifest,
+    double value, const char *var, const char *cfg_key);
+
+void at_utils_manifest__print_str(at_utils_manifest_t *manifest,
+    const char* value, const char *var, const char *cfg_key);
+
+void at_utils_manifest__print_bool(at_utils_manifest_t *manifest,
+    at_bool_t value, const char *var, const char *cfg_key);
+
 void at_utils_manifest__print_int_arr(at_utils_manifest_t *manifest,
     const int *arr, int n, const char *name);
 

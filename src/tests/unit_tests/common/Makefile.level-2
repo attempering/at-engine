@@ -11,6 +11,8 @@ deps = $(dep_srcs) \
        $(wildcard ../../../../core/at/*.h) \
        $(wildcard ../../../../core/at/*/*.h) \
        $(wildcard ../../../../core/at/*/*/*.h) \
+       $(wildcard ../../../../core/at/*/*/*/*.h) \
+       $(wildcard ../../../../core/at/*/*/*/*/*.h) \
        Makefile
 includes = -I../../../../core
 

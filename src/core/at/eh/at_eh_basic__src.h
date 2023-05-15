@@ -35,6 +35,9 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->mb = mb;
   eh->n = distr->domain->n;
 
+  eh->min_real = 0;
+  eh->max_real = 0;
+
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
   if (0 != zcom_cfg__get(cfg, &eh->mode, "ehist_mode", "%d")) {
@@ -76,9 +79,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->bwdel = 0.05;
   if (eh->mode && eh->bwmod == 1) {
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_lnT", "%lf")) {
-      fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_lnT, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
+      fprintf(stderr, "Info: assuming default eh->bwdel = %g, key: ehist_delta_lnT, fmt: %%lf\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del/distr->domain->beta_min) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del/beta_min\n");
@@ -91,9 +92,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode && eh->bwmod == 0) {
     eh->bwdel = 0.02;
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_beta", "%lf")) {
-      fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_beta, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
+      fprintf(stderr, "Info: assuming default eh->bwdel = %g, key: ehist_delta_beta, fmt: %%lf\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del\n");
@@ -106,9 +105,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode && eh->bwmod == 2) {
     eh->bwdel = 0.10;
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist_delta_kT", "%lf")) {
-      fprintf(stderr, "missing var: eh->bwdel, key: ehist_delta_kT, fmt: %%lf\n");
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
+      fprintf(stderr, "Info: assuming default eh->bwdel = %g, key: ehist_delta_kT, fmt: %%lf\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del/pow(distr->domain->beta_min, 2.0)) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del/beta_min^2\n");
@@ -124,6 +121,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       fprintf(stderr, "Info: assuming default eh->min = -12.6e4, key: ehist_min\n");
     }
   }
+  eh->min_real = eh->min;
 
   /* eh_max: maximal energy */
   eh->max = -9.0e4;
@@ -137,6 +135,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       goto ERR;
     }
   }
+  eh->max_real = eh->max;
 
   /* eh_del: energy bin size */
   eh->del = 20.0;
@@ -236,7 +235,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
       eh->it[i] = 0;
     }
 
-    fprintf(stderr, "eh->is %p, eh->it %p\n", eh->is, eh->it);
+    //fprintf(stderr, "eh->is %p, eh->it %p, %s:%d\n", eh->is, eh->it, __FILE__, __LINE__);
 
     // windows for the reconstructed energy histograms
     at_mb_win__make_unres_windows_for_grid_estimators(
@@ -303,5 +302,77 @@ void at_eh__finish(at_eh_t *eh)
     if (eh->it     != NULL) free(eh->it);
   }
 }
+
+
+void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
+{
+  /* eh_mode: 0: disable; 1: simple histogram */
+  at_utils_manifest__print_int(manifest, eh->mode, "eh->mode", "ehist_mode");
+
+  if (eh->mode == 0) {
+    return;
+  }
+
+  /* interval of reconstructing energy histograms */
+  at_utils_manifest__print_int(manifest, eh->skip, "eh->skip", "ehist_skip");
+
+  /* eh_bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
+  at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist_mbin_mode");
+
+  if (eh->bwmod == 0) {
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist_delta_beta");
+  } else if (eh->bwmod == 1) {
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist_delta_lnT");
+  } else if (eh->bwmod == 2) {
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist_delta_kT");
+  }
+
+  /* eh_min: minimal energy */
+  at_utils_manifest__print_double(manifest, eh->min, "eh->min", "ehist_min");
+
+  /* eh_max: maximal energy */
+  at_utils_manifest__print_double(manifest, eh->max, "eh->max", "ehist_max");
+
+  /* eh_del: energy bin size */
+  at_utils_manifest__print_double(manifest, eh->del, "eh->del", "ehist_del");
+
+  /* eh_cnt: number of energy bins */
+  at_utils_manifest__print_int(manifest, eh->cnt, "eh->cnt", NULL);
+
+  /* eh_binary: binary format for ehist file */
+  at_utils_manifest__print_bool(manifest, eh->binary, "eh->binary", "ehist_binary");
+
+  /* eh_nst_save: interval of writing histogram files */
+  at_utils_manifest__print_int(manifest, eh->nst_save, "eh->nst_save", "nsthist");
+
+  /* name of ehist file */
+  at_utils_manifest__print_str(manifest, eh->file, "eh->file", "ehist_file");
+
+  /* name of reconstructed energy histogram */
+  at_utils_manifest__print_str(manifest, eh->rfile, "eh->rfile", "ehist_mbin_file");
+
+  /* eh_his: energy histogram data */
+  at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->cnt, "eh->his");
+
+  /* eh_recon: temporary space for reconstructing histogram */
+  at_utils_manifest__print_double_arr(manifest, eh->recon, eh->cnt, "eh->recon");
+
+  /* eh_is: indices for temperature windows (lower) */
+  at_utils_manifest__print_int_arr(manifest, eh->is, eh->n + 1, "eh->is");
+
+  /* eh_it: indices for temperature windows (higher) */
+  at_utils_manifest__print_int_arr(manifest, eh->it, eh->n + 1, "eh->it");
+
+  /* whether to add a half energy bin width in output */
+  at_utils_manifest__print_bool(manifest, eh->add_half_ebin, "eh->add_half_ebin", "ehist_addahalf");
+
+  /* whether to keep empty margin */
+  at_utils_manifest__print_bool(manifest, eh->keep_margins, "eh->keep_margins", "ehist_keepedge");
+
+  /* whether to include empty energy bins in the output */
+  at_utils_manifest__print_bool(manifest, eh->no_zeros, "eh->no_zeros", "ehist_nozeroes");
+}
+
+
 
 #endif

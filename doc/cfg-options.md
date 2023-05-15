@@ -229,7 +229,7 @@ The options are given below:
 
 * `boost_Tref`: reference temperature
 
-  Variable: `at->distr->bias->TH_Tref`.
+  Variable: `at->distr->bias->ref_temp`.
 
   Default: 300.0 (unit is K).
 
@@ -600,10 +600,6 @@ The thermodynamic quantity file contains information about the average energy, n
 * `ze_file`: name of the file
 
   Default: "ze.dat" (legacy: "ZE")
-
-* `mbest_wze_reps`: number of iterations before writing the ZE file.
-
-  Default: 5
 
 ## III. Basic output
 

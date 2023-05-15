@@ -37,4 +37,6 @@ void at_eh__clear(at_eh_t *eh);
 
 void at_eh__finish(at_eh_t *eh);
 
+void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest);
+
 #endif

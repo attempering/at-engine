@@ -81,9 +81,7 @@ void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng)
 void at_driver_langevin_rng__manifest(at_driver_langevin_rng_t *rng,
     at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
-
-  fprintf(fp, "rng->filename: char *, %s\n", rng->filename);
+  at_utils_manifest__print_str(manifest, rng->filename, "driver->langevin->rng->filename", "rng_file");
 }
 
 

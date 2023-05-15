@@ -71,14 +71,11 @@ void at_driver__manifest(
     const at_driver_t *driver,
     at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
-
   at_driver_langevin__manifest(driver->langevin, manifest);
 
-  fprintf(fp, "driver->nsttemp: int, %4d\n", driver->nsttemp);
+  at_utils_manifest__print_int(manifest, driver->nsttemp, "driver->nsttemp", "nsttemp");
 
-  fprintf(fp, "driver->move_repeats: int, %d\n", driver->move_repeats);
-
+  at_utils_manifest__print_int(manifest, driver->move_repeats, "driver->move_repeats", "nsttemp");
 }
 
 

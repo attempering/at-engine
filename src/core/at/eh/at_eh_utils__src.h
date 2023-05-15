@@ -31,8 +31,19 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
   if (eh->mode > 0) { /* add to energy histogram */
 
     int ie = (int)((e - eh->min)/eh->del);
-    if (ie >= 0 && ie < eh->cnt) /* no invw for histogram */
+
+    if (e > eh->max_real) {
+      fprintf(stderr, "Warning: at->eh: energy point overflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
+      eh->max_real = e;
+    } else if (e < eh->min_real) {
+      fprintf(stderr, "Warning: at->eh: energy point underflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
+      eh->min_real = e;
+    }
+
+    if (ie >= 0 && ie < eh->cnt) { /* no invw for histogram */
       eh->his[ib*eh->cnt+ie] += 1.0;
+    }
+
   }
 }
 
@@ -63,6 +74,7 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
         eh->rfile);
     return 1;
   }
+
   full = eh->keep_margins;
   keep0 = !eh->no_zeros;
   del = (eh->add_half_ebin) ? 0.5 : 0; /* for continuous system */

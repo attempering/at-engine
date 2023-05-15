@@ -203,13 +203,16 @@ void at_mb_win__finish(at_mb_win_t *win)
 
 void at_mb_win__manifest(const at_mb_win_t *win, at_utils_manifest_t *manifest)
 {
-  FILE *fp = manifest->fp;
+  /* 0: d(beta) 1: dT/T  2: d(kT) */
+  at_utils_manifest__print_int(manifest, win->bwmod, "mb->win->bwmod", "mbest_mbin_mode");
 
-  /* bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
-  fprintf(fp, "mb->win->bwmod: int, %4d\n", win->bwmod);
-
-  /* bwdel: delta lnT */
-  fprintf(fp, "mb->win->bwdel: double, %g\n", win->bwdel);
+  if (win->bwmod == 0) {
+    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest_delta_beta");
+  } else if (win->bwmod == 1) {
+    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest_delta_lnT");
+  } else if (win->bwmod == 2) {
+    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest_delta_kT");
+  }
 
   at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "mb->win->js_grid_unres");
 

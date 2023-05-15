@@ -23,6 +23,6 @@
 
 #include "at_eh_utils__src.h"
 
-#include "at_eh_io__src.h"
+#include "io/at_eh_io__src.h"
 
 #endif
