@@ -43,18 +43,25 @@ target_link_libraries(libgromacs PRIVATE lmfit)
 
 ### Adding a file type for `.cfg` files
 
-1. Add an enum `cfCFG` before `efNR` in [include/types/filenm.h](include/types/filenm.h).
+1. Add an enum `cfCFG` before `efNR` in [src/gromacs/fileio/filetypes.h](src/gromacs/fileio/filetypes.h).
 
-2. Add the following line to [src/gmxlib/filenm.c](src/gmxlib/filenm.c)
-   at the end of the definition of `t_deffile`:
+    ```C
+    cfCSV,
+    cfCFG, // add this
+    efNR
+    ```
+
+2. Add the following line to [src/gromacs/fileio/filetypes.cpp](src/gromacs/fileio/filetypes.cpp)
+   at the end of the definition of `t_deffile deffile`:
 
     ```C
     { eftASC, ".cfg", "at", NULL, "AT-Engine configuration file" }
     ```
 
     Remember to add a comma at the end of the previous line.
+    The position of addition should match that in `filetypes.h`.
 
-3. Add the following line to the definition of variable `fnm` in [src/kernel/mdrun.c](src/kernel/mdrun.c)
+3. Add the following line to the definition of variable `fnm` in [src/gromacs/mdrun/legacymdrunoptions.h](src/gromacs/mdrun/legacymdrunoptions.h)
 
     ```C
     { cfCFG, "-at",  NULL, ffOPTRD },
@@ -64,52 +71,119 @@ target_link_libraries(libgromacs PRIVATE lmfit)
 
 ### at-gromacs code to `src/gromacs/mdrun/md.cpp`
 
-1. Adding a `#include` statement to `src/gromacs/mdrun/md.cpp`
+[src/gromacs/mdrun/md.cpp](src/gromacs/mdrun/md.cpp)
 
-    ```C++
-    #include "gromacs/at-gromacs/at-gromacs__src.h"
-    ```
+Adding a `#include` statement
 
-Modify the function `do_md()` in [src/kernel/md.c](src/kernel/md.c)
+```C++
+#include "gromacs/at-gromacs/at-gromacs__src.h"
+```
+
+Modify the function `do_md()`
 
 1. At the beginning of the function, before entering the MD loop, add
 
     ```C
-    atgmx_t atgmx[1];
-
-    atgmx__init(atgmx,
-        atgmx__opt2fn("-at", nfile, fnm),
+    auto atGmx = AtGmx(
+        opt2fn_null("-at", nfile, fnm),
         ir, cr,
-        Flags & MD_STARTFROMCPT,
+        startingBehavior != StartingBehavior::NewSimulation,
         AT__INIT_VERBOSE);
     ```
 
-2. Within the MD loop, right before the line (about line 1154) of assignment `bGStat = ...`, add
+    A proper location of addition is probably on line 465, after `prepareAwhModule()`, but before `init_replica_exchange()`
+
+2. Within the MD loop, right before the line (about line 910) of assignment `bGStat = ...`, add
 
     ```C
-        if (atgmx__do_tempering_on_step(atgmx, step, bNS)) {
-            bCalcEner = TRUE;
-            bCalcVir = TRUE;
-        }
+    if (atGmx.do_tempering_on_step(step, bNS)) {
+        bCalcEner = TRUE;
+        bCalcVir = TRUE;
+    }
     ```
 
 3. Still in the MD loop, after the call of `do_force()` and the call of `GMX_BARRIER(cr->mpi_comm_mygroup)`, add
 
     ```C
-    atgmx__scale_force(atgmx, f, mdatoms);
+    atGmx.scale_force(f.view(), mdatoms);
     ```
+
+    Roughly on line 964.
 
 4. Before the comment of `START TRAJECTORY OUTPUT`
 
     ```C
-        atgmx__move(atgmx, enerd, step, bFirstStep, bLastStep,
-            bGStat, do_per_step(step, ir->nstxtcout), bNS, cr);
+    atGmx.move(enerd, step, bFirstStep, bLastStep,
+        bGStat, do_per_step(step, ir->nstxout), bNS, cr);
     ```
 
-5. At the end of function
+    on line 1135, after
 
-    ```C
-    atgmx__finish(atgmx);
+    ```C++
+    /* ########  END FIRST UPDATE STEP  ############## */
+    /* ########  If doing VV, we now have v(dt) ###### */
+    if (bDoExpanded) {
+        ...
+    }
+    ```
+
+### Disabling the modular simulator
+
+By default, GROMACS uses the modular simulator,
+but for `atgmx` we want to use the legacy simulator instead.
+
+1. In [src/gromacs/modularsimulator/modularsimulator.h](src/gromacs/modularsimulator/modularsimulator.h),
+
+    In the declaration of the function `isInputCompatible()`, on roughly line 88,
+    before the line for `bool doEssentialDynamics,`
+    add a parameter
+
+    ```C++
+    bool doAt,
+    ```
+
+2. In [src/gromacs/modularsimulator/modularsimulator.cpp](src/gromacs/modularsimulator/modularsimulator.cpp),
+
+    In the definition of function `isInputCompatible()`:
+    On roughly line 180, before the line `bool doEssentialDynamics,`
+    add the parameter for `doAt`,
+
+    ```C++
+    bool doAt,
+    ```
+
+    Then on roughly line 326, before the line `doEssentialDynamics`,
+    add the following piece of code,
+
+    ```C++
+    isInputCompatible =
+            isInputCompatible
+            && conditionalAssert(!doAt,
+                                 "Adaptive tempering is not supported by the modular simulator.");
+    ```
+
+    In the function of `void ModularSimulator::checkInputForDisabledFunctionality()`,
+    on roughly line 387, right before the line for
+    `opt2bSet("-ei", legacySimulatorData_->nfile, legacySimulatorData_->fnm),`
+    add a line
+    `opt2bSet("-at", legacySimulatorData_->nfile, legacySimulatorData_->fnm),`
+
+3. In [src/gromacs/mdrun/runner.cpp](src/gromacs/mdrun/runner.cpp)
+
+    In `mdrunner()`, in the line 909 before
+    `const bool useModularSimulator = checkUseModularSimulator(...)`,
+    add the following line:
+
+    ```C++
+    const bool doAt = opt2bSet("-at", filenames.size(), filenames.data());
+    ```
+
+    and then add the argument `doAt` to the function call to `checkUseModularSimulator`
+
+    ```C++
+    const bool useModularSimulator =
+            checkUseModularSimulator(false, inputrec.get(), doRerun, mtop, ms, replExParams,
+                                     nullptr, doAt, doEssentialDynamics, membedHolder.doMembed());
     ```
 
 ## Script to sync modified files

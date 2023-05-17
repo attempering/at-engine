@@ -27,6 +27,7 @@
 
 /* to be used as a replacement of opt2fn(),
  * it will replace the file extension from .mdp to .cfg */
+/*
 __inline const char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fnm[])
 {
   const t_filenm* fileOption = nullptr;
@@ -47,6 +48,7 @@ __inline const char *atgmx__opt2fn(const char *opt, int nfile, const t_filenm fn
 
   return nullptr;
 }
+*/
 
 
 
