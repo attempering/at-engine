@@ -25,7 +25,7 @@
 #define zcom_cfg__set(cfg, var) zcom_opt__isset(cfg->opts, cfg->nopt, &var, #var)
 
 
-int zcom_cfg__compare_keys(const char *user_key, const char *registered_keys)
+static int zcom_cfg__compare_keys(const char *user_key, const char *registered_keys)
 {
   return strcmp(user_key, registered_keys);
 }
@@ -179,6 +179,10 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
 
 void zcom_cfg__close(zcom_cfg_t *cfg)
 {
+  if (cfg == NULL) {
+    return;
+  }
+
   free(cfg->ents);
   free(cfg->opts);
   zcom_ssm__close(cfg->ssm);
@@ -187,7 +191,7 @@ void zcom_cfg__close(zcom_cfg_t *cfg)
 }
 
 /* register an option request, return the index */
-int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
+ZCOM__INLINE int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
 {
   int n = cfg->nopt++;
   zcom_opt_t *o;
@@ -208,7 +212,7 @@ int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, 
 
 /* match requested options with entries in cfg file
  * returns 0 if successful */
-int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
+ZCOM__INLINE int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
 {
   int i, j, ret = 0, verbose = flags & ZCOM_CFG__VERBOSE, must = flags & ZCOM_OPT__MANDATORY;
   zcom_opt_t *o;

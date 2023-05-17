@@ -43,6 +43,9 @@ void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
 {
   int i, n = mb->distr->domain->n;
 
+  (void) cfg;
+  (void) verbose;
+
   gridvals->n = n;
 
   gridvals->items = NULL;

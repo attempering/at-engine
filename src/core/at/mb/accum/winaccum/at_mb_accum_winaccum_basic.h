@@ -43,4 +43,7 @@ void at_mb_accum_winaccum__add(
     double invwf, double e, int do_2nd,
     at_mb_shk_t *shk, double total_visits);
 
+void at_mb_accum_winaccum__normalize(at_mb_accum_winaccum_t *winaccum, int i);
+
+
 #endif

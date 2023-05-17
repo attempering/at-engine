@@ -164,7 +164,7 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
 
 
 
-void at_mb_win_ids__clear(at_mb_win_ids_t *wi)
+static void at_mb_win_ids__clear(at_mb_win_ids_t *wi)
 {
   wi->count = 0;
   wi->curr_id_ = 0;

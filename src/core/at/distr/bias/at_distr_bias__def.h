@@ -30,7 +30,7 @@
 */
 typedef struct at_distr_bias_t_
 {
-  int       enabled;
+  at_bool_t enabled;
   double    ref_temp;
 #ifdef AT__PCST_COMPAT
   double    *kappa, *epsilon;

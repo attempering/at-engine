@@ -25,10 +25,12 @@
 int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t verbose)
 {
   /* enabled : 0: disable; 1:enable */
-  bias->enabled = 0;
+  bias->enabled = AT__FALSE;
   if (zcom_cfg__get(cfg, &bias->enabled, "boost_mode", "%d") != 0)
   {
-    fprintf(stderr, "Info@at: assuming default distr->bias->th_mode = 0, key: boost_mode\n");
+    if (verbose) {
+      fprintf(stderr, "Info@at: assuming default distr->bias->th_mode = 0, key: boost_mode\n");
+    }
   }
 
   if (bias->enabled) {
@@ -37,20 +39,22 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
     bias->ref_temp = 300.0;
     if (zcom_cfg__get(cfg, &bias->ref_temp, "boost_Tref", "%lf") != 0)
     {
-      fprintf(stderr, "Info@at: assuming default distr->bias->th_Tref = 300.0, key: boost_Tref\n");
+      if (verbose) {
+        fprintf(stderr, "Info@at: assuming default distr->bias->th_Tref = 300.0, key: boost_Tref\n");
+      }
     }
 
 #ifdef AT__PCST_COMPAT
     /* kappa0 */
     bias->kappa0 = 1.0;
     if (zcom_cfg__get(cfg, &bias->kappa0, "kappa0", "%lf") != 0) {
-      fprintf(stderr, "Info@at: assuming default distr->bias->kappa0 = 1.0, key: kappa0\n");
+      if (verbose) fprintf(stderr, "Info@at: assuming default distr->bias->kappa0 = 1.0, key: kappa0\n");
     }
 
     /* epsilon0 */
     bias->epsilon0 = 0.0;
     if (zcom_cfg__get(cfg, &bias->epsilon0, "epsilon0", "%lf") != 0) {
-      fprintf(stderr, "Info@at: assuming default distr->bias->epsilon0 = 0.0, key: epsilon0\n");
+      if (verbose) fprintf(stderr, "Info@at: assuming default distr->bias->epsilon0 = 0.0, key: epsilon0\n");
     }
 #endif
 
@@ -64,7 +68,10 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
 
 void at_distr_bias__finish(at_distr_bias_t *bias)
 {
+  bias->enabled = AT__FALSE;
 }
+
+
 
 void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *manifest)
 {

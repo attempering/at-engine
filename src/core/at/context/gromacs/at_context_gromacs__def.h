@@ -22,14 +22,58 @@
 /* GROMACS context */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
+
+
+// for GROMACS 4.6
+// GMX_VERSION is defined in include/version.h
+//
+// for GROMACS 5.0 or later, GMX_VERSION is defined
+// in src/gromacs/version.h during compilation
+//
+#ifndef GMX_VERSION
+#include "gromacs/version.h"
+#endif
+
+
+// Now GMX_VERSION should be defined
+#ifndef GMX_VERSION
+#error "GMX_VERSION is not defined"
+#endif
+
+
+/*
+#ifdef GMX_VERSION
+#error "GMX_VERSION is defined"
+#if GMX_VERSION < 50000
+#error "GROMACS 4 or earlier"
+#endif
+#else
+#error "$GMX_VERSION is not defined"
+#endif
+*/
+
+
+#if (GMX_VERSION >= 50000)
+
+// GMX_LIB_MPI and GMX_THREAD_MPI are always defined
+// but their values may be zeros
+
+#include "gromacs/utility/gmxmpi.h"
+
+#else
+
+// for GROMACS 4.6 or lower
+// GMX_LIB_MPI and GMX_THREAD_MPI may not be defined
 
 #ifdef GMX_LIB_MPI
 #include <mpi.h>
 #endif
 #ifdef GMX_THREAD_MPI
 #include "tmpi.h"
+#endif
+
 #endif
 
 
@@ -52,7 +96,7 @@
 // GMX_VERSION == 20210007 (major = 2021, minor = 0, patch = 7)
 //
 //
-#if (defined(GMX_VERSION) && (GMX_VERSION < 60000))
+#if (GMX_VERSION < 60000)
 // These headers are located in
 //  /include (GROMACS 4.6)
 //  /src/gromacs/legacyheaders (GROMACS 5.1)
@@ -63,7 +107,7 @@
 // This header is introduced in GROMACS 5.1
 // (while legacy headers are still supported)
 // /src/gromacs/utility (GROMACS 5.1, 2011)
-#include "basedefinitions.h"
+#include "gromacs/utility/basedefinitions.h"
 #endif
 
 typedef gmx_bool at_bool_t;
@@ -84,7 +128,7 @@ typedef gmx_bool at_bool_t;
 #else
 // nonexistent (GROMACS 4.6, 5.0)
 // /src/gromacs/math/units.h (GROMACS 5.1, 2021)
-#include "units.h"
+#include "gromacs/math/units.h"
 #endif
 
 

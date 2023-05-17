@@ -38,7 +38,7 @@ int at_driver_langevin__cfg_init(
     const char *data_dir,
     at_bool_t verbose)
 {
-  langevin->distr = mb->distr;
+  langevin->distr = distr;
 
   langevin->mb = mb;
 

@@ -53,7 +53,7 @@ double at_driver_langevin__move_simple(
 
   at_driver_langevin_move__propose(
       proposal,
-      langevin, mb,
+      langevin,
       current_energy,
       beta_old, ib,
       invwf, neg_dlnwf_dbeta,

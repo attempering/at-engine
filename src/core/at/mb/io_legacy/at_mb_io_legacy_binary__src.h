@@ -36,10 +36,12 @@ static int at_mb__read_binary_legacy_low_level(
     at_mb_t *mb,
     at_driver_langevin_t *langevin,
     double *beta,
-    FILE *fp, int ver, int endn)
+    FILE *fp, int version, int endn)
 {
   int itmp;
   at_distr_domain_t *domain = mb->distr->domain;
+
+  (void) version;
 
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to at_mb__read_binary_low_level\n");
@@ -260,8 +262,11 @@ static int at_mb__write_binary_legacy_low_level(
     at_mb_t *mb,
     at_driver_langevin_t *langevin,
     double beta,
-    FILE *fp, int ver)
+    FILE *fp,
+    int version)
 {
+  (void) version;
+
   if (mb == NULL) {
     fprintf(stderr, "passing null pointer to at_mb__write_binary_low_level\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);

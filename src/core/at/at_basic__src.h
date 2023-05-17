@@ -164,7 +164,10 @@ void at__finish(at_t *at, at_flags_t flags)
   at_utils__finish(at->utils);
 
   if (flags & AT__FINISH_CLOSE_CFG) {
-    zcom_cfg__close(at->cfg);
+    //fprintf(stderr, "at->cfg %p\n", at->cfg);
+    if (at->cfg != NULL) {
+      zcom_cfg__close(at->cfg);
+    }
   }
 
   memset(at, 0, sizeof(*at));

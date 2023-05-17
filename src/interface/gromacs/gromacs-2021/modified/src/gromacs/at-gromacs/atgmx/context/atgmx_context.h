@@ -20,19 +20,24 @@
 #define ATGMX_CONTEXT_H__
 
 
+#ifndef GMX_VERSION
+#include "gromacs/version.h"
+#endif
+
+
 #include <string.h>
 #include <signal.h>
 #include <omp.h>
 
 // /src/gromacs/utility (5.1, 2021)
 // /include (4.6)
-#include "smalloc.h"
+#include "gromacs/utility/smalloc.h"
 
 // /src/gromacs/gmxlib (2021)
-#include "network.h"
+#include "gromacs/gmxlib/network.h"
 
 // /src/gromacs/mdlib (2021)
-#include "vsite.h"
+#include "gromacs/mdlib/vsite.h"
 
 #include "gromacs/mdlib/enerdata_utils.h"
 #include "gromacs/mdtypes/enerdata.h"
@@ -74,12 +79,7 @@
 // gmx_multisim_t
 #include "gromacs/mdrunutility/multisim.h"
 
-#ifdef GMX_LIB_MPI
-#include <mpi.h>
-#endif
-#ifdef GMX_THREADS
-// /src/external/thread_mpi/include (2021)
-#include "tmpi.h"
-#endif
+// mpi.h or tmpi.h
+#include "gromacs/utility/gmxmpi.h"
 
 #endif

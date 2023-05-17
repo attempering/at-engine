@@ -29,5 +29,11 @@ typedef struct at_mb_t_ at_mb_t;
  * at all grid points */
 void at_mb_iie_gridvals__calc(at_mb_t *mb);
 
+void at_mb_iie_gridvals__calc_energy(at_mb_t *mb);
+
+void at_mb_iie_gridvals__calc_cv(at_mb_t *mb);
+
+void at_mb_iie_gridvals__calc_lnz(at_mb_t *mb);
+
 
 #endif

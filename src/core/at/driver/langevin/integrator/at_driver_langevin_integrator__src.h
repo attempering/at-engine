@@ -199,7 +199,8 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
 
 
 
-double at_driver_langevin_integrator__get_unsigned_integral(at_driver_langevin_integrator_t *intgr,
+static double at_driver_langevin_integrator__get_unsigned_integral(
+    at_driver_langevin_integrator_t *intgr,
     at_driver_langevin_zerofiller_t *zf)
 {
   int ib;

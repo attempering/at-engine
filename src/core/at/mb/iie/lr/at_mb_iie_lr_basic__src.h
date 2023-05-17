@@ -64,6 +64,7 @@ void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_m
 
 void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr)
 {
+  lr->zerofiller = NULL;
 }
 
 

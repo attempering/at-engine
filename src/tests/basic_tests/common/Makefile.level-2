@@ -1,5 +1,6 @@
-CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
-CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
+CC_OPTIONS = -Wmissing-declarations -Wno-unused-function -Wunused-parameter -Wno-stringop-truncation -Wno-unused-variable
+CC = gcc -O3 -g -Wall $(CC_OPTIONS)
+CC_DBG = gcc -O0 -g -pg -Wall $(CC_OPTIONS)
 LM = -lm
 
 srcs = $(wildcard *.c)
@@ -8,11 +9,12 @@ bins_dbg = $(patsubst %.c, %_d.exe, $(srcs))
 dep_srcs =
 deps = $(dep_srcs) \
        $(wildcard *.h) \
-       $(wildcard ../../../../core/at/*.h) \
-       $(wildcard ../../../../core/at/*/*.h) \
-       $(wildcard ../../../../core/at/*/*/*.h) \
-       $(wildcard ../../../../core/at/*/*/*/*.h) \
-       $(wildcard ../../../../core/at/*/*/*/*/*.h) \
+       $(wildcard ../../../../core/*.h) \
+       $(wildcard ../../../../core/*/*.h) \
+       $(wildcard ../../../../core/*/*/*.h) \
+       $(wildcard ../../../../core/*/*/*/*.h) \
+       $(wildcard ../../../../core/*/*/*/*/*.h) \
+       $(wildcard ../../../../core/*/*/*/*/*/*.h) \
        Makefile
 includes = -I../../../../core
 

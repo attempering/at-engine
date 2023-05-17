@@ -33,21 +33,6 @@
 #include "../../../distr/at_distr.h"
 
 
-/* set quality bit */
-void at_mb_iie__set_quality_bit(unsigned *ptr, unsigned mask, int on)
-{
-  if (mask) {
-    if (on) {
-      *ptr |= mask;
-    } else {
-      *ptr &= ~mask;
-    }
-  }
-}
-
-
-
-
 void at_mb_iie_gridvals__calc_energy(at_mb_t *mb)
 {
   int i;

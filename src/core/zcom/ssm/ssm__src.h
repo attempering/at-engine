@@ -267,7 +267,7 @@ static char *zcom_ssm_resize_string_(zcom_ssm_t *m, zcom_ssm__ss_llist_node_t **
 
 
 /* delete a string, etc ... */
-ZCOM__STRCLS int zcom_ssm__del(zcom_ssm_t *m, char *s)
+ZCOM__INLINE int zcom_ssm__del(zcom_ssm_t *m, char *s)
 {
   zcom_ssm__ss_llist_node_t *hp;
 
@@ -411,7 +411,7 @@ ZCOM__STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t)
 }
 
 
-ZCOM__STRCLS char *zcom_ssm__new(zcom_ssm_t *m)
+ZCOM__INLINE char *zcom_ssm__new(zcom_ssm_t *m)
 {
   return zcom_ssm__dup(m, NULL);
 }
@@ -474,7 +474,7 @@ ZCOM__STRCLS char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int del
 }
 
 
-ZCOM__STRCLS char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
+ZCOM__INLINE char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp)
 {
   return zcom_ssm__fgetx(m, ps, pn, '\n', fp);
 }

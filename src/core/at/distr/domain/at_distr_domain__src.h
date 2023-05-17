@@ -74,13 +74,13 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   domain->beta_min = 0.2;
   if (0 != zcom_cfg__get(cfg, &domain->beta_min, "beta_min", "%lf")) {
     fprintf(stderr, "Warning@at: missing var: distr->domain->beta_min, key: beta_min, fmt: %%lf, assuming %g\n", domain->beta_min);
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
   if ( !(domain->beta_min >= 0.0) ) {
     fprintf(stderr, "domain->beta_min: failed validation: distr->domain->beta_min %g > 1e-6\n",
         domain->beta_min);
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -88,7 +88,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   domain->beta_max = 0.4;
   if (0 != zcom_cfg__get(cfg, &domain->beta_max, "beta_max", "%lf")) {
     fprintf(stderr, "Warning@at: missing var: distr->domain->beta_max, key: beta_max, fmt: %%lf, assuming %g\n", domain->beta_max);
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
   //printf("domain->beta_min %g, domain->beta_max %g\n", domain->beta_min, domain->beta_max); getchar();
@@ -96,7 +96,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   if ( !(domain->beta_max >= domain->beta_min) ) {
     fprintf(stderr, "distr->domain->beta_max: failed validation: domain->beta_max %g > domain->beta_min %g\n",
         domain->beta_max, domain->beta_min);
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
@@ -106,12 +106,12 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   if (0 != zcom_cfg__get(cfg, &domain->beta_del, "beta_del", "%lf")) {
     fprintf(stderr, "Warning@at: missing var: distr->domain->beta_del, key: beta_del, fmt: %%lf, assuming %g\n",
         domain->beta_del);
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
   if ( !(domain->beta_del > 1e-6) ) {
     fprintf(stderr, "distr->domain->beta_del: failed validation: domain->beta_del > 1e-6\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 

@@ -2,6 +2,45 @@
 
 ## List of main modifications
 
+### Symbolically linking the at-gromacs directory under `src/gromacs`
+
+```sh
+cd src/gromacs
+ln -sf ../../../../at-engine/src/interface/gromacs/gromacs-2021/modified/src/gromacs/at-gromacs
+```
+
+Make sure there is a `CMakeLists.txt` under the `at-gromacs` directory,
+even if it is an empty file.
+
+Editing the `CMakeLists.txt` under the `gromacs`.
+
+Adding the following piece of code:
+
+```cmake
+######## Beginning of modifications for at-gromacs #######
+
+add_subdirectory(at-gromacs)
+
+# force rebuild `at-gromacs__src.h` every time
+add_custom_target(
+  update_at_gromacs
+  ALL
+  DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/at-gromacs/at-gromacs__src.h
+)
+
+# add the target `update_at_gromacs` as a dependency of libgromacs
+add_dependencies(libgromacs update_at_gromacs)
+
+######## End of modifications for at-gromacs #######
+```
+
+A possible position is after on line 336:
+
+```cmake
+target_link_libraries(libgromacs PRIVATE lmfit)
+```
+
 ### Adding a file type for `.cfg` files
 
 1. Add an enum `cfCFG` before `efNR` in [include/types/filenm.h](include/types/filenm.h).
@@ -23,7 +62,13 @@
 
     Remember to add a comma at the end of the previous line.
 
-### atgmx code to src/kernel/md.c
+### at-gromacs code to `src/gromacs/mdrun/md.cpp`
+
+1. Adding a `#include` statement to `src/gromacs/mdrun/md.cpp`
+
+    ```C++
+    #include "gromacs/at-gromacs/at-gromacs__src.h"
+    ```
 
 Modify the function `do_md()` in [src/kernel/md.c](src/kernel/md.c)
 

@@ -60,7 +60,6 @@ int at_driver_langevin_move__check_min_visits(
 int at_driver_langevin_move__propose(
     langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin,
-    at_mb_t *mb,
     double current_energy,
     double beta_old,
     int ib,
