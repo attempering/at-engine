@@ -12,23 +12,23 @@ bins_mpi = $(patsubst %.c, %_mpi.exe, $(srcs))
 bins_tmpi = $(patsubst %.c, %_tmpi.exe, $(srcs))
 
 dep_srcs =
-dep_srcs_mpi = ../../../../../interface/gromacs/gromacs-4.6/gmxmock/src/gmxmock.c
+dep_srcs_mpi = ../../../../../interface/gromacs/versions/gromacs-4.6/gmxmock/src/gmxmock.c
 dep_srcs_tmpi = $(dep_srcs_mpi) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/gmxroot/src/gmxlib/thread_mpi/*.c)
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/gmxroot/src/gmxlib/thread_mpi/*.c)
 
 deps = $(dep_srcs) \
        $(wildcard *.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel/at-gromacs/*/*/*/*/*/*/*.h) \
        Makefile
-includes = -I../../../../../interface/gromacs/gromacs-4.6/gmxroot/src/kernel \
-           -I../../../../../interface/gromacs/gromacs-4.6/gmxmock/include \
-           -I../../../../../interface/gromacs/gromacs-4.6/gmxroot/include \
+includes = -I../../../../../interface/gromacs/versions/gromacs-4.6/modified/src/kernel \
+           -I../../../../../interface/gromacs/versions/gromacs-4.6/gmxmock/include \
+           -I../../../../../interface/gromacs/versions/gromacs-4.6/gmxroot/include \
 
 bins: $(bins)
 

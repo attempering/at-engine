@@ -31,7 +31,7 @@ copyright_template = '''/*{description}
 '''
 
 def has_copyright(s):
-    if re.search(r'^/\*.*?Copyright \(C\).*?\*/', s, re.DOTALL):
+    if re.search(r'^/\*.*?Copyright \([Cc]\).*?\*/', s, re.DOTALL):
         return True
     return False
 

@@ -24,7 +24,7 @@ def check_ifndef_file(path, file):
             m = re.search('#ifndef\s+(.*)\s+', line)
             if m:
                 tag = m.group(1)
-                if tag == tag_expected:
+                if tag.startswith(tag_expected):
                     return False
                 else:
                     print(f"tag {tag}, vs. file {file}, at {path}")
@@ -40,7 +40,7 @@ def check_ifndef_file(path, file):
     if not found:
         return False
     
-    print("Updating #ifndef/ to", path)
+    print("Updating #ifndef protection macros to", path)
     input()
     open(path, "w").writelines(s)
     return True
@@ -53,7 +53,7 @@ def check_ifndef_dir(root, excluded_dirs):
             continue
 
         for file in files:
-            if not file.endswith(".h") and not file.endswith(".c"):
+            if not file.endswith(".h"): # and not file.endswith(".c"):
                 continue
 
             path = os.path.join(dir, file)
@@ -64,5 +64,5 @@ def check_ifndef_dir(root, excluded_dirs):
             check_ifndef_file(path, file)
 
 
-check_ifndef_dir(".", excluded_dirs=["_backup", "gmxmock", "zcom", "tests"])
+check_ifndef_dir(".", excluded_dirs=["_backup", "gmxmock", "zcom", "tests", "modified"])
 

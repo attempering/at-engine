@@ -11,31 +11,31 @@ bins_dbg = $(patsubst %.cpp, %_d.exe, $(srcs))
 bins_mpi = $(patsubst %.cpp, %_mpi.exe, $(srcs))
 bins_tmpi = $(patsubst %.cpp, %_tmpi.exe, $(srcs))
 
-dep_srcs = ../../../../../interface/gromacs/gromacs-2021/gmxmock/src/gmxmock.cpp
+dep_srcs = ../../../../../interface/gromacs/versions/gromacs-2021/gmxmock/src/gmxmock.cpp
 dep_srcs_mpi = $(dep_srcs)
 dep_srcs_tmpi = $(dep_srcs_mpi) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/gmxroot/src/external/thread_mpi/src/*.cpp)
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/external/thread_mpi/src/*.cpp)
 
 deps = $(dep_srcs) \
        $(wildcard *.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*/*/*.h) \
-       $(wildcard ../../../../../interface/gromacs/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*/*/*.h) \
+       $(wildcard ../../../../../interface/gromacs/versions/gromacs-2021/modified/src/kernel/at-gromacs/*/*/*/*/*/*/*.h) \
        Makefile
-includes = -I../../../../../interface/gromacs/gromacs-2021/gmxmock/include \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/gromacs \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/gromacs/gmxlib \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/gromacs/mdlib \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/gromacs/utility \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/gromacs/math \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/external \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/src/external/thread_mpi/include \
-           -I../../../../../interface/gromacs/gromacs-2021/gmxroot/include
+includes = -I../../../../../interface/gromacs/versions/gromacs-2021/gmxmock/include \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/gromacs \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/gromacs/gmxlib \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/gromacs/mdlib \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/gromacs/utility \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/gromacs/math \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/external \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/src/external/thread_mpi/include \
+           -I../../../../../interface/gromacs/versions/gromacs-2021/gmxroot/include
 
 bins: $(bins)
 
