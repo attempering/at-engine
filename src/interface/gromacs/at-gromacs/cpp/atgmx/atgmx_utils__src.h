@@ -73,7 +73,11 @@ void AtGmx::update_force_scale(t_commrec *cr)
 #ifdef GMX_MPI
   /* inform all other PP nodes the new scale(s) */
   if (PAR(cr)) {
+#if GMX_VERSION >= 20210000
     gmx_bcast(sizeof(at->force_scale), &at->force_scale, cr->mpi_comm_mygroup);
+#else
+    gmx_bcast(sizeof(at->force_scale), &at->force_scale, cr);
+#endif
   }
 #endif
 
@@ -187,7 +191,7 @@ int AtGmx::move(
 }
 
 
-
+#if GMX_VERSION >= 20210000
 void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
 {
   if (!enabled) {
@@ -219,6 +223,36 @@ void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
   }
 
 }
+
+#else
+
+void AtGmx::scale_force(rvec f[], t_mdatoms *mdatoms)
+{
+  if (!enabled) {
+    return;
+  }
+
+  /* scale the force */
+  real fs = (real) at->force_scale;
+
+  int homenr = mdatoms->homenr;
+  int nth = gmx_omp_nthreads_get(emntUpdate);
+
+#pragma omp parallel for num_threads(nth) schedule(static)
+  for (int th = 0; th < nth; th++) {
+    int start_th = ((th+0)*homenr)/nth;
+    int end_th   = ((th+1)*homenr)/nth;
+
+    for (int i = start_th; i < end_th; i++) {
+      for (int d = 0; d < DIM; d++) {
+        f[i][d] *= fs;
+      }
+    }
+  }
+
+}
+
+#endif
 
 
 

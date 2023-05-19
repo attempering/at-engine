@@ -61,7 +61,11 @@ public:
     at_bool_t is_ns_step,
     t_commrec *cr);
 
+#if GMX_VERSION >= 20210000
   void scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms);
+#else
+  void scale_force(rvec f[], t_mdatoms *mdatoms);
+#endif
 
   void update_thermostat_temperatures(t_inputrec *ir) const;
 

@@ -6,13 +6,13 @@
 
 ```sh
 cd src/gromacs
-ln -sf ../../../../at-engine/src/interface/gromacs/gromacs-2021/modified/src/gromacs/at-gromacs
+ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-2021/modified/src/gromacs/at-gromacs
 ```
 
 Make sure there is a `CMakeLists.txt` under the `at-gromacs` directory,
 even if it is an empty file.
 
-Editing the `CMakeLists.txt` under the `gromacs`.
+Editing the [CMakeLists.txt](src/gromacs/CMakeLists.txt) under the `gromacs`.
 
 Adding the following piece of code:
 

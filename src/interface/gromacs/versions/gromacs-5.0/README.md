@@ -19,15 +19,6 @@ cmake .. -DGMX_GPU=OFF -DGMX_BUILD_OWN_FFTW=ON
 make -j 8
 ```
 
-### Building a GPU version
-
-```sh
-mkdir build_gpu
-cd build_gpu
-cmake .. -DCMAKE_C_COMPILER=gcc-8 -DCMAKE_CXX_COMPILER=g++-8 -DGMX_GPU=CUDA -DGMX_BUILD_OWN_FFTW=ON
-make -j 8
-```
-
 ### Building MPI version
 
 First install OpenMPI or an alternative
@@ -35,6 +26,6 @@ First install OpenMPI or an alternative
 ```sh
 mkdir build_mpi
 cd build_mpi
-cmake .. -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=ON
+cmake .. -DGMX_GPU=OFF -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=ON
 make
 ```

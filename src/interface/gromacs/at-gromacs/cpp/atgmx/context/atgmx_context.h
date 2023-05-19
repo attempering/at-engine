@@ -36,14 +36,14 @@
 // /include (4.6)
 #include "gromacs/utility/smalloc.h"
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20160000
 // /src/gromacs/gmxlib (2021)
 #include "gromacs/gmxlib/network.h"
 #else
 #include "gromacs/legacyheaders/network.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20160000
 // (2021)
 #include "gromacs/mdlib/vsite.h"
 #else
@@ -51,45 +51,45 @@
 #include "gromacs/legacyheaders/network.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20180000
 #include "gromacs/mdlib/enerdata_utils.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20180000
 #include "gromacs/mdtypes/enerdata.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20180000
 #include "gromacs/mdtypes/pull_params.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20180000
 #include "gromacs/mdtypes/multipletimestepping.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20180000
 #include "gromacs/utility/keyvaluetree.h"
 #endif
 
-#if GMX_VERSION > 50099
-// (2021)
 // t_inputrec
+#if GMX_VERSION >= 20160000
+// (2021)
 #include "gromacs/mdtypes/inputrec.h"
 #else
 // (5.0)
 #include "gromacs/legacyheaders/inputrec.h"
 #endif
 
-#if GMX_VERSION > 50099
+// t_commrec, MASTER(), PAR()
+#if GMX_VERSION >= 20160000
 // (2021)
-// t_commrec, MASTER, PAR
 #include "gromacs/mdtypes/commrec.h"
 #else
 // (5.0)
 #include "gromacs/legacyheaders/types/commrec.h"
 #endif
 
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20160000
 // (2021)
 // t_mdatoms
 #include "gromacs/mdtypes/mdatom.h"
@@ -98,26 +98,26 @@
 #include "gromacs/legacyheaders/types/mdatom.h"
 #endif
 
-#if GMX_VERSION > 50099
-// (2021)
 // gmx::ForceBuffersView
+#if GMX_VERSION >= 20180000
+// (2021)
 #include "gromacs/mdtypes/forcebuffers.h"
 #endif
 
 // gmx_omp_nthreads_get();
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20160000
 #include "gromacs/mdlib/gmx_omp_nthreads.h"
 #endif
 
 // getThreadAtomRange();
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20160000
 #include "gromacs/mdlib/update.h"
 #else 
 #include "gromacs/legacyheaders/update.h"
 #endif
 
 // t_filenm
-#if GMX_VERSION > 50099
+#if GMX_VERSION >= 20160000
 // (2021)
 #include "gromacs/commandline/filenm.h"
 #else
@@ -126,8 +126,8 @@
 #endif
 
 // gmx_multisim_t
-#if GMX_VERSION > 50099
-// /src/gromacs/mdrunutility/multisim.h (2021)
+#if GMX_VERSION >= 20180000
+// (2021)
 #include "gromacs/mdrunutility/multisim.h"
 #endif
 

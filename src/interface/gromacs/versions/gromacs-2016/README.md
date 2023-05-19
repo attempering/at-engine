@@ -1,4 +1,4 @@
-# Interface to GROMACS 5.1
+# Interface to GROMACS 2016
 
 This directory contains files relevant to using at-engine in GROMACS.
 
@@ -15,9 +15,11 @@ This directory contains files relevant to using at-engine in GROMACS.
 ```sh
 mkdir build
 cd build
-cmake .. -DGMX_GPU=OFF -DGMX_BUILD_OWN_FFTW=ON
+cmake .. -DGMX_GPU=OFF -DGMX_HWLOC=OFF -DGMX_BUILD_OWN_FFTW=ON
 make -j 8
 ```
+
+Hardware location code is still buggy, so we need to disable it by `-DGMX_HWLOC=OFF`.
 
 ### Building MPI version
 
@@ -26,6 +28,6 @@ First install OpenMPI or an alternative
 ```sh
 mkdir build_mpi
 cd build_mpi
-cmake .. -DGMX_GPU=OFF -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=ON
+cmake .. -DGMX_GPU=OFF -DGMX_HWLOC=OFF -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=ON
 make
 ```
