@@ -43,11 +43,11 @@ target_link_libraries(libgromacs PRIVATE lmfit)
 
 ### Adding a file type for `.cfg` files
 
-1. Add an enum `cfCFG` before `efNR` in [src/gromacs/fileio/filetypes.h](src/gromacs/fileio/filetypes.h).
+1. Add an enum `efCFG` before `efNR` in [src/gromacs/fileio/filetypes.h](src/gromacs/fileio/filetypes.h).
 
     ```C
-    cfCSV,
-    cfCFG, // add this
+    efCSV,
+    efCFG, // add this
     efNR
     ```
 
@@ -64,7 +64,7 @@ target_link_libraries(libgromacs PRIVATE lmfit)
 3. Add the following line to the definition of variable `fnm` in [src/gromacs/mdrun/legacymdrunoptions.h](src/gromacs/mdrun/legacymdrunoptions.h)
 
     ```C
-    { cfCFG, "-at",  NULL, ffOPTRD },
+    { efCFG, "-at",  NULL, ffOPTRD },
     ```
 
     Remember to add a comma at the end of the previous line.
@@ -83,7 +83,7 @@ Modify the function `do_md()`
 
 1. At the beginning of the function, before entering the MD loop, add
 
-    ```C
+    ```C++
     auto atGmx = AtGmx(
         opt2fn_null("-at", nfile, fnm),
         ir, cr,
@@ -95,7 +95,7 @@ Modify the function `do_md()`
 
 2. Within the MD loop, right before the line (about line 910) of assignment `bGStat = ...`, add
 
-    ```C
+    ```C++
     if (atGmx.do_tempering_on_step(step, bNS)) {
         bCalcEner = TRUE;
         bCalcVir = TRUE;
@@ -104,7 +104,7 @@ Modify the function `do_md()`
 
 3. Still in the MD loop, after the call of `do_force()` and the call of `GMX_BARRIER(cr->mpi_comm_mygroup)`, add
 
-    ```C
+    ```C++
     atGmx.scale_force(f.view(), mdatoms);
     ```
 
@@ -112,7 +112,7 @@ Modify the function `do_md()`
 
 4. Before the comment of `START TRAJECTORY OUTPUT`
 
-    ```C
+    ```C++
     atGmx.move(enerd, step, bFirstStep, bLastStep,
         bGStat, do_per_step(step, ir->nstxout), bNS, cr);
     ```

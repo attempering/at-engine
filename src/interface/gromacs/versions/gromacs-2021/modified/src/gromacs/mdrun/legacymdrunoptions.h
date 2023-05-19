@@ -127,7 +127,7 @@ public:
                                           { efTOP, "-mp", "membed", ffOPTRD },
                                           { efNDX, "-mn", "membed", ffOPTRD },
                                           { efXVG, "-if", "imdforces", ffOPTWR },
-                                          { cfCFG, "-at",  NULL, ffOPTRD },
+                                          { efCFG, "-at",  NULL, ffOPTRD },
                                           { efXVG, "-swap", "swapions", ffOPTWR } } };
 
     //! Print a warning if any force is larger than this (in kJ/mol nm).

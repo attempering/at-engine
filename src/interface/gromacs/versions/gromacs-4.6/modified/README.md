@@ -4,7 +4,7 @@
 
 ### Adding a file type for `.cfg` files
 
-1. Add an enum `cfCFG` before `efNR` in [include/types/filenm.h](include/types/filenm.h).
+1. Add an enum `efCFG` before `efNR` in [include/types/filenm.h](include/types/filenm.h).
 
 2. Add the following line to [src/gmxlib/filenm.c](src/gmxlib/filenm.c)
    at the end of the definition of `t_deffile`:
@@ -18,7 +18,7 @@
 3. Add the following line to the definition of variable `fnm` in [src/kernel/mdrun.c](src/kernel/mdrun.c)
 
     ```C
-    { cfCFG, "-at",  NULL, ffOPTRD },
+    { efCFG, "-at",  NULL, ffOPTRD },
     ```
 
     Remember to add a comma at the end of the previous line.

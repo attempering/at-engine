@@ -9,7 +9,7 @@ Although the rest of file structure is C++.
 
 ```sh
 cd src/gromacs
-ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-5.0/modified/src/gromacs/at-gromacs
+ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-5.1/modified/src/gromacs/at-gromacs
 ```
 
 Make sure there is a `CMakeLists.txt` under the `at-gromacs` directory,
@@ -84,7 +84,7 @@ Modify the function `do_md()`
     atgmx_t atgmx[1];
     ```
 
-    And probably on line 465, after `set_constraints()`, but before `init_replica_exchange()`, add
+    And probably on line 482, after `set_constraints()`, but before `init_replica_exchange()`, add
 
     ```C
     atgmx__init(atgmx,
@@ -94,7 +94,7 @@ Modify the function `do_md()`
         AT__INIT_VERBOSE);
     ```
 
-2. Within the MD loop, right before the line (about line 1035) of assignment `bGStat = ...`, add
+2. Within the MD loop, right before the line (about line 1037) of assignment `bGStat = ...`, add
 
     ```C
         if (atgmx__do_tempering_on_step(atgmx, step, bNS)) {
@@ -109,9 +109,9 @@ Modify the function `do_md()`
     atgmx__scale_force(atgmx, f, mdatoms);
     ```
 
-    Roughly on line 1110.
+    Roughly on line 1112.
 
-4. On line 1351, after
+4. On line 1353, after
 
     ```C++
     /* ########  END FIRST UPDATE STEP  ############## */
@@ -122,7 +122,7 @@ Modify the function `do_md()`
     }
     ```
 
-    but before `do_md_trajectory_writing()`
+    but before `do_md_trajectory_writing()`,
     add
 
     ```C

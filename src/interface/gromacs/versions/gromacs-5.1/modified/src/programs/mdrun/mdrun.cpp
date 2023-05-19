@@ -432,7 +432,7 @@ int gmx_mdrun(int argc, char *argv[])
         { efTOP, "-mp",     "membed",   ffOPTRD },
         { efNDX, "-mn",     "membed",   ffOPTRD },
         { efXVG, "-if",     "imdforces", ffOPTWR },
-        { efCFG, "-at",  NULL, ffOPTRD },
+        { efCFG, "-at",     NULL, ffOPTRD },
         { efXVG, "-swap",   "swapions", ffOPTWR }
     };
 #define NFILE asize(fnm)

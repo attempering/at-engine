@@ -85,7 +85,7 @@ enum GromacsFileType
     efXPM,
     efRND,
     efCSV,
-    cfCFG,
+    efCFG,
     efNR
 };
 

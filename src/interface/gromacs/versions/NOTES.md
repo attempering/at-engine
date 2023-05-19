@@ -2,7 +2,7 @@
 
 ## GROMACS versions
 
-From GROMACS 4.6, the `GMX_VERSION` is managed in `cmake` directory
+In GROMACS 4.6, the `GMX_VERSION` is managed in `cmake` directory
 
 `GMX_VERSION` is integral macro whose numerical value is something like `40607`.
 The formula is `major*10000 + minor*100 + patch`.
