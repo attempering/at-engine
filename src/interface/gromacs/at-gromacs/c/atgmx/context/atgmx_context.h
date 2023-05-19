@@ -24,7 +24,13 @@
 #include <signal.h>
 #include "typedefs.h"
 #include "physics.h"
+
+#if GMX_VERSION >= 50000
+#include "gromacs/utility/smalloc.h"
+#else
 #include "smalloc.h"
+#endif
+
 #include "network.h"
 #include "vsite.h"
 

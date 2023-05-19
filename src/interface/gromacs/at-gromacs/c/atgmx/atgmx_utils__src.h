@@ -195,7 +195,7 @@ int atgmx__move(atgmx_t *atgmx,
 void atgmx__scale_force(atgmx_t *atgmx,
     rvec f[], t_mdatoms *mdatoms)
 {
-  int k;
+  int k, start, end;
   real scale;
 
   if (!atgmx->enabled) {
@@ -205,7 +205,15 @@ void atgmx__scale_force(atgmx_t *atgmx,
   /* scale the force */
   scale = (real) atgmx->at->force_scale;
 
-  for (k = mdatoms->start; k < mdatoms->start + mdatoms->homenr; k++) {
+#if GMX_VERSION < 50000
+  start = mdatoms->start;
+  end = mdatoms->start + mdatoms->homenr;
+#else
+  start = 0;
+  end = mdatoms->homenr;
+#endif
+
+  for (k = start; k < end; k++) {
     f[k][0] *= scale;
     f[k][1] *= scale;
     f[k][2] *= scale;

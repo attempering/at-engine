@@ -27,57 +27,109 @@
 
 #include <string.h>
 #include <signal.h>
+
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 // /src/gromacs/utility (5.1, 2021)
 // /include (4.6)
 #include "gromacs/utility/smalloc.h"
 
+#if GMX_VERSION > 50099
 // /src/gromacs/gmxlib (2021)
 #include "gromacs/gmxlib/network.h"
+#else
+#include "gromacs/legacyheaders/network.h"
+#endif
 
-// /src/gromacs/mdlib (2021)
+#if GMX_VERSION > 50099
+// (2021)
 #include "gromacs/mdlib/vsite.h"
+#else
+// (5.0)
+#include "gromacs/legacyheaders/network.h"
+#endif
 
+#if GMX_VERSION > 50099
 #include "gromacs/mdlib/enerdata_utils.h"
-#include "gromacs/mdtypes/enerdata.h"
-#include "gromacs/mdtypes/pull_params.h"
-#include "gromacs/mdtypes/multipletimestepping.h"
-#include "gromacs/utility/keyvaluetree.h"
+#endif
 
-// /src/gromacs/mdtypes/inputrec.h (2021)
+#if GMX_VERSION > 50099
+#include "gromacs/mdtypes/enerdata.h"
+#endif
+
+#if GMX_VERSION > 50099
+#include "gromacs/mdtypes/pull_params.h"
+#endif
+
+#if GMX_VERSION > 50099
+#include "gromacs/mdtypes/multipletimestepping.h"
+#endif
+
+#if GMX_VERSION > 50099
+#include "gromacs/utility/keyvaluetree.h"
+#endif
+
+#if GMX_VERSION > 50099
+// (2021)
 // t_inputrec
 #include "gromacs/mdtypes/inputrec.h"
+#else
+// (5.0)
+#include "gromacs/legacyheaders/inputrec.h"
+#endif
 
-// /src/gromacs/mdtypes/commrec.h (2021)
+#if GMX_VERSION > 50099
+// (2021)
 // t_commrec, MASTER, PAR
 #include "gromacs/mdtypes/commrec.h"
+#else
+// (5.0)
+#include "gromacs/legacyheaders/types/commrec.h"
+#endif
 
-// /src/gromacs/mdtypes/enerdata.h (2021)
-// gmx_enerdata_t
-#include "gromacs/mdtypes/enerdata.h"
-
-// /src/gromacs/mdtypes/mdatom.h (2021)
+#if GMX_VERSION > 50099
+// (2021)
 // t_mdatoms
 #include "gromacs/mdtypes/mdatom.h"
+#else
+// (5.0)
+#include "gromacs/legacyheaders/types/mdatom.h"
+#endif
 
-// /src/gromacs/mdtypes/forcebuffers.h (2021)
+#if GMX_VERSION > 50099
+// (2021)
 // gmx::ForceBuffersView
 #include "gromacs/mdtypes/forcebuffers.h"
+#endif
 
 // gmx_omp_nthreads_get();
+#if GMX_VERSION > 50099
 #include "gromacs/mdlib/gmx_omp_nthreads.h"
+#endif
 
 // getThreadAtomRange();
+#if GMX_VERSION > 50099
 #include "gromacs/mdlib/update.h"
+#else 
+#include "gromacs/legacyheaders/update.h"
+#endif
 
-// /src/gromacs/commandline/filenm.h (2021)
 // t_filenm
+#if GMX_VERSION > 50099
+// (2021)
 #include "gromacs/commandline/filenm.h"
+#else
+// (5.0)
+#include "gromacs/fileio/filenm.h"
+#endif
 
-// /src/gromacs/mdrunutility/multisim.h (2021)
 // gmx_multisim_t
+#if GMX_VERSION > 50099
+// /src/gromacs/mdrunutility/multisim.h (2021)
 #include "gromacs/mdrunutility/multisim.h"
+#endif
 
 // mpi.h or tmpi.h
 #include "gromacs/utility/gmxmpi.h"
