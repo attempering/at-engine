@@ -74,9 +74,10 @@ void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *mani
 
 
 
-zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace)
+zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation)
 {
-  trace->log = zcom_log__open(trace->filename);
+  trace->log = zcom_log__open(trace->filename,
+      (is_continuation ? ZCOM_LOG__APPEND : 0));
 
   return trace->log;
 }

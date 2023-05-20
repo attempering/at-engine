@@ -21,7 +21,7 @@
 
 
 
-#include "at_driver_langevin_move_basic.h"
+#include "at_driver_langevin_move_utils.h"
 
 
 
@@ -33,6 +33,23 @@ double at_driver_langevin_move__get_acceptance_ratio(
   } else {
     return 0;
   }
+}
+
+
+
+void at_driver_langevin_move__print_acceptance_ratio_suggestions(
+    const at_driver_langevin_t *langevin)
+{
+  double ar = at_driver_langevin_move__get_acceptance_ratio(langevin);
+  const double ar_max = 0.98;
+  const double ar_min = 0.50;
+
+  if (ar > ar_max) {
+    fprintf(stderr, "\rInfo@at.driver.langevin.move: acceptance ratio %g, consider increasing Tdt\n", ar);
+  } else if (ar < ar_min) {
+    fprintf(stderr, "\rInfo@at.driver.langevin.move: acceptance ratio %g, consider decreasing Tdt\n", ar);
+  }
+
 }
 
 

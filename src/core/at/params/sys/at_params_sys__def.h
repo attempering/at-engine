@@ -22,12 +22,14 @@
 #include "../../context/at_context__def.h"
 
 typedef struct at_params_sys_t_ {
-  double boltz;
-  double md_time_step;
 
-  at_bool_t is_continuation; // continue from a previous run
+  double boltz; // Boltzmann's constant
 
-  int id;
+  double md_time_step; // MD time step, used to convert step to time
+
+  at_bool_t is_continuation; // if continuing from a previous run
+
+  int id; // simulation ID for the multi-sim extension
   
   // append the id to the data directory
   // e.g., data_dir would be "atdata0", "atdata1", ... instead of "atdata"
@@ -36,7 +38,6 @@ typedef struct at_params_sys_t_ {
   // name of the data directory,
   // to be constructed from the program
   char data_dir[64];
-
 
 } at_params_sys_t;
 

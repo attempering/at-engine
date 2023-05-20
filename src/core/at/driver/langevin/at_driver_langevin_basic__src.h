@@ -72,6 +72,12 @@ int at_driver_langevin__cfg_init(
     if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->bin_min_visits = 1, key: langevin_bin_min_visits\n");
   }
 
+  langevin->nst_suggest = 100000;
+  if (zcom_cfg__get(cfg, &langevin->nst_suggest, "langevin_nst_suggest", "%d") != 0) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default langevin->nst_suggest = %d, key: langevin_nst_suggest\n",
+        langevin->nst_suggest);
+  }
+
   /* rejects: number of rejected Langevin moves */
   langevin->rejects = 0.0;
   /* total: total number of Langevin moves */
@@ -144,6 +150,8 @@ void at_driver_langevin__manifest(const at_driver_langevin_t *langevin, at_utils
   at_utils_manifest__print_bool(manifest, langevin->no_skip, "driver->langevin->no_skip", "langevin_no_skip");
 
   at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "driver->langevin->bin_min_visits", "langevin_bin_min_visits");
+
+  at_utils_manifest__print_int(manifest, langevin->nst_suggest, "driver->langevin->nst_suggest", "langevin_nst_suggest");
 }
 
 

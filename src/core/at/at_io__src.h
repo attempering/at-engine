@@ -69,7 +69,7 @@ static void at__write_trace(at_t *at,
     zcom_log_t *zcom_log = trace->log;
 
     if (zcom_log == NULL) {
-      zcom_log = at_utils_trace__open_file(trace);
+      zcom_log = at_utils_trace__open_file(trace, 0);
     }
 
     //fprintf(stderr, "step params %p, zcom_log %p\n", step_params, zcom_log);
@@ -102,6 +102,11 @@ void at__output(at_t *at,
     //at_mb__write_legacy(at->mb, at->driver->langevin, at->beta);
     at_mb__write_ze_file(at->mb, NULL);
     at_driver_langevin_rng__save(at->driver->langevin->rng);
+  }
+
+  // write suggestions
+  if (at__do_output_on_step(step_params, at->driver->langevin->nst_suggest, AT__FALSE)) {
+    at_driver_langevin_move__print_acceptance_ratio_suggestions(at->driver->langevin);
   }
 
   // to save energy histogram data

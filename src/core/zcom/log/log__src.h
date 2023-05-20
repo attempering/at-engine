@@ -23,7 +23,7 @@
 #include "log.h"
 
 
-ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn)
+ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn, unsigned flags)
 {
   zcom_log_t *log;
 
@@ -37,8 +37,7 @@ ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn)
   }
 
   log->fname = fn;
-  log->flags = 0;
-  log->flags |= ZCOM_LOG__APPEND;
+  log->flags = flags;
 
   return log;
 }
@@ -49,7 +48,10 @@ ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
 {
   va_list args;
 
-  if (log == NULL) return 1;
+  if (log == NULL) {
+    return 1;
+  }
+
   if (log->fp == NULL) {
     const char *aw = (log->flags & ZCOM_LOG__APPEND) ? "a" : "w";
     if ((log->fp = fopen(log->fname, aw)) == NULL) {

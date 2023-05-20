@@ -24,8 +24,12 @@ make -j 8
 ```sh
 mkdir build_gpu
 cd build_gpu
-cmake .. -DCMAKE_C_COMPILER=gcc-8 -DCMAKE_CXX_COMPILER=g++-8 -DGMX_GPU=CUDA -DGMX_BUILD_OWN_FFTW=ON
+cmake .. -DGMX_GPU=CUDA -DGMX_BUILD_OWN_FFTW=ON
 make -j 8
+```
+
+```sh
+cmake .. -DGMX_GPU=CUDA -DGMX_BUILD_OWN_FFTW=ON -DCMAKE_C_COMPILER=gcc-8 -DCMAKE_CXX_COMPILER=g++-8
 ```
 
 ### Building MPI version

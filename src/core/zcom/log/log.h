@@ -22,7 +22,7 @@
 
 #include "log__def.h"
 
-ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn);
+ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn, unsigned flags);
 
 ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...);
 

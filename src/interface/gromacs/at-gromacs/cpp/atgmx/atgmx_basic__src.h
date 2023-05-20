@@ -47,7 +47,9 @@ AtGmx::AtGmx(
     enabled = AT__FALSE;
   }
 
-  if (MASTER(cr)) {
+  is_master = (MASTER(cr) ? AT__TRUE : AT__FALSE);
+
+  if (is_master) {
     at_params_sys_t sys_params[1];
 
     sys_params->boltz = BOLTZ;
@@ -69,11 +71,13 @@ AtGmx::AtGmx(
   }
 #endif
 
-  is_master = (MASTER(cr) ? AT__TRUE : AT__FALSE);
-
   update_thermostat_temperatures(ir);
 
   update_force_scale(cr);
+
+  if (is_master) {
+    at__manifest(at);
+  }
 }
 
 

@@ -66,6 +66,8 @@ typedef struct at_driver_langevin_t_
   int     no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
 
+  int nst_suggest;
+
   at_driver_langevin_rng_t rng[1];
 
   at_driver_langevin_integrator_t integrator[1];

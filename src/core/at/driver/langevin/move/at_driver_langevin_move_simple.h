@@ -16,29 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_TRACE_H__
-#define AT_UTILS_TRACE_H__
-
-#include "at_utils_trace__def.h"
-#include "../../params/at_params__def.h"
+#ifndef AT_DRIVER_LANGEVIN_MOVE_SIMPLE_H__
+#define AT_DRIVER_LANGEVIN_MOVE_SIMPLE_H__
 
 
-void at_utils_trace__cfg_init(at_utils_trace_t *trace,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
 
-zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation);
+#include "at_driver_langevin_move_basic.h"
 
-void at_utils_trace__close_file(at_utils_trace_t *trace);
 
-void at_utils_trace__finish(at_utils_trace_t *trace);
 
-void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *manifest);
+/* Langevin equation without the Metropolis correction */
+double at_driver_langevin__move_simple(
+    at_driver_langevin_t *langevin,
+    at_mb_t *mb,
+    double current_energy,
+    double beta_old,
+    int ib,
+    double invwf,
+    double neg_dlnwf_dbeta,
+    double *bin_av_energy);
 
-at_bool_t at_utils_trace__decide_do_trace(at_utils_trace_t *trace,
-    const at_params_step_t *step_params);
 
 
 #endif

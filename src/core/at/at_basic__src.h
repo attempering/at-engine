@@ -88,10 +88,8 @@ int at__cfg_init(at_t *at,
     fprintf(stderr, "Warning@at: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 
-  // no need to do so, the log file will be open upon the first time of writing
-  //if (flags & AT__INIT_OPENLOG) {
-  //  at_utils_trace__open_file(at->utils->log);
-  //}
+  // open the trace file using the proper mode
+  at_utils_trace__open_file(at->utils->trace, at->sys_params->is_continuation);
 
   at->energy = 0.0;
 
