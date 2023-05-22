@@ -1349,7 +1349,7 @@ double do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
         }
 
         atgmx__move(atgmx, enerd, step, bFirstStep, bLastStep,
-            bGStat, do_per_step(step, ir->nstxout), bNS, cr);
+            bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
 
         /* Now we have the energies and forces corresponding to the
          * coordinates at time t. We must output all of this before

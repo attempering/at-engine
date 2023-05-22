@@ -84,6 +84,7 @@ Modify the function `do_md()`
         opt2fn_null("-at", nfile, fnm),
         ir, cr,
         Flags & MD_STARTFROMCPT,
+        (MULTISIM(cr) != NULL),
         AT__INIT_VERBOSE);
     ```
 
@@ -108,7 +109,7 @@ Modify the function `do_md()`
 
     ```C++
     atGmx.move(enerd, step, bFirstStep, bLastStep,
-        bGStat, do_per_step(step, ir->nstxout), bNS, cr);
+        bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
     ```
 
     on line 1276, after

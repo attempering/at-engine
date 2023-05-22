@@ -33,10 +33,12 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
     int ie = (int)((e - eh->min)/eh->del);
 
     if (e > eh->max_real) {
-      fprintf(stderr, "Warning@at: at->eh: energy point overflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
+      fprintf(stderr, "\rWarning@at: at->eh: energy point overflow %g, (%g, %g)\n",
+          e, eh->min_real, eh->max_real);
       eh->max_real = e;
     } else if (e < eh->min_real) {
-      fprintf(stderr, "Warning@at: at->eh: energy point underflow %g, (%g, %g)\n", e, eh->min_real, eh->max_real);
+      fprintf(stderr, "\rWarning@at: at->eh: energy point underflow %g, (%g, %g)\n",
+          e, eh->min_real, eh->max_real);
       eh->min_real = e;
     }
 
@@ -65,12 +67,12 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
   }
   
   if (eh->mode != 1) {
-    fprintf(stderr, "invalid eh_mode %d\n", eh->mode);
+    fprintf(stderr, "\rError@at.eh: invalid eh_mode %d\n", eh->mode);
     return -1;
   }
 
   if ((fp = fopen((fname != NULL) ? fname : eh->rfile, "w")) == NULL) {
-    fprintf(stderr, "cannot write reconstructed histogram [%s].\n",
+    fprintf(stderr, "\rError@at.eh: cannot write reconstructed histogram [%s].\n",
         eh->rfile);
     return 1;
   }

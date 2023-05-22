@@ -1,6 +1,6 @@
 # GROMACS notes
 
-## GROMACS versions
+## Macros for the GROMACS version
 
 In GROMACS 4.6, the `GMX_VERSION` is managed in `cmake` directory
 

@@ -39,6 +39,7 @@ AtGmx::AtGmx(
     t_inputrec *ir,
     t_commrec *cr,
     at_bool_t is_continuation,
+    at_bool_t multi_sims,
     at_flags_t flags)
 {
   if (fn_cfg != NULL) {
@@ -55,7 +56,7 @@ AtGmx::AtGmx(
     sys_params->boltz = BOLTZ;
     sys_params->id = 0;
     sys_params->md_time_step = ir->delta_t;
-    sys_params->multi_sims = AT__FALSE; //(MULTISIM(cr) != NULL);
+    sys_params->multi_sims = multi_sims;
     sys_params->is_continuation = is_continuation;
 
     at__init(at, fn_cfg, sys_params, flags);

@@ -504,6 +504,7 @@ double gmx::do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
         opt2fn_null("-at", nfile, fnm),
         ir, cr,
         Flags & MD_STARTFROMCPT,
+        (MULTISIM(cr) != NULL),
         AT__INIT_VERBOSE);
 
     if (repl_ex_nst > 0 && MASTER(cr))
@@ -1274,7 +1275,7 @@ double gmx::do_md(FILE *fplog, t_commrec *cr, int nfile, const t_filenm fnm[],
         }
 
         atGmx.move(enerd, step, bFirstStep, bLastStep,
-            bGStat, do_per_step(step, ir->nstxout), bNS, cr);
+            bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
 
         /* ########  END FIRST UPDATE STEP  ############## */
         /* ########  If doing VV, we now have v(dt) ###### */

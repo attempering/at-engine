@@ -466,6 +466,7 @@ void gmx::LegacySimulator::do_md()
         opt2fn_null("-at", nfile, fnm),
         ir, cr,
         startingBehavior != StartingBehavior::NewSimulation,
+        isMultiSim(ms),
         AT__INIT_VERBOSE);
 
     if (useReplicaExchange && MASTER(cr))
@@ -1133,7 +1134,7 @@ void gmx::LegacySimulator::do_md()
         }
 
         atGmx.move(enerd, step, bFirstStep, bLastStep,
-                bGStat, do_per_step(step, ir->nstxout), bNS, cr);
+                bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
 
         // Copy coordinate from the GPU for the output/checkpointing if the update is offloaded and
         // coordinates have not already been copied for i) search or ii) CPU force tasks.

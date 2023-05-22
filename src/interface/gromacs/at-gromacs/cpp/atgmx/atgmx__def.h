@@ -47,6 +47,7 @@ public:
     t_inputrec *ir,
     t_commrec *cr,
     at_bool_t is_continuation,
+    at_bool_t multi_sims,
     at_flags_t flags);
 
   ~AtGmx();

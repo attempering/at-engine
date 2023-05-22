@@ -127,7 +127,7 @@ Modify the function `do_md()`
 
     ```C
         atgmx__move(atgmx, enerd, step, bFirstStep, bLastStep,
-            bGStat, do_per_step(step, ir->nstxout), bNS, cr);
+            bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
     ```
 
 5. At the end of function
