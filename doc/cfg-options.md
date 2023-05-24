@@ -147,7 +147,8 @@ The `f(beta)` factor is a new feature from the PCST paper.
 The `f(beta)` factor has three possibilities.
 
 * Type 0. Flat distribution: `f(beta) = 1`
-          This is the case that falls back to the classic CST algorithm.
+          This is the case that falls back to the classic
+          adaptive tempering algorithm.
 
 * Type 1. Gaussian distribution: `f(beta) = exp[-(beta - beta0)^2/(2 sigma^2)]`
           This is the new distribution suggested by the PCST paper.
@@ -365,7 +366,7 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
 #### II.G.3. Adaptive averaging
 
-The CST algorithm uses average energy to establish runtime
+The adaptive tempering algorithm uses average energy to establish runtime
 estimates of the partition function.
 Such estimates serve as the weights of the temperature ensemble
 and determine how many visits a certain temperature would receive.

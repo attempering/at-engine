@@ -52,4 +52,4 @@ $(bins_tmpi): %_tmpi.exe : %.cpp $(deps)
 	$(CXX_TMPI) $(includes) $< $(dep_srcs_tmpi) -o $@ $(LM) -lpthread
 
 clean::
-	$(RM) -rf $(bins) $(bins_dbg) $(bins_mpi) $(bins_tmpi) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat cst.dat gmon.out data/* atdata*
+	$(RM) -rf $(bins) $(bins_dbg) $(bins_mpi) $(bins_tmpi) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat gmon.out data/* atdata*

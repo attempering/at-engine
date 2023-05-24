@@ -23,14 +23,13 @@
 
 typedef long long at_llong_t;
 double boltz = 1.0;
-int use_minicst = 0;
 uint32_t langevin_seed = 1234;
 
 double sigma = 100.0;     /* standard deviation of energy distributions */
 double epot_dt = 0.01;   /* equilibration rate, larger value means the system is able to equilibrate faster */
 at_llong_t nsteps = 5000000;
 
-void run_cst_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
+void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 {
   at_llong_t step = 0;
   at_params_step_t step_params[1];
@@ -87,9 +86,9 @@ int main(int argc, char **argv)
 
   mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->beta_min, at->distr->domain->beta_max, boltz);
 
-  run_cst_md(at, mdsys, nsteps);
+  run_at_md(at, mdsys, nsteps);
 
-  fprintf(stderr, "CST simulation finished successfully.\n");
+  fprintf(stderr, "AT simulation finished successfully.\n");
 
   mdsys__delete(mdsys);
 

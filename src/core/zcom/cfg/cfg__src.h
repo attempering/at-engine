@@ -25,6 +25,11 @@
 #define zcom_cfg__set(cfg, var) zcom_opt__isset(cfg->opts, cfg->nopt, &var, #var)
 
 
+/* Comparing keys,
+
+   user_key is the key in the configuration file
+   registered_key is the key given by the programmer
+ */
 static int zcom_cfg__compare_keys(const char *user_key, const char *registered_keys)
 {
   return strcmp(user_key, registered_keys);

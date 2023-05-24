@@ -7,3 +7,5 @@ _backup
 *.exe
 *.dat
 atdata*
+*.pdf
+.sync-sim1.sh

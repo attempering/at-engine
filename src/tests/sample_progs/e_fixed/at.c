@@ -22,7 +22,6 @@
 
 typedef long long at_llong_t;
 double boltz = 1.0;
-int use_minicst = 0;
 uint32_t langevin_seed = 1234;
 
 double sigma = 10.0; /* standard deviation of energy distributions */
@@ -32,7 +31,7 @@ at_llong_t nsteps = 500000;
 double epot = -100.0;
 
 
-void run_cst_md(at_t* at, at_llong_t nsteps)
+void run_at_md(at_t* at, at_llong_t nsteps)
 {
   at_llong_t step = 0;
   at_params_step_t step_params[1];
@@ -73,9 +72,9 @@ int main(int argc, char** argv)
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
   at__manifest(at);
 
-  run_cst_md(at, nsteps);
+  run_at_md(at, nsteps);
 
-  fprintf(stderr, "CST simulation finished successfully.\n");
+  fprintf(stderr, "AT simulation finished successfully.\n");
 
   at__close(at);
 

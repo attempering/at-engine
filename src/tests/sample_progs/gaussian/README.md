@@ -1,5 +1,5 @@
 # Testing
 
 ```sh
-valgrind --leak-check=full ./cst.exe
+valgrind --leak-check=full ./at.exe
 ```
