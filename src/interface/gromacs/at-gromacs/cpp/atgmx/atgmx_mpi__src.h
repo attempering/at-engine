@@ -22,6 +22,10 @@
 
 #include "atgmx__def.h"
 
+// This function should be called even if AtGmx is disabled
+// so that members of the class
+// mpi_rank, mpi_size, mpi_comm, is_master are properly set
+//
 int AtGmx::init_mpi(MPI_Comm comm)
 {
   int mpi_size = 1;

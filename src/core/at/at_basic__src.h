@@ -105,20 +105,29 @@ int at__init(at_t *at,
 {
   zcom_cfg_t *cfg = NULL;
 
-  if (cfg_filename != NULL) {
-    /* open configuration file */
-    zcom_util__exit_if((cfg = zcom_cfg__open(cfg_filename)) == NULL,
-        "at_t: cannot open configuration file %s.\n", cfg_filename);
+  at->cfg = NULL;
+
+  if (cfg_filename == NULL) {
+    return -1;
+  }
+
+  //fprintf(stderr, "Debug@at: at__init() from %s\n", cfg_filename);
+
+  /* open configuration file */
+  if ((cfg = zcom_cfg__open(cfg_filename)) == NULL) {
+    fprintf(stderr, "\rError@at: cannot open configuration file %s.\n", cfg_filename);
+    return -1;
   }
 
   /* call low level function */
-  zcom_util__exit_if (at__cfg_init(at, cfg, sys_params, flags) != 0,
-      "at_t: error while reading configuration file %s\n",
-      (cfg_filename ? cfg_filename : "NULL") );
-
-  if (cfg_filename != NULL) {
-    fprintf(stderr, "Info@at: successfully loaded configuration file %s\n", cfg_filename);
+  if (at__cfg_init(at, cfg, sys_params, flags) != 0) {
+    fprintf(stderr, "\rError@at: error while reading configuration file %s\n",
+        (cfg_filename ? cfg_filename : "NULL") );
+    zcom_cfg__close(cfg);
+    return -1;
   }
+
+  fprintf(stderr, "Info@at: successfully loaded configuration file %s\n", cfg_filename);
 
   at->cfg = cfg;
 

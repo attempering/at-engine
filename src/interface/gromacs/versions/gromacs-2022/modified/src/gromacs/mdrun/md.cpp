@@ -1313,7 +1313,7 @@ void gmx::LegacySimulator::do_md()
             }
         }
 
-        atGmx.move(enerd, step, bFirstStep, bLastStep,
+        atGmx.move(enerd, static_cast<at_llong_t>(step), bFirstStep, bLastStep,
             bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
 
         // Copy coordinate from the GPU for the output/checkpointing if the update is offloaded and

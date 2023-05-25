@@ -108,7 +108,7 @@ Modify the function `do_md()`
 4. Before the comment of `START TRAJECTORY OUTPUT`
 
     ```C++
-    atGmx.move(enerd, step, bFirstStep, bLastStep,
+    atGmx.move(enerd, static_cast<at_llong_t>(step), bFirstStep, bLastStep,
         bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
     ```
 

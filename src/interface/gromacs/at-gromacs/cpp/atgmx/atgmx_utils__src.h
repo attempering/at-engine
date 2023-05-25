@@ -65,7 +65,7 @@ void AtGmx::update_force_scale(t_commrec *cr)
     return;
   }
 
-  /* call the single processor version */
+  // call the single processor version on the main rank
   if (ATGMX_IS_MAIN_RANK(cr)) {
     at__update_force_scale(at);
   }
@@ -85,15 +85,15 @@ void AtGmx::update_force_scale(t_commrec *cr)
 
 
 
-at_bool_t AtGmx::do_tempering_on_step(at_llong_t step,
-    at_bool_t is_ns_step)
+bool AtGmx::do_tempering_on_step(at_llong_t step,
+    bool is_ns_step)
 {
   if (!enabled) {
-    return AT__FALSE;
+    return false;
   }
 
   int nsttemp = at->driver->nsttemp;
-  at_bool_t do_tempering;
+  bool do_tempering;
 
   if (nsttemp > 0) {
     do_tempering = (step % nsttemp) == 0;
@@ -107,16 +107,21 @@ at_bool_t AtGmx::do_tempering_on_step(at_llong_t step,
 
 
 void AtGmx::sum_energy(
-#if GMX_VERSION >= 20230000
+#if GMX_VERSION >= 20220000
     const std::array<real, F_NRE>& eterm,
 #else
     const real *eterm,
 #endif
     t_commrec *cr,
     at_llong_t step,
-    at_bool_t dirty)
+    bool dirty)
 {
   double epot = eterm[F_EPOT];
+
+  if (!enabled) {
+    fprintf(stderr, "\rError@atgmx: trying to call sum_energy() without enabling atgmx\n");
+    return;
+  }
 
   if (dirty) { /* summarize local potential energy */
     zcom_util__exit_if (!PAR(cr),
@@ -152,7 +157,12 @@ int AtGmx::move(
   at_bool_t do_tempering;
   at_params_step_t step_params[1];
 
-  step_params->step = (at_llong_t) step;
+  if (!enabled) {
+    //fprintf(stderr, "\rError@atgmx: trying to call move() without enabling atgmx\n");
+    return -1;
+  }
+
+  step_params->step = step;
   step_params->is_first_step = is_first_step;
   step_params->is_last_step = is_last_step;
   step_params->do_trace = is_xtc_step;
@@ -196,7 +206,7 @@ int AtGmx::move(
 
 
 #if GMX_VERSION >= 20210000
-void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
+void AtGmx::scale_force(gmx::ForceBuffersView& forceView, const t_mdatoms *mdatoms)
 {
   if (!enabled) {
     return;
@@ -207,7 +217,7 @@ void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
   auto f = forceView.forceWithPadding();
   int homenr = mdatoms->homenr;
 
-#if GMX_VERSION >= 20230000
+#if GMX_VERSION >= 20220000
   int nth = gmx_omp_nthreads_get(ModuleMultiThread::Update);
 #else
   int nth = gmx_omp_nthreads_get(emntUpdate);
@@ -235,7 +245,7 @@ void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
 #else
 // for versions up to 2020
 
-void AtGmx::scale_force(rvec f[], t_mdatoms *mdatoms)
+void AtGmx::scale_force(rvec f[], const t_mdatoms *mdatoms)
 {
   if (!enabled) {
     return;

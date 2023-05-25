@@ -2,8 +2,7 @@
 
 ## Applicability
 
-Applicable to GROMACS 2021.
-Can also apply to GROMACS 2016.
+Applicable to GROMACS 2016, 2021, 2022, 2023.
 
 ## Notes
 

@@ -29,9 +29,14 @@ void AtGmx::update_thermostat_temperatures(const t_inputrec *ir) const
   const double tol = 0.5;
   const real ref_temp = static_cast<real>(at->utils->temp_thermostat);
 
+  if (!enabled) {
+    fprintf(stderr, "\rError@atgmx: trying to call update_thermostat_temperatures without enabling atgmx\n");
+    return;
+  }
+
   for (i = 0; i < ir->opts.ngtc; i++) {
     if (std::fabs(ir->opts.ref_t[i] - ref_temp) > tol) {
-      fprintf(stderr, "\nWarning@atgmx: trying to modify Gromacs thermostat group temperature from %g to %g\n",
+      fprintf(stderr, "\rWarning@atgmx: trying to modify Gromacs thermostat group temperature from %g to %g\n",
         ir->opts.ref_t[i], ref_temp);
     }
     ir->opts.ref_t[i] = ref_temp;
@@ -56,10 +61,10 @@ AtGmx::AtGmx(
 
   is_master = (ATGMX_IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
 
-  if (is_master) {
+  if (enabled && is_master) {
     at_params_sys_t sys_params[1];
 
-#if GMX_VERSION >= 20230000
+#if GMX_VERSION >= 20220000
     sys_params->boltz = gmx::c_boltz;
 #else
     sys_params->boltz = BOLTZ;
@@ -69,26 +74,49 @@ AtGmx::AtGmx(
     sys_params->multi_sims = multi_sims;
     sys_params->is_continuation = is_continuation;
 
-    at__init(at, fn_cfg, sys_params, flags);
+    // This call may fail is the configuration doesn't exist
+    // or its content contains an error
+    //
+    // Our policy is to throw an exception if the filename
+    // is given, but it doesn't exist or it contains an error.
+    //
+    // However, if the filename is not given,
+    // i.e., the command-line options `-at at.cfg` is not set,
+    // we will simply set `enabled` to false
+    //
+    if (at__init(at, fn_cfg, sys_params, flags) != 0) {
+      throw;
+    }
   }
+  //fprintf(stderr, "enabled %d, is_master %d\n", enabled, is_master); getchar();
 
 #ifdef GMX_MPI
-  /* tell every node the settings on the master
-   * valid only for PP only node, maybe we need to
-   * consider using mpi_comm_mysim for more advanced versions
-   * we pass MPI_COMM_NULL to avoid the case of one-node-mpi */
+  // tell every node the settings on the master
+  // valid only for PP only node, maybe we need to
+  // consider using mpi_comm_mysim for more advanced versions
+  // we pass MPI_COMM_NULL to avoid the case of one-node-mpi
+  //
+  // This function should be called even if AtGmx is disabled
+  // so that members mpi_rank, mpi_size, mpi_comm, is_master are properly set
+  //
   if (PAR(cr)) {
     init_mpi(PAR(cr) ? cr->mpi_comm_mygroup : MPI_COMM_NULL);
   }
+
 #endif
 
-  update_thermostat_temperatures(ir);
+  if (enabled) {
+    // every node in the MPI case should updates its thermostat temperature(s)
+    update_thermostat_temperatures(ir);
 
-  update_force_scale(cr);
+    // every node in the MPI case should update its force scale
+    update_force_scale(cr);
 
-  if (is_master) {
-    at__manifest(at);
+    if (is_master) {
+      at__manifest(at);
+    }
   }
+
 }
 
 

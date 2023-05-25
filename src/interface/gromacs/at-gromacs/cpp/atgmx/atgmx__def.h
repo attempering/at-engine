@@ -63,9 +63,9 @@ public:
     t_commrec *cr);
 
 #if GMX_VERSION >= 20210000
-  void scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms);
+  void scale_force(gmx::ForceBuffersView& forceView, const t_mdatoms *mdatoms);
 #else
-  void scale_force(rvec f[], t_mdatoms *mdatoms);
+  void scale_force(rvec f[], const t_mdatoms *mdatoms);
 #endif
 
   void update_thermostat_temperatures(const t_inputrec *ir) const;
@@ -74,20 +74,20 @@ public:
 
   double get_beta();
 
-  at_bool_t do_tempering_on_step(at_llong_t step,
-      at_bool_t is_ns_step);
+  bool do_tempering_on_step(at_llong_t step,
+      bool is_ns_step);
 
   void update_force_scale(t_commrec *cr);
 
   void sum_energy(
-#if GMX_VERSION >= 20230000
+#if GMX_VERSION >= 20220000
       const std::array<real, F_NRE>& eterm,
 #else
       const real *eterm,
 #endif
       t_commrec *cr,
       at_llong_t step,
-      at_bool_t dirty);
+      bool dirty);
 
 };
 

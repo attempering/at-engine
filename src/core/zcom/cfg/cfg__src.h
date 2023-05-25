@@ -88,18 +88,24 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
   size_t i, j, n, size = 0;
   char *p, *q;
 
-  if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for a new zcom_cfg_t object\n");
+  zcom_util__exit_if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL,
+    "Fatal@zcom.cfg: no memory for a new zcom_cfg_t object\n");
+
+  cfg->ssm = NULL;
+
+  if ((fp = fopen(fn, "r")) == NULL) {
+    fprintf(stderr, "Error@zcom.cfg: failed to open (read) %s\n", fn);
+    free(cfg);
     return NULL;
   }
 
   cfg->ssm = zcom_ssm__open();
 
-  zcom_util__xfopen(fp, fn, "r", return NULL);
   if (zcom_ssm__fget_all(cfg->ssm, &(cfg->buf), &size, fp) == NULL) {
     fprintf(stderr, "error reading file %s\n", fn);
     return NULL;
   }
+
   zcom_ssm__concat(cfg->ssm, &(cfg->buf), "\n"); /* in case the file is not ended by a new line, we add one */
   fclose(fp);
 
