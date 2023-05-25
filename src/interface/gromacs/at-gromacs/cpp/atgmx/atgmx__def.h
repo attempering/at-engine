@@ -44,7 +44,7 @@ public:
 
   AtGmx(
     const char *fn_cfg,
-    t_inputrec *ir,
+    const t_inputrec *ir,
     t_commrec *cr,
     at_bool_t is_continuation,
     at_bool_t multi_sims,
@@ -68,7 +68,7 @@ public:
   void scale_force(rvec f[], t_mdatoms *mdatoms);
 #endif
 
-  void update_thermostat_temperatures(t_inputrec *ir) const;
+  void update_thermostat_temperatures(const t_inputrec *ir) const;
 
   int init_mpi(MPI_Comm comm);
 
@@ -80,7 +80,11 @@ public:
   void update_force_scale(t_commrec *cr);
 
   void sum_energy(
-      real *eterm,
+#if GMX_VERSION >= 20230000
+      const std::array<real, F_NRE>& eterm,
+#else
+      const real *eterm,
+#endif
       t_commrec *cr,
       at_llong_t step,
       at_bool_t dirty);

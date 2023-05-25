@@ -23,12 +23,18 @@
 //#include "atgmx_mpi.h"
 
 
-void AtGmx::update_thermostat_temperatures(t_inputrec *ir) const
+void AtGmx::update_thermostat_temperatures(const t_inputrec *ir) const
 {
   int i;
+  const double tol = 0.5;
+  const real ref_temp = static_cast<real>(at->utils->temp_thermostat);
 
   for (i = 0; i < ir->opts.ngtc; i++) {
-    ir->opts.ref_t[i] = (real) at->utils->temp_thermostat;
+    if (std::fabs(ir->opts.ref_t[i] - ref_temp) > tol) {
+      fprintf(stderr, "\nWarning@atgmx: trying to modify Gromacs thermostat group temperature from %g to %g\n",
+        ir->opts.ref_t[i], ref_temp);
+    }
+    ir->opts.ref_t[i] = ref_temp;
   }
 }
 
@@ -36,7 +42,7 @@ void AtGmx::update_thermostat_temperatures(t_inputrec *ir) const
 
 AtGmx::AtGmx(
     const char *fn_cfg,
-    t_inputrec *ir,
+    const t_inputrec *ir,
     t_commrec *cr,
     at_bool_t is_continuation,
     at_bool_t multi_sims,
@@ -48,12 +54,16 @@ AtGmx::AtGmx(
     enabled = AT__FALSE;
   }
 
-  is_master = (MASTER(cr) ? AT__TRUE : AT__FALSE);
+  is_master = (ATGMX_IS_MAIN_RANK(cr) ? AT__TRUE : AT__FALSE);
 
   if (is_master) {
     at_params_sys_t sys_params[1];
 
+#if GMX_VERSION >= 20230000
+    sys_params->boltz = gmx::c_boltz;
+#else
     sys_params->boltz = BOLTZ;
+#endif
     sys_params->id = 0;
     sys_params->md_time_step = ir->delta_t;
     sys_params->multi_sims = multi_sims;

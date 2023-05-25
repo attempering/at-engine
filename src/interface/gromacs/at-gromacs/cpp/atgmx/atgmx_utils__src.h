@@ -66,7 +66,7 @@ void AtGmx::update_force_scale(t_commrec *cr)
   }
 
   /* call the single processor version */
-  if (MASTER(cr)) {
+  if (ATGMX_IS_MAIN_RANK(cr)) {
     at__update_force_scale(at);
   }
 
@@ -107,7 +107,11 @@ at_bool_t AtGmx::do_tempering_on_step(at_llong_t step,
 
 
 void AtGmx::sum_energy(
-    real *eterm,
+#if GMX_VERSION >= 20230000
+    const std::array<real, F_NRE>& eterm,
+#else
+    const real *eterm,
+#endif
     t_commrec *cr,
     at_llong_t step,
     at_bool_t dirty)
@@ -125,7 +129,7 @@ void AtGmx::sum_energy(
 
   }
 
-  if (MASTER(cr)) {
+  if (ATGMX_IS_MAIN_RANK(cr)) {
     at->energy = epot;
   }
 
@@ -165,7 +169,7 @@ int AtGmx::move(
     sum_energy(enerd->term, cr, step, dirty);
 
     /* change temperature, and regularly write output files */
-    if (MASTER(cr)) {
+    if (ATGMX_IS_MAIN_RANK(cr)) {
 
       // calling at__move()
       zcom_util__exit_if(0 != at__move(at, step_params),
@@ -181,7 +185,7 @@ int AtGmx::move(
     // not doing tempering, we may need to output
     // if tempering is done, output tasks are already
     // considered in at__move()
-    if (MASTER(cr)) {
+    if (ATGMX_IS_MAIN_RANK(cr)) {
       at__output(at, step_params);
     }
 
@@ -198,12 +202,16 @@ void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
     return;
   }
 
-  /* scale the force */
   real fs = (real) at->force_scale;
 
   auto f = forceView.forceWithPadding();
   int homenr = mdatoms->homenr;
+
+#if GMX_VERSION >= 20230000
+  int nth = gmx_omp_nthreads_get(ModuleMultiThread::Update);
+#else
   int nth = gmx_omp_nthreads_get(emntUpdate);
+#endif
 
 #pragma omp parallel for num_threads(nth) schedule(static)
   for (int th = 0; th < nth; th++) {
@@ -225,6 +233,7 @@ void AtGmx::scale_force(gmx::ForceBuffersView& forceView, t_mdatoms *mdatoms)
 }
 
 #else
+// for versions up to 2020
 
 void AtGmx::scale_force(rvec f[], t_mdatoms *mdatoms)
 {

@@ -89,6 +89,13 @@
 #include "gromacs/legacyheaders/types/commrec.h"
 #endif
 
+#ifdef MASTER
+#define ATGMX_IS_MAIN_RANK(cr) MASTER(cr)
+#else
+#define ATGMX_IS_MAIN_RANK(cr) MAIN(cr)
+#endif
+
+
 #if GMX_VERSION >= 20160000
 // (2021)
 // t_mdatoms
