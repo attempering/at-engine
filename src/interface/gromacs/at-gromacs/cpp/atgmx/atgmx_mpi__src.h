@@ -52,6 +52,8 @@ int AtGmx::init_mpi(MPI_Comm comm)
   mpi_size = mpi_size;
   mpi_rank = mpi_rank;
 
+  is_master = (mpi_rank == 0);
+
   return 0;
 }
 

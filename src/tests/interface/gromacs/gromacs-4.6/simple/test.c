@@ -73,10 +73,6 @@ int work(int argc, char **argv)
 
   zcom_mtrng__init_from_seed(rng, 12345);
 
-  if (MASTER(cr)) {
-    remove("atdata/trace.dat");
-  }
-
   for (step = 1; step <= nsteps; step++) {
     at_bool_t is_first_step = (step == 1);
     at_bool_t is_last_step = (step == nsteps);
