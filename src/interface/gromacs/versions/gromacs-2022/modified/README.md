@@ -6,7 +6,7 @@
 
 ```sh
 cd src/gromacs
-ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-2023/modified/src/gromacs/at-gromacs
+ln -sf ../../../../at-engine/src/interface/gromacs/versions/gromacs-2022/modified/src/gromacs/at-gromacs
 ```
 
 Make sure there is a `CMakeLists.txt` under the `at-gromacs` directory,
@@ -35,7 +35,7 @@ add_dependencies(libgromacs update_at_gromacs)
 ######## End of modifications for at-gromacs #######
 ```
 
-A possible position is after on line 417:
+A possible position is after on line 401:
 
 ```cmake
 target_link_libraries(libgromacs PRIVATE lmfit)
@@ -93,9 +93,9 @@ Modify the function `do_md()`
         AT__INIT_VERBOSE);
     ```
 
-    A proper location of addition is probably on line 527, after `prepareAwhModule()`, but before `init_replica_exchange()`
+    A proper location of addition is probably on line 538, after `prepareAwhModule()`, but before `init_replica_exchange()`
 
-2. Within the MD loop, right before the line (about line 1104) of assignment `bGStat = ...`, add
+2. Within the MD loop, right before the line (about line 1121) of assignment `bGStat = ...`, add
 
     ```C++
     if (atGmx.do_tempering_on_step(step, bNS)) {
@@ -107,10 +107,10 @@ Modify the function `do_md()`
 3. Still in the MD loop, after the call of `do_force()` and the call of `GMX_BARRIER(cr->mpi_comm_mygroup)`, add
 
     ```C++
-    atGmx.scale_force(f.view(), mdAtoms->mdatoms());
+    atGmx.scale_force(f.view(), md);
     ```
 
-    Roughly on line 1262.
+    Roughly on line 1227.
 
 4. Inserting the code for `atGmx.move()`
 
@@ -119,7 +119,7 @@ Modify the function `do_md()`
         bGStat, do_per_step(step, ir->nstxout_compressed), bNS, cr);
     ```
 
-    on line 1322, after the block
+    on line 1316, after the block
 
     ```C++
     /* ########  END FIRST UPDATE STEP  ############## */
@@ -136,7 +136,7 @@ but for `atgmx` we want to use the legacy simulator instead.
 
 1. In [src/gromacs/modularsimulator/modularsimulator.h](src/gromacs/modularsimulator/modularsimulator.h),
 
-    In the declaration of the function `isInputCompatible()`, on roughly line 88,
+    In the declaration of the function `isInputCompatible()`, on roughly line 87,
     before the line for `bool doEssentialDynamics,`
     add a parameter
 
@@ -154,7 +154,7 @@ but for `atgmx` we want to use the legacy simulator instead.
     bool doAt,
     ```
 
-    Then on roughly line 471, before the line `doEssentialDynamics`,
+    Then on roughly line 470, before the line `doEssentialDynamics`,
     add the following piece of code,
 
     ```C++
@@ -165,14 +165,14 @@ but for `atgmx` we want to use the legacy simulator instead.
     ```
 
     In the function of `void ModularSimulator::checkInputForDisabledFunctionality()`,
-    on roughly line 538, right before the line for
+    on roughly line 535, right before the line for
     `opt2bSet("-ei", legacySimulatorData_->nfile, legacySimulatorData_->fnm),`
     add a line
     `opt2bSet("-at", legacySimulatorData_->nfile, legacySimulatorData_->fnm),`
 
 3. In [src/gromacs/mdrun/runner.cpp](src/gromacs/mdrun/runner.cpp)
 
-    In `mdrunner()`, in the line 1055 before
+    In `mdrunner()`, in the line 1021 before
     `const bool useModularSimulator = checkUseModularSimulator(...)`,
     add the following line:
 

@@ -1,4 +1,4 @@
-# Interface to GROMACS 2023
+# Interface to GROMACS 2022
 
 This directory contains files relevant to using at-engine in GROMACS.
 
@@ -8,18 +8,14 @@ This directory contains files relevant to using at-engine in GROMACS.
 * [gmxmock](gmxmock) mock files to GROMACS files so that test programs can be compiled without the actual GROMACS code.
 * [modified](modified) modified files, [list of modifications](modified/README.md)
 
-## Building GROMACS 2023
-
-Requires CMake 3.18, use `~/app/cmake-3.26/bin/cmake` instead of `cmake`
-
-See [installing a custom version of CMake](../../../../../doc/installing-custom-cmake.md).
+## Building GROMACS 2022
 
 ### Regular CPU version
 
 ```sh
 mkdir build
 cd build
-~/app/cmake-3.26/bin/cmake .. -DGMX_BUILD_OWN_FFTW=ON
+cmake .. -DGMX_BUILD_OWN_FFTW=ON
 make -j 8
 ```
 
@@ -28,7 +24,7 @@ make -j 8
 ```sh
 mkdir build_gpu
 cd build_gpu
-~/app/cmake-3.26/bin/cmake .. -DGMX_GPU=CUDA -DGMX_BUILD_OWN_FFTW=ON
+cmake .. -DGMX_GPU=CUDA -DGMX_BUILD_OWN_FFTW=ON
 make -j 8
 ```
 
