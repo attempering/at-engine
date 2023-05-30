@@ -25,6 +25,31 @@
 #define zcom_cfg__set(cfg, var) zcom_opt__isset(cfg->opts, cfg->nopt, &var, #var)
 
 
+static char *zcom_cfg__standardize_key(zcom_cfg_t *cfg, const char *key_)
+{
+  char *key = zcom_ssm__dup(cfg->ssm, key_);
+  char *p;
+
+  if (cfg->flags & ZCOM_CFG__IGNORE_CASE) {
+    /* convert every letter to lower case */
+    for (p = key; *p != '\0'; p++) {
+      *p = zcom_util__tolower(*p);
+    }
+  }
+
+  if (cfg->flags & ZCOM_CFG__ALLOW_DASHES) {
+    /* converting '_' to '-' */
+    for (p = key; *p != '\0'; p++) {
+      if (*p == '_') {
+        *p = '-';
+      }
+    }
+  }
+
+  return key;
+}
+
+
 /* Comparing keys,
 
    user_key is the key in the configuration file
@@ -48,6 +73,7 @@ static int zcom_cfg__compare_keys(const char *user_key, const char *registered_k
 int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
 {
   int i;
+  char *key_std = zcom_cfg__standardize_key(cfg, key);
 
   if (cfg == NULL) {
     return -1;
@@ -56,7 +82,7 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
   for (i = 0; i < cfg->nent; i++) {
     zcom_cfgent_t *ent = cfg->ents + i;
 
-    if (ent->key != NULL && zcom_cfg__compare_keys(ent->key, key) == 0) {
+    if (ent->key != NULL && zcom_cfg__compare_keys(ent->key, key_std) == 0) {
       //fprintf(stderr, "found a matched key [%s] vs [%s]\n", key, ent->key);
 
       if (strcmp(fmt, "%s") == 0) { /* string */
@@ -70,8 +96,11 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
 
         //fprintf(stderr, "after assignment [%s]: %s\n", key, (var ? *(char**)var : NULL));
         return 0;
+
       } else { /* use sscanf for other cases, like int, float,... */
+
         return EOF == sscanf(ent->val, fmt, var) ? 2 : 0;
+
       }
     }
   }
@@ -79,8 +108,9 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
   return 1; /* no match */
 }
 
+
 /* load the whole configuration file into memory, parse it to entries */
-zcom_cfg_t *zcom_cfg__open(const char *fn)
+zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
 {
   zcom_cfg_t *cfg;
   zcom_cfgent_t *ent;
@@ -88,10 +118,20 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
   size_t i, j, n, size = 0;
   char *p, *q;
 
+  /* a comment line may start with one of the following characters
+   *
+   * # % ! ;
+   *
+   */
+  const char *comment_chars = "#%!;";
+
+
   zcom_util__exit_if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL,
     "Fatal@zcom.cfg: no memory for a new zcom_cfg_t object\n");
 
   cfg->ssm = NULL;
+
+  cfg->flags = flags;
 
   if ((fp = fopen(fn, "r")) == NULL) {
     fprintf(stderr, "Error@zcom.cfg: failed to open (read) %s\n", fn);
@@ -106,7 +146,8 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
     return NULL;
   }
 
-  zcom_ssm__concat(cfg->ssm, &(cfg->buf), "\n"); /* in case the file is not ended by a new line, we add one */
+  /* add a new line if the file does not end with one */
+  zcom_ssm__concat(cfg->ssm, &(cfg->buf), "\n");
   fclose(fp);
 
   /* count the number of lines (before allocating the key-table) */
@@ -123,7 +164,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
 
       /* replace following CR LF by spaces for efficiency
          as the size of the key table == the number of blank lines */
-      for (j = i+1; j < size && zcom_util__cisspace(p[j]); j++) {
+      for (j = i+1; j < size && zcom_util__isspace(p[j]); j++) {
         p[j] = ' ';
       }
     }
@@ -135,7 +176,8 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
     exit(1);
   }
 
-  /* load lines into the key table */
+  /* load lines into the key table
+   * do not parse the `key = value` yet */
   for (p = cfg->buf, j = 0, i = 0; i < size; i++) {
     if (cfg->buf[i] == '\0') {
       cfg->ents[j++].key = p;
@@ -153,30 +195,41 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
 
   /* parse each line to a key-value pair */
   for (j = 0; j < n; j++) {
+
     ent = cfg->ents + j;
-    p = ent->key;
+    p = ent->key; /* unparsed line */
+
+    for (q = p; *q != '\0'; q++) {
+      if (strchr(comment_chars, *q)) {
+        *q = '\0';
+        break;
+      }
+    }
+
     zcom_util__strip(p);
 
     /* skip a blank or comment line */
-    if (p[0] == '\0' || strchr("#%!;", p[0]) != NULL) {
+    if (p[0] == '\0') {
       ent->key = NULL;
       continue;
-    }
-
-    /* remove trailing space and ';' */
-    for (q = p + strlen(p) - 1; q >= p && (zcom_util__cisspace(*q) || *q == ';'); q--) {
-      *q = '\0';
     }
 
     if ((q = strchr(p, '=')) == NULL) { /* skip a line without '=' */
       ent->key = NULL;
       continue;
     }
+
     *q = '\0';
     ent->val = q + 1;
+
     zcom_util__strip(ent->key);
+
+    ent->key = zcom_cfg__standardize_key(cfg, ent->key);
+
     zcom_util__strip(ent->val);
+
   }
+
   cfg->nent = (int) n;
   cfg->nopt = 0;
   cfg->nopt_cap = ZCOM_CFG__OPT_BLOCK_SIZE_;
@@ -187,6 +240,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn)
 
   return cfg;
 }
+
 
 void zcom_cfg__close(zcom_cfg_t *cfg)
 {
@@ -201,11 +255,13 @@ void zcom_cfg__close(zcom_cfg_t *cfg)
   free(cfg);
 }
 
+
 /* register an option request, return the index */
 ZCOM__INLINE int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
 {
   int n = cfg->nopt++;
   zcom_opt_t *o;
+  char *key_std;
 
   if (cfg->nopt > cfg->nopt_cap) {
     cfg->nopt_cap += ZCOM_CFG__OPT_BLOCK_SIZE_;
@@ -216,10 +272,14 @@ ZCOM__INLINE int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt
   }
 
   o = cfg->opts + n;
-  zcom_opt__set(o, NULL, key, fmt, ptr, desc);
+
+  key_std = zcom_cfg__standardize_key(cfg, key);
+
+  zcom_opt__set(o, NULL, key_std, fmt, ptr, desc);
 
   return n;
 }
+
 
 /* match requested options with entries in cfg file
  * returns 0 if successful */

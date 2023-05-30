@@ -60,20 +60,28 @@ ZCOM__INLINE void zcom_opt__set(zcom_opt_t *o, const char *sflag, const char *ke
   } else { /* argument */
     o->isopt = 0;
   }
+
   o->sflag = sflag;
   o->key = key;
   o->flags = 0;
-  zcom_util__exit_if (ptr == NULL, "null pass to argopt with %s: %s\n", sflag, desc);
+
+  zcom_util__exit_if (ptr == NULL, "Error@zcom.opt: null pass to zcomopt with %s: %s\n", sflag, desc);
+
   o->ptr = ptr;
-  if (fmt == NULL) fmt = "";
+  if (fmt == NULL) {
+    fmt = "";
+  }
+
   if (fmt[0] == '!') {
     fmt++;
     o->flags |= ZCOM_OPT__MANDATORY;
   }
+
   if (strcmp(fmt, "%b") == 0) {
     fmt = "%d";
     o->flags |= ZCOM_OPT__SWITCH;
   }
+
   o->fmt = fmt;
   o->pfmt = NULL;
   o->desc = desc;

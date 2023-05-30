@@ -28,10 +28,12 @@
 #include "../opt/opt.h"
 #include "../ssm/ssm.h"
 
+
 typedef struct {
   char *key, *val;
   int used;
 } zcom_cfgent_t; /* line from cfg file */
+
 
 typedef struct zcom_cfg_t_ {
   char *buf;      /* the string buffer of the entire configuration file */
@@ -39,9 +41,18 @@ typedef struct zcom_cfg_t_ {
   zcom_cfgent_t *ents; /* entries */
   int nopt;       /* number of user-requested options */
   int nopt_cap;   /* capacity of opts[] */
+  unsigned flags;
   zcom_opt_t *opts;    /* user-requested options */
   zcom_ssm_t *ssm;
 } zcom_cfg_t;
+
+
+
+/* ignoring cases */
+#define ZCOM_CFG__IGNORE_CASE       0x0010
+
+/* treating '_' as the same as '-' */
+#define ZCOM_CFG__ALLOW_DASHES      0x0020
 
 #define ZCOM_CFG__CHECK_USE         0x0100
 #define ZCOM_CFG__VERBOSE           0x1000

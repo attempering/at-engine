@@ -151,14 +151,22 @@ ZCOM__INLINE char *zcom_util__stripx(char *s, unsigned flags)
 {
   char *p;
 
-  if (flags & ZSTR_XSPACEL) { /* remove leading spaces */
-    for (p = s; zcom_util__cisspace(*p); p++) ;
-    if (*p == '\0') *s = '\0';
-    else memmove(s, p, strlen(p)+1);
+  if (flags & ZCOM_UTIL__REMOVE_LEADING_SPACES) { /* remove leading spaces */
+    for (p = s; zcom_util__isspace(*p); p++) ;
+    if (*p == '\0') {
+      *s = '\0';
+    }
+    else {
+      memmove(s, p, strlen(p)+1);
+    }
   }
-  if (flags & ZSTR_XSPACER) /* remove trailing spaces */
-    for (p = s + strlen(s) - 1; p >= s && zcom_util__cisspace(*p); p--)
+
+  if (flags & ZCOM_UTIL__REMOVE_TRAILING_SPACES) { /* remove trailing spaces */
+    for (p = s + strlen(s) - 1; p >= s && zcom_util__isspace(*p); p--) {
       *p = '\0';
+    }
+  }
+
   return s;
 }
 
@@ -168,10 +176,10 @@ ZCOM__INLINE char *zcom_util__stripx(char *s, unsigned flags)
 ZCOM__INLINE char *zcom_util__strcnv(char *s, const char *t, size_t len, unsigned flags)
 {
   size_t i = 0, j;
-  unsigned docase = flags & ZSTR_CASE, up = flags & ZSTR_UPPER_;
+  unsigned docase = flags & ZCOM_UTIL__STR_CASE, up = flags & ZCOM_UTIL__STR_UPPER_;
 
   if (len == 0 || s == NULL || t == NULL) return s;
-  if (flags & ZSTR_CAT) while(s[i]) i++;
+  if (flags & ZCOM_UTIL__STR_CONCAT) while(s[i]) i++;
   for (j = 0; i < len; i++, j++) {
     if (docase && t[j]) {
       if (up) s[i] = (char) (unsigned char) toupper((unsigned char) t[j]);
@@ -180,7 +188,7 @@ ZCOM__INLINE char *zcom_util__strcnv(char *s, const char *t, size_t len, unsigne
     if (t[j] == 0) break;
   }
   if (i == len) s[i] = '\0';
-  if (flags & ZSTR_XSPACE) zcom_util__stripx(s, flags); /* call zcom_util__strip */
+  if (flags & ZCOM_UTIL__REMOVE_SPACES) zcom_util__stripx(s, flags); /* call zcom_util__strip */
   return s;
 }
 

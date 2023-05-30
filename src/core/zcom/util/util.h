@@ -109,43 +109,44 @@ ZCOM__INLINE void zcom_util__fatal(const char *fmt, ...) ZCOM_UTIL__PERRMSG__(1)
 #endif
 
 
-#define zcom_util__cisalnum(c)   isalnum((unsigned char)(c))
-#define zcom_util__cisalpha(c)   isalpha((unsigned char)(c))
-#define zcom_util__cisdigit(c)   isdigit((unsigned char)(c))
-#define zcom_util__cisxdigit(c)  isxdigit((unsigned char)(c))
-#define zcom_util__cisprint(c)   isprint((unsigned char)(c))
-#define zcom_util__cisspace(c)   isspace((unsigned char)(c))
-#define zcom_util__cislower(c)   islower((unsigned char)(c))
-#define zcom_util__cisupper(c)   isupper((unsigned char)(c))
-#define zcom_util__ctolower(c)   (char) tolower((unsigned char)(c))
-#define zcom_util__ctoupper(c)   (char) toupper((unsigned char)(c))
+#define zcom_util__isalnum(c)   isalnum((unsigned char)(c))
+#define zcom_util__isalpha(c)   isalpha((unsigned char)(c))
+#define zcom_util__isdigit(c)   isdigit((unsigned char)(c))
+#define zcom_util__isxdigit(c)  isxdigit((unsigned char)(c))
+#define zcom_util__isprint(c)   isprint((unsigned char)(c))
+#define zcom_util__isspace(c)   isspace((unsigned char)(c))
+#define zcom_util__islower(c)   islower((unsigned char)(c))
+#define zcom_util__isupper(c)   isupper((unsigned char)(c))
+#define zcom_util__tolower(c)   (char) tolower((unsigned char)(c))
+#define zcom_util__toupper(c)   (char) toupper((unsigned char)(c))
 
 /* string manipulation */
-#define ZSTR_XSPACEL  0x0001
-#define ZSTR_XSPACER  0x0002
-#define ZSTR_XSPACE   (ZSTR_XSPACEL|ZSTR_XSPACER)
-#define ZSTR_COPY     0x0004
-#define ZSTR_CAT      0x0008
-#define ZSTR_CASE     0x0100
-#define ZSTR_UPPER_   0x0200
-#define ZSTR_UPPER    (ZSTR_CASE|ZSTR_UPPER_)
-#define ZSTR_LOWER    ZSTR_CASE
+#define ZCOM_UTIL__REMOVE_LEADING_SPACES   0x0001
+#define ZCOM_UTIL__REMOVE_TRAILING_SPACES  0x0002
+#define ZCOM_UTIL__REMOVE_SPACES   (ZCOM_UTIL__REMOVE_LEADING_SPACES|ZCOM_UTIL__REMOVE_TRAILING_SPACES)
+#define ZCOM_UTIL__STR_COPY     0x0004
+#define ZCOM_UTIL__STR_CONCAT   0x0008
+#define ZCOM_UTIL__STR_CASE     0x0100
+#define ZCOM_UTIL__STR_UPPER_   0x0200
+#define ZCOM_UTIL__STR_UPPER    (ZCOM_UTIL__STR_CASE|ZCOM_UTIL__STR_UPPER_)
+#define ZCOM_UTIL__STR_LOWER    ZCOM_UTIL__STR_CASE
 
 /* remove leading and trailing spaces */
-#define zcom_util__strip(s)  zcom_util__stripx(s, ZSTR_XSPACE)
-#define zcom_util__lstrip(s) zcom_util__stripx(s, ZSTR_XSPACEL)
-#define zcom_util__rstrip(s) zcom_util__stripx(s, ZSTR_XSPACER)
+#define zcom_util__strip(s)  zcom_util__stripx(s, ZCOM_UTIL__REMOVE_SPACES)
+#define zcom_util__lstrip(s) zcom_util__stripx(s, ZCOM_UTIL__REMOVE_LEADING_SPACES)
+#define zcom_util__rstrip(s) zcom_util__stripx(s, ZCOM_UTIL__REMOVE_TRAILING_SPACES)
 
 
-/* in the follows, size_s means the buffer size of s, i.e., sizeof(s) for static strings */
+/* in the following macros,
+   size_s means the buffer size of s, i.e., sizeof(s) for static strings */
 /* copy the string and convert it to upper/lower case */
-#define zcom_util__strcpy2u(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_COPY|ZSTR_UPPER)
-#define zcom_util__strcpy2l(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_COPY|ZSTR_LOWER)
-#define zcom_util__strcpy_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_COPY)
-#define zcom_util__substr(s, t, start, len) zcom_util__strcnv(s, t+start, len, ZSTR_COPY)
+#define zcom_util__strcpy2u(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_COPY|ZCOM_UTIL__STR_UPPER)
+#define zcom_util__strcpy2l(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_COPY|ZCOM_UTIL__STR_LOWER)
+#define zcom_util__strcpy_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_COPY)
+#define zcom_util__substr(s, t, start, len) zcom_util__strcnv(s, t+start, len, ZCOM_UTIL__STR_COPY)
 /* concatenate strings, the last parameter is the buffer size of s,
  * unlike strncat(), in which it's the number of characters from *t* to be copied.  */
-#define zcom_util__strcat_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZSTR_CAT)
+#define zcom_util__strcat_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_CONCAT)
 
 
 #endif

@@ -1,10 +1,12 @@
 bins::
+	$(MAKE) $@ -C zcom
 	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C driver
 	$(MAKE) $@ -C at
 
 clean::
+	$(MAKE) $@ -C zcom
 	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C driver
