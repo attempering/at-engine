@@ -28,7 +28,7 @@
 static char *zcom_cfg__standardize_key(zcom_cfg_t *cfg, const char *key_)
 {
   char *key = zcom_ssm__dup(cfg->ssm, key_);
-  char *p;
+  char *p, *q, *key2;
 
   if (cfg->flags & ZCOM_CFG__IGNORE_CASE) {
     /* convert every letter to lower case */
@@ -37,7 +37,22 @@ static char *zcom_cfg__standardize_key(zcom_cfg_t *cfg, const char *key_)
     }
   }
 
-  if (cfg->flags & ZCOM_CFG__ALLOW_DASHES) {
+  if (cfg->flags & ZCOM_CFG__IGNORE_DASHES) {
+
+    key2 = zcom_ssm__dup(cfg->ssm, key_);
+
+    p = key2;
+
+    for (q = key; *q != '\0'; q++) {
+      if (strchr("-_", *q) == NULL) {
+        *p++ = *q;
+      }
+    }
+    *p = '\0';
+
+    key = key2;
+
+  } else if (cfg->flags & ZCOM_CFG__ALLOW_DASHES) {
     /* converting '_' to '-' */
     for (p = key; *p != '\0'; p++) {
       if (*p == '_') {

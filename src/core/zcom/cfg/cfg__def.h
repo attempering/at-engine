@@ -54,6 +54,9 @@ typedef struct zcom_cfg_t_ {
 /* treating '_' as the same as '-' */
 #define ZCOM_CFG__ALLOW_DASHES      0x0020
 
+/* ignore '_' and '-' */
+#define ZCOM_CFG__IGNORE_DASHES     0x0040
+
 #define ZCOM_CFG__CHECK_USE         0x0100
 #define ZCOM_CFG__VERBOSE           0x1000
 #define ZCOM_CFG__OPT_BLOCK_SIZE_   64

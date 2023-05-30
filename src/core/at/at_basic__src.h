@@ -114,7 +114,7 @@ int at__init(at_t *at,
   //fprintf(stderr, "Debug@at: at__init() from %s\n", cfg_filename);
 
   /* open configuration file */
-  if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
+  if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__IGNORE_DASHES)) == NULL) {
     fprintf(stderr, "\rError@at: cannot open configuration file %s.\n", cfg_filename);
     return -1;
   }
