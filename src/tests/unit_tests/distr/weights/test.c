@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     cfg_fn = argv[1];
   }
 
-  cfg = zcom_cfg__open(cfg_fn);
+  cfg = zcom_cfg__open(cfg_fn, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
 
   at_utils_manifest__cfg_init(manifest, cfg, NULL, NULL, verbose);
   at_utils_manifest__open_file(manifest);

@@ -26,10 +26,10 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
 {
   /* enabled : 0: disable; 1:enable */
   bias->enabled = AT__FALSE;
-  if (zcom_cfg__get(cfg, &bias->enabled, "boost_mode", "%d") != 0)
+  if (zcom_cfg__get(cfg, &bias->enabled, "boost-mode", "%d") != 0)
   {
     if (verbose) {
-      fprintf(stderr, "Info@at: assuming default distr->bias->th_mode = 0, key: boost_mode\n");
+      fprintf(stderr, "Info@at: assuming default distr->bias->th_mode = 0, key: boost-mode\n");
     }
   }
 
@@ -37,10 +37,10 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
 
     /* ref_temp */
     bias->ref_temp = 300.0;
-    if (zcom_cfg__get(cfg, &bias->ref_temp, "boost_Tref", "%lf") != 0)
+    if (zcom_cfg__get(cfg, &bias->ref_temp, "boost-Tref", "%lf") != 0)
     {
       if (verbose) {
-        fprintf(stderr, "Info@at: assuming default distr->bias->th_Tref = 300.0, key: boost_Tref\n");
+        fprintf(stderr, "Info@at: assuming default distr->bias->th_Tref = 300.0, key: boost-Tref\n");
       }
     }
 

@@ -56,25 +56,25 @@ int at_driver_langevin__cfg_init(
 
   /* whether to apply the Metropolisation correction */
   langevin->corrected = 1;
-  if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin_corrected", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->corrected = 1, key: langevin_corrected\n");
+  if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin-corrected", "%d")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->corrected = 1, key: langevin-corrected\n");
   }
 
   /* whether to avoid crossing over unvisited bins */
   langevin->no_skip = 1;
-  if (0 != zcom_cfg__get(cfg, &langevin->no_skip, "langevin_no_skip", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->no_skip = 1, key: langevin_no_skip\n");
+  if (0 != zcom_cfg__get(cfg, &langevin->no_skip, "langevin-no-skip", "%d")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->no-skip = 1, key: langevin-no-skip\n");
   }
 
   /* minimum number of visits before moving out of a bin */
   langevin->bin_min_visits = 1;
   if (0 != zcom_cfg__get(cfg, &langevin->bin_min_visits, "langevin_bin_min_visits", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->bin_min_visits = 1, key: langevin_bin_min_visits\n");
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->bin_min_visits = 1, key: langevin-bin-min-visits\n");
   }
 
   langevin->nst_suggest = 100000;
   if (zcom_cfg__get(cfg, &langevin->nst_suggest, "langevin_nst_suggest", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default langevin->nst_suggest = %d, key: langevin_nst_suggest\n",
+    if (verbose) fprintf(stderr, "Info@at: assuming default langevin->nst_suggest = %d, key: langevin-nst-suggest\n",
         langevin->nst_suggest);
   }
 

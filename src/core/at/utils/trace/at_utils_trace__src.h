@@ -34,9 +34,9 @@ void at_utils_trace__cfg_init(at_utils_trace_t *trace,
     at_bool_t verbose)
 {
   trace->filename = (char *) "trace.dat";
-  if (zcom_cfg__get(cfg, &trace->filename, "trace_file", "%s") != 0)
+  if (zcom_cfg__get(cfg, &trace->filename, "trace-file", "%s") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at: assuming default utils->trace->filename = \"trace.dat\", key: trace_file\n");
+    if (verbose) fprintf(stderr, "Info@at: assuming default utils->trace->filename = \"trace.dat\", key: trace-file\n");
   }
 
   trace->filename = at_utils__make_output_filename(ssm, data_dir, trace->filename);

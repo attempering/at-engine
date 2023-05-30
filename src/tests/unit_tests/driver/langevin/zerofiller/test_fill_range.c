@@ -37,7 +37,7 @@ long ntimes = 100000;
 
 void init_distr_mb_and_langevin(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg");
+  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
   at_bool_t verbose = 0;
   double boltz = 1.0;
 

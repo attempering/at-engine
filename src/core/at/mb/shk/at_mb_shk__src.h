@@ -43,8 +43,8 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   shk->base = 0.0;
   /* shk_window_adjusted: adjust shrink according to temperature window width */
   shk->window_adjusted = 1;
-  if (0 != zcom_cfg__get(cfg, &shk->window_adjusted, "shrink_mbin_adjust", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->window_adjusted = 1, key: shrink_mbin_adjust\n");
+  if (0 != zcom_cfg__get(cfg, &shk->window_adjusted, "shrink-mbin-adjust", "%d")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->window_adjusted = 1, key: shrink-mbin-adjust\n");
   }
 
   /* shk_max: initial and maximal shrink (adjusted) */
@@ -76,8 +76,8 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   shk->mode = 1;
-  if (0 != zcom_cfg__get(cfg, &shk->mode, "shrink_mode", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->mode = 1, key: shrink_mode\n");
+  if (0 != zcom_cfg__get(cfg, &shk->mode, "shrink-mode", "%d")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->mode = 1, key: shrink-mode\n");
   }
   if ( !(shk->mode >= 0 && shk->mode <= 2) ) {
     fprintf(stderr, "shk->mode: failed validation: mb->shk->mode >= 0 && shk->mode <= 2\n");

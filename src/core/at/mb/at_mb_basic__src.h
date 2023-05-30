@@ -67,26 +67,26 @@ int at_mb__cfg_init(
 
   /* compute heat capacity */
   mb->need_cv = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest_needcv", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mbest_needcv\n");
+  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest-needcv", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mbest-needcv\n");
   }
 
   /* use symmetric windows */
   mb->use_sym_wins = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest_sym_mbin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mbest_sym_mbin\n");
+  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest-sym-mbin", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mbest-sym-mbin\n");
   }
 
   /* force the single bin estimator */
   mb->use_single_bin = 0;
-  if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest_single_bin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_single_bin = 0, key: mbest_single_bin\n");
+  if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest-single-bin", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_single_bin = 0, key: mbest-single-bin\n");
   }
 
   /* being verbose */
   mb->verbose = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->verbose, "mbest_verbose", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->verbose = 1, key: mbest_verbose\n");
+  if (0 != zcom_cfg__get(cfg, &mb->verbose, "mbest-verbose", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->verbose = 1, key: mbest-verbose\n");
   }
 
   at_mb_win__cfg_init(mb->win, cfg, mb);
@@ -105,15 +105,15 @@ int at_mb__cfg_init(
 
   /* av_binary: use binary format in mbav file */
   mb->av_binary = AT__TRUE;
-  if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav_binary", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_binary = 1, key: mbav_binary\n");
+  if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav-binary", "%d")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_binary = 1, key: mbav-binary\n");
   }
 
   /* av_file: name of mbav file */
   {
     char *fn_mb = (char *) "mb.dat";
-    if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav_file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_file = \"%s\", key: mbav_file\n", fn_mb);
+    if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav-file", "%s")) {
+      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_file = \"%s\", key: mbav-file\n", fn_mb);
     }
     mb->av_file = at_utils__make_output_filename(ssm, data_dir, fn_mb);
   }
@@ -121,8 +121,8 @@ int at_mb__cfg_init(
   /* ze_file: name of ze file */
   {
     char *fn_ze = (char *) "ze.dat";
-    if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze_file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->ze_file = \"%s\", key: ze_file\n", fn_ze);
+    if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze-file", "%s")) {
+      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->ze_file = \"%s\", key: ze-file\n", fn_ze);
     }
     mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
 

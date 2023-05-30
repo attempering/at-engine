@@ -51,8 +51,8 @@ int at_driver__cfg_init(
   }
 
   driver->move_repeats = 1;
-  if (zcom_cfg__get(cfg, &driver->move_repeats, "move_repeats", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->move_repeats = 1, key: move_repeats\n");
+  if (zcom_cfg__get(cfg, &driver->move_repeats, "move-repeats", "%d") != 0) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->move_repeats = 1, key: move-repeats\n");
   }
 
   return 0;
