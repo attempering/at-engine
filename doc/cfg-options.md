@@ -445,7 +445,7 @@ is zero and `gamma` is unity.  So we recover the normal averaging
 scheme.
 .
 
-* `mbest_damp`: turning on adaptive averaging or not
+* `use-adaptive-averaging` (`mbest_damp`): turning on adaptive averaging or not
 
   * 0: disabled
   * 1: enabled.

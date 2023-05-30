@@ -46,8 +46,8 @@ int at_driver__cfg_init(
 
   /* nsttemp: frequency of tempering, 0: disable, -1: only ns */
   driver->nsttemp = -1;
-  if (zcom_cfg__get(cfg, &driver->nsttemp, "nsttemp", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->nsttemp = -1, key: nsttemp\n");
+  if (zcom_cfg__get(cfg, &driver->nsttemp, "nsttemp,nst-temp,nst-tempering", "%d") != 0) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->nsttemp = -1, key: nst-tempering\n");
   }
 
   driver->move_repeats = 1;
@@ -73,9 +73,9 @@ void at_driver__manifest(
 {
   at_driver_langevin__manifest(driver->langevin, manifest);
 
-  at_utils_manifest__print_int(manifest, driver->nsttemp, "driver->nsttemp", "nsttemp");
+  at_utils_manifest__print_int(manifest, driver->nsttemp, "driver->nsttemp", "nst-tempering");
 
-  at_utils_manifest__print_int(manifest, driver->move_repeats, "driver->move_repeats", "nsttemp");
+  at_utils_manifest__print_int(manifest, driver->move_repeats, "driver->move_repeats", "move-repeats");
 }
 
 

@@ -30,9 +30,9 @@ double *get_expected_distr(at_t *at)
   double w_tot;
   double *distr;
 
-  zcom_cfg__get(cfg, &expo, "ensemble_factor", "%lf");
-  zcom_cfg__get(cfg, &beta0, "ensemble_beta0", "%lf");
-  zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf");
+  zcom_cfg__get(cfg, &expo, "ensemble-factor", "%lf");
+  zcom_cfg__get(cfg, &beta0, "ensemble-beta0", "%lf");
+  zcom_cfg__get(cfg, &sigma, "ensemble-sigma", "%lf");
 
   distr = calloc(n, sizeof(double));
 

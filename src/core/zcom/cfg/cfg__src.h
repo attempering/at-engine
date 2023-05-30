@@ -70,10 +70,63 @@ static char *zcom_cfg__standardize_key(zcom_cfg_t *cfg, const char *key_)
    user_key is the key in the configuration file
    registered_key is the key given by the programmer
  */
-static int zcom_cfg__compare_keys(const char *user_key, const char *registered_keys)
+static int zcom_cfg__compare_keys(const char *user_key, const char *registered_key)
 {
-  return strcmp(user_key, registered_keys);
+  return strcmp(user_key, registered_key);
 }
+
+static int zcom_cfg__match_multiple_keys(const char *user_key, size_t n, char **registered_keys)
+{
+  size_t i;
+
+  for (i = 0; i < n; i++) {
+    if (zcom_cfg__compare_keys(user_key, registered_keys[i]) == 0) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+
+static char **zcom_cfg__break_down_keys(zcom_cfg_t *cfg, const char *key_, size_t *nkeys)
+{
+  size_t i;
+  char *p;
+  const char *delims = ",;";
+  char *key, **keys;
+
+  key = zcom_ssm__dup(cfg->ssm, key_);
+
+  // figure out the number of keys;
+  i = 1;
+  for (p = key; *p != '\0'; p++) {
+    if (strchr(delims, *p) != NULL) {
+      i++;
+    }
+  }
+  *nkeys = i;
+
+  keys = (char **) calloc(*nkeys, sizeof(char *));
+
+  keys[0] = key;
+
+  i = 1;
+
+  for (p = key; *p != '\0'; p++) {
+    if (strchr(delims, *p) != NULL) {
+      keys[i++] = p + 1;
+    }
+  }
+
+  for (i = 0; i < *nkeys; i++) {
+    zcom_util__strip(keys[i]);
+    keys[i] = zcom_cfg__standardize_key(cfg, keys[i]);
+  }
+
+  return keys;
+}
+
 
 
 /* Read the value of a given variable from the current configuration file,
@@ -84,20 +137,29 @@ static int zcom_cfg__compare_keys(const char *user_key, const char *registered_k
  * If the function succeeds, it returns 0.
  *
  * In case fmt is "%s", (*var) is a string, or a pointer to char.
- *   The space for (*var) will be managed through zcom_ssm__copy(). */
+ *   The space for (*var) will be managed through zcom_ssm__copy().
+ * 
+ **/
 int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
 {
   int i;
-  char *key_std = zcom_cfg__standardize_key(cfg, key);
+  size_t nkeys = 0;
+  char **keys = 0;
 
   if (cfg == NULL) {
+    return -1;
+  }
+
+  keys = zcom_cfg__break_down_keys(cfg, key, &nkeys);
+
+  if (keys == NULL) {
     return -1;
   }
 
   for (i = 0; i < cfg->nent; i++) {
     zcom_cfgent_t *ent = cfg->ents + i;
 
-    if (ent->key != NULL && zcom_cfg__compare_keys(ent->key, key_std) == 0) {
+    if (ent->key != NULL && zcom_cfg__match_multiple_keys(ent->key, nkeys, keys)) {
       //fprintf(stderr, "found a matched key [%s] vs [%s]\n", key, ent->key);
 
       if (strcmp(fmt, "%s") == 0) { /* string */
@@ -119,6 +181,9 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
       }
     }
   }
+
+
+  free(keys);
 
   return 1; /* no match */
 }

@@ -43,8 +43,8 @@ void at_utils_trace__cfg_init(at_utils_trace_t *trace,
 
   /* nst_trace: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
   trace->nst_trace = -1;
-  if (zcom_cfg__get(cfg, &trace->nst_trace, "nsttrace", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default utils->trace->nst_trace = -1, key: nsttrace\n");
+  if (zcom_cfg__get(cfg, &trace->nst_trace, "nsttrace,nst-trace", "%d")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default utils->trace->nst_trace = -1, key: nst-trace\n");
   }
 
   // do not open trace file yet, at__open_log();

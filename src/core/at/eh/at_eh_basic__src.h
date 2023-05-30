@@ -31,6 +31,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
 {
   int i;
   at_distr_t *distr = mb->distr;
+  at_distr_domain_t *domain = distr->domain;
 
   eh->mb = mb;
   eh->n = distr->domain->n;
@@ -50,13 +51,13 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   }
 
   /* eh_skip: interval of reconstructing energy histograms */
-  eh->skip = 10;
+  eh->recon_stride = 10;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->skip, "ehist-skip", "%d")) {
-      fprintf(stderr, "Info@at: assuming default eh->skip = 10, key: ehist-skip\n");
+    if (0 != zcom_cfg__get(cfg, &eh->recon_stride, "ehist-skip,ehist-recon-stride", "%d")) {
+      fprintf(stderr, "Info@at: assuming default eh->recon_stride = 10, key: ehist-recon-stride\n");
     }
-    if ( !(eh->skip > 0) ) {
-      fprintf(stderr, "eh->skip: failed validation: eh->skip > 0\n");
+    if ( !(eh->recon_stride > 0) ) {
+      fprintf(stderr, "eh->recon_stride: failed validation: eh->recon_stride > 0\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -79,10 +80,11 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->bwdel = 0.05;
   if (eh->mode && eh->bwmod == 1) {
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-delta-lnT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-lnT, fmt: %%lf\n", eh->bwdel);
+      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-lnT\n", eh->bwdel);
     }
-    if ( !(eh->bwdel > distr->domain->beta_del/distr->domain->beta_min) ) {
-      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del/beta_min\n");
+    if ( !(eh->bwdel > domain->beta_del/domain->beta_min) ) {
+      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel %g > (beta-del %g)/(beta-min %g)\n",
+          eh->bwdel, domain->beta_del, domain->beta_min);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -92,10 +94,11 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode && eh->bwmod == 0) {
     eh->bwdel = 0.02;
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-delta-beta", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-beta, fmt: %%lf\n", eh->bwdel);
+      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-beta\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del) ) {
-      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del\n");
+      fprintf(stderr, "eh->bwdel: failed validation: (eh->bwdel %g) > (beta-del %g)\n",
+          eh->bwdel, domain->beta_del);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -105,10 +108,11 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode && eh->bwmod == 2) {
     eh->bwdel = 0.10;
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-delta-kT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-kT, fmt: %%lf\n", eh->bwdel);
+      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-kT\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del/pow(distr->domain->beta_min, 2.0)) ) {
-      fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel > beta_del/beta_min^2\n");
+      fprintf(stderr, "eh->bwdel: failed validation: (eh->bwdel %g) > (beta-del %g)/(beta-min %g)^2\n",
+          eh->bwdel, domain->beta_del, domain->beta_min);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -117,8 +121,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_min: minimal energy */
   eh->min = -12.6e4;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->min, "ehist-min", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->min = -12.6e4, key: ehist-min\n");
+    if (0 != zcom_cfg__get(cfg, &eh->min, "ehist-min,ehist-e-min", "%lf")) {
+      fprintf(stderr, "Info@at: assuming default eh->min = -12.6e4, key: ehist-e-min\n");
     }
   }
   eh->min_real = eh->min;
@@ -126,8 +130,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_max: maximal energy */
   eh->max = -9.0e4;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->max, "ehist-max", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->max = -9.0e4, key: ehist-max\n");
+    if (0 != zcom_cfg__get(cfg, &eh->max, "ehist-max,ehist-e-max", "%lf")) {
+      fprintf(stderr, "Info@at: assuming default eh->max = -9.0e4, key: ehist-e-max\n");
     }
     if ( !(eh->max > eh->min) ) {
       fprintf(stderr, "eh->max: failed validation: eh->max > eh->min\n");
@@ -140,8 +144,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_del: energy bin size */
   eh->del = 20.0;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->del, "ehist-del", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->del = 20.0, key: ehist-del\n");
+    if (0 != zcom_cfg__get(cfg, &eh->del, "ehist-del,ehist-e-del", "%lf")) {
+      fprintf(stderr, "Info@at: assuming default eh->del = 20.0, key: ehist-e-del\n");
     }
     if ( !(eh->del > 0) ) {
       fprintf(stderr, "eh->del: failed validation: eh->del > 0\n");
@@ -163,8 +167,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_nst_save: interval of writing histogrm files */
   eh->nst_save = 100000;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->nst_save, "nsthist", "%d")) {
-      fprintf(stderr, "Info@at: assuming default eh->nst_save = 100000, key: nsthist\n");
+    if (0 != zcom_cfg__get(cfg, &eh->nst_save, "nsthist,nst-hist,ehist-nst-save", "%d")) {
+      fprintf(stderr, "Info@at: assuming default eh->nst_save = 100000, key: ehist-nst-save\n");
     }
   }
 
@@ -247,20 +251,20 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
 
     /* add a half energy bin width in output */
     eh->add_half_ebin = AT__TRUE;
-    if (0 != zcom_cfg__get(cfg, &eh->add_half_ebin, "ehist-addahalf", "%u")) {
-      fprintf(stderr, "Info@at: assuming default eh->add_a_half = 1, key: ehist-addahalf\n");
+    if (0 != zcom_cfg__get(cfg, &eh->add_half_ebin, "ehist-addahalf,ehist-add-half-ebin", "%u")) {
+      fprintf(stderr, "Info@at: assuming default eh->add_a_half = 1, key: ehist-add-half-ebin\n");
     }
 
     /* keep zero margins */
     eh->keep_margins = AT__FALSE;
-    if (0 != zcom_cfg__get(cfg, &eh->keep_margins, "ehist-keepedge", "%u")) {
-      fprintf(stderr, "Info@at: assuming default eh->keep_margins = 0, key: ehist-keepedge\n");
+    if (0 != zcom_cfg__get(cfg, &eh->keep_margins, "ehist-keepedge,ehist-keep-margin,ehist-keep-margins", "%u")) {
+      fprintf(stderr, "Info@at: assuming default eh->keep_margins = 0, key: ehist-keep-margins\n");
     }
 
     /* do not output zeroes */
     eh->no_zeros = 0;
-    if (0 != zcom_cfg__get(cfg, &eh->no_zeros, "ehist-nozeroes", "%u")) {
-      fprintf(stderr, "Info@at: assuming default eh->no_zeros = 0, key: ehist-nozeroes\n");
+    if (0 != zcom_cfg__get(cfg, &eh->no_zeros, "ehist-nozeroes,ehist-no-zeroes,ehist-no-zeros", "%u")) {
+      fprintf(stderr, "Info@at: assuming default eh->no_zeros = 0, key: ehist-no-zeros\n");
     }
   }
 
@@ -307,49 +311,49 @@ void at_eh__finish(at_eh_t *eh)
 void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
 {
   /* eh_mode: 0: disable; 1: simple histogram */
-  at_utils_manifest__print_int(manifest, eh->mode, "eh->mode", "ehist_mode");
+  at_utils_manifest__print_int(manifest, eh->mode, "eh->mode", "ehist-mode");
 
   if (eh->mode == 0) {
     return;
   }
 
   /* interval of reconstructing energy histograms */
-  at_utils_manifest__print_int(manifest, eh->skip, "eh->skip", "ehist_skip");
+  at_utils_manifest__print_int(manifest, eh->recon_stride, "eh->recon_stride", "ehist-recon-stride");
 
   /* eh_bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
-  at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist_mbin_mode");
+  at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist-mbin-mode");
 
   if (eh->bwmod == 0) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist_delta_beta");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-delta-beta");
   } else if (eh->bwmod == 1) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist_delta_lnT");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-delta-lnT");
   } else if (eh->bwmod == 2) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist_delta_kT");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-delta-kT");
   }
 
   /* eh_min: minimal energy */
-  at_utils_manifest__print_double(manifest, eh->min, "eh->min", "ehist_min");
+  at_utils_manifest__print_double(manifest, eh->min, "eh->min", "ehist-e-min");
 
   /* eh_max: maximal energy */
-  at_utils_manifest__print_double(manifest, eh->max, "eh->max", "ehist_max");
+  at_utils_manifest__print_double(manifest, eh->max, "eh->max", "ehist-e-max");
 
   /* eh_del: energy bin size */
-  at_utils_manifest__print_double(manifest, eh->del, "eh->del", "ehist_del");
+  at_utils_manifest__print_double(manifest, eh->del, "eh->del", "ehist-e-del");
 
   /* eh_cnt: number of energy bins */
   at_utils_manifest__print_int(manifest, eh->cnt, "eh->cnt", NULL);
 
   /* eh_binary: binary format for ehist file */
-  at_utils_manifest__print_bool(manifest, eh->binary, "eh->binary", "ehist_binary");
+  at_utils_manifest__print_bool(manifest, eh->binary, "eh->binary", "ehist-binary");
 
   /* eh_nst_save: interval of writing histogram files */
-  at_utils_manifest__print_int(manifest, eh->nst_save, "eh->nst_save", "nsthist");
+  at_utils_manifest__print_int(manifest, eh->nst_save, "eh->nst_save", "ehist-nst-save");
 
   /* name of ehist file */
-  at_utils_manifest__print_str(manifest, eh->file, "eh->file", "ehist_file");
+  at_utils_manifest__print_str(manifest, eh->file, "eh->file", "ehist-file");
 
   /* name of reconstructed energy histogram */
-  at_utils_manifest__print_str(manifest, eh->rfile, "eh->rfile", "ehist_mbin_file");
+  at_utils_manifest__print_str(manifest, eh->rfile, "eh->rfile", "ehist-mbin-file");
 
   /* eh_his: energy histogram data */
   at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->cnt, "eh->his");
@@ -364,13 +368,13 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   at_utils_manifest__print_int_arr(manifest, eh->it, eh->n + 1, "eh->it");
 
   /* whether to add a half energy bin width in output */
-  at_utils_manifest__print_bool(manifest, eh->add_half_ebin, "eh->add_half_ebin", "ehist_addahalf");
+  at_utils_manifest__print_bool(manifest, eh->add_half_ebin, "eh->add_half_ebin", "ehist-add-half-ebin");
 
   /* whether to keep empty margin */
-  at_utils_manifest__print_bool(manifest, eh->keep_margins, "eh->keep_margins", "ehist_keepedge");
+  at_utils_manifest__print_bool(manifest, eh->keep_margins, "eh->keep_margins", "ehist-keep-margins");
 
   /* whether to include empty energy bins in the output */
-  at_utils_manifest__print_bool(manifest, eh->no_zeros, "eh->no_zeros", "ehist_nozeroes");
+  at_utils_manifest__print_bool(manifest, eh->no_zeros, "eh->no_zeros", "ehist-no-zeros");
 }
 
 

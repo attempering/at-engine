@@ -37,8 +37,8 @@
 
 static void at__set_init_beta(at_t *at)
 {
-  /* make the initial temperature = temp_thermostat */
-  double beta = at__temp_to_beta(at, at->utils->temp_thermostat);
+  /* make the initial temperature = thermostat_temp */
+  double beta = at__temp_to_beta(at, at->utils->thermostat_temp);
   at_distr_domain_t *domain = at->distr->domain;
 
   if (beta >= domain->beta_min
@@ -114,7 +114,7 @@ int at__init(at_t *at,
   //fprintf(stderr, "Debug@at: at__init() from %s\n", cfg_filename);
 
   /* open configuration file */
-  if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__IGNORE_DASHES)) == NULL) {
+  if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
     fprintf(stderr, "\rError@at: cannot open configuration file %s.\n", cfg_filename);
     return -1;
   }

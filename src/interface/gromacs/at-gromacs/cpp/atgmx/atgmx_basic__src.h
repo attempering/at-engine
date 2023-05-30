@@ -27,7 +27,7 @@ void AtGmx::update_thermostat_temperatures(const t_inputrec *ir) const
 {
   int i;
   const double tol = 0.5;
-  const real ref_temp = static_cast<real>(at->utils->temp_thermostat);
+  const real ref_temp = static_cast<real>(at->utils->thermostat_temp);
 
   if (!enabled) {
     fprintf(stderr, "\rError@atgmx: trying to call update_thermostat_temperatures without enabling atgmx\n");

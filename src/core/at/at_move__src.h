@@ -30,7 +30,7 @@
 
 void at__update_force_scale(at_t *at)
 {
-  at->force_scale = at->beta / at__temp_to_beta(at, at->utils->temp_thermostat);
+  at->force_scale = at->beta / at__temp_to_beta(at, at->utils->thermostat_temp);
 }
 
 

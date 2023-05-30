@@ -51,11 +51,11 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.05;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest-delta-lnT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest-delta-lnT, fmt: %%lf\n", win->bwdel);
+      fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest-delta-lnT\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del/domain->beta_min),
-        "at->error: win->bwdel: failed validation: win->bwdel %g > %g, domain->beta_del %g /(domain->beta_min %g)\n",
+        "at->error: win->bwdel: failed validation: win->bwdel %g > %g, (beta-del %g)/(beta-min %g)\n",
         win->bwdel, domain->beta_del/domain->beta_min, domain->beta_del, domain->beta_min);
   }
 
@@ -64,11 +64,12 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.02;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest-delta-beta", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest-delta-beta, fmt: %%lf\n", win->bwdel);
+      fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest-delta-beta\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del),
-        "at->error: win->bwdel: failed validation: win->bwdel > domain->beta_del\n");
+        "at->error: win->bwdel: failed validation: win->bwdel %g > beta-del %g\n",
+        win->bwdel, domain->beta_del);
   }
 
 
@@ -77,11 +78,11 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
     win->bwdel = 0.1;
 
     if (0 != zcom_cfg__get(cfg, &win->bwdel, "mbest-delta-kT", "%lf")) {
-        fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest-delta-kT, fmt: %%lf\n", win->bwdel);
+        fprintf(stderr, "Info@at: assuming default win->bwdel = %g, key: mbest-delta-kT\n", win->bwdel);
     }
 
     zcom_util__exit_if ( !(win->bwdel > domain->beta_del/pow(domain->beta_min, 2.0)),
-        "at->error: win->bwdel: failed validation: win->bwdel > domain->beta_del/domain->beta_min^2\n");
+        "at->error: win->bwdel: failed validation: win->bwdel > beta-del/beta-min^2\n");
   }
 
 
@@ -201,14 +202,14 @@ void at_mb_win__finish(at_mb_win_t *win)
 void at_mb_win__manifest(const at_mb_win_t *win, at_utils_manifest_t *manifest)
 {
   /* 0: d(beta) 1: dT/T  2: d(kT) */
-  at_utils_manifest__print_int(manifest, win->bwmod, "mb->win->bwmod", "mbest_mbin_mode");
+  at_utils_manifest__print_int(manifest, win->bwmod, "mb->win->bwmod", "mbest-mbin-mode");
 
   if (win->bwmod == 0) {
-    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest_delta_beta");
+    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest-delta-beta");
   } else if (win->bwmod == 1) {
-    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest_delta_lnT");
+    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest-delta-lnT");
   } else if (win->bwmod == 2) {
-    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest_delta_kT");
+    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mbest-delta-kT");
   }
 
   at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "mb->win->js_grid_unres");

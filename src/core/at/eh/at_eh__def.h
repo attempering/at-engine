@@ -25,7 +25,7 @@ typedef struct at_eh_t_
 {
   int        n;         /* number of temperature bins */
   int        mode;      /* 0: disable; 1: simple histogram */
-  int        skip;      /* interval of reconstructing energy histograms */
+  int        recon_stride;      /* interval of reconstructing energy histograms */
   int        bwmod;     /* 0: d(beta) 1: dT/T  2: d(kT) */
   double     bwdel;     /* delta lnT */
   double     min;       /* minimal energy */

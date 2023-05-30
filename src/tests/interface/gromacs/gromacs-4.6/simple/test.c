@@ -49,7 +49,7 @@ void init_gromacs_vars(t_commrec *cr, t_inputrec *ir, gmx_enerdata_t *enerd)
   ir->delta_t = 0.002;
 
   ir->opts.ngtc = 1;
-  ir->opts.ref_t = calloc(1, sizeof(real));
+  ir->opts.ref_t = (real *) calloc(1, sizeof(real));
   ir->opts.ref_t[0] = 300;
 
   enerd->term[F_EPOT] = 0.0;

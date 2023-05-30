@@ -37,7 +37,7 @@ long ntimes = 100000;
 
 void init_mb_object(at_distr_t *distr, at_mb_t *mb)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__IGNORE_DASHES);
+  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
   at_bool_t verbose = 0;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);

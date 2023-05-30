@@ -67,14 +67,14 @@ int at_mb__cfg_init(
 
   /* compute heat capacity */
   mb->need_cv = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest-needcv", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mbest-needcv\n");
+  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest-needcv,mbest-need-cv", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mbest-need-cv\n");
   }
 
   /* use symmetric windows */
   mb->use_sym_wins = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest-sym-mbin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mbest-sym-mbin\n");
+  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest-sym-mbin,mbest-use-sym-wins", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mbest-use-sym-wins\n");
   }
 
   /* force the single bin estimator */
@@ -93,27 +93,28 @@ int at_mb__cfg_init(
 
   /* nst_refresh: interval of recalculating et for all temperatures */
   mb->nst_refresh = 10000;
-  if (0 != zcom_cfg__get(cfg, &mb->nst_refresh, "nstrefresh", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nstrefresh = 10000, key: nstrefresh\n");
+  if (0 != zcom_cfg__get(cfg, &mb->nst_refresh, "nstrefresh,nst-refresh,mb-nst-refresh", "%d")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nst_refresh = %d, key: nst-refresh,mb-nst-refresh\n",
+        mb->nst_refresh);
   }
 
   /* nst_save_av: interval of writing mbav and ze files */
   mb->nst_save_av = 10000;
-  if (0 != zcom_cfg__get(cfg, &mb->nst_save_av, "nstav", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nst_save_av = 10000, key: nstav\n");
+  if (0 != zcom_cfg__get(cfg, &mb->nst_save_av, "nstav,nst-av,mb-nst-save", "%d")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nst_save_av = 10000, key: mb-nst-save\n");
   }
 
   /* av_binary: use binary format in mbav file */
   mb->av_binary = AT__TRUE;
-  if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav-binary", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_binary = 1, key: mbav-binary\n");
+  if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav-binary,mb-file-binary", "%d")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_binary = 1, key: mb-file-binary\n");
   }
 
   /* av_file: name of mbav file */
   {
     char *fn_mb = (char *) "mb.dat";
-    if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_file = \"%s\", key: mbav-file\n", fn_mb);
+    if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav-file,mb-file", "%s")) {
+      IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->av_file = \"%s\", key: mb-file\n", fn_mb);
     }
     mb->av_file = at_utils__make_output_filename(ssm, data_dir, fn_mb);
   }
@@ -131,7 +132,7 @@ int at_mb__cfg_init(
 
   /* visits: number of visits */
   if ((mb->visits = (double *) calloc((n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "at->error: no memory! var: mb->visits, type: double\n");
+    fprintf(stderr, "Error@at.mb: no memory! var: mb->visits, type: double\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -192,33 +193,33 @@ void at_mb__clear(at_mb_t *mb)
 void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 {
   /* compute heat capacity */
-  at_utils_manifest__print_bool(manifest, mb->need_cv, "mb->need_cv", "mbest_needcv");
+  at_utils_manifest__print_bool(manifest, mb->need_cv, "mb->need_cv", "mbest-need-cv");
 
   /* use symmetrical window */
-  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "mb->use_sym_wins", "mbest_needcv");
+  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "mb->use_sym_wins", "mbest-use-sym-wins");
 
   /* use single bin estimator */
-  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "mb->use_single_bin", "mbest_needcv");
+  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "mb->use_single_bin", "mbest-use-single-bin");
 
   /* being verbose */
-  at_utils_manifest__print_bool(manifest, mb->verbose, "mb->verbose", "mbest_verbose");
+  at_utils_manifest__print_bool(manifest, mb->verbose, "mb->verbose", "mbest-verbose");
 
   at_mb_win__manifest(mb->win, manifest);
 
   /* interval of recalculating et for all temperature */
-  at_utils_manifest__print_int(manifest, mb->nst_refresh, "mb->nst_refresh", "nstrefresh");
+  at_utils_manifest__print_int(manifest, mb->nst_refresh, "mb->nst_refresh", "nst-refresh");
 
   /* interval of writing mbav and ze files */
-  at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "nstav");
+  at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "mb-nst-save");
 
   /* use binary format in mbav file */
-  at_utils_manifest__print_bool(manifest, mb->av_binary, "mb->av_binary", "mbav_binary");
+  at_utils_manifest__print_bool(manifest, mb->av_binary, "mb->av_binary", "mb-file-binary");
 
   /* name of mbav file */
-  at_utils_manifest__print_str(manifest, mb->av_file, "mb->av_file", "mbav_file");
+  at_utils_manifest__print_str(manifest, mb->av_file, "mb->av_file", "mb-file");
 
   /* name of ze file */
-  at_utils_manifest__print_str(manifest, mb->ze_file, "mb->ze_file", "ze_file");
+  at_utils_manifest__print_str(manifest, mb->ze_file, "mb->ze_file", "ze-file");
 
   /* number of visits */
   at_utils_manifest__print_double_arr(manifest, mb->visits, mb->distr->domain->n, "mb->visits");

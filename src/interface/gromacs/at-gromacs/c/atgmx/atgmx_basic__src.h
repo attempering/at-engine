@@ -28,7 +28,7 @@ static void atgmx__update_thermostat_temperatures(atgmx_t *atgmx, t_inputrec *ir
   int i;
 
   for (i = 0; i < ir->opts.ngtc; i++) {
-    ir->opts.ref_t[i] = (real) atgmx->at->utils->temp_thermostat;
+    ir->opts.ref_t[i] = (real) atgmx->at->utils->thermostat_temp;
   }
 }
 

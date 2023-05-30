@@ -44,14 +44,14 @@ int at_driver_langevin__cfg_init(
 
   /* dt: time step for the temperature Langevin eq */
   langevin->dt = 1e-5;
-  if (0 != zcom_cfg__get(cfg, &langevin->dt, "Tdt", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->dt = 1e-5, key: Tdt\n");
+  if (0 != zcom_cfg__get(cfg, &langevin->dt, "Tdt,T-dt,langevin-T-dt,langevin-dt", "%lf")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->dt = 1e-5, key: langevin-dt\n");
   }
 
   /* dTmax: maximal amount of temperature change in a step */
   langevin->dTmax = 25.0;
-  if (0 != zcom_cfg__get(cfg, &langevin->dTmax, "dTmax", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->dTmax = 25.0, key: dTmax\n");
+  if (0 != zcom_cfg__get(cfg, &langevin->dTmax, "dTmax,dT-max,langevin-max-dT,langevin-dT-max", "%lf")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->dTmax = 25.0, key: langevin-dT-max\n");
   }
 
   /* whether to apply the Metropolisation correction */
@@ -63,7 +63,7 @@ int at_driver_langevin__cfg_init(
   /* whether to avoid crossing over unvisited bins */
   langevin->no_skip = 1;
   if (0 != zcom_cfg__get(cfg, &langevin->no_skip, "langevin-no-skip", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->no-skip = 1, key: langevin-no-skip\n");
+    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->no_skip = 1, key: langevin-no-skip\n");
   }
 
   /* minimum number of visits before moving out of a bin */
@@ -108,8 +108,8 @@ int at_driver_langevin__cfg_init(
 
   {
     char *fn = (char *) "langevin.dat";
-    if (0 != zcom_cfg__get(cfg, &langevin->file, "langevin_file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default langevin->file = \"%s\", key: langevin_file\n", fn);
+    if (0 != zcom_cfg__get(cfg, &langevin->file, "langevin-file", "%s")) {
+      if (verbose) fprintf(stderr, "Info@at: assuming default langevin->file = \"%s\", key: langevin-file\n", fn);
     }
     langevin->file = at_utils__make_output_filename(ssm, data_dir, fn);
   }
@@ -137,21 +137,23 @@ void at_driver_langevin__finish(at_driver_langevin_t *langevin)
 
 void at_driver_langevin__manifest(const at_driver_langevin_t *langevin, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_double(manifest, langevin->dt, "driver->langevin->dt", "Tdt");
+  at_utils_manifest__print_str(manifest, langevin->file, "driver->langevin->file", "langevin-file");
 
-  at_utils_manifest__print_double(manifest, langevin->dTmax, "driver->langevin->dTmax", "dTmax");
+  at_utils_manifest__print_double(manifest, langevin->dt, "driver->langevin->dt", "langevin-dt");
+
+  at_utils_manifest__print_double(manifest, langevin->dTmax, "driver->langevin->dTmax", "langevin-dT-max");
 
   at_utils_manifest__print_double(manifest, langevin->rejects, "driver->langevin->rejects", NULL);
 
   at_utils_manifest__print_double(manifest, langevin->total, "driver->langevin->total", NULL);
 
-  at_utils_manifest__print_bool(manifest, langevin->corrected, "driver->langevin->corrected", "langevin_corrected");
+  at_utils_manifest__print_bool(manifest, langevin->corrected, "driver->langevin->corrected", "langevin-corrected");
 
-  at_utils_manifest__print_bool(manifest, langevin->no_skip, "driver->langevin->no_skip", "langevin_no_skip");
+  at_utils_manifest__print_bool(manifest, langevin->no_skip, "driver->langevin->no_skip", "langevin-no-skip");
 
-  at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "driver->langevin->bin_min_visits", "langevin_bin_min_visits");
+  at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "driver->langevin->bin_min_visits", "langevin-bin-min-visits");
 
-  at_utils_manifest__print_int(manifest, langevin->nst_suggest, "driver->langevin->nst_suggest", "langevin_nst_suggest");
+  at_utils_manifest__print_int(manifest, langevin->nst_suggest, "driver->langevin->nst_suggest", "langevin-nst-suggest");
 }
 
 

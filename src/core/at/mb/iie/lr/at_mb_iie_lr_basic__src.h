@@ -38,8 +38,8 @@ void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_m
 
   /* frac_min: minimum acceptable coefficient during left/right combination */
   lr->frac_min = 0.0;
-  if (0 != zcom_cfg__get(cfg, &lr->frac_min, "mbest-fracmin", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->iie->lr->frac_min = 0.0, key: mbest-fracmin\n");
+  if (0 != zcom_cfg__get(cfg, &lr->frac_min, "mbest-fracmin,mbest-frac-min,mbest-min-frac", "%lf")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default mb->iie->lr->frac_min = 0.0, key: mbest-min-frac\n");
   }
 
   lr->min_size = AT_MB_IIE_LR__DEFAULT_MIN_SIZE;
@@ -54,8 +54,8 @@ void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_m
    * If the heat capacity cv is monotonic, it should be 0.0,
    * For the Ising model, it can restrain the magnitude */
   lr->cv_shift_max = 1.0;
-  if (0 != zcom_cfg__get(cfg, &lr->cv_shift_max, "mbest-cvshiftmax", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->iie->lr->cv_shift_max = 1.0, key: mbest-cvshiftmax\n");
+  if (0 != zcom_cfg__get(cfg, &lr->cv_shift_max, "mbest-cvshiftmax,mbest-cv-shift-max,mbest-max-cv-shift", "%lf")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default mb->iie->lr->cv_shift_max = 1.0, key: mbest-max-cv-shift\n");
   }
 
 }
@@ -71,12 +71,12 @@ void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr)
 void at_mb_iie_lr__manifest(const at_mb_iie_lr_t *lr, at_utils_manifest_t *manifest)
 {
   /* minimal allowable coefficient during left/right combination */
-  at_utils_manifest__print_double(manifest, lr->frac_min, "mb->iie->lr->frac_min", "mbest_fracmin");
+  at_utils_manifest__print_double(manifest, lr->frac_min, "mb->iie->lr->frac_min", "mbest-min-frac");
 
-  at_utils_manifest__print_double(manifest, lr->min_size, "mb->iie->lr->min_size", "mbest_min_size");
+  at_utils_manifest__print_double(manifest, lr->min_size, "mb->iie->lr->min_size", "mbest-min-size");
 
   /* maximal fraction for shift energy fluct. if cv is monotonic, it should be 0.0, for ising model, it can restrain the magnitude */
-  at_utils_manifest__print_double(manifest, lr->cv_shift_max, "mb->iie->lr->cv_shift_max", "mbest_cvshiftmax");
+  at_utils_manifest__print_double(manifest, lr->cv_shift_max, "mb->iie->lr->cv_shift_max", "mbest-max-cv-shift");
 }
 
 #endif

@@ -111,12 +111,12 @@ void at_mb_iie_et__clear(at_mb_iie_et_t *et)
 
 void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_bool(manifest, et->cache_params->enabled, "mb->iie->et->cache_params->enabled", "et_cache_enabled");
+  at_utils_manifest__print_bool(manifest, et->cache_params->enabled, "mb->iie->et->cache_params->enabled", "et-cache-enabled");
 
   if (et->cache_params->enabled) {
-    at_utils_manifest__print_double(manifest, et->cache_params->lifespan, "mb->iie->et->cache_params->lifespan", "et_cache_lifespan");
+    at_utils_manifest__print_double(manifest, et->cache_params->lifespan, "mb->iie->et->cache_params->lifespan", "et-cache-lifespan");
 
-    at_utils_manifest__print_double(manifest, et->cache_params->min_visits, "mb->iie->et->cache_params->min_visits", "et_cache_min_visits");
+    at_utils_manifest__print_double(manifest, et->cache_params->min_visits, "mb->iie->et->cache_params->min_visits", "et-cache-min-visits");
   }
 }
 

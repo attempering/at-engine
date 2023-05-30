@@ -73,7 +73,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->beta_min = 0.2;
   if (0 != zcom_cfg__get(cfg, &domain->beta_min, "beta-min", "%lf")) {
-    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_min, key: beta-min, fmt: %%lf, assuming %g\n", domain->beta_min);
+    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_min, key: beta-min, assuming %g\n", domain->beta_min);
     if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -87,7 +87,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->beta_max = 0.4;
   if (0 != zcom_cfg__get(cfg, &domain->beta_max, "beta-max", "%lf")) {
-    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_max, key: beta-max, fmt: %%lf, assuming %g\n", domain->beta_max);
+    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_max, key: beta-max, assuming %g\n", domain->beta_max);
     if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -104,7 +104,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   domain->beta_del = 0.005;
 
   if (0 != zcom_cfg__get(cfg, &domain->beta_del, "beta-del", "%lf")) {
-    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_del, key: beta-del, fmt: %%lf, assuming %g\n",
+    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_del, key: beta-del, assuming %g\n",
         domain->beta_del);
     if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
@@ -161,11 +161,11 @@ void at_distr_domain__finish(at_distr_domain_t *domain)
 
 void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_double(manifest, domain->beta_min, "distr->domain->beta_min", "beta_min");
+  at_utils_manifest__print_double(manifest, domain->beta_min, "distr->domain->beta_min", "beta-min");
 
-  at_utils_manifest__print_double(manifest, domain->beta_max, "distr->domain->beta_max", "beta_max");
+  at_utils_manifest__print_double(manifest, domain->beta_max, "distr->domain->beta_max", "beta-max");
 
-  at_utils_manifest__print_double(manifest, domain->beta_del, "distr->domain->beta_del", "beta_del");
+  at_utils_manifest__print_double(manifest, domain->beta_del, "distr->domain->beta_del", "beta-del");
 
   at_utils_manifest__print_int(manifest, domain->n, "distr->domain->n", NULL);
 

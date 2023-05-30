@@ -42,9 +42,9 @@ void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
   double expo, beta0, sigma;
   double err, max_err = 0.0;
 
-  zcom_cfg__get(cfg, &expo, "ensemble_factor", "%lf");
-  zcom_cfg__get(cfg, &beta0, "ensemble_beta0", "%lf");
-  zcom_cfg__get(cfg, &sigma, "ensemble_sigma", "%lf");
+  zcom_cfg__get(cfg, &expo, "ensemble-factor", "%lf");
+  zcom_cfg__get(cfg, &beta0, "ensemble-beta0", "%lf");
+  zcom_cfg__get(cfg, &sigma, "ensemble-sigma", "%lf");
 
   for (i = 0; i < domain->n; i++) {
     beta = at_distr_domain__get_bin_center(domain, i);
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     cfg_fn = argv[1];
   }
 
-  cfg = zcom_cfg__open(cfg_fn, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__IGNORE_DASHES);
+  cfg = zcom_cfg__open(cfg_fn, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
 
   at_utils_manifest__cfg_init(manifest, cfg, NULL, NULL, verbose);
   at_utils_manifest__open_file(manifest);

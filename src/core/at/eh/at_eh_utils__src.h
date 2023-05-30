@@ -93,7 +93,7 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
   }
 
   /* loop over temperatures, and skip a few intermediate temperatures */
-  for (ib = 0; ib <= n; ib += eh->skip) {
+  for (ib = 0; ib <= n; ib += eh->recon_stride) {
     /* reconstruct energy histogram at beta = distr->domain->barr[ib] */
     js = eh->is[ib];
     jt = eh->it[ib];

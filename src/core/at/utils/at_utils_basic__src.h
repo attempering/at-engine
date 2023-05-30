@@ -30,10 +30,10 @@
 
 void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, const char *data_dir, at_bool_t verbose)
 {
-  /* temp_thermostat: thermostat temperature */
-  utils->temp_thermostat = 300.0;
-  if (zcom_cfg__get(cfg, &utils->temp_thermostat, "T0", "%lf") != 0) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default utils->temp_thermostat = 300.0, key: T0\n");
+  /* thermostat_temp: thermostat temperature */
+  utils->thermostat_temp = 300.0;
+  if (zcom_cfg__get(cfg, &utils->thermostat_temp, "T0,thermostat-temp", "%lf") != 0) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default utils->thermostat_temp = 300.0, key: thermostat-temp\n");
   }
 
   utils->ssm = zcom_ssm__open();
@@ -65,7 +65,7 @@ void at_utils__manifest(at_utils_t *utils)
 
   at_utils_trace__manifest(utils->trace, utils->manifest);
 
-  at_utils_manifest__print_double(utils->manifest, utils->temp_thermostat, "utils->temp_thermostat", "T0");
+  at_utils_manifest__print_double(utils->manifest, utils->thermostat_temp, "utils->thermostat_temp", "thermostat-temp");
 }
 
 

@@ -48,7 +48,7 @@ int test_allow_dashes(const char *fn)
     printf("first-key: %d\n", first_key);
   }
 
-  if (zcom_cfg__get(cfg, &second_key, "second-key", "%s") != 0) {
+  if (zcom_cfg__get(cfg, &second_key, "second-key, second-key-alt", "%s") != 0) {
     fprintf(stderr, "failed to find second-key from %s\n", fn);
   } else {
     printf("second-key: %s\n", second_key);
