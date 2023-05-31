@@ -280,17 +280,17 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
 #### II.G.1. Window construction settings
 
-* `mbest_single_bin`: use a single bin estimator instead of the multiple-bin estimator
+* `mb-use-single-bin`: use a single bin estimator instead of the multiple-bin estimator
 
   * 0: disabled
   * 1: enabled
 
   Default: 0.
 
-  Remarks: if `mbest_single_bin == 1`,
-  then `mbest_mbin_mode`, `mbest_delta_xxx` options are no longer active.
+  Remarks: if `mb-use-single-bin == 1`,
+  then `mb-mbin-mode`, `mb-del-xxx` options are no longer active.
 
-* `mbest_mbin_mode`: window width scaling mode.
+* `mb-mbin-mode` (`mbest_mbin_mode`): window width scaling mode.
 
   Available modes:
 
@@ -303,32 +303,32 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
   Default: 1
 
-* `mbest_delta_xxx`: window size.
+* `mb-del-xxx` (`mbest_delta_xxx`): window size.
 
   The following options are all mapped to a single variable `mb->bwdel`.
 
-  * `mbest_delta_lnT`: half window width in terms of `d(lnT)`,
-      only applicable for `mbest_mbin_mode == 1`.
+  * `mb-del-lnT` (`mbest_delta_lnT`): half window width in terms of `d(lnT)`,
+      only applicable for `mb-mbin-mode == 1`.
 
     Conditions: `mb->bwdel > beta_del/beta_max`
 
     Default: 0.05 (in terms of percentage of T).
 
-  * `mbest_delta_beta`: half window width in terms of `beta`,
-      only applicable for `mbest_mbin_mode == 0`.
+  * `mb-del-beta` (`mbest_delta_beta`): half window width in terms of `beta`,
+      only applicable for `mb-mbin-mode == 0`.
 
     Conditions: `mb->bwdel > beta_del`.
 
     Default: 0.02 (in terms of beta).
 
-  * `mbest_delta_kT`: half window width in terms of `kT`,
-      only applicable for `mbest_mbin_mode == 2`.
+  * `mb-del-kT` (`mbest_delta_kT`): half window width in terms of `kT`,
+      only applicable for `mb-mbin-mode == 2`.
 
     Conditions: `mb->bwdel > beta_del/pow(m, 2.0)`
 
     Default: 0.1 (in terms of kT = 1.0/beta).
 
-* `mbest_sym_mbin`: force symmetric windows.
+* `mb-use-sym-wins` (`mbest_sym_mbin`): force symmetric windows.
 
   Symmetric means being symmetric in the beta space.
 
@@ -340,7 +340,7 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
   Default: 1.
 
-* `mbest_single_bin`: force the single-bin estimator.
+* `mb-use-single-bin` (`mbest_single_bin`): force the single-bin estimator.
 
   * 0: disabled.
   * 1: enabled.
@@ -349,18 +349,11 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
 #### II.G.2. Averaging behavior
 
-* `mbest_regularize`: average behavior
-
-  * 0: average is weighted by the counts in the bins
-  * 2: average within a bin first
-
-  Default: 2.
-
-* `mbest_fracmin`: minimum acceptable combination for combining left/right estimators
+* `mb-min-frac` (old `mbest_fracmin`): minimum acceptable combination for combining left/right estimators
 
   Default: 0.0.
 
-* `mbest_cvshiftmax`: maximum fraction for shifting energy fluctuations
+* `mb-max-cv-shift` (old `mbest_cvshiftmax`): maximum fraction for shifting energy fluctuations
 
   Default: 1.0.
 
@@ -445,7 +438,7 @@ is zero and `gamma` is unity.  So we recover the normal averaging
 scheme.
 .
 
-* `use-adaptive-averaging` (`mbest_damp`): turning on adaptive averaging or not
+* `mb-use-adaptive-averaging` (old `mbest_damp`): turning on adaptive averaging or not
 
   * 0: disabled
   * 1: enabled.
@@ -489,21 +482,21 @@ scheme.
 
 #### II.G.4. Miscellaneous settings
 
-* `mbest_needcv`: need estimators for the heat capacity
+* `mb-need-cv` (`mbest_needcv`): need estimators for the heat capacity
 
   * 0: disabled, no Cv
   * 1: enabled, Cv
 
   Default: 1
 
-* `mbest_verbose`: being verbose
+* `mb-verbose` (`mbest_verbose`): being verbose
 
   * 0: disabled
   * 1: enabled
 
   Default: 1.
 
-* ``: frequency (in the number of MD steps) of recalculating Et for all temperatures
+* `mb-nst-refresh` (`nstrefresh`): frequency (in the number of MD steps) of recalculating Et for all temperatures
 
   Default: 10000.
 

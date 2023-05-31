@@ -67,20 +67,20 @@ int at_mb__cfg_init(
 
   /* compute heat capacity */
   mb->need_cv = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest-needcv,mbest-need-cv", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mbest-need-cv\n");
+  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest_needcv,mb-need-cv", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->need_cv = 1, key: mb-need-cv\n");
   }
 
   /* use symmetric windows */
   mb->use_sym_wins = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest-sym-mbin,mbest-use-sym-wins", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mbest-use-sym-wins\n");
+  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest_sym_mbin,mb-use-sym-wins", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_sym_wins = 1, key: mb-use-sym-wins\n");
   }
 
   /* force the single bin estimator */
   mb->use_single_bin = 0;
-  if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest-single-bin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_single_bin = 0, key: mbest-single-bin\n");
+  if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest_single_bin,mb-use-single-bin", "%u")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->use_single_bin = 0, key: mb-use-single-bin\n");
   }
 
   /* being verbose */
@@ -94,7 +94,7 @@ int at_mb__cfg_init(
   /* nst_refresh: interval of recalculating et for all temperatures */
   mb->nst_refresh = 10000;
   if (0 != zcom_cfg__get(cfg, &mb->nst_refresh, "nstrefresh,nst-refresh,mb-nst-refresh", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nst_refresh = %d, key: nst-refresh,mb-nst-refresh\n",
+    IF_VERBOSE_FPRINTF(stderr, "Info@at: assuming default mb->nst_refresh = %d, key: mb-nst-refresh\n",
         mb->nst_refresh);
   }
 
@@ -193,21 +193,21 @@ void at_mb__clear(at_mb_t *mb)
 void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 {
   /* compute heat capacity */
-  at_utils_manifest__print_bool(manifest, mb->need_cv, "mb->need_cv", "mbest-need-cv");
+  at_utils_manifest__print_bool(manifest, mb->need_cv, "mb->need_cv", "mb-need-cv");
 
   /* use symmetrical window */
-  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "mb->use_sym_wins", "mbest-use-sym-wins");
+  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "mb->use_sym_wins", "mb-use-sym-wins");
 
   /* use single bin estimator */
-  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "mb->use_single_bin", "mbest-use-single-bin");
+  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "mb->use_single_bin", "mb-use-single-bin");
 
   /* being verbose */
-  at_utils_manifest__print_bool(manifest, mb->verbose, "mb->verbose", "mbest-verbose");
+  at_utils_manifest__print_bool(manifest, mb->verbose, "mb->verbose", "mb-verbose");
 
   at_mb_win__manifest(mb->win, manifest);
 
   /* interval of recalculating et for all temperature */
-  at_utils_manifest__print_int(manifest, mb->nst_refresh, "mb->nst_refresh", "nst-refresh");
+  at_utils_manifest__print_int(manifest, mb->nst_refresh, "mb->nst_refresh", "mb-nst-refresh");
 
   /* interval of writing mbav and ze files */
   at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "mb-nst-save");

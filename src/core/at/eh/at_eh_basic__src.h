@@ -79,8 +79,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwdel: delta lnT */
   eh->bwdel = 0.05;
   if (eh->mode && eh->bwmod == 1) {
-    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-delta-lnT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-lnT\n", eh->bwdel);
+    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-del-lnT", "%lf")) {
+      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-del-lnT\n", eh->bwdel);
     }
     if ( !(eh->bwdel > domain->beta_del/domain->beta_min) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel %g > (beta-del %g)/(beta-min %g)\n",
@@ -93,8 +93,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwdel: delta beta */
   if (eh->mode && eh->bwmod == 0) {
     eh->bwdel = 0.02;
-    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-delta-beta", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-beta\n", eh->bwdel);
+    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-del-beta", "%lf")) {
+      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-del-beta\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del) ) {
       fprintf(stderr, "eh->bwdel: failed validation: (eh->bwdel %g) > (beta-del %g)\n",
@@ -107,8 +107,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwdel: delta kT */
   if (eh->mode && eh->bwmod == 2) {
     eh->bwdel = 0.10;
-    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-delta-kT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-delta-kT\n", eh->bwdel);
+    if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-del-kT", "%lf")) {
+      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-del-kT\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del/pow(distr->domain->beta_min, 2.0)) ) {
       fprintf(stderr, "eh->bwdel: failed validation: (eh->bwdel %g) > (beta-del %g)/(beta-min %g)^2\n",
@@ -324,11 +324,11 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist-mbin-mode");
 
   if (eh->bwmod == 0) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-delta-beta");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-beta");
   } else if (eh->bwmod == 1) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-delta-lnT");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-lnT");
   } else if (eh->bwmod == 2) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-delta-kT");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-kT");
   }
 
   /* eh_min: minimal energy */
