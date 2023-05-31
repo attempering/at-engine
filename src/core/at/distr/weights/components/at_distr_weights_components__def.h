@@ -16,32 +16,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_PARAMS_SYS__SRC_H__
-#define AT_PARAMS_SYS__SRC_H__
+#ifndef AT_DISTR_WEIGHTS_COMPONENTS__DEF_H__
+#define AT_DISTR_WEIGHTS_COMPONENTS__DEF_H__
 
-#include "at_params_sys.h"
-#include <stdio.h>
+#include "../../../context/at_context__def.h"
 
-void at_params_sys__init(at_params_sys_t *inited, const at_params_sys_t *user, at_bool_t verbose)
-{
-  if (user == NULL) {
-    inited->boltz = 1.0;
-    inited->id = 0;
-    inited->multi_sims = AT__FALSE;
-    inited->md_time_step = 0.002;
-  } else {
-    *inited = *user;
-  }
+enum {
+  AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT = 0,
+  AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN = 1,
+  AT_DISTR_WEIGHTS_COMPONENT_TYPE__COUNT
+};
 
-  if (inited->multi_sims) {
-    snprintf(inited->data_dir, 60, "atdata%d", inited->id);
-  } else {
-    strcpy(inited->data_dir, "atdata");
-  }
 
-  if (verbose) {
-    fprintf(stderr, "Info@at.params.sys: datadir: %s\n", inited->data_dir);
-  }
-}
+typedef struct at_distr_weights_component_t_ {
+
+  int id;
+
+  const char *key;
+
+  int type;
+
+  double w_rel; /* relative weight */
+
+  double beta0;
+
+  double sigma;
+
+  double inv_sigma_sqr;
+
+} at_distr_weights_component_t;
+
+
+
+typedef struct at_distr_weights_components_t_ {
+
+  double    beta_min;
+  double    beta_max;
+  int       n;
+
+  int n_components;
+  at_distr_weights_component_t *components;
+
+} at_distr_weights_components_t;
+
+
 
 #endif

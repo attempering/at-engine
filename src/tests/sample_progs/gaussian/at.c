@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
   remove("atdata/trace.dat");
 
-  at_t *at = at__open(fn_cfg, NULL, 0);
+  at_t *at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 
   at__manifest(at);
 

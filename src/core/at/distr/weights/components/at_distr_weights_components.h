@@ -16,32 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_PARAMS_SYS__SRC_H__
-#define AT_PARAMS_SYS__SRC_H__
+#ifndef AT_DISTR_WEIGHTS_COMPONENTS_H__
+#define AT_DISTR_WEIGHTS_COMPONENTS_H__
 
-#include "at_params_sys.h"
 #include <stdio.h>
 
-void at_params_sys__init(at_params_sys_t *inited, const at_params_sys_t *user, at_bool_t verbose)
-{
-  if (user == NULL) {
-    inited->boltz = 1.0;
-    inited->id = 0;
-    inited->multi_sims = AT__FALSE;
-    inited->md_time_step = 0.002;
-  } else {
-    *inited = *user;
-  }
+#include "at_distr_weights_components__def.h"
+#include "../../domain/at_distr_domain__def.h"
+#include "../../../utils/at_utils.h"
 
-  if (inited->multi_sims) {
-    snprintf(inited->data_dir, 60, "atdata%d", inited->id);
-  } else {
-    strcpy(inited->data_dir, "atdata");
-  }
+typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-  if (verbose) {
-    fprintf(stderr, "Info@at.params.sys: datadir: %s\n", inited->data_dir);
-  }
-}
+int at_distr_weights_components__cfg_init(
+    at_distr_weights_components_t *c,
+    at_distr_domain_t *domain, zcom_cfg_t *cfg, at_bool_t verbose);
+
+void at_distr_weights_components__finish(at_distr_weights_components_t *c);
+
+void at_distr_weights_components__manifest(
+    const at_distr_weights_components_t *c,
+    at_utils_manifest_t *manifest);
+
+double at_distr_weights_components__calc_f_factor(
+    const at_distr_weights_components_t *c,
+    double beta, double *p_neg_df_dbeta);
 
 #endif

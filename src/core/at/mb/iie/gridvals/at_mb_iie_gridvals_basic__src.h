@@ -50,7 +50,7 @@ void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
 
   gridvals->items = NULL;
   if ((gridvals->items = (at_mb_iie_gridvals_item_t *) calloc((n + 1), sizeof(at_mb_iie_gridvals_item_t))) == NULL) {
-    fprintf(stderr, "at->error: no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
+    fprintf(stderr, "Error@at.mb.iie.gridvals: no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }

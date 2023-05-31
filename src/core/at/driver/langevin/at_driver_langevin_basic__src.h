@@ -45,36 +45,36 @@ int at_driver_langevin__cfg_init(
   /* dt: time step for the temperature Langevin eq */
   langevin->dt = 1e-5;
   if (0 != zcom_cfg__get(cfg, &langevin->dt, "Tdt,T-dt,langevin-T-dt,langevin-dt", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->dt = 1e-5, key: langevin-dt\n");
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->dt = 1e-5, key: langevin-dt\n");
   }
 
   /* dTmax: maximal amount of temperature change in a step */
   langevin->dTmax = 25.0;
   if (0 != zcom_cfg__get(cfg, &langevin->dTmax, "dTmax,dT-max,langevin-max-dT,langevin-dT-max", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->dTmax = 25.0, key: langevin-dT-max\n");
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->dTmax = 25.0, key: langevin-dT-max\n");
   }
 
   /* whether to apply the Metropolisation correction */
   langevin->corrected = 1;
   if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin-corrected", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->corrected = 1, key: langevin-corrected\n");
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->corrected = 1, key: langevin-corrected\n");
   }
 
   /* whether to avoid crossing over unvisited bins */
   langevin->no_skip = 1;
   if (0 != zcom_cfg__get(cfg, &langevin->no_skip, "langevin-no-skip", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->no_skip = 1, key: langevin-no-skip\n");
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->no_skip = 1, key: langevin-no-skip\n");
   }
 
   /* minimum number of visits before moving out of a bin */
   langevin->bin_min_visits = 1;
   if (0 != zcom_cfg__get(cfg, &langevin->bin_min_visits, "langevin_bin_min_visits", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default driver->langevin->bin_min_visits = 1, key: langevin-bin-min-visits\n");
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->bin_min_visits = 1, key: langevin-bin-min-visits\n");
   }
 
   langevin->nst_suggest = 100000;
   if (zcom_cfg__get(cfg, &langevin->nst_suggest, "langevin_nst_suggest", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default langevin->nst_suggest = %d, key: langevin-nst-suggest\n",
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default langevin->nst_suggest = %d, key: langevin-nst-suggest\n",
         langevin->nst_suggest);
   }
 
@@ -109,7 +109,7 @@ int at_driver_langevin__cfg_init(
   {
     char *fn = (char *) "langevin.dat";
     if (0 != zcom_cfg__get(cfg, &langevin->file, "langevin-file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default langevin->file = \"%s\", key: langevin-file\n", fn);
+      if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->file = \"%s\", key: langevin-file\n", fn);
     }
     langevin->file = at_utils__make_output_filename(ssm, data_dir, fn);
   }

@@ -172,12 +172,17 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
         }
 
         //fprintf(stderr, "after assignment [%s]: %s\n", key, (var ? *(char**)var : NULL));
+        free(keys);
+
         return 0;
 
       } else { /* use sscanf for other cases, like int, float,... */
 
-        return EOF == sscanf(ent->val, fmt, var) ? 2 : 0;
+        int ret_val = (EOF == sscanf(ent->val, fmt, var) ? 2 : 0);
 
+        free(keys);
+
+        return ret_val;
       }
     }
   }
@@ -222,7 +227,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
   cfg->ssm = zcom_ssm__open();
 
   if (zcom_ssm__fget_all(cfg->ssm, &(cfg->buf), &size, fp) == NULL) {
-    fprintf(stderr, "error reading file %s\n", fn);
+    fprintf(stderr, "Error@zcom.cfg: error reading file %s\n", fn);
     return NULL;
   }
 
@@ -252,7 +257,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
   n++; /* for the last line */
 
   if ((cfg->ents = (zcom_cfgent_t *) calloc(n, sizeof(*cfg->ents))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for %lu objects of zcom_cfgent_t\n", (unsigned long) n);
+    fprintf(stderr, "Error@zcom.cfg: no memory for %lu objects of zcom_cfgent_t\n", (unsigned long) n);
     exit(1);
   }
 
@@ -314,7 +319,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
   cfg->nopt = 0;
   cfg->nopt_cap = ZCOM_CFG__OPT_BLOCK_SIZE_;
   if ((cfg->opts = (zcom_opt_t *) calloc(cfg->nopt_cap, sizeof(zcom_opt_t))) == NULL) {
-    fprintf(stderr, "Fatal no memory for %d objects of op_t", cfg->nopt_cap);
+    fprintf(stderr, "Error@zcom.cfg: no memory for %d objects of op_t", cfg->nopt_cap);
     exit(1);
   }
 

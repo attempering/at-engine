@@ -67,7 +67,7 @@ static double at_driver_langevin_move__calc_et_iie(
   }
 
   //if ((ib == 0 || ib == iie->et->n - 1) && et == 0.0) {
-  //  fprintf(stderr, "Info@at: boundary ib %d value is zero, quality %d\n", ib, lr->quality);
+  //  fprintf(stderr, "Info@at.driver.langevin.move:: boundary ib %d value is zero, quality %d\n", ib, lr->quality);
   //}
 
   //fprintf(stderr, "iie %p, %s:%d\n", iie, __FILE__, __LINE__);

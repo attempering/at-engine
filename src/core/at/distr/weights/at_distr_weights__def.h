@@ -21,18 +21,40 @@
 
 #include "../../context/at_context__def.h"
 
+#include "components/at_distr_weights_components__def.h"
+
+enum {
+  AT_DISTR_WEIGHTS_MODE__FLAT = 0,
+  AT_DISTR_WEIGHTS_MODE__GAUSSIAN = 1,
+  AT_DISTR_WEIGHTS_MODE__EXPONENTIAL = 2,
+  AT_DISTR_WEIGHTS_MODE__COMPONENTS = 3,
+  AT_DISTR_WEIGHTS_MODE__COUNT,
+};
+
+
 typedef struct at_distr_weights_t_ {
 
   double    beta_min;
   double    beta_max;
   int       n;
 
-  int       mode;         /* mode 0: disable 1: Gaussian 2:exponential */
-  double    ens_exp;      /* ensemble exponent of beta */
+  int       mode;         /* mode: AT_DISTR_WEIGHTS_MODE__xxx */
+
+  double    ens_exp;      /* exponent for the overall beta factor as beta^{-ens_exp}
+                             This applies to every mode */
+  at_bool_t ens_exp_is_int; /* whether ens_exp is an integer */
+  int       ens_exp_int;  /* integer version of ens_exp */
+
+  /* for legacy mode 1 */
   double    beta0;        /* beta0 in Gaussian distribution */
   double    sigma;        /* Gaussian width */
   double    inv_sigma2;   /* 1/sigma^2 in Gaussian distribution */
+
+  /* for legacy mode 2 */
   double    c;            /* c in exponential distribution */
+
+  at_distr_weights_components_t components[1];
+
   double   *ens_w;        /* array of ensemble weights at bin boundaries */
 
 } at_distr_weights_t;

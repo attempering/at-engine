@@ -44,23 +44,23 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   /* shk_win_adjusted: adjust shrink according to temperature window width */
   shk->win_adjusted = 1;
   if (0 != zcom_cfg__get(cfg, &shk->win_adjusted, "shrink-mbin-adjust", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->win_adjusted = 1, key: shrink-mbin-adjust\n");
+    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->win_adjusted = 1, key: shrink-mbin-adjust\n");
   }
 
   /* shk_max: initial and maximal shrink (adjusted) */
   shk->max = 0.01;
   if (0 != zcom_cfg__get(cfg, &shk->max, "shrink0,shrink-init", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->max = 0.01, key: shrink-init\n");
+    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->max = 0.01, key: shrink-init\n");
   }
   if ( !(shk->max < 0.9 && shk->max >= 0.0) ) {
-    fprintf(stderr, "shk->max: failed validation: mb->shk->max < 0.9 && shk->max >= 0.0\n");
+    fprintf(stderr, "Error@at.mb.shk: shk->max: failed validation: mb->shk->max < 0.9 && shk->max >= 0.0\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   /* shk_win_mul: array used of modulation shrinking factors */
   if ((shk->win_mul = (double *) calloc(shk->n, sizeof(double))) == NULL) {
-    fprintf(stderr, "at->error: no memory! var: shk->win_mul, type: double\n");
+    fprintf(stderr, "Error@at.mb.shk: no memory! var: shk->win_mul, type: double\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -77,10 +77,10 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   shk->mode = 1;
   if (0 != zcom_cfg__get(cfg, &shk->mode, "shrink-mode", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->mode = 1, key: shrink-mode\n");
+    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->mode = 1, key: shrink-mode\n");
   }
   if ( !(shk->mode >= 0 && shk->mode <= 2) ) {
-    fprintf(stderr, "shk->mode: failed validation: mb->shk->mode >= 0 && shk->mode <= 2\n");
+    fprintf(stderr, "Error@at.mb.shk: shk->mode: failed validation: mb->shk->mode >= 0 && shk->mode <= 2\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
@@ -88,20 +88,20 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   /* shk_min: minimal value for enforcing acc. sampling */
   shk->min = 0.0;
   if (0 != zcom_cfg__get(cfg, &shk->min, "shrinkmin,shrink-min", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->min = 0.0, key: shrink-min\n");
+    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->min = 0.0, key: shrink-min\n");
   }
 
   /* shk_stop: stop shrinking after this number of steps */
   shk->stop = -1;
   if (0 != zcom_cfg__get(cfg, &shk->stop, "shrinkstop,shrink-stop", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->stop = -1, key: shrink-stop\n");
+    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->stop = -1, key: shrink-stop\n");
   }
 
   /* shk_amp: amp t^(-exp) */
   shk->amp = 0.1;
   if (shk->mode >= 1) {
     if (0 != zcom_cfg__get(cfg, &shk->amp, "shrinkamp,shrink-amp", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->amp = 0.1, key: shrink-amp\n");
+      if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->amp = 0.1, key: shrink-amp\n");
     }
   }
 
@@ -109,7 +109,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   shk->exp = 1.0;
   if (shk->mode >= 2) {
     if (0 != zcom_cfg__get(cfg, &shk->exp, "shrinkexp,shrink-exp", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default mb->shk->exp = 1.0, key: shrink-exp\n");
+      if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->exp = 1.0, key: shrink-exp\n");
     }
   }
 

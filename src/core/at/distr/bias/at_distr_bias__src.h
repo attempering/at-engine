@@ -29,7 +29,7 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
   if (zcom_cfg__get(cfg, &bias->enabled, "boost-mode", "%d") != 0)
   {
     if (verbose) {
-      fprintf(stderr, "Info@at: assuming default distr->bias->th_mode = 0, key: boost-mode\n");
+      fprintf(stderr, "Info@at.distr.bias: assuming default distr->bias->th_mode = 0, key: boost-mode\n");
     }
   }
 
@@ -40,7 +40,7 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
     if (zcom_cfg__get(cfg, &bias->ref_temp, "boost-Tref", "%lf") != 0)
     {
       if (verbose) {
-        fprintf(stderr, "Info@at: assuming default distr->bias->th_Tref = 300.0, key: boost-Tref\n");
+        fprintf(stderr, "Info@at.distr.bias: assuming default distr->bias->th_Tref = 300.0, key: boost-Tref\n");
       }
     }
 
@@ -48,13 +48,13 @@ int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t ve
     /* kappa0 */
     bias->kappa0 = 1.0;
     if (zcom_cfg__get(cfg, &bias->kappa0, "kappa0", "%lf") != 0) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default distr->bias->kappa0 = 1.0, key: kappa0\n");
+      if (verbose) fprintf(stderr, "Info@at.distr.bias: assuming default distr->bias->kappa0 = 1.0, key: kappa0\n");
     }
 
     /* epsilon0 */
     bias->epsilon0 = 0.0;
     if (zcom_cfg__get(cfg, &bias->epsilon0, "epsilon0", "%lf") != 0) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default distr->bias->epsilon0 = 0.0, key: epsilon0\n");
+      if (verbose) fprintf(stderr, "Info@at.distr.bias: assuming default distr->bias->epsilon0 = 0.0, key: epsilon0\n");
     }
 #endif
 

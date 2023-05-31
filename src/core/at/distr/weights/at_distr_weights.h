@@ -19,9 +19,9 @@
 #ifndef AT_DISTR_WEIGHTS_H__
 #define AT_DISTR_WEIGHTS_H__
 
-#include <stdio.h>
 
 #include "at_distr_weights__def.h"
+#include "components/at_distr_weights_components.h"
 #include "../domain/at_distr_domain__def.h"
 #include "../../utils/at_utils.h"
 

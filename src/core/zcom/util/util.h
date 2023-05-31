@@ -132,9 +132,15 @@ ZCOM__INLINE void zcom_util__fatal(const char *fmt, ...) ZCOM_UTIL__PERRMSG__(1)
 #define ZCOM_UTIL__STR_LOWER    ZCOM_UTIL__STR_CASE
 
 /* remove leading and trailing spaces */
-#define zcom_util__strip(s)  zcom_util__stripx(s, ZCOM_UTIL__REMOVE_SPACES)
-#define zcom_util__lstrip(s) zcom_util__stripx(s, ZCOM_UTIL__REMOVE_LEADING_SPACES)
-#define zcom_util__rstrip(s) zcom_util__stripx(s, ZCOM_UTIL__REMOVE_TRAILING_SPACES)
+ZCOM__INLINE char *zcom_util__strip_(char *s, unsigned flags);
+
+#define zcom_util__strip(s)  zcom_util__strip_(s, ZCOM_UTIL__REMOVE_SPACES)
+#define zcom_util__lstrip(s) zcom_util__strip_(s, ZCOM_UTIL__REMOVE_LEADING_SPACES)
+#define zcom_util__rstrip(s) zcom_util__strip_(s, ZCOM_UTIL__REMOVE_TRAILING_SPACES)
+
+
+ZCOM__INLINE char *zcom_util__str_to_lower(char *s);
+ZCOM__INLINE char *zcom_util__str_to_upper(char *s);
 
 
 /* in the following macros,
@@ -144,6 +150,7 @@ ZCOM__INLINE void zcom_util__fatal(const char *fmt, ...) ZCOM_UTIL__PERRMSG__(1)
 #define zcom_util__strcpy2l(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_COPY|ZCOM_UTIL__STR_LOWER)
 #define zcom_util__strcpy_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_COPY)
 #define zcom_util__substr(s, t, start, len) zcom_util__strcnv(s, t+start, len, ZCOM_UTIL__STR_COPY)
+
 /* concatenate strings, the last parameter is the buffer size of s,
  * unlike strncat(), in which it's the number of characters from *t* to be copied.  */
 #define zcom_util__strcat_sf(s, t, size_s) zcom_util__strcnv(s, t, size_s - 1, ZCOM_UTIL__STR_CONCAT)

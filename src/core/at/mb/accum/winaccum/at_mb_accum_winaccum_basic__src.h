@@ -118,13 +118,13 @@ void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
 
   winaccum->enabled = AT__TRUE;
   if (0 != zcom_cfg__get(cfg, &winaccum->enabled, "mbest-damp,mb-use-win-accum", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default mb->accum->winaccum->enabled = 1, key: mb-use-win-accum\n");
+    if (verbose) fprintf(stderr, "Info@at.accum.winaccum: assuming default mb->accum->winaccum->enabled = 1, key: mb-use-win-accum\n");
   }
 
   if (winaccum->enabled) {
 
     zcom_util__exit_if ((winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t))) == NULL,
-        "at->error: no memory! var: winaccum->items, type: at_mb_sm_t\n");
+        "Error@at.mb.accum.winaccum: no memory! var: winaccum->items, type: at_mb_sm_t\n");
 
     for (i = 0; i < n; i++) {
       at_mb_accum_winaccum_item__init(winaccum->items + i, i, winaccum->win);

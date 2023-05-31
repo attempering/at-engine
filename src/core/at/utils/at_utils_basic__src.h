@@ -33,7 +33,7 @@ void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg, const char *data_dir
   /* thermostat_temp: thermostat temperature */
   utils->thermostat_temp = 300.0;
   if (zcom_cfg__get(cfg, &utils->thermostat_temp, "T0,thermostat-temp", "%lf") != 0) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default utils->thermostat_temp = 300.0, key: thermostat-temp\n");
+    if (verbose) fprintf(stderr, "Info@at.utils: assuming default utils->thermostat_temp = 300.0, key: thermostat-temp\n");
   }
 
   utils->ssm = zcom_ssm__open();

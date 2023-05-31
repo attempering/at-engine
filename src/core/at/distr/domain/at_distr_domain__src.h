@@ -73,7 +73,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->beta_min = 0.2;
   if (0 != zcom_cfg__get(cfg, &domain->beta_min, "beta-min", "%lf")) {
-    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_min, key: beta-min, assuming %g\n", domain->beta_min);
+    fprintf(stderr, "Warning@at.distr.domain: missing var: distr->domain->beta_min, key: beta-min, assuming %g\n", domain->beta_min);
     if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -87,7 +87,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   domain->beta_max = 0.4;
   if (0 != zcom_cfg__get(cfg, &domain->beta_max, "beta-max", "%lf")) {
-    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_max, key: beta-max, assuming %g\n", domain->beta_max);
+    fprintf(stderr, "Warning@at.distr.domain: missing var: distr->domain->beta_max, key: beta-max, assuming %g\n", domain->beta_max);
     if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
 
@@ -104,7 +104,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   domain->beta_del = 0.005;
 
   if (0 != zcom_cfg__get(cfg, &domain->beta_del, "beta-del", "%lf")) {
-    fprintf(stderr, "Warning@at: missing var: distr->domain->beta_del, key: beta-del, assuming %g\n",
+    fprintf(stderr, "Warning@at.distr.domain: missing var: distr->domain->beta_del, key: beta-del, assuming %g\n",
         domain->beta_del);
     if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
   }
@@ -123,7 +123,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   /* barr: temperature array */
   if ((domain->barr = (double *) calloc((domain->n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "at->error: no memory! var: distr->domain->barr, type: double\n");
+    fprintf(stderr, "Error@at.distr.domain: no memory! var: distr->domain->barr, type: double\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }
@@ -134,7 +134,7 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
 
   /* check beta array */
   if ( !(at_distr_domain__check_barr(domain) == 0) ) {
-    fprintf(stderr, "check beta array\n");
+    fprintf(stderr, "Info@at.distr.domain: check beta array\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     exit(1);
   }

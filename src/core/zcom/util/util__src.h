@@ -117,37 +117,10 @@ ZCOM__INLINE double zcom_util__dblround(double x, double dx)
 ZCOM__INLINE void zcom_util__dblcleararr(double *x, int n)
   { int i; for (i = 0; i < n; i++) x[i] = 0.0; }
 
-#ifndef LNADD_DEFINED
-#define LNADD_DEFINED
-#define LN_BIG 50.0
-
-/* log(exp(a) + exp(b)) */
-ZCOM__INLINE double zcom_util__lnadd(double a, double b)
-{
-  double c;
-  if (a < b) { c = a; a = b; b = c; } /* ensure a >= b */
-  return ((c = a-b) > LN_BIG) ? a : a + log(1 + exp(-c));
-}
-
-/* log(exp(a) - exp(b)), only works for a > b */
-ZCOM__INLINE double zcom_util__lndif(double a, double b)
-{
-  double c;
-  zcom_util__exit_if (a < b, "zcom_util__lndif: %g < %g\n", a, b);
-  return ((c = a-b) > LN_BIG) ? a : a + log(1 - exp(-c));
-}
-
-/* log(exp(a)+b) */
-ZCOM__INLINE double zcom_util__lnaddn(double a, double b)
-{
-  return (a > LN_BIG) ? a : a + log(1 + b*exp(-a));
-}
-
-#undef LN_BIG
-#endif  /* LNADD_DEFINED */
 
 
-ZCOM__INLINE char *zcom_util__stripx(char *s, unsigned flags)
+
+ZCOM__INLINE char *zcom_util__strip_(char *s, unsigned flags)
 {
   char *p;
 
@@ -170,6 +143,34 @@ ZCOM__INLINE char *zcom_util__stripx(char *s, unsigned flags)
   return s;
 }
 
+
+
+ZCOM__INLINE char *zcom_util__str_to_lower(char *s)
+{
+  char *p;
+
+  for (p = s; *p != '\0'; p++) {
+    *p = zcom_util__tolower(*p);
+  }
+
+  return s;
+}
+
+
+
+ZCOM__INLINE char *zcom_util__str_to_upper(char *s)
+{
+  char *p;
+
+  for (p = s; *p != '\0'; p++) {
+    *p = zcom_util__toupper(*p);
+  }
+
+  return s;
+}
+
+
+
 /* safely copy/cat strings with case conversion
  * unlike strncpy(), s is always null-terminated on return: it copies at most
  * len nonblank characters, i.e., s[len] = '\0' for the longest output */
@@ -188,7 +189,7 @@ ZCOM__INLINE char *zcom_util__strcnv(char *s, const char *t, size_t len, unsigne
     if (t[j] == 0) break;
   }
   if (i == len) s[i] = '\0';
-  if (flags & ZCOM_UTIL__REMOVE_SPACES) zcom_util__stripx(s, flags); /* call zcom_util__strip */
+  if (flags & ZCOM_UTIL__REMOVE_SPACES) zcom_util__strip_(s, flags); /* call zcom_util__strip */
   return s;
 }
 

@@ -42,7 +42,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
   if (0 != zcom_cfg__get(cfg, &eh->mode, "ehist-mode", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default eh->mode = 0, key: ehist-mode\n");
+    if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->mode = 0, key: ehist-mode\n");
   }
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
     fprintf(stderr, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
@@ -54,7 +54,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->recon_stride = 10;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->recon_stride, "ehist-skip,ehist-recon-stride", "%d")) {
-      fprintf(stderr, "Info@at: assuming default eh->recon_stride = 10, key: ehist-recon-stride\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->recon_stride = 10, key: ehist-recon-stride\n");
     }
     if ( !(eh->recon_stride > 0) ) {
       fprintf(stderr, "eh->recon_stride: failed validation: eh->recon_stride > 0\n");
@@ -67,7 +67,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->bwmod = 1;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->bwmod, "ehist-mbin-mode", "%d")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwmod = 1, key: ehist-mbin-mode\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->bwmod = 1, key: ehist-mbin-mode\n");
     }
     if ( !(eh->bwmod >= 0 && eh->bwmod <= 2) ) {
       fprintf(stderr, "eh->bwmod: failed validation: eh->bwmod >= 0 && eh->bwmod <= 2\n");
@@ -80,7 +80,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->bwdel = 0.05;
   if (eh->mode && eh->bwmod == 1) {
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-del-lnT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-del-lnT\n", eh->bwdel);
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->bwdel = %g, key: ehist-del-lnT\n", eh->bwdel);
     }
     if ( !(eh->bwdel > domain->beta_del/domain->beta_min) ) {
       fprintf(stderr, "eh->bwdel: failed validation: eh->bwdel %g > (beta-del %g)/(beta-min %g)\n",
@@ -94,7 +94,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode && eh->bwmod == 0) {
     eh->bwdel = 0.02;
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-del-beta", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-del-beta\n", eh->bwdel);
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->bwdel = %g, key: ehist-del-beta\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del) ) {
       fprintf(stderr, "eh->bwdel: failed validation: (eh->bwdel %g) > (beta-del %g)\n",
@@ -108,7 +108,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode && eh->bwmod == 2) {
     eh->bwdel = 0.10;
     if (0 != zcom_cfg__get(cfg, &eh->bwdel, "ehist-del-kT", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->bwdel = %g, key: ehist-del-kT\n", eh->bwdel);
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->bwdel = %g, key: ehist-del-kT\n", eh->bwdel);
     }
     if ( !(eh->bwdel > distr->domain->beta_del/pow(distr->domain->beta_min, 2.0)) ) {
       fprintf(stderr, "eh->bwdel: failed validation: (eh->bwdel %g) > (beta-del %g)/(beta-min %g)^2\n",
@@ -122,7 +122,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->min = -12.6e4;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->min, "ehist-min,ehist-e-min", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->min = -12.6e4, key: ehist-e-min\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->min = -12.6e4, key: ehist-e-min\n");
     }
   }
   eh->min_real = eh->min;
@@ -131,7 +131,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->max = -9.0e4;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->max, "ehist-max,ehist-e-max", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->max = -9.0e4, key: ehist-e-max\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->max = -9.0e4, key: ehist-e-max\n");
     }
     if ( !(eh->max > eh->min) ) {
       fprintf(stderr, "eh->max: failed validation: eh->max > eh->min\n");
@@ -145,7 +145,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->del = 20.0;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->del, "ehist-del,ehist-e-del", "%lf")) {
-      fprintf(stderr, "Info@at: assuming default eh->del = 20.0, key: ehist-e-del\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->del = 20.0, key: ehist-e-del\n");
     }
     if ( !(eh->del > 0) ) {
       fprintf(stderr, "eh->del: failed validation: eh->del > 0\n");
@@ -160,7 +160,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->binary = 1;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->binary, "ehist-binary", "%d")) {
-      fprintf(stderr, "Info@at: assuming default eh->binary = 1, key: ehist-binary\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->binary = 1, key: ehist-binary\n");
     }
   }
 
@@ -168,7 +168,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->nst_save = 100000;
   if (eh->mode) {
     if (0 != zcom_cfg__get(cfg, &eh->nst_save, "nsthist,nst-hist,ehist-nst-save", "%d")) {
-      fprintf(stderr, "Info@at: assuming default eh->nst_save = 100000, key: ehist-nst-save\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->nst_save = 100000, key: ehist-nst-save\n");
     }
   }
 
@@ -177,7 +177,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     char *fn_eh = (char *) "hist.dat";
     if (0 != zcom_cfg__get(cfg, &fn_eh, "ehist-file", "%s")) {
-      fprintf(stderr, "Info@at: assuming default eh->file = \"%s\", key: ehist-file\n", fn_eh);
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->file = \"%s\", key: ehist-file\n", fn_eh);
     }
     eh->file = at_utils__make_output_filename(ssm, data_dir, fn_eh);
   }
@@ -187,7 +187,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   if (eh->mode) {
     char *fn_eh_mb = (char *) "hist-mb.dat";
     if (0 != zcom_cfg__get(cfg, &fn_eh_mb, "ehist-mbin-file", "%s")) {
-      fprintf(stderr, "Info@at: assuming default eh->rfile = \"%s\", key: ehist-mbin-file\n", fn_eh_mb);
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->rfile = \"%s\", key: ehist-mbin-file\n", fn_eh_mb);
     }
     eh->rfile = at_utils__make_output_filename(ssm, data_dir, fn_eh_mb);
   }
@@ -196,7 +196,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->his = NULL;
   if (eh->mode) {
     if ((eh->his = (double *) calloc((eh->n*eh->cnt + 1), sizeof(double))) == NULL) {
-      fprintf(stderr, "at->error: no memory! var: eh->his, type: double\n");
+      fprintf(stderr, "Error@at.eh: no memory! var: eh->his, type: double\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
@@ -207,7 +207,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->recon = NULL;
   if (eh->mode) {
     if ((eh->recon = (double *) calloc((eh->cnt + 1), sizeof(double))) == NULL) {
-      fprintf(stderr, "at->error: no memory! var: eh->recon, type: double\n");
+      fprintf(stderr, "Error@at.eh: no memory! var: eh->recon, type: double\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
@@ -218,7 +218,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->is = NULL;
   if (eh->mode) {
     if ((eh->is = (int *) calloc((eh->n + 2), sizeof(int))) == NULL) {
-      fprintf(stderr, "at->error: no memory! var: eh->is, type: int\n");
+      fprintf(stderr, "Error@at.eh: no memory! var: eh->is, type: int\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
@@ -231,7 +231,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->it = NULL;
   if (eh->mode) {
     if ((eh->it = (int *) calloc((eh->n + 2), sizeof(int))) == NULL) {
-      fprintf(stderr, "at->error: no memory! var: eh->it, type: int\n");
+      fprintf(stderr, "Error@at.eh: no memory! var: eh->it, type: int\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
@@ -252,19 +252,19 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
     /* add a half energy bin width in output */
     eh->add_half_ebin = AT__TRUE;
     if (0 != zcom_cfg__get(cfg, &eh->add_half_ebin, "ehist-addahalf,ehist-add-half-ebin", "%u")) {
-      fprintf(stderr, "Info@at: assuming default eh->add_a_half = 1, key: ehist-add-half-ebin\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->add_a_half = 1, key: ehist-add-half-ebin\n");
     }
 
     /* keep zero margins */
     eh->keep_margins = AT__FALSE;
     if (0 != zcom_cfg__get(cfg, &eh->keep_margins, "ehist-keepedge,ehist-keep-margin,ehist-keep-margins", "%u")) {
-      fprintf(stderr, "Info@at: assuming default eh->keep_margins = 0, key: ehist-keep-margins\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->keep_margins = 0, key: ehist-keep-margins\n");
     }
 
     /* do not output zeroes */
     eh->no_zeros = 0;
     if (0 != zcom_cfg__get(cfg, &eh->no_zeros, "ehist-nozeroes,ehist-no-zeroes,ehist-no-zeros", "%u")) {
-      fprintf(stderr, "Info@at: assuming default eh->no_zeros = 0, key: ehist-no-zeros\n");
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->no_zeros = 0, key: ehist-no-zeros\n");
     }
   }
 

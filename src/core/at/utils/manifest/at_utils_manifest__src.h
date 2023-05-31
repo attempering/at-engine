@@ -37,7 +37,7 @@ void at_utils_manifest__cfg_init(
   manifest->filename = (char *) "manifest.dat";
   if (zcom_cfg__get(cfg, &manifest->filename, "manifest-file", "%s") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at: assuming default utils->manifest->filename = \"manifest.dat\", key: manifest-file\n");
+    if (verbose) fprintf(stderr, "Info@at.utils.manifest: assuming default utils->manifest->filename = \"manifest.dat\", key: manifest-file\n");
   }
 
   manifest->filename = at_utils__make_output_filename(ssm, data_dir, manifest->filename);
@@ -45,7 +45,7 @@ void at_utils_manifest__cfg_init(
   manifest->arr_max_items = 3;
   if (zcom_cfg__get(cfg, &manifest->arr_max_items, "manifest-arr-max-items", "%d") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at: assuming default utils->manifest->arr_max_items = 3, key: manifest-arr-max-items\n");
+    if (verbose) fprintf(stderr, "Info@at.utils.manifest: assuming default utils->manifest->arr_max_items = 3, key: manifest-arr-max-items\n");
   }
 
   manifest->fp = NULL; // do not open it yet
