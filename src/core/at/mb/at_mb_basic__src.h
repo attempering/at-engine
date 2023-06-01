@@ -168,7 +168,9 @@ ERR:
 
 void at_mb__finish(at_mb_t *mb)
 {
-  if (mb->visits    != NULL) free(mb->visits);
+  if (mb->visits != NULL) {
+    free(mb->visits);
+  }
 
   at_mb_shk__finish(mb->shk);
 

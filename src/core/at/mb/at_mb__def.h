@@ -39,7 +39,6 @@ typedef struct at_mb_t_ {
 
   //int       n;        /* same as distr->domain->n */
 
-  at_bool_t use_win_accum;
   at_bool_t use_single_bin;
   at_bool_t use_sym_wins;
   at_bool_t need_cv;

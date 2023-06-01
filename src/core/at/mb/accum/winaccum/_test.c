@@ -40,7 +40,7 @@ static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double beta_min, doubl
   mb->distr = distr;
 
   mb->use_sym_wins = AT__TRUE;
-  mb->use_win_accum = AT__TRUE;
+  mb->accum->winaccum->enabled = AT__TRUE;
 }
 
 

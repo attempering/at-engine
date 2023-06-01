@@ -663,7 +663,7 @@ The following set of options apply to behaviors to this functionality.
 
   This file is always written in the text format.
 
-  Default: "hist-mb.dat" (legacy file name "HMB").
+  Default: "hist-recon.dat" (legacy file name "HMB").
 
 * `ehist_skip` number of temperatures to skip over when writing the reconstructed energy histogram.
 

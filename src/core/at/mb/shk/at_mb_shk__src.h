@@ -42,7 +42,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   /* shk_base: current generic shrink amplitude */
   shk->base = 0.0;
   /* shk_win_adjusted: adjust shrink according to temperature window width */
-  shk->win_adjusted = 1;
+  shk->win_adjusted = AT__TRUE;
   if (0 != zcom_cfg__get(cfg, &shk->win_adjusted, "shrink-mbin-adjust", "%d")) {
     if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->win_adjusted = 1, key: shrink-mbin-adjust\n");
   }
@@ -66,7 +66,7 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   }
 
   for (i = 0; i < shk->n; i++) {
-    double beta_midpoint = 0.5*(domain->barr[i] + domain->barr[i+1]);
+    double beta_midpoint = at_distr_domain__get_bin_center(domain, i);
     double invwf = at_distr_weights__calc_inv_weight(w, beta_midpoint, NULL, NULL, NULL);
     int window_width = mb->win->jt_bin[i] - mb->win->js_bin[i];
     shk->win_mul[i] = invwf * mb->win->max_win_bins / window_width;

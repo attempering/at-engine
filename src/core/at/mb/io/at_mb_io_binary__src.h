@@ -53,88 +53,48 @@ static int at_mb__read_binary_low_level(
 
   /* n: number of temperature bins */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading itmp\n");
+    fprintf(stderr, "Error@at.mb: error in reading itmp\n");
     goto ERR;
   }
   if (itmp != mb->distr->domain->n) {
-    fprintf(stderr, "mb->distr->domain->n mismatch, expect: %d, read: %d, pos: %#lx\n",
+    fprintf(stderr, "Error@at.mb: mb->distr->domain->n mismatch, expect: %d, read: %d, pos: %#lx\n",
         mb->distr->domain->n, itmp, (unsigned long) ftell(fp));
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   /* m: maximal number of bins in a window */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading itmp\n");
+    fprintf(stderr, "Error@at.mb: error in reading itmp\n");
     goto ERR;
   }
   if (itmp != mb->win->max_win_bins) {
-    fprintf(stderr, "mb->m mismatch, expect: %d, read: %d, pos: %#lx\n",
+    fprintf(stderr, "Error@at.mb: mb->m mismatch, expect: %d, read: %d, pos: %#lx\n",
         mb->win->max_win_bins, itmp, (unsigned long) ftell(fp));
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
-  {
-    int mb_order = 1;
-
-    /* order: order, should be 1 */
-    if (zcom_endn__fread(&mb_order, sizeof(mb_order), 1, fp, endn) != 1) {
-      fprintf(stderr, "error in reading mb_order\n");
-      goto ERR;
-    }
-    if ( !(mb_order == 1) ) {
-      fprintf(stderr, "mb->order: failed validation: mb_order == 1\n");
-      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-  }
-
-  /* cnt_int: number of additional integer variables to be written to binary file */
-  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading itmp\n");
-    goto ERR;
-  }
-  if (itmp != mb->cnt_int) {
-    fprintf(stderr, "mb->cnt_int mismatch, expect: %d, read: %d, pos: %#lx\n",
-        mb->cnt_int, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-  /* cnt_dbl: number of additional double variables to be written to binary file */
-  if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading itmp\n");
-    goto ERR;
-  }
-  if (itmp != mb->cnt_dbl) {
-    fprintf(stderr, "mb->cnt_dbl mismatch, expect: %d, read: %d, pos: %#lx\n",
-        mb->cnt_dbl, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
-
-
-
   /* total_visits: total number of visits, number of tempering */
   if (zcom_endn__fread(&mb->total_visits, sizeof(mb->total_visits), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->total_visits\n");
+    fprintf(stderr, "Error@at.mb: error in reading mb->total_visits\n");
     goto ERR;
   }
   if ( !(mb->total_visits > 0) ) {
-    fprintf(stderr, "mb->total_visits: failed validation: mb->total_visits > 0\n");
+    fprintf(stderr, "Error@at.mb: mb->total_visits: failed validation: mb->total_visits > 0\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   /* shk_base: current generic shrink amplitude */
   if (zcom_endn__fread(&mb->shk->base, sizeof(mb->shk->base), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading mb->shk_base\n");
+    fprintf(stderr, "Error@at.mb: error in reading mb->shk_base\n");
     goto ERR;
   }
 
   /* barr: temperature array */
   if ((mb->distr->domain->n > 0)
     && (zcom_endn__fread(mb->distr->domain->barr, sizeof(*(mb->distr->domain->barr)), mb->distr->domain->n, fp, endn) != (size_t) (mb->distr->domain->n))) {
-    fprintf(stderr, "error in reading mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
+    fprintf(stderr, "Error@at.mb: error in reading mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */
@@ -171,30 +131,30 @@ int at_mb__read_binary(
   int endn;
 
   if ((fp = fopen(fname, "rb")) == NULL) {
-    fprintf(stderr, "cannot read binary file [%s].\n", fname);
+    fprintf(stderr, "Error@at.mb: cannot read binary file [%s].\n", fname);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
   /* determine file endian */
   if ((endn = zcom_endn__rmatchi(&itmp, sizeof(int), fp)) < 0) {
-    fprintf(stderr, "itmp 0x%X cannot match sizeof(int) 0x%X\n",
+    fprintf(stderr, "Error@at.mb: itmp 0x%X cannot match sizeof(int) 0x%X\n",
         (unsigned) itmp, (unsigned) sizeof(int));
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading itmp\n");
+    fprintf(stderr, "Error@at.mb: error in reading itmp\n");
     goto ERR;
   }
   if (itmp != (int) sizeof(double)) {
-    fprintf(stderr, "(int) sizeof(double) mismatch, expect: %d, read: %d, pos: %#lx\n",
+    fprintf(stderr, "Error@at.mb: (int) sizeof(double) mismatch, expect: %d, read: %d, pos: %#lx\n",
         (int) sizeof(double), itmp, (unsigned long) ftell(fp));
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
   if (zcom_endn__fread(&ver, sizeof(ver), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading ver\n");
+    fprintf(stderr, "Error@at.mb: error in reading ver\n");
     goto ERR;
   }
   if (pver != NULL) {
@@ -221,57 +181,37 @@ static int at_mb__write_binary_low_level(
   (void) version;
 
   if (mb == NULL) {
-    fprintf(stderr, "passing null pointer to at_mb__write_binary_low_level\n");
+    fprintf(stderr, "Error@at.mb: passing null pointer to at_mb__write_binary_low_level\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* n: number of temperature bins */
   if (zcom_endn__fwrite(&mb->distr->domain->n, sizeof(mb->distr->domain->n), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->distr->domain->n\n");
+    fprintf(stderr, "Error@at.mb: error in writing mb->distr->domain->n\n");
     goto ERR;
   }
   /* m: maximal number of bins in a window */
   if (zcom_endn__fwrite(&mb->win->max_win_bins, sizeof(mb->win->max_win_bins), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->m\n");
-    goto ERR;
-  }
-
-  {
-    int mb_order = 1;
-
-    if (zcom_endn__fwrite(&mb_order, sizeof(mb_order), 1, fp, 1) != 1) {
-      fprintf(stderr, "error in writing mb_order\n");
-      goto ERR;
-    }
-  }
-
-  /* cnt_int: number of additional integer variables to be written to binary file */
-  if (zcom_endn__fwrite(&mb->cnt_int, sizeof(mb->cnt_int), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->cnt_int\n");
-    goto ERR;
-  }
-  /* cnt_dbl: number of additional double variables to be written to binary file */
-  if (zcom_endn__fwrite(&mb->cnt_dbl, sizeof(mb->cnt_dbl), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->cnt_dbl\n");
+    fprintf(stderr, "Error@at.mb: error in writing mb->win->max_win_bins\n");
     goto ERR;
   }
 
 
   /* total_visits: total number of visits, number of tempering */
   if (zcom_endn__fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->total_visits\n");
+    fprintf(stderr, "Error@at.mb: error in writing mb->total_visits\n");
     goto ERR;
   }
   /* shk_base: current generic shrink amplitude */
   if (zcom_endn__fwrite(&mb->shk->base, sizeof(mb->shk->base), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->shk->base\n");
+    fprintf(stderr, "Error@at.mb: error in writing mb->shk->base\n");
     goto ERR;
   }
 
   /* barr: temperature array */
   if ((mb->distr->domain->n > 0)
     && (zcom_endn__fwrite(mb->distr->domain->barr, sizeof(*(mb->distr->domain->barr)), mb->distr->domain->n, fp, 1) != (size_t) (mb->distr->domain->n))) {
-    fprintf(stderr, "error in writing mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
+    fprintf(stderr, "Error@at.mb: error in writing mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */

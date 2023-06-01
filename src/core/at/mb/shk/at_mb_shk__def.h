@@ -97,7 +97,7 @@ typedef struct at_mb_shk_t_ {
 
   double    base;     /* current generic shrink amplitude */
 
-  int       win_adjusted;
+  at_bool_t win_adjusted;
                       /* adjust shrink rate according to beta window width */
 
   double    max;      /* initial and maximal shrink (adjusted) */

@@ -76,7 +76,7 @@ void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 
   }
 
-  mb->use_win_accum = AT__FALSE;
+  mb->accum->winaccum->enabled = AT__FALSE;
 }
 
 

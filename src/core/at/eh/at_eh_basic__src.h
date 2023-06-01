@@ -185,7 +185,7 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_rfile: name of reconstructed energy histogram */
   eh->rfile = NULL;
   if (eh->mode) {
-    char *fn_eh_mb = (char *) "hist-mb.dat";
+    char *fn_eh_mb = (char *) "hist-recon.dat";
     if (0 != zcom_cfg__get(cfg, &fn_eh_mb, "ehist-mbin-file", "%s")) {
       if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->rfile = \"%s\", key: ehist-mbin-file\n", fn_eh_mb);
     }
