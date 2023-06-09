@@ -35,7 +35,7 @@ typedef struct at_eh_t_
   int        binary;    /* use binary format for IO */
   int        nst_save;  /* interval of writing histogram files */
   char      *file;      /* name of IO file */
-  char      *rfile;     /* name of reconstructed energy histogram */
+  char      *fn_recon;     /* name of reconstructed energy histogram */
   double    *his;       /* energy histogram data */
   double    *recon;     /* temporary space for reconstructing histogram */
   int       *is;        /* indices for temperature windows (lower) */

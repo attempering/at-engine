@@ -40,12 +40,7 @@ char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, cons
 
   } else {
 
-    if (ssm != NULL) {
-      buf = zcom_ssm__dup(ssm, fn);
-    } else {
-      // only for testing code
-      buf = (char *) fn;
-    }
+    buf = zcom_ssm__dup(ssm, fn);
 
   }
 

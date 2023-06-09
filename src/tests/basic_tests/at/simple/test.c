@@ -31,7 +31,6 @@ int main(void)
 
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 
-  //at_driver_langevin_rng__reset(at->driver->langevin->rng, 1234);
   at__manifest(at);
 
   for (step = 1; step <= nsteps; step++) {

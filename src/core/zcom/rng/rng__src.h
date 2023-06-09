@@ -23,7 +23,7 @@
 
 
 /* save the current mt state to file */
-ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname)
+ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fn)
 {
   FILE *fp;
   int k;
@@ -32,14 +32,16 @@ ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname)
     return 1; /* RNG was never used, so it cannot be saved */
   }
 
-  if ((fp = fopen(fname, "w")) == NULL) {
-    fprintf(stderr, "cannot save to %s.\n", fname);
+  if ((fp = fopen(fn, "w")) == NULL) {
+    fprintf(stderr, "Error@zcom.mtrng: cannot save to %s.\n", fn);
     return 1;
   }
+
   fprintf(fp, "MTSEED\n%d\n", mtrng->index);
   for (k = 0; k < ZCOM_RNG__MT_N; k++) {
     fprintf(fp, "%" PRIu32 "\n", mtrng->arr[k]);
   }
+
   fclose(fp);
 
   return 0;
@@ -103,7 +105,7 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
       }
 
       if (k != ZCOM_RNG__MT_N) {
-        fprintf(stderr, "%s incomplete %d/%d\n", fname, k, ZCOM_RNG__MT_N);
+        fprintf(stderr, "Warning@zcom.mtrng: %s incomplete %d/%d\n", fname, k, ZCOM_RNG__MT_N);
       } else {
         err = z; /* clear error, if array is nonzero */
       }
@@ -121,21 +123,35 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
 
 
 ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
-    const char *fname, uint32_t seed, int force_reload)
+    const char *fn, uint32_t seed, int force_reload,
+    const char *fn_backup)
 {
   int err;
   
   if (force_reload || !mtrng->loaded) {
-    //fprintf(stderr, "start loading rng from file %s, %d %d\n", fname, force_reload, mtrng->loaded);
-    err = zcom_mtrng__load_from_file_(mtrng, fname);
+    //fprintf(stderr, "start loading rng from file %s, %d %d\n", fn, force_reload, mtrng->loaded);
+    err = zcom_mtrng__load_from_file_(mtrng, fn);
 
     if (err) { /* fallback: to initialize from the seed */
-      fprintf(stderr, "Info@zcom.mtrng: cannot load file: \"%s\", init. from seed: %d directly [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
+
+      fprintf(stderr, "Info@zcom.mtrng: cannot load file: \"%s\", init. from seed: %d directly [%d/%d].\n", fn, seed, mtrng->loaded, force_reload);
 
       zcom_mtrng__init_from_seed(mtrng, seed);
+
     } else {
-      fprintf(stderr, "Info@zcom.mtrng: successfully loaded rng file \"%s\" (seed %d unused) [%d/%d].\n", fname, seed, mtrng->loaded, force_reload);
+
+      fprintf(stderr, "Info@zcom.mtrng: successfully loaded rng file \"%s\" (seed %d unused) [%d/%d].\n", fn, seed, mtrng->loaded, force_reload);
+
     }
+
+    if (fn_backup != NULL) {
+
+      fprintf(stderr, "Info@zcom.mtrng: saved rng state file to \"%s\".\n", fn_backup);
+
+      zcom_mtrng__save(mtrng, fn_backup);
+
+    }
+
 
   } else {
     err = 0;
@@ -171,7 +187,7 @@ ZCOM__INLINE void zcom_mtrng__close(zcom_mtrng_t *mtrng)
 
 
 /* return an unsigned random number */
-ZCOM__INLINE uint32_t zcom_mtrng__randuint32(zcom_mtrng_t *mtrng)
+ZCOM__INLINE uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng)
 {
   uint32_t x;
   static const uint32_t mag01[2] = {0, 0x9908b0dfUL}; /* MATRIX_A */
@@ -213,14 +229,14 @@ ZCOM__INLINE uint32_t zcom_mtrng__randuint32(zcom_mtrng_t *mtrng)
 
 ZCOM__INLINE double zcom_mtrng__rand01(zcom_mtrng_t *mtrng)
 {
-  return zcom_mtrng__randuint32(mtrng) * (1.0/4294967296.0);
+  return zcom_mtrng__rand_uint32(mtrng) * (1.0/4294967296.0);
 }
 
 
 
 /* Gaussian distribution with zero mean and unit variance
  * using ratio method */
-ZCOM__INLINE double zcom_mtrng__randgaus(zcom_mtrng_t *mtrng)
+ZCOM__INLINE double zcom_mtrng__rand_gauss(zcom_mtrng_t *mtrng)
 {
   double x, y, u, v, q;
 

@@ -71,9 +71,9 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
     return -1;
   }
 
-  if ((fp = fopen((fname != NULL) ? fname : eh->rfile, "w")) == NULL) {
+  if ((fp = fopen((fname != NULL) ? fname : eh->fn_recon, "w")) == NULL) {
     fprintf(stderr, "\rError@at.eh: cannot write reconstructed histogram [%s].\n",
-        eh->rfile);
+        eh->fn_recon);
     return 1;
   }
 

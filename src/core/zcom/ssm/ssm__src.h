@@ -408,6 +408,10 @@ ZCOM__STRCLS char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t)
 
 ZCOM__STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t)
 {
+  if (m == NULL) {
+    return (char *) t;
+  }
+
   return zcom_ssm__copy(m, NULL, t);
 }
 

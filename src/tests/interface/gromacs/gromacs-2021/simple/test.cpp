@@ -87,7 +87,7 @@ int work(int argc, char **argv)
 
     if (MASTER(cr)) {
       epot = -sigma * sigma * atgmx.get_beta()
-          + sigma * zcom_mtrng__randgaus(rng);
+          + sigma * zcom_mtrng__rand_gauss(rng);
     } else {
       epot = 0;
     }

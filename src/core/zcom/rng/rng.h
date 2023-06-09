@@ -44,7 +44,8 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
  * if a previous file loading operation is already performed.
  * */
 ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
-  const char *fname, uint32_t seed, int force_reload);
+    const char *fn, uint32_t seed, int force_reload,
+    const char *fn_backup);
 
 ZCOM__INLINE zcom_mtrng_t *zcom_mtrng__open(uint32_t seed);
 
@@ -52,14 +53,14 @@ ZCOM__INLINE void zcom_mtrng__close(zcom_mtrng_t *mtrng);
 
 
 /* return an unsigned random number */
-ZCOM__INLINE uint32_t zcom_mtrng__randuint32(zcom_mtrng_t *mtrng);
+ZCOM__INLINE uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng);
 
 /* return a uniformly distributed random number */
 ZCOM__INLINE double zcom_mtrng__rand01(zcom_mtrng_t *mtrng);
 
 /* return a normally distributed with zero mean and unit variance
  * using ratio method */
-ZCOM__INLINE double zcom_mtrng__randgaus(zcom_mtrng_t *mtrng);
+ZCOM__INLINE double zcom_mtrng__rand_gauss(zcom_mtrng_t *mtrng);
 
 
 #endif

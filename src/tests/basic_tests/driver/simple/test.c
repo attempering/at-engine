@@ -37,7 +37,8 @@ int main(void)
   at_mb__cfg_init(mb, distr, cfg, 1.0, NULL, NULL, verbose);
   at_driver__cfg_init(driver, distr, mb, cfg, NULL, NULL, verbose);
 
-  at_driver_langevin_rng__reset(driver->langevin->rng, 1234);
+  at_driver_langevin_rng__reset(driver->langevin->rng, 1234,
+      NULL, NULL, NULL);
 
   at_driver__finish(driver);
   at_mb__finish(mb);

@@ -25,18 +25,42 @@
 
 
 
-void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed)
+void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed,
+    zcom_ssm_t *ssm, const char *data_dir, const char *fn_backup)
 {
   int force_reload = 0;
+  char* fn_rng_backup = NULL;
 
   if (rng->mtrng == NULL) {
+
     rng->mtrng = zcom_mtrng__open(seed);
+
   }
 
-  zcom_mtrng__load_or_init_from_seed(rng->mtrng, rng->filename, seed, force_reload);
+  // calculate the name of the backup file
+  if (ssm != NULL && fn_backup != NULL) {
+
+    if (data_dir != NULL) {
+
+      fn_rng_backup = zcom_ssm__dup(ssm, data_dir);
+      zcom_ssm__concat(ssm, &fn_rng_backup, "/");
+      zcom_ssm__concat(ssm, &fn_rng_backup, fn_backup);
+
+    } else {
+
+      fn_rng_backup = zcom_ssm__dup(ssm, fn_backup);
+
+    }
+
+  }
+
+  zcom_mtrng__load_or_init_from_seed(rng->mtrng,
+      rng->filename, seed, force_reload,
+      fn_rng_backup);
 
   rng->inited = 1;
 }
+
 
 
 void at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng)
@@ -47,23 +71,25 @@ void at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng)
 }
 
 
+
 void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_bool_t verbose)
 {
-  rng->filename = (char *) "rng.dat";
+  rng->filename = zcom_ssm__dup(ssm, "rng.dat");
   if (zcom_cfg__get(cfg, &rng->filename, "rngfile,rng-file", "%s") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->filename = \"rng.dat\", key: rng-file\n");
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->filename = \"%s\", key: rng-file\n",
+        rng->filename);
   }
 
   rng->filename = at_utils__make_output_filename(ssm, data_dir, rng->filename);
 
   rng->mtrng = NULL;
 
-  at_driver_langevin_rng__reset(rng, 0);
+  at_driver_langevin_rng__reset(rng, 0, ssm, data_dir, "rng-init.dat");
 }
 
 

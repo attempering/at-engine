@@ -117,7 +117,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
 
     // exact configuration sampling at the current temperature
     energy = -beta * (gaussian_sigma * gaussian_sigma)
-           + gaussian_sigma * zcom_mtrng__randgaus(mtrng);
+           + gaussian_sigma * zcom_mtrng__rand_gauss(mtrng);
 
     at_mb__add(mb, energy, beta, &ib, &invwf, &neg_dlnwf_dbeta);
 

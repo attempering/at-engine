@@ -68,7 +68,7 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
      * and the energy fluctuation is sigma
      */
     double epot_c = -gaussian_sigma*gaussian_sigma * beta;
-    double epot = epot_c + gaussian_sigma * zcom_mtrng__randgaus(rng);
+    double epot = epot_c + gaussian_sigma * zcom_mtrng__rand_gauss(rng);
     int ib;
 
     at_mb__add(mb, epot, beta, &ib, NULL, NULL);

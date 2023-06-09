@@ -33,7 +33,7 @@ void at_utils_trace__cfg_init(at_utils_trace_t *trace,
     const char *data_dir,
     at_bool_t verbose)
 {
-  trace->filename = (char *) "trace.dat";
+  trace->filename = zcom_ssm__dup(ssm, "trace.dat");
   if (zcom_cfg__get(cfg, &trace->filename, "trace-file", "%s") != 0)
   {
     if (verbose) fprintf(stderr, "Info@at.utils.trace: assuming default utils->trace->filename = \"trace.dat\", key: trace-file\n");

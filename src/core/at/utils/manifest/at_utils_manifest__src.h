@@ -34,7 +34,7 @@ void at_utils_manifest__cfg_init(
 {
   manifest->inited = 1;
 
-  manifest->filename = (char *) "manifest.dat";
+  manifest->filename = zcom_ssm__dup(ssm, "manifest.dat");
   if (zcom_cfg__get(cfg, &manifest->filename, "manifest-file", "%s") != 0)
   {
     if (verbose) fprintf(stderr, "Info@at.utils.manifest: assuming default utils->manifest->filename = \"manifest.dat\", key: manifest-file\n");

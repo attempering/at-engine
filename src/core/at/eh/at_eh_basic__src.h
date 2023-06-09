@@ -175,21 +175,21 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_file: name of ehist file */
   eh->file = NULL;
   if (eh->mode) {
-    char *fn_eh = (char *) "hist.dat";
+    char *fn_eh = zcom_ssm__dup(ssm, "hist.dat");
     if (0 != zcom_cfg__get(cfg, &fn_eh, "ehist-file", "%s")) {
       if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->file = \"%s\", key: ehist-file\n", fn_eh);
     }
     eh->file = at_utils__make_output_filename(ssm, data_dir, fn_eh);
   }
 
-  /* eh_rfile: name of reconstructed energy histogram */
-  eh->rfile = NULL;
+  /* name of reconstructed energy histogram */
+  eh->fn_recon = NULL;
   if (eh->mode) {
-    char *fn_eh_mb = (char *) "hist-recon.dat";
-    if (0 != zcom_cfg__get(cfg, &fn_eh_mb, "ehist-mbin-file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->rfile = \"%s\", key: ehist-mbin-file\n", fn_eh_mb);
+    char *fn_eh_recon = zcom_ssm__dup(ssm, "hist-recon.dat");
+    if (0 != zcom_cfg__get(cfg, &fn_eh_recon, "ehist-mbin-file", "%s")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->fn_recon = \"%s\", key: ehist-mbin-file\n", fn_eh_recon);
     }
-    eh->rfile = at_utils__make_output_filename(ssm, data_dir, fn_eh_mb);
+    eh->fn_recon = at_utils__make_output_filename(ssm, data_dir, fn_eh_recon);
   }
 
   /* eh_his: energy histogram data */
@@ -353,7 +353,7 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   at_utils_manifest__print_str(manifest, eh->file, "eh->file", "ehist-file");
 
   /* name of reconstructed energy histogram */
-  at_utils_manifest__print_str(manifest, eh->rfile, "eh->rfile", "ehist-mbin-file");
+  at_utils_manifest__print_str(manifest, eh->fn_recon, "eh->fn_recon", "ehist-mbin-file");
 
   /* eh_his: energy histogram data */
   at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->cnt, "eh->his");

@@ -131,7 +131,7 @@ int work(int argc, char **argv)
   zcom_mtrng__init_from_seed(mtrng, 12345);
 
   epot = -sigma * sigma * at__get_beta(at)
-         + sigma * zcom_mtrng__randgaus(mtrng);
+         + sigma * zcom_mtrng__rand_gauss(mtrng);
 
   //fprintf(stderr, "0 %g %g\n", epot, at__get_beta(at));
 
@@ -144,7 +144,7 @@ int work(int argc, char **argv)
     step_params->flush_output = AT__FALSE;
 
     epot = -sigma * sigma * at__get_beta(at)
-         + sigma * zcom_mtrng__randgaus(mtrng);
+         + sigma * zcom_mtrng__rand_gauss(mtrng);
 
     at__set_energy(at, epot);
 

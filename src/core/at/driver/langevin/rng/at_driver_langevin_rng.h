@@ -22,7 +22,8 @@
 #include "at_driver_langevin_rng__def.h"
 #include "../../../utils/at_utils.h"
 
-void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed);
+void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed,
+    zcom_ssm_t *ssm, const char *data_dir, const char *fn_backup);
 
 void at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng);
 
