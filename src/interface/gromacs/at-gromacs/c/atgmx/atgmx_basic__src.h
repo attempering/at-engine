@@ -55,7 +55,7 @@ int atgmx__init(
     at_params_sys_t sys_params[1];
 
     sys_params->boltz = BOLTZ;
-    sys_params->id = 0;
+    sys_params->sim_id = 0;
     sys_params->md_time_step = ir->delta_t;
     sys_params->multi_sims = (MULTISIM(cr) != NULL);
     sys_params->is_continuation = is_continuation;

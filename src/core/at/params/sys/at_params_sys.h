@@ -21,6 +21,13 @@
 
 #include "at_params_sys__def.h"
 
-void at_params_sys__init(at_params_sys_t *inited, const at_params_sys_t *user, at_bool_t verbose);
+/* initialize system parameters `sys_params_dest` from
+ * the user-provided value `sys_params_user` (if not null),
+ * or from the default values.
+ *
+ */
+void at_params_sys__init(
+    at_params_sys_t *sys_params_dest,
+    const at_params_sys_t *sys_params_user);
 
 #endif

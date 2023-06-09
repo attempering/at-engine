@@ -55,7 +55,8 @@ typedef struct at_driver_langevin_t_
   int move_repeats;
 
   double  rejects;      /* total number of failed attempts */
-  double  total;        /* total number of attempts */
+  double  total;        /* total number of (corrected) attempts */
+  double  n_exemption;  /* total number of exemptions */
 
   /* the Metropolisation correction makes sure the correctness
    * of the algorithm for a large time step */
@@ -65,6 +66,12 @@ typedef struct at_driver_langevin_t_
    * of the algorithm related to large time steps */
   int     no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
+
+#ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
+  double  corr_bin_min_visits; 
+                          /* minimum number of visits (for every bin pass through) 
+                             to activate the Metropolisation correction */
+#endif
 
   int nst_suggest;
 

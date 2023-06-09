@@ -41,13 +41,17 @@ void at_driver_langevin_move__print_acceptance_ratio_suggestions(
     const at_driver_langevin_t *langevin)
 {
   double ar = at_driver_langevin_move__get_acceptance_ratio(langevin);
-  const double ar_max = 0.98;
-  const double ar_min = 0.50;
+  const double ar_max = 0.995;
+  const double ar_min = 0.60;
 
-  if (ar > ar_max) {
-    fprintf(stderr, "\rInfo@at.driver.langevin.move: acceptance ratio %g, consider increasing langevin-dt\n", ar);
-  } else if (ar < ar_min) {
-    fprintf(stderr, "\rInfo@at.driver.langevin.move: acceptance ratio %g, consider decreasing langevin-dt\n", ar);
+  if (langevin->total >= langevin->nst_suggest) {
+
+    if (ar > ar_max) {
+      fprintf(stderr, "\rInfo@at.driver.langevin.move: acceptance ratio %g, consider increasing langevin-dt\n", ar);
+    } else if (ar < ar_min) {
+      fprintf(stderr, "\rInfo@at.driver.langevin.move: acceptance ratio %g, consider decreasing langevin-dt\n", ar);
+    }
+
   }
 
 }

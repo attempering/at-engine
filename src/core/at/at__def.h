@@ -20,6 +20,8 @@
 #define AT__DEF_H__
 
 
+#define AT__VERSION  100000000
+
 
 /* this header needs to be placed before zcom modules
  * so that we can determine whether `real` should be defined or not */

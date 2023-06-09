@@ -51,10 +51,12 @@ ZCOM__STRCLS void zcom_ssm__close(zcom_ssm_t *m);
  * If flags & ZCOM_SSM__TASK_CONCAT:
  * append t after *ps. Equivalent to cpy if ps or *ps is NULL.
  * */
-ZCOM__STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char *t, size_t min_size, unsigned flags);
+ZCOM__STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m,
+    char **ps, const char *t, size_t min_size, unsigned flags);
 
 ZCOM__STRCLS char *zcom_ssm__copy(zcom_ssm_t *m, char **ps, const char *t);
 
+/* *ps = *ps + t */
 ZCOM__STRCLS char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t);
 
 ZCOM__STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t);

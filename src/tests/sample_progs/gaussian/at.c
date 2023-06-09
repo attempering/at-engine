@@ -26,7 +26,8 @@ double boltz = 1.0;
 uint32_t langevin_seed = 1234;
 
 double sigma = 100.0;     /* standard deviation of energy distributions */
-double epot_dt = 0.01;   /* equilibration rate, larger value means the system is able to equilibrate faster */
+double epot_dt = 1e-2;   /* equilibration rate, larger value means the system is able to equilibrate faster */
+//double epot_dt = 1e-4; // use this to emulate a slow system
 at_llong_t nsteps = 5000000;
 
 void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
@@ -77,8 +78,6 @@ int main(int argc, char **argv)
     fn_cfg = argv[1];
     fprintf(stderr, "reading configuration file %s\n", fn_cfg);
   }
-
-  remove("atdata/trace.dat");
 
   at_t *at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 

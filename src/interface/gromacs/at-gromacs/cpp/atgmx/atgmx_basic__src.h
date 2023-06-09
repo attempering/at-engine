@@ -69,7 +69,8 @@ AtGmx::AtGmx(
 #else
     sys_params->boltz = BOLTZ;
 #endif
-    sys_params->id = 0;
+
+    sys_params->sim_id = 0;
     sys_params->md_time_step = ir->delta_t;
     sys_params->multi_sims = multi_sims;
     sys_params->is_continuation = is_continuation;

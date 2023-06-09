@@ -19,9 +19,13 @@
 #ifndef AT_UTILS_SYS_H__
 #define AT_UTILS_SYS_H__
 
+#include "../../context/at_context.h"
+
+at_bool_t at_utils_sys__file_exists(const char *path);
+
 int at_utils_sys__create_dir(const char* path);
 
-int at_utils_sys__dir_exists(const char *path);
+at_bool_t at_utils_sys__dir_exists(const char *path);
 
 int at_utils_sys__create_dir_if_not_exists(const char *path);
 

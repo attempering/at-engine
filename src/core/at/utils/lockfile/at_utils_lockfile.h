@@ -16,54 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_SYS__SRC_H__
-#define AT_UTILS_SYS__SRC_H__
+#ifndef AT_UTILS_LOCKFILE_H__
+#define AT_UTILS_LOCKFILE_H__
 
-#include "at_utils_sys.h"
+#include "at_utils_lockfile__def.h"
+#include "../../../zcom/zcom.h"
 
-#include <sys/stat.h>
+int at_utils_lockfile__init(
+    at_utils_lockfile_t *lockfile,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    at_bool_t verbose);
 
-
-
-at_bool_t at_utils_sys__file_exists(const char *path)
-{
-  struct stat info;
-
-  if (stat(path, &info) != 0) {
-    return AT__FALSE;
-  }
-
-  return AT__TRUE;
-}
-
-
-
-int at_utils_sys__create_dir(const char* path)
-{
-  return mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IWOTH);
-}
-
-
-
-at_bool_t at_utils_sys__dir_exists(const char *path)
-{
-  struct stat info;
-
-  if (stat(path, &info) != 0) {
-    return AT__FALSE;
-  }
-
-  return S_ISDIR(info.st_mode);
-}
-
-
-int at_utils_sys__create_dir_if_not_exists(const char *path)
-{
-  if (!at_utils_sys__dir_exists(path)) {
-    return at_utils_sys__create_dir(path);
-  }
-
-  return 0;
-}
+void at_utils_lockfile__finish(
+    at_utils_lockfile_t *lockfile);
 
 #endif

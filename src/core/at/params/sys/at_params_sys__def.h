@@ -29,15 +29,13 @@ typedef struct at_params_sys_t_ {
 
   at_bool_t is_continuation; // if continuing from a previous run
 
-  int id; // simulation ID for the multi-sim extension
-  
-  // append the id to the data directory
-  // e.g., data_dir would be "atdata0", "atdata1", ... instead of "atdata"
-  at_bool_t multi_sims;
+  int sim_id; // simulation ID for the multi-sim extension
 
-  // name of the data directory,
-  // to be constructed from the program
-  char data_dir[64];
+  // append the id to the data directory
+  // if true, the data directory at->utils->data_dir
+  // would be "atdata0", "atdata1", ...,
+  // instead of "atdata"
+  at_bool_t multi_sims;
 
 } at_params_sys_t;
 

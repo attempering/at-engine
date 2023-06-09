@@ -81,9 +81,18 @@ static void at__write_trace(at_t *at,
     }
 
     zcom_log__printf(zcom_log,
-        "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f\n",
-        step_params->step * at->sys_params->md_time_step, ib, t2 - t1,
-        at->energy, av_energy, at->beta, t1, invw);
+        "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f %5.3f %g %g\n",
+        step_params->step * at->sys_params->md_time_step,
+        ib,
+        t2 - t1,
+        at->energy,
+        av_energy,
+        at->beta,
+        t1,
+        invw,
+        at_driver_langevin_move__get_acceptance_ratio(at->driver->langevin),
+        at->driver->langevin->total,
+        at->driver->langevin->n_exemption);
 
   }
 

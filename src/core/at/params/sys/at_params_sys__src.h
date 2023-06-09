@@ -22,26 +22,22 @@
 #include "at_params_sys.h"
 #include <stdio.h>
 
-void at_params_sys__init(at_params_sys_t *inited, const at_params_sys_t *user, at_bool_t verbose)
+
+
+void at_params_sys__init(
+    at_params_sys_t *sys_params_dest,
+    const at_params_sys_t *sys_params_user)
 {
-  if (user == NULL) {
-    inited->boltz = 1.0;
-    inited->id = 0;
-    inited->multi_sims = AT__FALSE;
-    inited->md_time_step = 0.002;
+  if (sys_params_user == NULL) {
+    sys_params_dest->boltz = 1.0;
+    sys_params_dest->sim_id = 0;
+    sys_params_dest->multi_sims = AT__FALSE;
+    sys_params_dest->md_time_step = 0.002;
   } else {
-    *inited = *user;
-  }
-
-  if (inited->multi_sims) {
-    snprintf(inited->data_dir, 60, "atdata%d", inited->id);
-  } else {
-    strcpy(inited->data_dir, "atdata");
-  }
-
-  if (verbose) {
-    fprintf(stderr, "Info@at.params.sys: datadir: %s\n", inited->data_dir);
+    *sys_params_dest = *sys_params_user;
   }
 }
+
+
 
 #endif

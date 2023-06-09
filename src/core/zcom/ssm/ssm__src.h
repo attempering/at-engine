@@ -344,7 +344,8 @@ ZCOM__STRCLS void zcom_ssm__close(zcom_ssm_t *m)
  * If flags & ZCOM_SSM__TASK_CONCAT:
  * append t after *ps. Equivalent to cpy if ps or *ps is NULL.
  * */
-ZCOM__STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m, char **ps, const char *t, size_t min_size, unsigned flags)
+ZCOM__STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m,
+    char **ps, const char *t, size_t min_size, unsigned flags)
 {
   zcom_ssm__ss_llist_node_t *hp = NULL;
   size_t t_size = 0u, s_size = 0u;

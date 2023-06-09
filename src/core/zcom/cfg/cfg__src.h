@@ -131,13 +131,15 @@ static char **zcom_cfg__break_down_keys(zcom_cfg_t *cfg, const char *key_, size_
 
 /* Read the value of a given variable from the current configuration file,
  * the name of variable is given by `key`,
+ *
  * If the key is matched, its value is saved to `*var' through sscanf,
- *   otherwise, the content in *var is not modified.
+ * otherwise, the content in *var is not modified.
  *
  * If the function succeeds, it returns 0.
  *
- * In case fmt is "%s", (*var) is a string, or a pointer to char.
- *   The space for (*var) will be managed through zcom_ssm__copy().
+ * In case fmt is "%s", (*var) is a string, or a pointer to char,
+ * i.e., var should be of the type of `char **`.
+ * The space for (*var) will be managed through zcom_ssm__copy().
  * 
  **/
 int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)

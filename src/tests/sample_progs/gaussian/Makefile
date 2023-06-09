@@ -1,4 +1,7 @@
+
 CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
+#CC = clang-12 -O3 -g -Wall -Wno-unused-function
+
 CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
 LM = -lm
 

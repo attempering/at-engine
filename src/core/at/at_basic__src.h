@@ -35,6 +35,7 @@
 
 
 
+/* set the initial beta as the thermostat temperature */
 static void at__set_init_beta(at_t *at)
 {
   /* make the initial temperature = thermostat_temp */
@@ -47,7 +48,53 @@ static void at__set_init_beta(at_t *at)
   } else {
     at->beta = 0.5 * (domain->beta_min + domain->beta_max);
   }
+
   fprintf(stderr, "Info@at: initial beta %g\n", at->beta);
+}
+
+
+
+/* load settings from the configuration file */
+static int at__cfg_init_low_level(at_t *at,
+    zcom_cfg_t *cfg,
+    const at_params_sys_t *sys_params,
+    at_flags_t flags)
+{
+  const char *data_dir;
+  zcom_ssm_t *ssm;
+  at_bool_t verbose = flags & AT__INIT_VERBOSE;
+
+  /* initialize system parameters at->sys_params from
+   * the user-provided sys_params (if not null),
+   * or from the default values
+   * also initialize the data directory */
+  at_params_sys__init(at->sys_params, sys_params);
+
+  /* initialize the utils objects such as manifest and trace */
+  at_utils__cfg_init(at->utils, cfg,
+      at->sys_params->multi_sims, at->sys_params->sim_id,
+      verbose);
+
+  data_dir = at->utils->data_dir;
+
+  ssm = at->utils->ssm;
+
+  if (at_distr__cfg_init(at->distr, cfg, at->sys_params->boltz, verbose) != 0) {
+    return -1;
+  }
+
+  at__set_init_beta(at);
+
+  /* initialize the multiple-bin estimator */
+  at_mb__cfg_init(at->mb, at->distr, cfg, at->sys_params->boltz, ssm, data_dir, verbose);
+
+  /* initialize the beta driver, i.e., the Langevin equation */
+  at_driver__cfg_init(at->driver, at->distr, at->mb, cfg, ssm, data_dir, verbose);
+
+  /* initialize the energy histograms */
+  at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, verbose);
+
+  return 0;
 }
 
 
@@ -57,38 +104,18 @@ int at__cfg_init(at_t *at,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
-  const char *data_dir;
-  zcom_ssm_t *ssm;
-  at_bool_t verbose = flags & AT__INIT_VERBOSE;
+  fprintf(stderr, "Info@at: version %d\n", AT__VERSION);
 
-  at_params_sys__init(at->sys_params, sys_params, verbose);
-
-  at_utils__cfg_init(at->utils, cfg, at->sys_params->data_dir, verbose);
-
-  data_dir = at->sys_params->data_dir;
-  ssm = at->utils->ssm;
-
-  if (at_distr__cfg_init(at->distr, cfg, at->sys_params->boltz, verbose) != 0) {
-    return -1;
-  }
-
-  at__set_init_beta(at);
-
-  /* handle for multiple-bin estimator */
-  at_mb__cfg_init(at->mb, at->distr, cfg, at->sys_params->boltz, ssm, data_dir, verbose);
-
-  at_driver__cfg_init(at->driver, at->distr, at->mb, cfg, ssm, data_dir, verbose);
-
-  /* energy histogram */
-  at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, verbose);
-
+  /* load settings from the configuration file */
+  at__cfg_init_low_level(at, cfg, sys_params, flags);
 
   /* we only load previous data if it's continuation */
   if (at__load_data(at, at->sys_params->is_continuation) != 0) {
     fprintf(stderr, "Warning@at: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
   }
 
-  // open the trace file using the proper mode
+  /* open the trace file using the proper (append or write) mode
+   * depending on whether it is a continuation run */
   at_utils_trace__open_file(at->utils->trace, at->sys_params->is_continuation);
 
   at->energy = 0.0;
@@ -144,17 +171,16 @@ at_t *at__open(const char *cfg_filename,
 
   /* allocate memory for at_t */
   zcom_util__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
-      "Fatal: no memory for a new object of at_t\n");
+      "Fatal@at: no memory for a new object of at_t\n");
 
   at->cfg = NULL;
 
   /* call low level function */
   zcom_util__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
-    "at_t: error while reading configuration file %s\n", cfg_filename);
+    "Error@at: error while reading configuration file %s\n", cfg_filename);
 
   return at;
 }
-
 
 
 

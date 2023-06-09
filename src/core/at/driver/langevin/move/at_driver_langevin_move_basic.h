@@ -43,6 +43,7 @@ typedef struct langevin_move_proposal_t_ {
   int ib_old;
   int ib_new;
   int ib_new_prop;
+  at_bool_t apply_metropolisation;
 } langevin_move_proposal_t;
 
 

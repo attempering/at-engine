@@ -221,7 +221,10 @@ static at_bool_t at_driver_langevin_move__accept(
   //zcom_util__exit_if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin),
   //    "out of boundary moves should have been filtered out\n");
 
-  // has been filtered out
+  // Out-of-range moves should have been filtered out
+  // earlier in at_driver_langevin__move_corrected()
+  // so we don't need to worry about them here
+  //
   //if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin)) {
   //  return AT__FALSE;
   //}
@@ -278,7 +281,10 @@ static at_bool_t at_driver_langevin_move__accept(
 
   /*
   // the following code is used to debug the phenomenon of
-  // missing visits at the two boundary bins
+  // missing visits at the two boundary bins in an early version.
+  // While the code is no longer needed,
+  // it is kept to show how a debugging code should look like.
+  //
   if (proposal->ib_new == 0 || proposal->ib_new == domain->n-1) {
     if (!accepted) {
 
@@ -299,6 +305,52 @@ static at_bool_t at_driver_langevin_move__accept(
   */
 
   return accepted;
+}
+
+
+
+static at_bool_t at_driver_langevin_move__decide_to_apply_metropolisation(
+    langevin_move_proposal_t *proposal,
+    const at_driver_langevin_t *langevin)
+{
+  at_bool_t apply_metropolisation = AT__TRUE;
+  int ib = proposal->ib_new;
+
+  if (langevin->mb->visits[ib] <= 0) {
+    apply_metropolisation = AT__FALSE;
+  }
+
+#ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
+  int ib_low, ib_high, ib;
+  double min_visits = langevin->corr_bin_min_visits;
+
+  ib_low = proposal->ib_old;
+
+  ib_high = proposal->ib_new;
+
+  if (ib_low > ib_high) {
+    ib = ib_low;
+    ib_low = ib_high;
+    ib_high = ib;
+  }
+
+  if (ib_low < 0 || ib_high >= langevin->distr->domain->n) {
+    fprintf(stderr, "Error@at.driver.langevin.move: invalid transition %d => %d\n",
+        proposal->ib_old, proposal->ib_new);
+  }
+
+  for (ib = ib_low; ib <= ib_high; ib++) {
+    // check if ib is an unvisited bin
+    if (langevin->mb->visits[ib] < min_visits) {
+      apply_metropolisation = AT__FALSE;
+      break;
+    }
+  }
+#endif
+
+  proposal->apply_metropolisation = apply_metropolisation;
+
+  return apply_metropolisation;
 }
 
 
@@ -337,27 +389,52 @@ double at_driver_langevin__move_corrected(
       bin_av_energy);
 
   if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin)) {
+
     accepted = AT__FALSE;
+
   } else {
+
+    at_bool_t apply_metropolisation;
+
     stride_moderated = at_driver_langevin_move__moderate_stride(
         proposal, langevin);
 
-    // compute the acceptance ratio
-    accepted = at_driver_langevin_move__accept(
+    apply_metropolisation = at_driver_langevin_move__decide_to_apply_metropolisation(
         proposal, langevin);
 
-    //if (proposal->ib_new_prop == 0 || proposal->ib_new_prop == langevin->distr->domain->n-1) {
+    if (apply_metropolisation) {
+
+      // compute the acceptance ratio
+      accepted = at_driver_langevin_move__accept(
+          proposal, langevin);
+
+      if (!accepted) {
+        langevin->rejects += 1.0;
+      }
+
+      langevin->total += 1.0;
+
+    } else {
+
+      //fprintf(stderr, "\rInfo@at.driver.langevin.move: disabling metropolisation %g => %g due to insufficient data\n",
+      //    proposal->beta_old, proposal->beta_new);
+
+      accepted = AT__TRUE;
+
+      langevin->n_exemption += 1.0;
+
+    }
+
+    //if (proposal->ib_new_prop == 0
+    // || proposal->ib_new_prop == langevin->distr->domain->n-1) {
     //  fprintf(stderr, "Info@at.driver.langevin.move: a proposed boundary trip %d => %d ~ %d, accepted %d\n", proposal->ib_old, proposal->ib_new_prop, proposal->ib_new, accepted);
     //}
+
   }
 
   if (accepted) {
     beta = proposal->beta_new;
-  } else {
-    langevin->rejects += 1.0;
   }
-
-  langevin->total += 1.0;
 
   if (at_driver_langevin_move__debug__) {
     fprintf(stderr, "at_driver_langevin__move_corrected(), %s:%d\n", __FILE__, __LINE__);
