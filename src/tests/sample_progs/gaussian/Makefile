@@ -1,12 +1,14 @@
 
 CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
-#CC = clang-12 -O3 -g -Wall -Wno-unused-function
+
+CC_CLANG = clang-12 -O3 -g -Wall -Wno-unused-function -Wnewline-eof
 
 CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
 LM = -lm
 
 srcs = $(wildcard *.c)
 bins = $(patsubst %.c, %.exe, $(srcs))
+bins_clang = $(patsubst %.c, %_clang.exe, $(srcs))
 bins_dbg = $(patsubst %.c, %_d.exe, $(srcs))
 dep_srcs =
 deps = $(dep_srcs) \
@@ -25,9 +27,12 @@ bins: $(bins)
 $(bins): %.exe : %.c $(deps)
 	$(CC) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
+$(bins_clang): %_clang.exe : %.c $(deps)
+	$(CC_CLANG) $(includes) $< $(dep_srcs) -o $@ $(LM)
+
 $(bins_dbg): %_d.exe : %.c $(deps)
 	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
 clean::
-	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* *_hist.dat TRACE* gmon.out data/* atdata*
+	$(RM) -rf $(bins) $(bins_clang) $(bins_dbg) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* *_hist.dat TRACE* gmon.out data/* atdata*
 

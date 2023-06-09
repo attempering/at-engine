@@ -86,7 +86,7 @@ int at_utils_lockfile__init(
       fprintf(stderr, "Warning@at.utils.lockfile: failed to create the lockfile %s\n", lockfile->filename);
     } else {
 
-      fprintf(fp, "%ld", (long) time(NULL));
+      fprintf(fp, "%ld\n", (long) time(NULL));
 
       fprintf(fp, "\n");
 
