@@ -53,7 +53,7 @@ AtGmx::AtGmx(
     at_bool_t multi_sims,
     at_flags_t flags)
 {
-  if (fn_cfg != NULL) {
+  if (fn_cfg != nullptr) {
     enabled = AT__TRUE;
   } else {
     enabled = AT__FALSE;
