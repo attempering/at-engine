@@ -34,7 +34,7 @@ is included under the [doc](doc) directory.
 
 ## New features
 
-Compared with the 2010 paper [1], the current code brings about
+In comparision with the 2010 paper [1], the current code brings about
 a few key improvements on the overall accuracy and performance.
 
 * Metropolisation.  The Langevin equation used in the original

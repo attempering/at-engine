@@ -6,8 +6,6 @@
 
 * [external](external) links to external source code (veritools).
 
-* [interface](interface) interface to GROMACS.
-
 * [tests](tests) testing programs.
 
 ## For developers
