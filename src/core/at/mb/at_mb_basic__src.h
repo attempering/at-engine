@@ -51,7 +51,7 @@ int at_mb__cfg_init(
   int i, n;
 
   if (mb == NULL) {
-    fprintf(stderr, "null pointer to at_mb_t\n");
+    fprintf(stderr, "Error@at.mb: null pointer to at_mb_t\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
@@ -104,19 +104,28 @@ int at_mb__cfg_init(
     IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->nst_save_av = 10000, key: mb-nst-save\n");
   }
 
-  /* av_binary: use binary format in mbav file */
-  mb->av_binary = AT__TRUE;
-  if (0 != zcom_cfg__get(cfg, &mb->av_binary, "mbav-binary,mb-file-binary", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->av_binary = 1, key: mb-file-binary\n");
+  /* use binary format in average file */
+  mb->use_binary_file = AT__TRUE;
+  /*
+  if (0 != zcom_cfg__get(cfg, &mb->use_binary_file, "mbav-binary,mb-use-binary-file", "%d")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->use_binary_file = 1, key: mb-use-binary-file\n");
   }
+  */
 
-  /* av_file: name of mbav file */
+  /* names of the average data file */
   {
-    char *fn_mb = zcom_ssm__dup(ssm, "mb.dat");
-    if (0 != zcom_cfg__get(cfg, &mb->av_file, "mbav-file,mb-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->av_file = \"%s\", key: mb-file\n", fn_mb);
+    char *fn_binary = zcom_ssm__dup(ssm, "mb.dat");
+    if (0 != zcom_cfg__get(cfg, &fn_binary, "mbav-file,mb-file,mb-binary-file", "%s")) {
+      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_binary = \"%s\", key: mb-binary-file\n", fn_binary);
     }
-    mb->av_file = at_utils__make_output_filename(ssm, data_dir, fn_mb);
+    mb->file_binary = at_utils__make_output_filename(ssm, data_dir, fn_binary);
+
+    char *fn_text = zcom_ssm__dup(ssm, "mb-text.dat");
+    if (0 != zcom_cfg__get(cfg, &fn_text, "mb-text-file", "%s")) {
+      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_text = \"%s\", key: mb-text-file\n",
+        fn_text);
+    }
+    mb->file_text = at_utils__make_output_filename(ssm, data_dir, fn_text);
   }
 
   /* ze_file: name of ze file */
@@ -142,11 +151,6 @@ int at_mb__cfg_init(
 
   /* total_visits: total number of visits, number of tempering */
   mb->total_visits = 0.0;
-
-  /* cnt_int: number of additional integer variables to be written to binary file */
-  mb->cnt_int = 0;
-  /* cnt_dbl: number of additional double variables to be written to binary file */
-  mb->cnt_dbl = 5;
 
   at_mb_iie__cfg_init(mb->iie, mb, cfg, verbose);
 
@@ -215,10 +219,11 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
   at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "mb-nst-save");
 
   /* use binary format in mbav file */
-  at_utils_manifest__print_bool(manifest, mb->av_binary, "mb->av_binary", "mb-file-binary");
+  at_utils_manifest__print_bool(manifest, mb->use_binary_file, "mb->use_binary_file", "mb-use-binary-file");
 
-  /* name of mbav file */
-  at_utils_manifest__print_str(manifest, mb->av_file, "mb->av_file", "mb-file");
+  /* name of the average file */
+  at_utils_manifest__print_str(manifest, mb->file_binary, "mb->file_binary", "mb-binary-file");
+  at_utils_manifest__print_str(manifest, mb->file_text, "mb->file_text", "mb-text-file");
 
   /* name of ze file */
   at_utils_manifest__print_str(manifest, mb->ze_file, "mb->ze_file", "ze-file");
@@ -234,13 +239,6 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
   at_mb_iie__manifest(mb->iie, manifest);
 
   at_mb_accum__manifest(mb->accum, manifest);
-
-  /* number of additional integer variables to be written to binary file */
-  at_utils_manifest__print_int(manifest, mb->cnt_int, "mb->cnt_int", NULL);
-
-  /* number of additional double variables to be written to binary file */
-  at_utils_manifest__print_int(manifest, mb->cnt_dbl, "mb->cnt_dbl", NULL);
-
 }
 
 
