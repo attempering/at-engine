@@ -22,7 +22,9 @@
 #include "sys/at_utils_sys.h"
 #include "at_utils_misc.h"
 
+#include "lockfile/at_utils_lockfile.h"
 #include "manifest/at_utils_manifest.h"
+#include "io/at_utils_io.h"
 #include "trace/at_utils_trace.h"
 
 #include "at_utils_basic.h"

@@ -16,18 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS__SRC_H__
-#define AT_UTILS__SRC_H__
+#ifndef AT_UTILS_IO_H__
+#define AT_UTILS_IO_H__
 
-#include "sys/at_utils_sys__src.h"
-#include "at_utils_misc__src.h"
-
-#include "lockfile/at_utils_lockfile__src.h"
-#include "manifest/at_utils_manifest__src.h"
-#include "io/at_utils_io__src.h"
-#include "trace/at_utils_trace__src.h"
-
-#include "at_utils_basic__src.h"
-
+#include "binary/at_utils_io_binary.h"
 
 #endif
