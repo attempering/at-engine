@@ -49,7 +49,7 @@ void test(at_driver_langevin_t *langevin, zcom_ssm_t *ssm)
 {
   uint32_t seed = 12345;
 
-  //langevin->rng->filename = zcom_ssm__dup(ssm, "rng.dat");
+  //langevin->rng->file = zcom_ssm__dup(ssm, "rng.dat");
   //langevin->rng->mtrng = NULL;
 
   at_driver_langevin_rng__reset(langevin->rng, seed, ssm, data_dir, "rng-reset.dat");

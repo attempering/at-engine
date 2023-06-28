@@ -129,7 +129,9 @@ void at_mb_accum__add(at_mb_accum_t *accum, int ib, double invwf, double e, int 
 void at_mb_accum__calc_win_total(at_mb_accum_t *accum)
 {
   if (accum->winaccum->enabled) {
+
     at_mb_accum_winaccum__calc_win_total(accum->winaccum, accum->win_total);
+
   } else {
 
     int i;
@@ -151,8 +153,18 @@ void at_mb_accum__calc_win_total(at_mb_accum_t *accum)
 }
 
 
+// call this before writing output
+void at_mb_accum__normalize(at_mb_accum_t *accum)
+{
+  if (accum->winaccum->enabled) {
+    // normalize all windowed accumulators
+    at_mb_accum_winaccum__normalize(accum->winaccum, -1);
+  }
+}
 
-void at_mb_accum__cfg_init(at_mb_accum_t *accum, int n, at_mb_win_t *win,
+
+void at_mb_accum__cfg_init(
+    at_mb_accum_t *accum, int n, at_mb_win_t *win,
     zcom_cfg_t *cfg, at_bool_t verbose)
 {
   int i;

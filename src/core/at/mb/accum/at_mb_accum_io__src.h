@@ -68,71 +68,204 @@ void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *mani
 
 
 
-int at_mb_accum__read_binary(at_mb_accum_t *accum, FILE *fp, int endn)
+int at_mb_accum__read_binary(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version, int endn)
 {
-  int i, itmp;
+  int i, itmp, ret;
 
-  /* sums: normal data */
   zcom_util__exit_if (accum->sums == NULL,
-      "accum->sums is null\n");
+      "Error@at.mb.accum: accum->sums is null\n");
 
   for (i = 0; i < accum->n; i++) {
+
     if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-      fprintf(stderr, "error in reading itmp\n");
+      fprintf(stderr, "Error@at.mb.accum: error in reading index %d\n", i);
       goto ERR;
     }
+
     if (itmp != i) {
-      fprintf(stderr, "i mismatch, expect: %d, read: %d, pos: %#lx\n",
+      fprintf(stderr, "Error@at.mb.accum: i mismatch, expect: %d, read: %d, pos: %#lx\n",
           i, itmp, (unsigned long) ftell(fp));
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
+
     if (0 != at_mb_sm__read_binary(accum->sums+i, fp, endn)) {
-      fprintf(stderr, "error reading object accum->sums+i\n");
+      fprintf(stderr, "Error@at.mb.accum: error reading object accum->sums+i %d\n", i);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
+
   }
 
-  at_mb_accum_winaccum__read_binary(accum->winaccum, fp, endn);
+  ret = at_mb_accum_winaccum__read_binary(accum->winaccum, fn, fp, version, endn);
+
+  if (ret != 0) {
+    return ret;
+  }
+
+  // recalculate accum->win_total
+  at_mb_accum__calc_win_total(accum);
 
   return 0;
+
 ERR:
+
   return -1;
 }
 
 
 
-int at_mb_accum__write_binary(at_mb_accum_t *accum, FILE *fp)
+int at_mb_accum__write_binary(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version)
 {
-  int i;
+  int i, ret;
   at_mb_sm_t *sm;
 
   /* sums: normal data */
   zcom_util__exit_if (accum->sums == NULL,
-      "accum->sums is null\n");
+      "Error@at.mb.accum: accum->sums is null\n");
 
   for (i = 0; i < accum->n; i++) {
     if (zcom_endn__fwrite(&i, sizeof(i), 1, fp, 1) != 1) {
-      fprintf(stderr, "error in writing i\n");
+      fprintf(stderr, "Error@at.mb.accum: failed to write bin index %d\n", i);
       goto ERR;
     }
 
     sm = at_mb_accum__get_sums(accum, i);
 
     if (0 != at_mb_sm__write_binary(sm, fp)) {
-      fprintf(stderr, "error writing object accum->sums+i\n");
+      fprintf(stderr, "Error@at.mb.accum: object accum->sums+i\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
   }
 
-  at_mb_accum_winaccum__write_binary(accum->winaccum, fp);
+  ret = at_mb_accum_winaccum__write_binary(accum->winaccum,
+      fn, fp, version);
+
+  if (ret != 0) {
+    return ret;
+  }
 
   return 0;
 ERR:
 
   return -1;
+}
+
+
+
+int at_mb_accum__read_text(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version)
+{
+  int i, itmp, ret;
+
+  (void) version;
+
+  zcom_util__exit_if (accum->sums == NULL,
+      "Error@at.mb.accum: accum->sums is null\n");
+
+  {
+    char token[32] = "";
+
+    if (fscanf(fp, "%32s", token) != 1) {
+      fprintf(stderr, "Error@at.mb.accum: error in reading begin token\n");
+      goto ERR;
+    }
+
+    if (strcmp(token, "ACCUM_BEGIN") != 0) {
+      fprintf(stderr, "Error@at.mb.accum: bad begin token [%s]\n", token);
+      goto ERR;
+    }
+  }
+
+  for (i = 0; i < accum->n; i++) {
+
+    if (fscanf(fp, "%d", &itmp) != 1) {
+      fprintf(stderr, "Error@at.mb.accum: error in reading index %d from %s\n", i, fn);
+      goto ERR;
+    }
+
+    if (itmp != i) {
+      fprintf(stderr, "Error@at.mb.accum: i mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, itmp, (unsigned long) ftell(fp));
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    if (0 != at_mb_sm__read_text(accum->sums+i, fp)) {
+      fprintf(stderr, "Error@at.mb.accum: error reading object accum->sums+i %d\n", i);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+  }
+
+  ret = at_mb_accum_winaccum__read_text(accum->winaccum, fn, fp, version);
+
+  if (ret != 0) {
+    return ret;
+  }
+
+  // recalculate accum->win_total
+  at_mb_accum__calc_win_total(accum);
+
+  {
+    char token[32] = "";
+
+    if (fscanf(fp, "%32s", token) != 1) {
+      fprintf(stderr, "Error@at.mb.accum: error in reading end token\n");
+      goto ERR;
+    }
+
+    if (strcmp(token, "ACCUM_END") != 0) {
+      fprintf(stderr, "Error@at.mb.accum: bad begin end [%s]\n", token);
+      goto ERR;
+    }
+  }
+
+  return 0;
+
+ERR:
+
+  return -1;
+}
+
+
+
+int at_mb_accum__write_text(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version)
+{
+  int i, ret;
+  at_mb_sm_t *sm;
+
+  (void) version;
+
+  zcom_util__exit_if (accum->sums == NULL,
+      "Error@at.mb.accum: accum->sums is null\n");
+
+  fprintf(fp, "ACCUM_BEGIN\n");
+
+  for (i = 0; i < accum->n; i++) {
+
+    fprintf(fp, "%d ", i);
+
+    sm = at_mb_accum__get_sums(accum, i);
+
+    at_mb_sm__write_text(sm, fp);
+  }
+
+  ret = at_mb_accum_winaccum__write_text(accum->winaccum,
+      fn, fp, version);
+
+  if (ret != 0) {
+    return ret;
+  }
+
+  fprintf(fp, "ACCUM_END\n");
+
+  return 0;
 }
 
 

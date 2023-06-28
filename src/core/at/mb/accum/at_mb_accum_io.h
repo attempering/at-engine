@@ -26,11 +26,19 @@
 #include "../shk/at_mb_shk.h"
 #include "../../utils/at_utils.h"
 
-void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *manifest);
+void at_mb_accum__manifest(const at_mb_accum_t *accum,
+    at_utils_manifest_t *manifest);
 
-int at_mb_accum__read_binary(at_mb_accum_t *accum, FILE *fp, int endn);
+int at_mb_accum__read_binary(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version, int endn);
 
-int at_mb_accum__write_binary(at_mb_accum_t *accum, FILE *fp);
+int at_mb_accum__write_binary(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version);
 
+int at_mb_accum__read_text(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version);
+
+int at_mb_accum__write_text(at_mb_accum_t *accum,
+    const char *fn, FILE *fp, int version);
 
 #endif

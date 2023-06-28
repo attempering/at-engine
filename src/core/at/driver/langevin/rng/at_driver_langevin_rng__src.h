@@ -55,7 +55,7 @@ void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed,
   }
 
   zcom_mtrng__load_or_init_from_seed(rng->mtrng,
-      rng->filename, seed, force_reload,
+      rng->file, seed, force_reload,
       fn_rng_backup);
 
   rng->inited = 1;
@@ -66,7 +66,7 @@ void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed,
 void at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng)
 {
   if (rng->mtrng) {
-    zcom_mtrng__save(rng->mtrng, rng->filename);
+    zcom_mtrng__save(rng->mtrng, rng->file);
   }
 }
 
@@ -78,14 +78,14 @@ void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
     const char *data_dir,
     at_bool_t verbose)
 {
-  rng->filename = zcom_ssm__dup(ssm, "rng.dat");
-  if (zcom_cfg__get(cfg, &rng->filename, "rngfile,rng-file", "%s") != 0)
+  rng->file = zcom_ssm__dup(ssm, "rng.dat");
+  if (zcom_cfg__get(cfg, &rng->file, "rngfile,rng-file", "%s") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->filename = \"%s\", key: rng-file\n",
-        rng->filename);
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->file = \"%s\", key: rng-file\n",
+        rng->file);
   }
 
-  rng->filename = at_utils__make_output_filename(ssm, data_dir, rng->filename);
+  rng->file = at_utils__make_output_filename(ssm, data_dir, rng->file);
 
   rng->mtrng = NULL;
 
@@ -98,7 +98,7 @@ void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng)
 {
   if (rng->inited) {
     if (rng->mtrng != NULL) {
-      zcom_mtrng__save(rng->mtrng, rng->filename);
+      zcom_mtrng__save(rng->mtrng, rng->file);
       zcom_mtrng__close(rng->mtrng);
     }
   }
@@ -107,7 +107,7 @@ void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng)
 void at_driver_langevin_rng__manifest(at_driver_langevin_rng_t *rng,
     at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_str(manifest, rng->filename, "driver->langevin->rng->filename", "rng_file");
+  at_utils_manifest__print_str(manifest, rng->file, "driver->langevin->rng->file", "rng_file");
 }
 
 

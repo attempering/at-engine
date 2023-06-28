@@ -22,13 +22,14 @@
 /* shrinking rate of the adaptive averaging scheme */
 
 #include "at_mb_shk.h"
+#include "io/at_mb_shk_io__src.h"
 
 #include "../at_mb_basic.h"
 #include "../../distr/at_distr.h"
 
 #include <stdlib.h>
 
-#include "../../../zcom/cfg/cfg.h"
+#include "../../../zcom/zcom.h"
 
 
 int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_t verbose)
@@ -47,9 +48,18 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
     if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->win_adjusted = 1, key: shrink-mbin-adjust\n");
   }
 
-  /* shk_max: initial and maximal shrink (adjusted) */
+  shk->init = 0.01;
+  if (0 != zcom_cfg__get(cfg, &shk->init, "shrink0,shrink-init", "%lf")) {
+    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->init = 0.01, key: shrink-init\n");
+  }
+  if ( !(shk->init < 0.9 && shk->init >= 0.0) ) {
+    fprintf(stderr, "Error@at.mb.shk: shk->max: failed validation: mb->shk->init < 0.9 && shk->init >= 0.0\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
+  }
+
   shk->max = 0.01;
-  if (0 != zcom_cfg__get(cfg, &shk->max, "shrink0,shrink-init", "%lf")) {
+  if (0 != zcom_cfg__get(cfg, &shk->max, "shrink-max", "%lf")) {
     if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->max = 0.01, key: shrink-init\n");
   }
   if ( !(shk->max < 0.9 && shk->max >= 0.0) ) {
@@ -144,14 +154,15 @@ void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest)
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
   at_utils_manifest__print_int(manifest, shk->mode, "mb->shk->mode", "shrink-mode");
 
-  /* initial and maximal shrink (adjusted) */
-  at_utils_manifest__print_double(manifest, shk->max, "mb->shk->max", "shrink-init");
+  at_utils_manifest__print_double(manifest, shk->init, "mb->shk->init", "shrink-init");
+
+  at_utils_manifest__print_double(manifest, shk->max, "mb->shk->max", "shrink-max");
 
   /* shk_min: minimal value for enforcing acc. sampling */
   at_utils_manifest__print_double(manifest, shk->min, "mb->shk->min", "shrink-min");
 
   /* shk_stop: stop shrinking after this number of steps */
-  at_utils_manifest__print_int(manifest, shk->stop, "mb->shk->stop", "shrink-stop");
+  at_utils_manifest__print_double(manifest, shk->stop, "mb->shk->stop", "shrink-stop");
 
   if (shk->mode >= 1) {
     /* shk_amp: amp t^(-exp) */

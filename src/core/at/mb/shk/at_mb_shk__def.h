@@ -100,14 +100,16 @@ typedef struct at_mb_shk_t_ {
   at_bool_t win_adjusted;
                       /* adjust shrink rate according to beta window width */
 
-  double    max;      /* initial and maximal shrink (adjusted) */
+  double    init;
+
+  double    max;
 
   double   *win_mul;
                       /* multipliers used to regularize the shrinking rate
                        * for windows of different sizes */
 
   double    min;      /* minimal value for enforcing acc. sampling */
-  int       stop;     /* stop shrinking after this number of steps */
+  double    stop;     /* stop shrinking after this number of steps */
   double    amp;      /* amp t^(-exp) */
   double    exp;      /* amp t^(-exp) */
 

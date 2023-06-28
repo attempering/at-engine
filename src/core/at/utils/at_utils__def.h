@@ -21,6 +21,7 @@
 
 #include "lockfile/at_utils_lockfile__def.h"
 #include "manifest/at_utils_manifest__def.h"
+#include "io/at_utils_io__def.h"
 #include "trace/at_utils_trace__def.h"
 
 typedef struct at_utils_t_

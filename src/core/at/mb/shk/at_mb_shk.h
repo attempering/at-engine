@@ -25,6 +25,7 @@
 
 #include "at_mb_shk__def.h"
 #include "../../utils/at_utils.h"
+#include "io/at_mb_shk_io.h"
 
 
 typedef struct at_mb_t_ at_mb_t;
@@ -39,5 +40,6 @@ void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest);
 double at_mb_shk__calc_shk_base(at_mb_shk_t *shk, double total_visits);
 
 double at_mb_shk__calc_inv_gamma(at_mb_shk_t *shk, double total_visits, int ib);
+
 
 #endif
