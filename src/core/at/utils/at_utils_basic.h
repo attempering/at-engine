@@ -28,7 +28,7 @@
 
 void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
     at_bool_t append_sim_id_to_data_dir, int sim_id,
-    at_bool_t verbose);
+    at_bool_t ignore_lockfile, at_bool_t verbose);
 
 void at_utils__finish(at_utils_t *utils);
 

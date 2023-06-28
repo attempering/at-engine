@@ -31,7 +31,7 @@
 
 void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
     at_bool_t append_sim_id_to_data_dir, int sim_id,
-    at_bool_t verbose)
+    at_bool_t ignore_lockfile, at_bool_t verbose)
 {
   utils->ssm = zcom_ssm__open();
 
@@ -61,7 +61,7 @@ void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
     utils->data_dir = data_dir;
   }
 
-  at_utils_lockfile__init(utils->lockfile, utils->ssm, utils->data_dir, verbose);
+  at_utils_lockfile__init(utils->lockfile, ignore_lockfile, utils->ssm, utils->data_dir, verbose);
 
   at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, utils->data_dir, verbose);
 

@@ -28,34 +28,77 @@
 /* implementation dependent headers */
 #include "../at_mb_basic.h"
 
-/* include the source code of sub-modules */
-#include "at_mb_io_binary__src.h"
+#include "binary/at_mb_io_binary__src.h"
+#include "text/at_mb_io_text__src.h"
 
 
+
+static void at_mb__after_reading(at_mb_t *mb)
+{
+  // TODO
+  (void) mb;
+}
 
 
 int at_mb__read(at_mb_t *mb)
 {
   int ret, version;
 
-  ret = at_mb__read_binary(mb, mb->av_file, &version);
+  //if (mb->use_binary_file) {
+  if (1) {
 
-  if (ret != 0) {
-    fprintf(stderr, "cannot load at_mb_t data from %s\n", mb->av_file);
-    return 1;
+    ret = at_mb__read_binary(mb, mb->file_binary, &version);
+
+    if (ret != 0) {
+      fprintf(stderr, "Error@at.mb: cannot load at_mb_t data from %s\n", mb->file_binary);
+      return 1;
+    } else {
+      fprintf(stderr, "Info@at.mb: loaded previous at_mb_t data, %s version: %d\n",
+          mb->file_binary, version);
+    }
+
+  } else {
+
+    ret = at_mb__read_text(mb, mb->file_text, &version);
+
+    if (ret != 0) {
+      fprintf(stderr, "Error@at.mb: cannot load at_mb_t data from %s\n", mb->file_text);
+      return 1;
+    } else {
+      fprintf(stderr, "Info@at.mb: loaded previous at_mb_t data, %s version: %d\n",
+        mb->file_text, version);
+    }
+
   }
 
-  fprintf(stderr, "loaded previous at_mb_t data, %s version: %d\n",
-    mb->av_file, version);
+  at_mb__after_reading(mb);
 
   return 0;
 }
 
 
-
-int at_mb__write(at_mb_t *mb)
+static void at_mb__before_writing(at_mb_t *mb)
 {
-  return at_mb__write_binary(mb, mb->av_file, 2);
+  at_mb_accum__normalize(mb->accum);
+}
+
+
+int at_mb__write(at_mb_t *mb, at_bool_t write_text_file)
+{
+  int ret;
+
+  at_mb__before_writing(mb);
+
+  ret = at_mb__write_binary(mb, mb->file_binary);
+  if (ret != 0) {
+    return ret;
+  }
+
+  if (write_text_file) {
+    ret = at_mb__write_text(mb, mb->file_text);
+  }
+
+  return ret;
 }
 
 

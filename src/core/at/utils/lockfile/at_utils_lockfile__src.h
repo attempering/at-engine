@@ -60,6 +60,7 @@ static char *at_utils_lockfile__get_file_name(
 
 int at_utils_lockfile__init(
     at_utils_lockfile_t *lockfile,
+    at_bool_t ignore_lockfile,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_bool_t verbose)
@@ -68,15 +69,18 @@ int at_utils_lockfile__init(
 
   if (at_utils_sys__file_exists(lockfile->filename)) {
 
-    // alert the user that the lock file exists
-    // another simulation may be running
+    if (!ignore_lockfile) {
 
-    fprintf(stderr, "Error@at.utils.lockfile: lockfile \"%s\" already exists, "
-        "this probably means that a previous simulation is still running. "
-        "If this is not so, please delete the file and restart the simulation.\n",
-        lockfile->filename);
+      // alert the user that the lock file exists
+      // another simulation may be running
 
-    exit(1);
+      fprintf(stderr, "Error@at.utils.lockfile: lockfile \"%s\" already exists, "
+          "this probably means that a previous simulation is still running. "
+          "If this is not so, please delete the file and restart the simulation.\n",
+          lockfile->filename);
+
+      exit(1);
+    }
 
   } else {
 

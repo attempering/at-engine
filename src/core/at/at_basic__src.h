@@ -49,12 +49,57 @@ static void at__set_init_beta(at_t *at)
     at->beta = 0.5 * (domain->beta_min + domain->beta_max);
   }
 
-  fprintf(stderr, "Info@at: initial beta %g\n", at->beta);
+  at__update_force_scale(at);
+
+  fprintf(stderr, "Info@at: initial beta %g, force_scale %g\n",
+      at->beta, at->force_scale);
 }
 
 
 
-/* load settings from the configuration file */
+static int at__cfg_init_self(
+    at_t *at,
+    zcom_cfg_t *cfg,
+    zcom_ssm_t *ssm,
+    const char *data_dir,
+    at_bool_t verbose)
+{
+  at__set_init_beta(at);
+
+  at->energy = 0.0;
+
+  {
+    char *fn_binary = zcom_ssm__dup(ssm, "at.dat");
+    if (0 != zcom_cfg__get(cfg, &fn_binary, "at-file,at-file-binary", "%s")) {
+      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = \"%s\", key: at-file-binary\n",
+          fn_binary);
+    }
+    at->file_binary = at_utils__make_output_filename(ssm, data_dir, fn_binary);
+  }
+
+  {
+    char *fn_text = zcom_ssm__dup(ssm, "at-text.dat");
+    if (0 != zcom_cfg__get(cfg, &fn_text, "at-file-text", "%s")) {
+      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = \"%s\", key: at-file-text\n",
+          fn_text);
+    }
+    at->file_text = at_utils__make_output_filename(ssm, data_dir, fn_text);
+  }
+
+  at->write_text_file = AT__FALSE;
+  if (0 != zcom_cfg__get(cfg, &at->write_text_file, "write-text-file", "%d")) {
+    if (verbose) fprintf(stderr, "Info@at: assuming default at->write_text_file = %d, key: write-text-file\n",
+        at->write_text_file);
+  }
+
+  return 0;
+}
+
+
+
+/* load settings from the configuration file
+ * sys_params can be NULL, in which case, default system parameters
+ * will be used */
 static int at__cfg_init_low_level(at_t *at,
     zcom_cfg_t *cfg,
     const at_params_sys_t *sys_params,
@@ -62,6 +107,7 @@ static int at__cfg_init_low_level(at_t *at,
 {
   const char *data_dir;
   zcom_ssm_t *ssm;
+  at_bool_t ignore_lockfile = flags & AT__INIT_IGNORE_LOCKFILE;
   at_bool_t verbose = flags & AT__INIT_VERBOSE;
 
   /* initialize system parameters at->sys_params from
@@ -73,7 +119,7 @@ static int at__cfg_init_low_level(at_t *at,
   /* initialize the utils objects such as manifest and trace */
   at_utils__cfg_init(at->utils, cfg,
       at->sys_params->multi_sims, at->sys_params->sim_id,
-      verbose);
+      ignore_lockfile, verbose);
 
   data_dir = at->utils->data_dir;
 
@@ -83,7 +129,9 @@ static int at__cfg_init_low_level(at_t *at,
     return -1;
   }
 
-  at__set_init_beta(at);
+  if (at__cfg_init_self(at, cfg, ssm, data_dir, verbose) != 0) {
+    return -1;
+  }
 
   /* initialize the multiple-bin estimator */
   at_mb__cfg_init(at->mb, at->distr, cfg, at->sys_params->boltz, ssm, data_dir, verbose);
@@ -109,16 +157,20 @@ int at__cfg_init(at_t *at,
   /* load settings from the configuration file */
   at__cfg_init_low_level(at, cfg, sys_params, flags);
 
+  at->energy = 0.0;
+
   /* we only load previous data if it's continuation */
-  if (at__load_data(at, at->sys_params->is_continuation) != 0) {
-    fprintf(stderr, "Warning@at: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
+  if (at->sys_params->is_continuation) {
+    //fprintf(stderr, "is-cont: %d\n", at->sys_params->is_continuation);
+    if (at__load_data(at) != 0) {
+      fprintf(stderr, "Error@at: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
+      return -1;
+    }
   }
 
   /* open the trace file using the proper (append or write) mode
    * depending on whether it is a continuation run */
   at_utils_trace__open_file(at->utils->trace, at->sys_params->is_continuation);
-
-  at->energy = 0.0;
 
   return 0;
 }
@@ -156,6 +208,10 @@ int at__init(at_t *at,
 
   fprintf(stderr, "Info@at: successfully loaded configuration file %s\n", cfg_filename);
 
+  /* save a handle for `cfg`
+   * Note: the `cfg` handle contains string data
+   * that may still be used throughout the program,
+   * So we keep the handle open and close it at the end. */
   at->cfg = cfg;
 
   return 0;
@@ -222,7 +278,7 @@ int at__manifest(at_t *at)
 
   //FILE *fp = at_utils_manifest__open_file(manifest);
 
-  //fprintf(stderr, "at %p, manifest %p, fp %p (%s)\n", at, manifest, fp, manifest->filename);
+  //fprintf(stderr, "at %p, manifest %p, fp %p (%s)\n", at, manifest, fp, manifest->file);
 
   at_utils_manifest__print_double(manifest, at->beta, "beta", NULL);
 

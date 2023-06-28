@@ -44,15 +44,17 @@ typedef struct at_mb_t_ {
   at_bool_t need_cv;
   at_bool_t verbose;
 
-  int       nst_refresh;  /* interval of recalculating et for all temperature */
-  int       nst_save_av;  /* interval of writing mbav and ze files */
-  at_bool_t av_binary;    /* use binary format in mbav file */
-  char      *av_file;     /* name of mbav file */
-  char      *ze_file;     /* name of ze file */
-  char      *ze_init_file; /* name of the initially-loaded ze file */
-  double    *visits;      /* number of visits */
-  double    total_visits; /* total number of visits, number of tempering */
+  int       nst_refresh;    /* interval of recalculating et for all temperature */
+  int       nst_save_av;    /* interval of writing the average and ze files */
+  at_bool_t use_binary_file;    /* use binary format in the average file */
+  char      *file_binary;   /* name of the average data file (binary format) */
+  char      *file_text;     /* name of the average data file (text format) */
+  char      *ze_file;       /* name of ze file */
+  char      *ze_init_file;  /* name of the initially-loaded ze file */
+  double    *visits;        /* number of visits */
+  double    total_visits;   /* total number of visits, number of tempering */
 
+  /* reference handle */
   at_distr_t *distr;
 
   /* adaptive averaging related parameters */
@@ -66,12 +68,7 @@ typedef struct at_mb_t_ {
 
   at_mb_iie_t  iie[1];
 
-  int       cnt_int;  /* number of additional integer variables to be written to binary file */
-  int       cnt_dbl;  /* number of additional double variables to be written to binary file */
-
 } at_mb_t;
 
 
 #endif
-
-

@@ -46,6 +46,11 @@ typedef struct at_t_ {
 
   double    force_scale;      // for force scaling
 
+  char *    file_binary;
+  char *    file_text;
+
+  at_bool_t write_text_file;
+
   at_params_sys_t sys_params[1];
 
   at_distr_t      distr[1];     // distribution

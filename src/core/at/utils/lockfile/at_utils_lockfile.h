@@ -24,6 +24,7 @@
 
 int at_utils_lockfile__init(
     at_utils_lockfile_t *lockfile,
+    at_bool_t ignore_lockfile,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_bool_t verbose);

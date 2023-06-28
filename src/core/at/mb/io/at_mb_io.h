@@ -16,21 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* multiple-bin estimators of thermodynamical quantities */
 #ifndef AT_MB_IO_H__
 #define AT_MB_IO_H__
 
 
-#include "at_mb_io_binary.h"
 
-#include "../../utils/at_utils.h"
-#include "../../driver/at_driver.h"
+/* IO routines for at_mb_t */
+
+#include "at_mb_io.h"
+
+/* implementation dependent headers */
+#include "../at_mb_basic.h"
+
+#include "binary/at_mb_io_binary.h"
+#include "text/at_mb_io_text.h"
 
 
-/* load previous mb data */
+
 int at_mb__read(at_mb_t *mb);
 
-/* prepare and write mb data */
-int at_mb__write(at_mb_t *mb);
+
+int at_mb__write(at_mb_t *mb, at_bool_t write_text_file);
+
+
 
 #endif
