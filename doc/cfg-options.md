@@ -572,7 +572,7 @@ will be reloaded.
 
 * `rng_file`: name of the random number state file.
 
-  Default: "rng.dat" (legacy: "MTSEED").
+  Default: "langevin-rng.dat" (legacy: "MTSEED").
 
 ## IV. Additional modules
 

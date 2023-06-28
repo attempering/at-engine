@@ -16,24 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_IO_H__
-#define AT_DRIVER_LANGEVIN_IO_H__
+/* multiple-bin estimators of thermodynamical quantities */
+#ifndef AT_MB_IO_LEGACY_H__
+#define AT_MB_IO_LEGACY_H__
 
-#include "at_driver_langevin__def.h"
+
+#include "at_mb_io_legacy_binary.h"
+
 #include "../../utils/at_utils.h"
+#include "../../driver/at_driver.h"
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn,
-    FILE *fp,
-    int endn);
 
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp);
+/* load previous mb data */
+int at_mb__read_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double *beta);
 
-int at_driver_langevin__read(at_driver_langevin_t *langevin);
-
-int at_driver_langevin__write(at_driver_langevin_t *langevin);
+/* prepare and write mb data  */
+int at_mb__write_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double beta);
 
 #endif

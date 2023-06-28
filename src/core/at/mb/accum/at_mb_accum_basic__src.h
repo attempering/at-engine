@@ -158,7 +158,7 @@ void at_mb_accum__normalize(at_mb_accum_t *accum)
 {
   if (accum->winaccum->enabled) {
     // normalize all windowed accumulators
-    at_mb_accum_winaccum__normalize(accum->winaccum, -1);
+    at_mb_accum_winaccum__normalize_all(accum->winaccum);
   }
 }
 

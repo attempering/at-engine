@@ -50,10 +50,20 @@ void at_mb_accum_winaccum_item__clear(at_mb_accum_winaccum_item_t *item);
 
 void at_mb_accum_winaccum_item__finish(at_mb_accum_winaccum_item_t *item);
 
-int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FILE *fp, int endn);
+int at_mb_accum_winaccum_item__read_binary(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version, int endn);
 
-int at_mb_accum_winaccum_item__write_binary(at_mb_accum_winaccum_item_t *item, FILE *fp);
+int at_mb_accum_winaccum_item__write_binary(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version);
 
+int at_mb_accum_winaccum_item__read_text(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version);
 
+int at_mb_accum_winaccum_item__write_text(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version);
 
 #endif

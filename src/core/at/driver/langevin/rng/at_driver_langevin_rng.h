@@ -25,7 +25,7 @@
 void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed,
     zcom_ssm_t *ssm, const char *data_dir, const char *fn_backup);
 
-void at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng);
+int at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng);
 
 void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
     zcom_cfg_t *cfg,

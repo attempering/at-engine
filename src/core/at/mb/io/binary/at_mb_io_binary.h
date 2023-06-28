@@ -16,24 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_IO_H__
-#define AT_DRIVER_LANGEVIN_IO_H__
+/* binary IO routines for at_mb_t */
+#ifndef AT_MB_IO_BINARY_H__
+#define AT_MB_IO_BINARY_H__
 
-#include "at_driver_langevin__def.h"
-#include "../../utils/at_utils.h"
+#include "at_mb_io_binary.h"
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
+/* implementation headers */
+#include "../../at_mb_basic.h"
+#include "../../sm/at_mb_sm.h"
+#include "../../accum/at_mb_accum.h"
+#include "../../../distr/at_distr.h"
+
+#include "../../../../zcom/zcom.h"
+
+#include "v2/at_mb_io_binary_v2.h"
+#include "v3/at_mb_io_binary_v3.h"
+
+
+#define AT_MB__FILE_BINARY_VERSION_LATEST 3
+
+int at_mb__read_binary(
+    at_mb_t *mb,
     const char *fn,
-    FILE *fp,
-    int endn);
+    int *version);
 
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp);
 
-int at_driver_langevin__read(at_driver_langevin_t *langevin);
+int at_mb__write_binary_versioned(
+    at_mb_t *mb,
+    const char *fn,
+    int version);
 
-int at_driver_langevin__write(at_driver_langevin_t *langevin);
+
+__inline int at_mb__write_binary(
+    at_mb_t *mb,
+    const char *fn) {
+  return at_mb__write_binary_versioned(mb, fn, AT_MB__FILE_BINARY_VERSION_LATEST);
+}
+
+
 
 #endif

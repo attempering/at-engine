@@ -38,16 +38,79 @@ void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
 
 
 
-int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp, int endn)
+int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum,
+    const char *fn, FILE *fp, int version, int endn)
 {
 
   int i;
+  at_bool_t winaccum_enabled = winaccum->enabled;
 
-  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
+  if (version >= 3) {
+    int itmp;
+
+    if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: failed to read winaccum->enabled\n");
+      goto ERR;
+    }
+
+    winaccum_enabled = itmp;
+
+    if (winaccum_enabled != winaccum->enabled) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: winaccum->enabled %d, file %d\n",
+          winaccum->enabled, winaccum_enabled);
+      goto ERR;
+    }
+  }
+
+  if (winaccum_enabled) {
+
+    for (i = 0; i < winaccum->n; i++) {
+
+      int ret = at_mb_accum_winaccum_item__read_binary(winaccum->items+i,
+          fn, fp, version, endn);
+
+      if (ret != 0) {
+        goto ERR;
+      }
+
+    }
+
+  }
+
+  return 0;
+
+ERR:
+
+  return -1;
+}
+
+
+
+int at_mb_accum_winaccum__write_binary(at_mb_accum_winaccum_t *winaccum,
+    const char *fn, FILE *fp, int version)
+{
+  int i, ret;
+
+  if (version >= 3) {
+    i = (winaccum->enabled ? 1 : 0);
+    if (zcom_endn__fwrite(&i, sizeof(int), 1, fp, 1) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: failed to write winaccum->enabled\n");
+      goto ERR;
+    }
+  }
+
+  if (!winaccum->enabled) {
+    return 0;
+  }
+
+  //fprintf(stderr, "winaccum->n %d, %s:%d\n", winaccum->n, __FILE__, __LINE__);
 
   for (i = 0; i < winaccum->n; i++) {
 
-    if (at_mb_accum_winaccum_item__read_binary(winaccum->items+i, fp, endn) != 0) {
+    ret = at_mb_accum_winaccum_item__write_binary(winaccum->items+i,
+        fn, fp, version);
+
+    if (ret != 0) {
       goto ERR;
     }
 
@@ -62,21 +125,112 @@ ERR:
 
 
 
-int at_mb_accum_winaccum__write_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp)
+static int at_mb_accum_winaccum__read_text(at_mb_accum_winaccum_t *winaccum,
+    const char *fn, FILE *fp, int version)
 {
-  int i;
 
-  if (!winaccum->enabled) return 0;
+  int i;
+  at_bool_t winaccum_enabled = winaccum->enabled;
+
+  {
+    char token[32] = "";
+
+    if (fscanf(fp, "%32s", token) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading begin token\n");
+      goto ERR;
+    }
+
+    if (strcmp(token, "WINACCUM_BEGIN") != 0) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: bad begin token [%s]\n", token);
+      goto ERR;
+    }
+  }
+
+  {
+    int itmp;
+
+    if (fscanf(fp, "%d", &itmp) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: failed to read winaccum->enabled\n");
+      goto ERR;
+    }
+
+    winaccum_enabled = itmp;
+
+    if (winaccum_enabled != winaccum->enabled) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: winaccum->enabled %d, file %d\n",
+          winaccum->enabled, winaccum_enabled);
+      goto ERR;
+    }
+  }
+
+  if (winaccum_enabled) {
+
+    for (i = 0; i < winaccum->n; i++) {
+
+      int ret = at_mb_accum_winaccum_item__read_text(winaccum->items+i,
+          fn, fp, version);
+
+      if (ret != 0) {
+        goto ERR;
+      }
+
+    }
+
+  }
+
+  {
+    char token[32] = "";
+
+    if (fscanf(fp, "%32s", token) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading end token\n");
+      goto ERR;
+    }
+
+    if (strcmp(token, "WINACCUM_END") != 0) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: bad end token [%s]\n", token);
+      goto ERR;
+    }
+  }
+
+  return 0;
+
+ERR:
+
+  return -1;
+}
+
+
+
+static int at_mb_accum_winaccum__write_text(at_mb_accum_winaccum_t *winaccum,
+    const char *fn, FILE *fp, int version)
+{
+  int i, ret;
+
+  fprintf(fp, "WINACCUM_BEGIN\n");
+
+  {
+    i = (winaccum->enabled ? 1 : 0);
+    fprintf(fp, "%d\n", i);
+  }
+
+  if (!winaccum->enabled) {
+    return 0;
+  }
 
   //fprintf(stderr, "winaccum->n %d, %s:%d\n", winaccum->n, __FILE__, __LINE__);
 
   for (i = 0; i < winaccum->n; i++) {
 
-    if (at_mb_accum_winaccum_item__write_binary(winaccum->items+i, fp) != 0) {
+    ret = at_mb_accum_winaccum_item__write_text(winaccum->items+i,
+        fn, fp, version);
+
+    if (ret != 0) {
       goto ERR;
     }
 
   }
+
+  fprintf(fp, "WINACCUM_END\n");
 
   return 0;
 

@@ -25,25 +25,30 @@
 
 
 
-int at_driver_langevin__read_binary_legacy(at_driver_langevin_t *langevin, FILE *fp, int endn)
+int at_driver_langevin__read_binary_legacy(
+    at_driver_langevin_t *langevin,
+    const char *fn,
+    FILE *fp,
+    int endn)
 {
+  at_utils_io_t io[1];
+
+  at_utils_io_binary__init_read(io, "at.driver.langevin", fn, fp, endn);
+
   /* rate */
   double rate = 0.0;
-  if (zcom_endn__fread(&rate, sizeof(rate), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading rate\n");
+  if (at_utils_io_binary__read_double(io, &rate, "langevin.rejection_rate",
+      AT_UTILS_IO__NONNEGATIVE)) {
     goto ERR;
   }
 
   /* total: total number of attempts of using langevin equation */
-  if (zcom_endn__fread(&langevin->total, sizeof(langevin->total), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading langevin->total\n");
+  if (at_utils_io_binary__read_double(io, &langevin->total, "langevin->total",
+      AT_UTILS_IO__VERBOSE | AT_UTILS_IO__NONNEGATIVE)) {
     goto ERR;
   }
-  if ( !((langevin->rejects=langevin->total*rate) >= 0.0) ) {
-    fprintf(stderr, "langevin->total: failed validation: (langevin->rejects=langevin->total*rate) >= 0.0\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    goto ERR;
-  }
+
+  langevin->rejects = round(langevin->total*rate);
 
   return 0;
 
@@ -53,18 +58,24 @@ ERR:
 
 
 
-int at_driver_langevin__write_binary_legacy(at_driver_langevin_t *langevin, FILE *fp)
+int at_driver_langevin__write_binary_legacy(
+    at_driver_langevin_t *langevin,
+    const char *fn, FILE *fp)
 {
-  /* rate */
-  double rate = (langevin->total > 1.0) ? (langevin->rejects/langevin->total) : 0.0;
-  if (zcom_endn__fwrite(&rate, sizeof(rate), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing langevin->rate\n");
-    goto ERR;
+  at_utils_io_t io[1];
+
+  at_utils_io_binary__init_write(io, "at.driver.langevin", fn, fp);
+
+  /* rejection rate */
+  {
+    double rate = (langevin->total > 1.0) ? (langevin->rejects/langevin->total) : 0.0;
+    if (at_utils_io_binary__write_double(io, rate, "langevin.rejection_rate") != 0) {
+      goto ERR;
+    }
   }
 
   /* total: total number of attempts of using langevin equation */
-  if (zcom_endn__fwrite(&langevin->total, sizeof(langevin->total), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing langevin->total\n");
+  if (at_utils_io_binary__write_double(io, langevin->total, "langevin->total") != 0) {
     goto ERR;
   }
 
@@ -77,7 +88,7 @@ ERR:
 
 
 
-int at_driver_langevin__read(at_driver_langevin_t *langevin)
+static int at_driver_langevin__read_self(at_driver_langevin_t *langevin)
 {
   const char *fn = langevin->file;
   FILE *fp = fopen(fn, "r");
@@ -86,9 +97,13 @@ int at_driver_langevin__read(at_driver_langevin_t *langevin)
     return -1;
   }
 
-  if (fscanf(fp, "%lf%lf", &langevin->total, &langevin->rejects) == 2) {
-    langevin->total = 0.0;
-    langevin->rejects = 0.0;
+  {
+    double total = 0.0, rejects = 0.0;
+
+    if (fscanf(fp, "%lf%lf", &total, &rejects) == 2) {
+      langevin->total = round(total);
+      langevin->rejects = round(rejects);
+    }
   }
 
   fclose(fp);
@@ -98,7 +113,21 @@ int at_driver_langevin__read(at_driver_langevin_t *langevin)
 
 
 
-int at_driver_langevin__write(at_driver_langevin_t *langevin)
+int at_driver_langevin__read(at_driver_langevin_t *langevin)
+{
+  at_driver_langevin__read_self(langevin);
+
+  //
+  // langevin->rng does not need to be loaded, as it already loaded in
+  //  at_driver_langevin_rng__cfg_init();
+  //
+
+  return 0;
+}
+
+
+
+static int at_driver_langevin__write_self(at_driver_langevin_t *langevin)
 {
   const char *fn = langevin->file;
   FILE *fp = fopen(fn, "w");
@@ -109,11 +138,23 @@ int at_driver_langevin__write(at_driver_langevin_t *langevin)
   }
 
   ar = 1.0 - langevin->rejects/langevin->total;
-  fprintf(fp, "%.0f %.0f %g\n", langevin->total, langevin->rejects, ar);
+  fprintf(fp, "%.0f %.0f %.8f\n", langevin->total, langevin->rejects, ar);
 
   fclose(fp);
 
   return 0;
+}
+
+
+
+int at_driver_langevin__write(at_driver_langevin_t *langevin)
+{
+  int ret1, ret2;
+
+  ret1 = at_driver_langevin__write_self(langevin);
+  ret2 = at_driver_langevin_rng__save(langevin->rng);
+
+  return ret1 || ret2;
 }
 
 

@@ -32,25 +32,37 @@
 
 /* normalize damping weight back to 1.0, averages are not affected
  * if i < 0, do for all estimators */
-void at_mb_accum_winaccum__normalize(at_mb_accum_winaccum_t *winaccum, int i)
+void at_mb_accum_winaccum__normalize(
+  at_mb_accum_winaccum_t *winaccum, int i)
 {
-  int i0, i1;
 
-  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
-
-  if (i >= 0) {
-    i0 = i1 = i;
-  } else { /* normalize all estimators, if i < 0 */
-    i0 = 0;
-    i1 = winaccum->n;
+  //zcom_util__exit_if(!winaccum->enabled,
+  //    "Error@at.mb.accum.winaccum: winaccum is disabled\n");
+  if (!winaccum->enabled) {
+    return;
   }
 
-  for (i = i0; i <= i1; i++) { /* loop over estimators */
+  at_mb_accum_winaccum_item__normalize(winaccum->items+i);
+
+}
+
+
+/* normalize damping weight back to 1.0, averages are not affected
+ * if i < 0, do for all estimators */
+void at_mb_accum_winaccum__normalize_all(
+  at_mb_accum_winaccum_t *winaccum)
+{
+  int i;
+
+  if (!winaccum->enabled) {
+    return;
+  }
+
+  for (i = 0; i < winaccum->n; i++) { /* loop over accumulators */
     at_mb_accum_winaccum_item__normalize(winaccum->items+i);
   }
 
 }
-
 
 
 void at_mb_accum_winaccum__add(

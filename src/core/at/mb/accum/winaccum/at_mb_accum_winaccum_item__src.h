@@ -37,7 +37,8 @@ at_mb_sm_t *at_mb_accum_winaccum_item__get_sums(
 
 
 
-void at_mb_accum_winaccum_item__normalize(at_mb_accum_winaccum_item_t *item)
+void at_mb_accum_winaccum_item__normalize(
+    at_mb_accum_winaccum_item_t *item)
 {
   double fac;
   int j, m = item->jt - item->js;
@@ -57,7 +58,8 @@ void at_mb_accum_winaccum_item__normalize(at_mb_accum_winaccum_item_t *item)
 
 
 
-double at_mb_accum_winaccum_item__calc_total(at_mb_accum_winaccum_item_t *item)
+double at_mb_accum_winaccum_item__calc_total(
+    at_mb_accum_winaccum_item_t *item)
 {
   double total = 0.0;
   int j, m = item->jt - item->js;
@@ -108,7 +110,8 @@ void at_mb_accum_winaccum_item__add(
 
 
 
-void at_mb_accum_winaccum_item__init(at_mb_accum_winaccum_item_t *item,
+void at_mb_accum_winaccum_item__init(
+    at_mb_accum_winaccum_item_t *item,
     int i, at_mb_win_t *win)
 {
   int m;
@@ -120,7 +123,7 @@ void at_mb_accum_winaccum_item__init(at_mb_accum_winaccum_item_t *item,
 
   m = item->jt - item->js;
   if ((item->sums = (at_mb_sm_t *) calloc(m, sizeof(at_mb_sm_t))) == NULL) {
-    fprintf(stderr, "no memory for winaccum item->sums\n");
+    fprintf(stderr, "Error@at.mb.accum.winaccum: no memory for winaccum item->sums\n");
     exit(1);
   }
 
@@ -134,7 +137,8 @@ void at_mb_accum_winaccum_item__init(at_mb_accum_winaccum_item_t *item,
 
 
 
-void at_mb_accum_winaccum_item__clear(at_mb_accum_winaccum_item_t *item)
+void at_mb_accum_winaccum_item__clear(
+    at_mb_accum_winaccum_item_t *item)
 {
   int j, m = item->jt - item->js;
 
@@ -148,48 +152,105 @@ void at_mb_accum_winaccum_item__clear(at_mb_accum_winaccum_item_t *item)
 
 
 
-void at_mb_accum_winaccum_item__finish(at_mb_accum_winaccum_item_t *item)
+void at_mb_accum_winaccum_item__finish(
+    at_mb_accum_winaccum_item_t *item)
 {
   free(item->sums);
 }
 
 
 
-int at_mb_accum_winaccum_item__read_binary(at_mb_accum_winaccum_item_t *item, FILE *fp, int endn)
+int at_mb_accum_winaccum_item__read_binary(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version, int endn)
 {
   int i = item->i, itmp, j;
   at_mb_sm_t *sm;
 
+  // read the item index
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-    fprintf(stderr, "error in reading itmp\n");
+    fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading item index %d, %s\n", i, fn);
     goto ERR;
   }
+
   if (itmp != i) {
-    fprintf(stderr, "i mismatch, expect: %d, read: %d, pos: %#lx\n",
+    fprintf(stderr, "Error@at.mb.accum.winaccum: item indices mismatch, expect: %d, read: %d, pos: %#lx\n",
         i, itmp, (unsigned long) ftell(fp));
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
-  for (j = item->js; j < item->jt; j++) {
+  if (version >= 3) {
+
+    // read js
     if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
-      fprintf(stderr, "error in reading itmp\n");
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading js for window %d\n",
+          i);
       goto ERR;
     }
-    if (itmp != j) {
-      fprintf(stderr, "j mismatch, expect: %d, read: %d, pos: %#lx\n",
-          j, itmp, (unsigned long) ftell(fp));
+
+    if (itmp != item->js) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: window %d js mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, item->js, itmp, (unsigned long) ftell(fp));
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
 
+    // read jt
+    if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading js for window %d\n",
+          i);
+      goto ERR;
+    }
+
+    if (itmp != item->jt) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: window %d jt mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, item->jt, itmp, (unsigned long) ftell(fp));
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    // read amplifier
+    if (zcom_endn__fread(&item->amplifier, sizeof(double), 1, fp, endn) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading amplifier for window %d\n",
+          i);
+      goto ERR;
+    }
+
+    // read number of visits
+    if (zcom_endn__fread(&item->visits, sizeof(double), 1, fp, endn) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading visits for window %d\n",
+          i);
+      goto ERR;
+    }
+
+  }
+
+  for (j = item->js; j < item->jt; j++) {
+
+    // read the bin index
+    if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading bin index %d for window %d\n",
+          j, i);
+      goto ERR;
+    }
+
+    if (itmp != j) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: window %d, bin indices j mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, j, itmp, (unsigned long) ftell(fp));
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    // read the sums
     sm = at_mb_accum_winaccum_item__get_sums(item, j);
 
     if (0 != at_mb_sm__read_binary(sm, fp, endn)) {
-      fprintf(stderr, "error reading object winaccum->items->sums i %d j %d\n", i, j);
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error reading object winaccum->items->sums i %d j %d\n", i, j);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
+
   }
 
   return 0;
@@ -201,28 +262,66 @@ ERR:
 
 
 
-int at_mb_accum_winaccum_item__write_binary(at_mb_accum_winaccum_item_t *item, FILE *fp)
+int at_mb_accum_winaccum_item__write_binary(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version)
 {
   int i = item->i, j;
   at_mb_sm_t *sm;
 
   at_mb_accum_winaccum_item__normalize(item);
 
+  // write the item index
   if (zcom_endn__fwrite(&i, sizeof(int), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing i\n");
+    fprintf(stderr, "Error@at.mb.accum.winaccum: error in writing window index %d, %s\n",
+        item->i, fn);
     goto ERR;
   }
 
-  for (j = item->js; j < item->jt; j++) {
-    if (zcom_endn__fwrite(&j, sizeof(j), 1, fp, 1) != 1) {
-      fprintf(stderr, "error in writing j\n");
+  if (version >= 3) {
+
+    // write js and jt
+    if (zcom_endn__fwrite(&item->js, sizeof(int), 1, fp, 1) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in writing js %d for window %d\n",
+          item->js, item->i);
       goto ERR;
     }
 
+    if (zcom_endn__fwrite(&item->jt, sizeof(int), 1, fp, 1) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in writing jt %d for window %d\n",
+          item->jt, item->i);
+      goto ERR;
+    }
+
+    // write the amplifier
+    if (zcom_endn__fwrite(&item->amplifier, sizeof(double), 1, fp, 1) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in writing amplifier %g for window %d\n",
+          item->amplifier, item->i);
+      goto ERR;
+    }
+
+    // write the number of visits
+    if (zcom_endn__fwrite(&item->visits, sizeof(double), 1, fp, 1) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in writing visits %g for window %d\n",
+          item->visits, item->i);
+      goto ERR;
+    }
+
+  }
+
+  for (j = item->js; j < item->jt; j++) {
+
+    // write the bin index
+    if (zcom_endn__fwrite(&j, sizeof(j), 1, fp, 1) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in writing j\n");
+      goto ERR;
+    }
+
+    // write the accumulator data
     sm = at_mb_accum_winaccum_item__get_sums(item, j);
 
     if (0 != at_mb_sm__write_binary(sm, fp)) {
-      fprintf(stderr, "error writing object winaccum->items->sums i %d j %d\n", i, j);
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error writing object winaccum->items->sums i %d j %d\n", i, j);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -233,6 +332,140 @@ ERR:
 
   return -1;
 }
+
+
+int at_mb_accum_winaccum_item__read_text(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version)
+{
+  int i = item->i, itmp, j;
+  at_mb_sm_t *sm;
+
+  (void) version;
+
+  // read the item index
+  if (fscanf(fp, "%d", &itmp) != 1) {
+    fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading item index %d, %s\n", i, fn);
+    goto ERR;
+  }
+
+  if (itmp != i) {
+    fprintf(stderr, "Error@at.mb.accum.winaccum: item indices mismatch, expect: %d, read: %d, pos: %#lx\n",
+        i, itmp, (unsigned long) ftell(fp));
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    goto ERR;
+  }
+
+  {
+    // read js
+    if (fscanf(fp, "%d", &itmp) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading js for window %d\n",
+          i);
+      goto ERR;
+    }
+
+    if (itmp != item->js) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: window %d js mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, item->js, itmp, (unsigned long) ftell(fp));
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    // read jt
+    if (fscanf(fp, "%d", &itmp) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading js for window %d\n",
+          i);
+      goto ERR;
+    }
+
+    if (itmp != item->jt) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: window %d jt mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, item->jt, itmp, (unsigned long) ftell(fp));
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    // read amplifier
+    if (fscanf(fp, "%lf", &item->amplifier) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading amplifier for window %d\n",
+          i);
+      goto ERR;
+    }
+
+    // read number of visits
+    if (fscanf(fp, "%lf", &item->visits) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading visits for window %d\n",
+          i);
+      goto ERR;
+    }
+
+  }
+
+  for (j = item->js; j < item->jt; j++) {
+
+    // read the bin index
+    if (fscanf(fp, "%d", &itmp) != 1) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error in reading bin index %d for window %d\n",
+          j, i);
+      goto ERR;
+    }
+
+    if (itmp != j) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: window %d, bin indices j mismatch, expect: %d, read: %d, pos: %#lx\n",
+          i, j, itmp, (unsigned long) ftell(fp));
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+    // read the sums
+    sm = at_mb_accum_winaccum_item__get_sums(item, j);
+
+    if (0 != at_mb_sm__read_text(sm, fp)) {
+      fprintf(stderr, "Error@at.mb.accum.winaccum: error reading object winaccum->items->sums i %d j %d\n", i, j);
+      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+      goto ERR;
+    }
+
+  }
+
+  return 0;
+
+ERR:
+
+  return -1;
+}
+
+
+
+int at_mb_accum_winaccum_item__write_text(
+    at_mb_accum_winaccum_item_t *item,
+    const char *fn, FILE *fp, int version)
+{
+  int j;
+  at_mb_sm_t *sm;
+
+  (void) version;
+
+  at_mb_accum_winaccum_item__normalize(item);
+
+  // write the item index, js, jt, amplifier, visits
+  fprintf(fp, "%d %d %d %.15e %.15e\n",
+      item->i, item->js, item->jt, item->amplifier, item->visits);
+
+  for (j = item->js; j < item->jt; j++) {
+
+    // write the bin index
+    fprintf(fp, "%d ", j);
+
+    // write the accumulator data
+    sm = at_mb_accum_winaccum_item__get_sums(item, j);
+
+    at_mb_sm__write_text(sm, fp);
+  }
+
+  return 0;
+}
+
 
 
 #endif

@@ -16,24 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_IO_H__
-#define AT_DRIVER_LANGEVIN_IO_H__
+#ifndef AT_MB_SHK_IO_H__
+#define AT_MB_SHK_IO_H__
 
-#include "at_driver_langevin__def.h"
-#include "../../utils/at_utils.h"
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn,
-    FILE *fp,
-    int endn);
+#include "../at_mb_shk__def.h"
+#include "../../../utils/at_utils.h"
 
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp);
 
-int at_driver_langevin__read(at_driver_langevin_t *langevin);
+int at_mb_shk__read_binary(
+    at_mb_shk_t *shk,
+    at_utils_io_t *io);
 
-int at_driver_langevin__write(at_driver_langevin_t *langevin);
+int at_mb_shk__write_binary(
+    at_mb_shk_t *shk,
+    at_utils_io_t *io);
+
+int at_mb_shk__read_text(at_mb_shk_t *shk,
+    const char *fn, FILE *fp, int version);
+
+int at_mb_shk__write_text(at_mb_shk_t *shk,
+    const char *fn, FILE *fp, int version);
+
 
 #endif

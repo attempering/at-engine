@@ -29,9 +29,11 @@
 void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
     at_utils_manifest_t *manifest);
 
-int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp, int endn);
+int at_mb_accum_winaccum__read_binary(at_mb_accum_winaccum_t *winaccum,
+    const char *fn, FILE *fp, int version, int endn);
 
-int at_mb_accum_winaccum__write_binary(at_mb_accum_winaccum_t *winaccum, FILE *fp);
+int at_mb_accum_winaccum__write_binary(at_mb_accum_winaccum_t *winaccum,
+    const char *fn, FILE *fp, int version);
 
 
 #endif

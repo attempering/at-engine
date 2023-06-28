@@ -188,18 +188,57 @@ ERR:
 
 
 
+int at_mb_sm__read_text(at_mb_sm_t *sm, FILE *fp)
+{
+  if (sm == NULL) {
+    fprintf(stderr, "passing null pointer to at_mb_sm__read_text\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    return -1;
+  }
+
+  /* clear data before reading */
+  at_mb_sm__clear(sm);
+
+  if (fscanf(fp, "%lf%lf%lf%lf", &sm->s, &sm->se, &sm->se2, &sm->se3) != 4) {
+    fprintf(stderr, "Error@at.mb.sm: error in reading sm\n");
+    goto ERR;
+  }
+
+  return 0;
+
+ERR:
+
+  at_mb_sm__clear(sm);
+  return -1;
+}
+
+
+
+int at_mb_sm__write_text(at_mb_sm_t *sm, FILE *fp)
+{
+  if (sm == NULL) {
+    fprintf(stderr, "Error@at.mb.sm: passing null pointer to at_mb_sm__write_text\n");
+    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    return -1;
+  }
+
+  fprintf(fp, "%.15e %.15e %.15e %.14e\n",
+      sm->s, sm->se, sm->se2, sm->se3);
+
+  return 0;
+}
+
+
+
+
 void at_mb_sm__manifest(at_mb_sm_t *sm, FILE *fp, int arrmax)
 {
-  /* s */
   fprintf(fp, "sm->s: double, %g\n", sm->s);
 
-  /* se */
   fprintf(fp, "sm->se: double, %g\n", sm->se);
 
-  /* se2 */
   fprintf(fp, "sm->se2: double, %g\n", sm->se2);
 
-  /* se3 */
   fprintf(fp, "sm->se3: double, %g\n", sm->se3);
 
   (void) arrmax;

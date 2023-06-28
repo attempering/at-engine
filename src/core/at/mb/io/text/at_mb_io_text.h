@@ -16,24 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_IO_H__
-#define AT_DRIVER_LANGEVIN_IO_H__
+/* text IO routines for at_mb_t */
+#ifndef AT_MB_IO_TEXT_H__
+#define AT_MB_IO_TEXT_H__
 
-#include "at_driver_langevin__def.h"
-#include "../../utils/at_utils.h"
+#include "../../at_mb__def.h"
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
+#define AT_MB__FILE_TEXT_VERSION_LATEST 3
+
+int at_mb__read_text(
+    at_mb_t *mb,
     const char *fn,
-    FILE *fp,
-    int endn);
+    int *pver);
 
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp);
 
-int at_driver_langevin__read(at_driver_langevin_t *langevin);
+int at_mb__write_text_versioned(
+    at_mb_t *mb,
+    const char *fn,
+    int ver);
 
-int at_driver_langevin__write(at_driver_langevin_t *langevin);
+__inline int at_mb__write_text(
+    at_mb_t *mb,
+    const char *fn) {
+  return at_mb__write_text_versioned(mb, fn, AT_MB__FILE_TEXT_VERSION_LATEST);
+}
+
+
 
 #endif

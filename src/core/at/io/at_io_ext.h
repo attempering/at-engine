@@ -16,24 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_IO_H__
-#define AT_DRIVER_LANGEVIN_IO_H__
+#ifndef AT_IO_EXT_H___
+#define AT_IO_EXT_H___
 
-#include "at_driver_langevin__def.h"
-#include "../../utils/at_utils.h"
+#include "../at__def.h"
+#include "at_io_ext.h"
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn,
-    FILE *fp,
-    int endn);
 
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp);
+at_bool_t at__do_output_on_step(
+    const at_params_step_t *step_params,
+    at_llong_t nst,
+    at_bool_t do_on_first_step);
 
-int at_driver_langevin__read(at_driver_langevin_t *langevin);
+void at__output(
+    at_t *at,
+    const at_params_step_t *step_params);
 
-int at_driver_langevin__write(at_driver_langevin_t *langevin);
+int at__load_data(at_t *at);
+
 
 #endif

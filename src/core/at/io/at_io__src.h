@@ -16,24 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_IO_H__
-#define AT_DRIVER_LANGEVIN_IO_H__
+#ifndef AT_IO__SRC_H___
+#define AT_IO__SRC_H___
 
-#include "at_driver_langevin__def.h"
-#include "../../utils/at_utils.h"
+#include "at_io_self__src.h"
+#include "at_io_ext__src.h"
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn,
-    FILE *fp,
-    int endn);
-
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp);
-
-int at_driver_langevin__read(at_driver_langevin_t *langevin);
-
-int at_driver_langevin__write(at_driver_langevin_t *langevin);
 
 #endif
