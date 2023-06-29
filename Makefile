@@ -7,3 +7,6 @@ zip::
 
 clean::
 	$(MAKE) $@ -C src
+
+countlines::
+	find . -name "*.[ch]" | xargs wc
