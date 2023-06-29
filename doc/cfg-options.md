@@ -1,20 +1,17 @@
-# at-engine configuration file
+# Configuration files for at-engine programs
 
 ## Disclaimer
 
-The document is produced in the hope that it will be useful
+The document is produced in the hope to be useful
 for guiding the use of the at-engine code.
-However, there is no warranty or even implied one of
-merchantability of fitness for any particular purpose.
+However, there is no explicit or implied warranty of
+merchantability or fitness for any particular purpose.
 
-The document is currently still under construction and subject to change.
+The document is currently under construction and
+subject to future changes.
 
-The information contained in this document are sometimes
-personal opinions and
-cannot always be regarded as accurate or even definitive.
-The reader is warned of the fact that the existence of possible
-inaccuracies and errors in this document may lead the user to
-improperly use the program.
+The information contained in this document may not be accurate
+or up to date.
 
 Several issues for both the adaptive tempering code and the GROMACS code
 it is based on have been discovered, and some have been documented.
@@ -30,7 +27,7 @@ it may be impossible to list all of them.
 Due to limited time in preparing this document as well as
 limited knowledge on the program, errors are inevitable.
 For these, we must apologize and encourage the reader to explore
-the source code for a correct meaning of various options.
+the source code for the true meaning of various options.
 
 2023.4.26
 
@@ -46,10 +43,27 @@ This configuration file share a similar format as the GROMACS
 `.mdp` file.
 However, the two are independent.
 
-The configuration file are compiled before simulation.
+The configuration file is not compiled before simulation.
 They are read and parsed at the beginning of the simulation by the program.
 
-For a multiple-run simulation, it is important to ensure that the parameters in the configuration file are unchanged.
+For continuation runs, it is important to ensure that the parameters
+contained in the configuration file are unchanged.
+
+### Basic format
+
+The format of each option is
+
+```cfg
+key = value
+```
+
+You can freely add spaces before and after the equal sign `=`.
+
+The keys are case insensitive.
+The dashes `-` and underscores `_`
+are regarded as the same in the keys.
+For example, `beta_min` and `Beta-Min`
+mean the same thing.
 
 ### Summary of most important parameters
 
@@ -156,6 +170,8 @@ The `f(beta)` factor has three possibilities.
 * Type 2. Exponential distribution: `f(beta) = exp(-c beta)`.
           This case is not documented, and only for used for testing.
 
+* Type 3. Composite distributions.
+
 Options:
 
 * `ensemble_mode`: distribution type selector.
@@ -190,9 +206,13 @@ Options:
 
     Notes: The default value of 0.0 reproduces a flat distribution.
 
+* Type 3 options:
+
+  TODO.
+
 ### II.D. Bias potential settings
 
-Bias potential settings apply where there is specifially assigned bias potential.
+Bias potential settings apply where there is specifically assigned bias potential.
 
 `H = kappa * H0 + epsilon * H1`
 
@@ -243,7 +263,7 @@ The options are given below:
 ### II.E. Basic tempering parameters
 
 * `nsttemp`: frequency of tempering.
-  This value means that the program invokes the tempering fucntion every this number of MD steps.
+  This value means that the program invokes the tempering function every this number of MD steps.
 
   For example: for an MD simulation of `10000` steps,
   and `nsttemp = 5`, then in `2000` steps out of the `10000` steps
@@ -298,7 +318,7 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
   * 1: dT/T = d(lnT) = |d(beta)/beta| mode, meaning that the window size (in `Delta beta`) is proportional to the `lnT` value.
   
-  * 2: d(kT) mode, meaning that the window size (in `Delta beta` is proportional to the value of `kT = 1/beta`.
+  * 2: d(kT) mode, meaning that the window size (in `Delta beta`) is proportional to the value of `kT = 1/beta`.
   This means the averaging window at 600K is twice as large as the window at 300K.
 
   Default: 1
@@ -438,7 +458,7 @@ is zero and `gamma` is unity.  So we recover the normal averaging
 scheme.
 .
 
-* `mb-use-adaptive-averaging` (old `mbest_damp`): turning on adaptive averaging or not
+* `mb-use-adaptive-averaging` (old: `mbest_damp`): turning on adaptive averaging or not
 
   * 0: disabled
   * 1: enabled.
@@ -456,7 +476,11 @@ scheme.
 
   Default: 1.
 
-* `shrink0`:
+* `shrink_init`:
+
+  Default: 0.01.
+
+* `shrink_max`:
 
   Default: 0.01.
 
