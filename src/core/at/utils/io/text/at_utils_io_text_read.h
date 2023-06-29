@@ -48,6 +48,18 @@ int at_utils_io_text__read_and_compare_int(
     const char *name,
     int val_ref);
 
+int at_utils_io_text__read_bool(
+    at_utils_io_t *io,
+    int *val,
+    const char *name,
+    unsigned long flags);
+
+int at_utils_io_text__read_and_compare_bool(
+    at_utils_io_t *io,
+    at_bool_t *val,
+    const char *name,
+    at_bool_t val_ref);
+
 int at_utils_io_text__read_double(
     at_utils_io_t *io,
     double *val,
@@ -67,5 +79,9 @@ int at_utils_io_text__read_and_compare_double(
     const char *name,
     double val_ref,
     double tol);
+
+int at_utils_io_text__read_token(
+    at_utils_io_t *io,
+    const char *token_ref);
 
 #endif

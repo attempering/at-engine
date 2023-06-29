@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -g _test.c -lm && valgrind --leak-check=full ./a.out
+// gcc -g _test.c -lm && valgrind --leak-check=full --show-leak-kinds=all ./a.out
 
 
 #include "../../../distr/at_distr__src.h"
@@ -35,7 +35,8 @@ static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double beta_min, doubl
   double boltz = 1.0;
 
   at_distr__cfg_init(distr, NULL, boltz, 1);
-  at_distr_domain__init_simple(distr->domain, beta_max, beta_max, beta_del);
+  at_distr_domain__init_simple(distr->domain, beta_min, beta_max, beta_del);
+  //printf("n %d\n", distr->domain->n);exit(1);
 
   mb->distr = distr;
 

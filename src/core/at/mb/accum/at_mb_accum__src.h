@@ -23,6 +23,6 @@
 
 #include "at_mb_accum_basic__src.h"
 
-#include "at_mb_accum_io__src.h"
+#include "io/at_mb_accum_io__src.h"
 
 #endif

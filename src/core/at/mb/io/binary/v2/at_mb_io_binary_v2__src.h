@@ -40,6 +40,7 @@ int at_mb__read_binary_v2_low_level(
 {
   const int version = 2;
   int itmp;
+  at_utils_io_t io[1];
 
   if (mb == NULL) {
     fprintf(stderr, "Error@at.mb.io.binary.v2: passing null pointer to at_mb__read_binary_low_level\n");
@@ -49,6 +50,8 @@ int at_mb__read_binary_v2_low_level(
 
   /* clear data before reading */
   at_mb__clear(mb);
+
+  at_utils_io_binary__init_read(io, "at.mb.io.binary.v2", fn, fp, endn);
 
   /* n: number of temperature bins */
   if (zcom_endn__fread(&itmp, sizeof(itmp), 1, fp, endn) != 1) {
@@ -100,7 +103,7 @@ int at_mb__read_binary_v2_low_level(
     goto ERR;
   }
 
-  if (at_mb_accum__read_binary(mb->accum, fn, fp, version, endn) != 0) {
+  if (at_mb_accum__read_binary(mb->accum, io) != 0) {
     goto ERR;
   }
 
@@ -119,12 +122,15 @@ int at_mb__write_binary_v2_low_level(
     FILE *fp)
 {
   const int version = 2;
+  at_utils_io_t io[1];
 
   if (mb == NULL) {
     fprintf(stderr, "Error@at.mb.io.binary.v2: passing null pointer to at_mb__write_binary_low_level\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
+
+  at_utils_io_binary__init_write(io, "at.mb.io.binary.v2", fn, fp);
 
   /* n: number of temperature bins */
   if (zcom_endn__fwrite(&mb->distr->domain->n, sizeof(mb->distr->domain->n), 1, fp, 1) != 1) {
@@ -165,7 +171,7 @@ int at_mb__write_binary_v2_low_level(
   }
   */
 
-  if (at_mb_accum__write_binary(mb->accum, fn, fp, version) != 0) {
+  if (at_mb_accum__write_binary(mb->accum, io) != 0) {
     goto ERR;
   }
 

@@ -49,6 +49,11 @@ int at_utils_io_binary__write_int_array(
     const char *name,
     unsigned long flags);
 
+int at_utils_io_binary__write_bool(
+    at_utils_io_t *io,
+    at_bool_t val,
+    const char *name);
+
 int at_utils_io_binary__write_double(
     at_utils_io_t *io,
     double val,

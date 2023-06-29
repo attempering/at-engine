@@ -5,6 +5,7 @@
 *.zip
 _backup
 *.exe
+*.bak
 *.dat
 atdata*
 *.pdf

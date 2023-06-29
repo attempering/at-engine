@@ -117,6 +117,16 @@ int at_utils_io_binary__write_int_array(
 
 
 
+int at_utils_io_binary__write_bool(
+    at_utils_io_t *io,
+    at_bool_t val,
+    const char *name)
+{
+  return at_utils_io_binary__write_int(io, (int) val, name);
+}
+
+
+
 int at_utils_io_binary__write_double(
     at_utils_io_t *io,
     double val,

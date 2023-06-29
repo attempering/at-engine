@@ -20,7 +20,7 @@
 #define ZCOM__UTILS__SRC_H__
 
 
-#include "util.h"
+#include "utils.h"
 
 /* print an error message */
 void zcom_utils__perrmsg__(const char *file, int line, const char *reason,

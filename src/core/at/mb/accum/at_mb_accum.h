@@ -23,6 +23,6 @@
 
 #include "at_mb_accum_basic.h"
 
-#include "at_mb_accum_io.h"
+#include "io/at_mb_accum_io.h"
 
 #endif

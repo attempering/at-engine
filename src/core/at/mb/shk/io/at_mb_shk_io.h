@@ -20,23 +20,8 @@
 #define AT_MB_SHK_IO_H__
 
 
-#include "../at_mb_shk__def.h"
-#include "../../../utils/at_utils.h"
-
-
-int at_mb_shk__read_binary(
-    at_mb_shk_t *shk,
-    at_utils_io_t *io);
-
-int at_mb_shk__write_binary(
-    at_mb_shk_t *shk,
-    at_utils_io_t *io);
-
-int at_mb_shk__read_text(at_mb_shk_t *shk,
-    const char *fn, FILE *fp, int version);
-
-int at_mb_shk__write_text(at_mb_shk_t *shk,
-    const char *fn, FILE *fp, int version);
+#include "at_mb_shk_io_binary.h"
+#include "at_mb_shk_io_text.h"
 
 
 #endif

@@ -20,7 +20,7 @@
 #define ZCOM__SRC_H__
 
 #include "def/def.h"
-#include "util/util__src.h"
+#include "utils/utils__src.h"
 #include "endn/endn__src.h"
 #include "ssm/ssm__src.h"
 #include "opt/opt__src.h"

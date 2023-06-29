@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -g _test.c -lm && valgrind --leak-check=full ./a.out
+// gcc -g _test.c -lm && valgrind --leak-check=full --show-leak-kinds=all ./a.out
 
 
 #include "../../distr/at_distr__src.h"

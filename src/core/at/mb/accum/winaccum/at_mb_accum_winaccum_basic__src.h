@@ -21,7 +21,7 @@
 
 
 #include "at_mb_accum_winaccum_basic.h"
-#include "at_mb_accum_winaccum_item.h"
+#include "item/at_mb_accum_winaccum_item.h"
 
 #include "../../sm/at_mb_sm.h"
 
@@ -33,7 +33,8 @@
 /* normalize damping weight back to 1.0, averages are not affected
  * if i < 0, do for all estimators */
 void at_mb_accum_winaccum__normalize(
-  at_mb_accum_winaccum_t *winaccum, int i)
+    at_mb_accum_winaccum_t *winaccum,
+    int i)
 {
 
   //zcom_utils__exit_if(!winaccum->enabled,
@@ -50,7 +51,7 @@ void at_mb_accum_winaccum__normalize(
 /* normalize damping weight back to 1.0, averages are not affected
  * if i < 0, do for all estimators */
 void at_mb_accum_winaccum__normalize_all(
-  at_mb_accum_winaccum_t *winaccum)
+    at_mb_accum_winaccum_t *winaccum)
 {
   int i;
 
@@ -176,6 +177,18 @@ void at_mb_accum_winaccum__finish(at_mb_accum_winaccum_t *winaccum)
   }
 
   free(winaccum->items);
+}
+
+
+
+
+void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
+    at_utils_manifest_t *manifest)
+{
+
+  /* use adaptive averaging */
+  at_utils_manifest__print_bool(manifest, winaccum->enabled, "mb->accum->winaccum->enabled", "mb-use-adaptive-averaging");
+
 }
 
 

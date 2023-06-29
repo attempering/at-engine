@@ -33,6 +33,9 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   at_distr_domain_t *domain = mb->distr->domain;
   int i, n = domain->n;
 
+  zcom_utils__exit_if (n <= 0,
+      "Error@at.mb.win: failed validation: n %d > 0\n", n);
+
   win->n = n;
 
   /* bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
@@ -44,7 +47,6 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
 
   zcom_utils__exit_if ( !(win->bwmod >= 0 && win->bwmod <= 2),
       "win->bwmod: failed validation: win->bwmod >= 0 && win->bwmod <= 2\n");
-
 
   if (win->bwmod == 1) {
     /* bwdel: delta lnT */
@@ -159,7 +161,6 @@ int at_mb_win__cfg_init(at_mb_win_t* win, zcom_cfg_t *cfg, at_mb_t *mb)
   at_mb_win__make_res_windows_for_grid_estimators(n,
       win->js_bin, win->jt_bin,
       win->js_grid_res, win->jt_grid_res);
-
 
   return 0;
 }

@@ -40,32 +40,27 @@ static void at_mb__after_reading(at_mb_t *mb)
 }
 
 
-int at_mb__read(at_mb_t *mb)
+int at_mb__read(at_mb_t *mb, at_bool_t read_text_file)
 {
-  int ret, version;
+  int version;
 
-  //if (mb->use_binary_file) {
-  if (1) {
+  if (!read_text_file) {
 
-    ret = at_mb__read_binary(mb, mb->file_binary, &version);
-
-    if (ret != 0) {
-      fprintf(stderr, "Error@at.mb: failed to load at_mb_t data from %s\n", mb->file_binary);
+    if (at_mb__read_binary(mb, mb->file_binary, &version) != 0) {
+      fprintf(stderr, "Error@at.mb.io: failed to load at_mb_t data from %s\n", mb->file_binary);
       return 1;
     } else {
-      fprintf(stderr, "Info@at.mb: loaded previous at_mb_t data, %s version: %d\n",
+      fprintf(stderr, "Info@at.mb.io: loaded previous at_mb_t data, %s version: %d\n",
           mb->file_binary, version);
     }
 
   } else {
 
-    ret = at_mb__read_text(mb, mb->file_text, &version);
-
-    if (ret != 0) {
-      fprintf(stderr, "Error@at.mb: failed to load at_mb_t data from %s\n", mb->file_text);
+    if (at_mb__read_text(mb, mb->file_text, &version) != 0) {
+      fprintf(stderr, "Error@at.mb.io: failed to load at_mb_t data from %s\n", mb->file_text);
       return 1;
     } else {
-      fprintf(stderr, "Info@at.mb: loaded previous at_mb_t data, %s version: %d\n",
+      fprintf(stderr, "Info@at.mb.io: loaded previous at_mb_t data, %s version: %d\n",
         mb->file_text, version);
     }
 

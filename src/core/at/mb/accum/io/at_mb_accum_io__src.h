@@ -16,29 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_ACCUM_IO_H__
-#define AT_MB_ACCUM_IO_H__
+#ifndef AT_MB_ACCUM_IO__SRC_H__
+#define AT_MB_ACCUM_IO__SRC_H__
 
 
-#include "at_mb_accum__def.h"
-#include "../at_mb__def.h"
-#include "../win/at_mb_win.h"
-#include "../shk/at_mb_shk.h"
-#include "../../utils/at_utils.h"
+#include "at_mb_accum_io_binary__src.h"
+#include "at_mb_accum_io_text__src.h"
 
-void at_mb_accum__manifest(const at_mb_accum_t *accum,
-    at_utils_manifest_t *manifest);
-
-int at_mb_accum__read_binary(at_mb_accum_t *accum,
-    const char *fn, FILE *fp, int version, int endn);
-
-int at_mb_accum__write_binary(at_mb_accum_t *accum,
-    const char *fn, FILE *fp, int version);
-
-int at_mb_accum__read_text(at_mb_accum_t *accum,
-    const char *fn, FILE *fp, int version);
-
-int at_mb_accum__write_text(at_mb_accum_t *accum,
-    const char *fn, FILE *fp, int version);
 
 #endif

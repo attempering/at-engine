@@ -49,6 +49,11 @@ int at_utils_io_text__write_int_array(
     const char *name,
     unsigned long flags);
 
+int at_utils_io_text__write_bool(
+    at_utils_io_t *io,
+    at_bool_t val,
+    const char *name);
+
 int at_utils_io_text__write_double(
     at_utils_io_t *io,
     double val,
@@ -60,5 +65,9 @@ int at_utils_io_text__write_double_array(
     double *arr,
     const char *name,
     unsigned long flags);
+
+int at_utils_io_text__write_token(
+    at_utils_io_t *io,
+    const char *token);
 
 #endif

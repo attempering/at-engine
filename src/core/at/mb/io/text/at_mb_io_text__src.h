@@ -21,13 +21,7 @@
 #define AT_MB_IO_TEXT__SRC_H__
 
 #include "at_mb_io_text.h"
-
-/* implementation headers */
-#include "../../at_mb_basic.h"
-#include "../../sm/at_mb_sm.h"
-#include "../../accum/at_mb_accum.h"
-#include "../../../distr/at_distr.h"
-
+#include "../../../utils/at_utils.h"
 #include "../../../../zcom/zcom.h"
 
 #include "v3/at_mb_io_text_v3__src.h"
@@ -36,15 +30,13 @@
 
 static int at_mb__read_text_low_level(
     at_mb_t *mb,
-    const char* fn,
-    FILE *fp,
-    int version)
+    at_utils_io_t *io)
 {
-  if (version == 3) {
-    return at_mb__read_text_v3_low_level(mb, fn, fp);
+  if (io->version == 3) {
+    return at_mb__read_text_v3_low_level(mb, io);
   } else {
-    fprintf(stderr, "Error@at.mb.io: failed to read text file [%s] of version %d\n",
-        fn, version);
+    fprintf(stderr, "Error@at.mb.io.text: failed to read text file [%s] of version %d\n",
+        io->fn, io->version);
   }
 
   return -1;
@@ -55,33 +47,26 @@ static int at_mb__read_text_low_level(
 int at_mb__read_text(
     at_mb_t *mb,
     const char *fn,
-    int *pver)
+    int *version)
 {
-  FILE *fp;
-  int ver;
-  int i;
+  at_utils_io_t io[1];
 
-  if ((fp = fopen(fn, "r")) == NULL) {
-    fprintf(stderr, "Error@at.mb.io: failed to read text file [%s].\n", fn);
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    return -1;
-  }
+  at_utils_io_text__init_read_ex(io, "at.mb.io.text", fn);
 
-  if (fscanf(fp, "%d", &ver) != 1) {
-    fprintf(stderr, "Error@at.mb.io: error in reading version from %s\n", fn);
-    goto ERR;
-  }
-  if (pver != NULL) {
-    *pver = ver;
+  if (version) {
+    *version = io->version;
   }
 
   /* call the low-level read function for members */
-  i = at_mb__read_text_low_level(mb, fn, fp, ver);
+  if (at_mb__read_text_low_level(mb, io) != 0) {
+    goto ERR;
+  }
 
-  fclose(fp);
-  return i;
+  at_utils_io_text__finish_read_ex(io);
+  return 0;
+
 ERR:
-  fclose(fp);
+  at_utils_io_text__finish_read_ex(io);
   return -1;
 }
 
@@ -89,15 +74,13 @@ ERR:
 
 static int at_mb__write_text_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp,
-    int version)
+    at_utils_io_t *io)
 {
-  if (version == 3) {
-    return at_mb__write_text_v3_low_level(mb, fn, fp);
+  if (io->version == 3) {
+    return at_mb__write_text_v3_low_level(mb, io);
   } else {
-    fprintf(stderr, "Error@at.mb.io: failed to write text file [%s] of version %d\n",
-        fn, version);
+    fprintf(stderr, "Error@at.mb.io.text: failed to write text file [%s] of version %d\n",
+        io->fn, io->version);
   }
 
   return -1;
@@ -108,23 +91,24 @@ static int at_mb__write_text_low_level(
 int at_mb__write_text_versioned(
     at_mb_t *mb,
     const char *fn,
-    int ver)
+    int version)
 {
-  FILE *fp;
-  int i;
+  at_utils_io_t io[1];
 
-  if ((fp = fopen(fn, "w")) == NULL) {
-    fprintf(stderr, "Error@at.mb.io: failed to write text file [%s].\n", fn);
-    return -1;
-  }
-
-  fprintf(fp, "%d\n", ver);
+  at_utils_io_binary__init_write_ex(io, "at.mb.io.text", fn, version);
 
   /* call low level write function for members */
-  i = at_mb__write_text_low_level(mb, fn, fp, ver);
+  if (at_mb__write_text_low_level(mb, io) != 0) {
+    goto ERR;
+  }
 
-  fclose(fp);
-  return i;
+  at_utils_io_binary__finish_write_ex(io);
+  return 0;
+
+ERR:
+
+  at_utils_io_binary__finish_write_ex(io);
+  return -1;
 }
 
 

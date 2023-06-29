@@ -22,7 +22,7 @@
 #include "zcom__def.h"
 
 #include "def/def.h"
-#include "util/util.h"
+#include "utils/utils.h"
 #include "endn/endn.h"
 #include "ssm/ssm.h"
 #include "opt/opt.h"

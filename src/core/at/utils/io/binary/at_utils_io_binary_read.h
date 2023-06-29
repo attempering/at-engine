@@ -49,6 +49,18 @@ int at_utils_io_binary__read_and_compare_int(
     const char *name,
     int val_ref);
 
+int at_utils_io_binary__read_bool(
+    at_utils_io_t *io,
+    at_bool_t *val,
+    const char *name,
+    unsigned long flags);
+
+int at_utils_io_binary__read_and_compare_bool(
+    at_utils_io_t *io,
+    at_bool_t *val,
+    const char *name,
+    at_bool_t val_ref);
+
 int at_utils_io_binary__read_double(
     at_utils_io_t *io,
     double *val,

@@ -21,20 +21,18 @@
 #define AT_MB_IO_TEXT_V3_H__
 
 #include "../../../at_mb__def.h"
+#include "../../../../utils/at_utils.h"
 
 
 
 int at_mb__read_text_v3_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp);
-
+    at_utils_io_t *io);
 
 
 int at_mb__write_text_v3_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp);
+    at_utils_io_t *io);
 
 
 

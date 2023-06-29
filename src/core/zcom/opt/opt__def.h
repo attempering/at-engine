@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 #include "../def/def.h"
-#include "../util/util.h"
+#include "../utils/utils.h"
 
 /* option either from arguments or configuration */
 typedef struct zcom_opt_t_ {

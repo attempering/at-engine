@@ -83,7 +83,11 @@ int at_utils_io_text__read_int(
 {
   int val_tmp = 0;
 
-  fscanf(io->fp, "%d", &val_tmp);
+  if (fscanf(io->fp, "%d", &val_tmp) != 1) {
+    fprintf(stderr, "Error@%s: failed to read %s (int) from %s\n",
+        io->module, name, io->fn);
+    return -1;
+  }
 
   if (flags & AT_UTILS_IO__NONNEGATIVE) {
     if (val_tmp < 0) {
@@ -141,6 +145,28 @@ int at_utils_io_text__read_and_compare_int(
 }
 
 
+
+int at_utils_io_text__read_bool(
+    at_utils_io_t *io,
+    int *val,
+    const char *name,
+    unsigned long flags)
+{
+  return at_utils_io_text__read_int(io, (int *) val, name, flags);
+}
+
+
+int at_utils_io_text__read_and_compare_bool(
+    at_utils_io_t *io,
+    at_bool_t *val,
+    const char *name,
+    at_bool_t val_ref)
+{
+  return at_utils_io_text__read_and_compare_bool(io, (int *) val, name, (int) val_ref);
+}
+
+
+
 int at_utils_io_text__read_double(
     at_utils_io_t *io,
     double *val,
@@ -149,7 +175,11 @@ int at_utils_io_text__read_double(
 {
   double val_tmp = 0.0;
 
-  fscanf(io->fp, "%lf", &val_tmp);
+  if (fscanf(io->fp, "%lf", &val_tmp) != 1) {
+    fprintf(stderr, "Error@%s: failed to read %s (double) from %s\n",
+        io->module, name, io->fn);
+    return -1;
+  }
 
   if (flags & AT_UTILS_IO__NONNEGATIVE) {
     if (val_tmp < 0) {
@@ -236,5 +266,26 @@ int at_utils_io_text__read_and_compare_double(
   return 0;
 }
 
+
+int at_utils_io_text__read_token(
+    at_utils_io_t *io,
+    const char *token_ref)
+{
+  char token[128] = "";
+
+  if (fscanf(io->fp, "%128s", token) != 1) {
+    fprintf(stderr, "Error@%s: error in reading token %s from %s\n",
+        io->module, token_ref, io->fn);
+    return -1;
+  }
+
+  if (strcmp(token, token_ref) != 0) {
+    fprintf(stderr, "Error@%s: bad token [%s] (read) vs [%s] (expected) from [%s]\n",
+        io->module, token, token_ref, io->fn);
+    return -1;
+  }
+
+  return 0;
+}
 
 #endif

@@ -27,7 +27,7 @@ int main(void)
 {
   at_llong_t step = 0, nsteps = 100;
   double epot = 0.0;
-  const char *fn_cfg = NULL; // "at.cfg";
+  const char *fn_cfg = "at.cfg";
 
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 

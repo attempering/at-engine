@@ -19,7 +19,10 @@
 #ifndef AT_UTILS_IO__DEF_H__
 #define AT_UTILS_IO__DEF_H__
 
+
 #include <stdio.h>
+#include "../../context/at_context.h"
+
 
 typedef struct at_utils_io_t_
 {

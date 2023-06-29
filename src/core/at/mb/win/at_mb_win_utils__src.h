@@ -22,8 +22,7 @@
 
 #include "at_mb_win_utils.h"
 
-#include "../../../zcom/util/util.h"
-#include "../../../zcom/cfg/cfg.h"
+#include "../../../zcom/zcom.h"
 
 
 

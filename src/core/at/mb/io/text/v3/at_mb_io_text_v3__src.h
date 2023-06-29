@@ -34,15 +34,10 @@
 
 int at_mb__read_text_v3_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp)
+    at_utils_io_t *io)
 {
-  const int version = 3;
-  int itmp;
-
   if (mb == NULL) {
-    fprintf(stderr, "Error@at.mb.io.text.v3: passing null pointer to at_mb__read_text_low_level\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    fprintf(stderr, "Error@at.mb.io.binary.v3: passing null pointer to at_mb__read_binary_low_level\n");
     return -1;
   }
 
@@ -50,103 +45,42 @@ int at_mb__read_text_v3_low_level(
   at_mb__clear(mb);
 
   /* n: number of temperature bins */
-  if (fscanf(fp, "%d", &itmp) != 1) {
-    fprintf(stderr, "Error@at.mb.io.text.v3: error in reading itmp\n");
+  if (at_utils_io_text__read_and_compare_int(io, NULL, "n", mb->distr->domain->n) != 0) {
     goto ERR;
   }
 
-  if (itmp != mb->distr->domain->n) {
-    fprintf(stderr, "Error@at.mb.io.text.v3: mb->distr->domain->n mismatch, expect: %d, read: %d, pos: %#lx\n",
-        mb->distr->domain->n, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+  /* beta_min */
+  if (at_utils_io_text__read_and_compare_double(io, NULL, "beta_min", mb->distr->domain->beta_min, 1e-8) != 0) {
     goto ERR;
   }
 
-  {
-    double beta_min = 0.0;
-
-    if (fscanf(fp, "%lf", &beta_min) != 1) {
-      fprintf(stderr, "Error@at.mb.io.text.v3: error in reading beta_min\n");
-      goto ERR;
-    }
-    if (fabs(beta_min - mb->distr->domain->beta_min) > 1e-6) {
-      fprintf(stderr, "Error@at.mb.io.text.v3: beta_min mismatch %g (read) %g (expected)\n",
-          beta_min, mb->distr->domain->beta_min);
-      goto ERR;
-    }
-  }
-
-  {
-    double beta_max = 0.0;
-
-    if (fscanf(fp, "%lf", &beta_max) != 1) {
-      fprintf(stderr, "Error@at.mb.io.text.v3: error in reading beta_max\n");
-      goto ERR;
-    }
-    if (fabs(beta_max - mb->distr->domain->beta_max) > 1e-6) {
-      fprintf(stderr, "Error@at.mb.io.text.v3: beta_max mismatch %g (read) %g (expected)\n",
-          beta_max, mb->distr->domain->beta_max);
-      goto ERR;
-    }
+  /* beta_max */
+  if (at_utils_io_text__read_and_compare_double(io, NULL, "beta_max", mb->distr->domain->beta_max, 1e-8) != 0) {
+    goto ERR;
   }
 
   /* m: maximal number of bins in a window */
-  if (fscanf(fp, "%d", &itmp) != 1) {
-    fprintf(stderr, "Error@at.mb.io.text.v3: error in reading itmp\n");
-    goto ERR;
-  }
-
-  if (itmp != mb->win->max_win_bins) {
-    fprintf(stderr, "Error@at.mb.io.text.v3: mb->m mismatch, expect: %d, read: %d, pos: %#lx\n",
-        mb->win->max_win_bins, itmp, (unsigned long) ftell(fp));
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+  if (at_utils_io_text__read_and_compare_int(io, NULL, "m", mb->win->max_win_bins) != 0) {
     goto ERR;
   }
 
   /* total_visits: total number of visits, number of tempering steps */
-  {
-    double total_visits = 0.0;
-
-    if (fscanf(fp, "%lf", &total_visits) != 1) {
-      fprintf(stderr, "Error@at.mb.io.text.v3: error in reading mb->total_visits\n");
-      goto ERR;
-    }
-    if (total_visits <= 0) {
-      fprintf(stderr, "Error@at.mb.io.text.v3: mb->total_visits: failed validation: mb->total_visits > 0\n");
-      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-      goto ERR;
-    }
-
-    fprintf(stderr, "Info@at.mb.io: setting mb->total_visits %g => %g\n",
-      mb->total_visits, total_visits);
-    mb->total_visits = total_visits;
-  }
-
-  {
-    double visits = 0.0;
-    int i, n = mb->distr->domain->n;
-
-    for (i = 0; i < n; i++) {
-      if (fscanf(fp, "%lf", &visits) != 1) {
-        fprintf(stderr, "Error@at.mb.io.text.v3: error in reading mb->visits[%d]\n", i);
-        goto ERR;
-      }
-      if (visits <= 0) {
-        fprintf(stderr, "Error@at.mb.io.text.v3: mb->visits[%d]: failed validation: mb->visits > 0\n", i);
-        goto ERR;
-      }
-
-      fprintf(stderr, "Info@at.mb.io: setting mb->visits[%d] %g => %g\n",
-          i, mb->visits[i], visits);
-      mb->visits[i] = visits;
-    }
-  }
-
-  if (at_mb_shk__read_text(mb->shk, fn, fp, version) != 0) {
+  if (at_utils_io_text__read_double(io, &mb->total_visits,
+      "total_visits", AT_UTILS_IO__NONNEGATIVE) != 0) {
     goto ERR;
   }
 
-  if (at_mb_accum__read_text(mb->accum, fn, fp, version) != 0) {
+  /* visits: number of visits to bins */
+  if (at_utils_io_text__read_double_array(io, mb->distr->domain->n, mb->visits,
+      "mb->visits", AT_UTILS_IO__NONNEGATIVE) != 0) {
+    goto ERR;
+  }
+
+  if (at_mb_shk__read_text(mb->shk, io) != 0) {
+    goto ERR;
+  }
+
+  if (at_mb_accum__read_text(mb->accum, io) != 0) {
     goto ERR;
   }
 
@@ -161,37 +95,29 @@ ERR:
 
 int at_mb__write_text_v3_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp)
+    at_utils_io_t *io)
 {
   const int version = 3;
 
-  if (mb == NULL) {
-    fprintf(stderr, "Error@at.mb.io.text.v3: passing null pointer to at_mb__write_text_low_level\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    return -1;
-  }
+  zcom_utils__exit_if (mb == NULL,
+    "Error@at.mb.io.text.v3: passing null pointer to at_mb__write_text_low_level\n");
 
-  fprintf(fp, "%d %g %g %d %.15e\n",
+  fprintf(io->fp, "%d %g %g %d %.15e\n",
       mb->distr->domain->n,
       mb->distr->domain->beta_min,
       mb->distr->domain->beta_max,
       mb->win->max_win_bins,
       mb->total_visits);
 
-  {
-    int i, n = mb->distr->domain->n;
-
-    for (i = 0; i < n; i++) {
-      fprintf(fp, "%.15e\n", mb->visits[i]);
-    }
-  }
-
-  if (at_mb_shk__write_text(mb->shk, fn, fp, version) != 0) {
+  if (at_utils_io_text__write_double_array(io, mb->distr->domain->n, mb->visits, "mb->visits", 0)) {
     goto ERR;
   }
 
-  if (at_mb_accum__write_text(mb->accum, fn, fp, version) != 0) {
+  if (at_mb_shk__write_text(mb->shk, io) != 0) {
+    goto ERR;
+  }
+
+  if (at_mb_accum__write_text(mb->accum, io) != 0) {
     goto ERR;
   }
 

@@ -33,7 +33,7 @@
 
 
 
-int at_mb__read(at_mb_t *mb);
+int at_mb__read(at_mb_t *mb, at_bool_t read_text_file);
 
 
 int at_mb__write(at_mb_t *mb, at_bool_t write_text_file);

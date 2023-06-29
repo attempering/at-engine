@@ -73,45 +73,31 @@ int at_mb__read_binary_v3_low_level(
   }
 
   /* total_visits: total number of visits, number of tempering steps */
-  if (at_utils_io_binary__read_double(io, &mb->total_visits, "total_visits", AT_UTILS_IO__NONNEGATIVE) != 0) {
+  if (at_utils_io_binary__read_double(io, &mb->total_visits,
+      "total_visits", AT_UTILS_IO__NONNEGATIVE) != 0) {
     goto ERR;
   }
 
-  /* visits: number of visits */
-  {
-    double visits = 0.0;
-    int i, n = mb->distr->domain->n;
-
-    for (i = 0; i < n; i++) {
-      if (zcom_endn__fread(&visits, sizeof(visits), 1, fp, endn) != 1) {
-        fprintf(stderr, "Error@at.mb.io.binary.v3: error in reading visits[%d] from %s\n",
-            i, fn);
-        goto ERR;
-      }
-      if (visits < 0) {
-        fprintf(stderr, "Error@at.mb.io.binary.v3: mb->visits[%d]: failed validation: mb->visits[%d] > 0 from %s\n",
-            i, i, fn);
-        goto ERR;
-      }
-
-      //fprintf(stderr, "Info@at.mb.io: setting mb->visits[%d] %g => %g\n",
-      //    i, mb->visits[i], visits);
-      mb->visits[i] = visits;
-    }
+  /* visits: number of visits to bins */
+  if (at_utils_io_binary__read_double_array(io, mb->distr->domain->n, mb->visits,
+      "mb->visits", AT_UTILS_IO__NONNEGATIVE) != 0) {
+    goto ERR;
   }
 
   if (at_mb_shk__read_binary(mb->shk, io) != 0) {
     goto ERR;
   }
 
-  if (at_mb_accum__read_binary(mb->accum, fn, fp, version, endn) != 0) {
+  if (at_mb_accum__read_binary(mb->accum, io) != 0) {
     goto ERR;
   }
 
   return 0;
 
 ERR:
+
   at_mb__clear(mb);
+
   return -1;
 }
 
@@ -170,7 +156,7 @@ int at_mb__write_binary_v3_low_level(
     goto ERR;
   }
 
-  if (at_mb_accum__write_binary(mb->accum, fn, fp, version) != 0) {
+  if (at_mb_accum__write_binary(mb->accum, io) != 0) {
     goto ERR;
   }
 

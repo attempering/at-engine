@@ -229,5 +229,45 @@ void at_mb_accum__finish(at_mb_accum_t *accum)
 }
 
 
+void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *manifest)
+{
+  int i;
+  FILE *fp = manifest->fp;
+  int arrmax = manifest->arr_max_items;
+
+  /* sums: normal data */
+  if (accum->sums != NULL) {
+    fprintf(fp, "mb->accum->sums: at_mb_sm_t array of accum->n:");
+
+    for (i = accum->n-1; i >= 0; i--) {
+      if (accum->sums[i].s != 0) {
+        break;
+      }
+    }
+
+    if (i >= 0) {
+      fprintf(fp, "\n");
+      for (i = 0; i < accum->n; i++) {
+        if (i == arrmax && i < accum->n-arrmax) {
+          fprintf(fp, "\n...\n");
+        }
+        if (arrmax >= 0 && i >= arrmax && i < (accum->n-arrmax)) continue;
+        fprintf(fp, "mb->accum->sums[%d]:\n", i);
+        at_mb_sm__manifest(accum->sums+i, fp, arrmax);
+      }
+    } else {
+      fprintf(fp, " {0}\n");
+    }
+  }
+
+  at_mb_accum_winaccum__manifest(accum->winaccum, manifest);
+
+  /* win_total: total of sum.s over a multiple-bine temperature window */
+  at_utils_manifest__print_double_arr(manifest, accum->win_total, accum->n, "mb->accum->win_total");
+
+}
+
+
+
 
 #endif

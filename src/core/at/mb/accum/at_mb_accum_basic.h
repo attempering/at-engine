@@ -52,4 +52,7 @@ void at_mb_accum__clear(at_mb_accum_t *accum);
 
 void at_mb_accum__finish(at_mb_accum_t *accum);
 
+void at_mb_accum__manifest(const at_mb_accum_t *accum,
+    at_utils_manifest_t *manifest);
+
 #endif
