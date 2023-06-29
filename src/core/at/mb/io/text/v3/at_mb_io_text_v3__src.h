@@ -97,8 +97,6 @@ int at_mb__write_text_v3_low_level(
     at_mb_t *mb,
     at_utils_io_t *io)
 {
-  const int version = 3;
-
   zcom_utils__exit_if (mb == NULL,
     "Error@at.mb.io.text.v3: passing null pointer to at_mb__write_text_low_level\n");
 

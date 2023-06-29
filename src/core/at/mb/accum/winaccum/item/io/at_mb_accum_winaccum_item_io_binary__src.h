@@ -32,7 +32,7 @@ int at_mb_accum_winaccum_item__read_binary(
     at_mb_accum_winaccum_item_t *item,
     at_utils_io_t *io)
 {
-  int i = item->i, itmp, j;
+  int j;
   at_mb_sm_t *sm;
 
   /* item index */
@@ -72,7 +72,7 @@ int at_mb_accum_winaccum_item__read_binary(
 
     if (0 != at_mb_sm__read_binary(sm, io->fp, io->endn)) {
       fprintf(stderr, "Error@at.mb.accum.winaccum: [%s] error reading object winaccum->items->sums i %d j %d\n",
-          io->fn, i, j);
+          io->fn, item->i, j);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }

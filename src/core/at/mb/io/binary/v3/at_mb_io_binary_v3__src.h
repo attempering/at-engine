@@ -35,13 +35,8 @@
 
 int at_mb__read_binary_v3_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp,
-    int endn)
+    at_utils_io_t *io)
 {
-  const int version = 3;
-  at_utils_io_t io[1];
-
   if (mb == NULL) {
     fprintf(stderr, "Error@at.mb.io.binary.v3: passing null pointer to at_mb__read_binary_low_level\n");
     return -1;
@@ -49,8 +44,6 @@ int at_mb__read_binary_v3_low_level(
 
   /* clear data before reading */
   at_mb__clear(mb);
-
-  at_utils_io_binary__init_read(io, "at.mb.io.binary.v3", fn, fp, endn);
 
   /* n: number of temperature bins */
   if (at_utils_io_binary__read_and_compare_int(io, NULL, "n", mb->distr->domain->n) != 0) {
@@ -105,50 +98,35 @@ ERR:
 
 int at_mb__write_binary_v3_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp)
+    at_utils_io_t *io)
 {
-  const int version = 3;
-  at_utils_io_t io[1];
+  zcom_utils__exit_if (mb == NULL,
+    "Error@at.mb.io.binary.v3: passing null pointer to at_mb__write_binary_v3_low_level\n");
 
-  if (mb == NULL) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: passing null pointer to at_mb__write_binary_low_level\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    return -1;
-  }
-
-  at_utils_io_binary__init_write(io, "at.mb.io.binary.v3", fn, fp);
-
-  if (zcom_endn__fwrite(&mb->distr->domain->n, sizeof(mb->distr->domain->n), 1, fp, 1) != 1) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: error in writing mb->distr->domain->n\n");
+  if (at_utils_io_binary__write_int(io, mb->distr->domain->n, "n") != 0) {
     goto ERR;
   }
 
-  if (zcom_endn__fwrite(&mb->distr->domain->beta_min, sizeof(mb->distr->domain->beta_min), 1, fp, 1) != 1) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: error in writing mb->distr->domain->beta_min\n");
+  if (at_utils_io_binary__write_double(io, mb->distr->domain->beta_min, "beta_min") != 0) {
     goto ERR;
   }
 
-  if (zcom_endn__fwrite(&mb->distr->domain->beta_max, sizeof(mb->distr->domain->beta_max), 1, fp, 1) != 1) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: error in writing mb->distr->domain->beta_max\n");
+  if (at_utils_io_binary__write_double(io, mb->distr->domain->beta_min, "beta_max") != 0) {
     goto ERR;
   }
 
   /* m: maximal number of bins in a window */
-  if (zcom_endn__fwrite(&mb->win->max_win_bins, sizeof(mb->win->max_win_bins), 1, fp, 1) != 1) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: error in writing mb->win->max_win_bins\n");
+  if (at_utils_io_binary__write_int(io, mb->win->max_win_bins, "m") != 0) {
     goto ERR;
   }
 
   /* total_visits: total number of visits, number of tempering steps */
-  if (zcom_endn__fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: error in writing mb->total_visits\n");
+  if (at_utils_io_binary__write_double(io, mb->total_visits, "mb->total_visits") != 0) {
     goto ERR;
   }
 
   /* visits: number of visits */
-  if (zcom_endn__fwrite(mb->visits, sizeof(mb->visits[0]), mb->distr->domain->n, fp, 1) != mb->distr->domain->n) {
-    fprintf(stderr, "Error@at.mb.io.binary.v3: error in writing mb->visits\n");
+  if (at_utils_io_binary__write_double_array(io, mb->distr->domain->n, mb->visits, "mb->visits", 0) != 0) {
     goto ERR;
   }
 

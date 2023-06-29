@@ -21,21 +21,16 @@
 #define AT_MB_IO_BINARY_V2_H__
 
 #include "../../../at_mb__def.h"
-
+#include "../../../../utils/at_utils.h"
 
 
 int at_mb__read_binary_v2_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp,
-    int endn);
-
-
+    at_utils_io_t *io);
 
 int at_mb__write_binary_v2_low_level(
     at_mb_t *mb,
-    const char *fn,
-    FILE *fp);
+    at_utils_io_t *io);
 
 
 #endif

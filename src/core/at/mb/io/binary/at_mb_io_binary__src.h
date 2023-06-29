@@ -37,18 +37,15 @@
 
 static int at_mb__read_binary_low_level(
     at_mb_t *mb,
-    const char* fn,
-    FILE *fp,
-    int version,
-    int endn)
+    at_utils_io_t *io)
 {
-  if (version == 2) {
-    return at_mb__read_binary_v2_low_level(mb, fn, fp, endn);
-  } else if (version == 3) {
-    return at_mb__read_binary_v3_low_level(mb, fn, fp, endn);
+  if (io->version == 2) {
+    return at_mb__read_binary_v2_low_level(mb, io);
+  } else if (io->version == 3) {
+    return at_mb__read_binary_v3_low_level(mb, io);
   } else {
-    fprintf(stderr, "Error@at.mb: failed to read binary file [%s] of version %d\n",
-        fn, version);
+    fprintf(stderr, "Error@at.mb.io.binary: failed to read binary file [%s] of version %d\n",
+        io->fn, io->version);
   }
 
   return -1;
@@ -72,7 +69,7 @@ int at_mb__read_binary(
   }
 
   /* call the low-level read function for members */
-  if (at_mb__read_binary_low_level(mb, io->fn, io->fp, io->version, io->endn) != 0) {
+  if (at_mb__read_binary_low_level(mb, io) != 0) {
     goto ERR;
   }
 
@@ -91,9 +88,9 @@ static int at_mb__write_binary_low_level(
     at_utils_io_t *io)
 {
   if (io->version == 2) {
-    return at_mb__write_binary_v2_low_level(mb, io->fn, io->fp);
+    return at_mb__write_binary_v2_low_level(mb, io);
   } else if (io->version == 3) {
-    return at_mb__write_binary_v3_low_level(mb, io->fn, io->fp);
+    return at_mb__write_binary_v3_low_level(mb, io);
   } else {
     fprintf(stderr, "Error@%s: failed to write binary file [%s] of version %d\n",
         io->module, io->fn, io->version);
