@@ -58,6 +58,9 @@ int at_mb_accum_winaccum__read_binary(
 
 ERR:
 
+      printf("err: %d %d\n", io->version, winaccum->enabled);getchar();
+
+
   return -1;
 }
 

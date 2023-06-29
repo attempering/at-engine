@@ -124,7 +124,7 @@ at_bool_t compare_files(const char *dir1, const char *dir2,
 
   sprintf(cmd, "cmp %s/%s %s/%s", dir1, fn, dir2, fn);
   ret = system(cmd);
-  fprintf(stderr, "cmp returns %d\n", ret);
+  fprintf(stderr, "cmp %s returns %d\n", fn, ret);
   passed = (ret == 0);
 
   return passed;
@@ -200,7 +200,7 @@ int do_test(const char *fn_cfg)
   }
 
   fprintf(stderr, "at->beta %g vs %g\n", at1->beta, at2->beta);
-  //getchar();
+  //exit(1); getchar();
 
   // 5. at1 and at2 both continue sampling for another n_times
   do_sampling(at1, at2, n_times, n_times);

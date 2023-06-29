@@ -95,19 +95,19 @@ int at_mb__write_text_versioned(
 {
   at_utils_io_t io[1];
 
-  at_utils_io_binary__init_write_ex(io, "at.mb.io.text", fn, version);
+  at_utils_io_text__init_write_ex(io, "at.mb.io.text", fn, version);
 
   /* call low level write function for members */
   if (at_mb__write_text_low_level(mb, io) != 0) {
     goto ERR;
   }
 
-  at_utils_io_binary__finish_write_ex(io);
+  at_utils_io_text__finish_write_ex(io);
   return 0;
 
 ERR:
 
-  at_utils_io_binary__finish_write_ex(io);
+  at_utils_io_text__finish_write_ex(io);
   return -1;
 }
 

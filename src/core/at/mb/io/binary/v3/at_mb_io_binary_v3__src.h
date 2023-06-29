@@ -111,7 +111,7 @@ int at_mb__write_binary_v3_low_level(
     goto ERR;
   }
 
-  if (at_utils_io_binary__write_double(io, mb->distr->domain->beta_min, "beta_max") != 0) {
+  if (at_utils_io_binary__write_double(io, mb->distr->domain->beta_max, "beta_max") != 0) {
     goto ERR;
   }
 

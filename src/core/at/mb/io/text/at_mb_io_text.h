@@ -20,7 +20,7 @@
 #ifndef AT_MB_IO_TEXT_H__
 #define AT_MB_IO_TEXT_H__
 
-#include "../../at_mb__def.h"
+#include "v3/at_mb_io_text_v3.h"
 
 #define AT_MB__FILE_TEXT_VERSION_LATEST 3
 

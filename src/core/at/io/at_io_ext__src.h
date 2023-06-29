@@ -101,13 +101,17 @@ static void at__write_trace(at_t *at,
 }
 
 
-static void at__write(at_t *at)
+void at__write(at_t *at, at_bool_t save_eh)
 {
-    at__write_self(at);
-    at_mb__write(at->mb, at->write_text_file);
-    //at_mb__write_legacy(at->mb, at->driver->langevin, at->beta);
-    at_mb__write_ze_file(at->mb, NULL);
-    at_driver__write(at->driver);
+  at__write_self(at);
+  at_mb__write(at->mb, at->write_text_file);
+  //at_mb__write_legacy(at->mb, at->driver->langevin, at->beta);
+  at_mb__write_ze_file(at->mb, NULL);
+  at_driver__write(at->driver);
+
+  if (save_eh) {
+    at_eh__write(at->eh, at->write_text_file);
+  }
 }
 
 
@@ -118,11 +122,7 @@ void at__output(
 {
   // to save mb and langevin data
   if (at__do_output_on_step(step_params, at->mb->nst_save_av, AT__FALSE)) {
-    at__write(at);
-    at_mb__write(at->mb, at->write_text_file);
-    //at_mb__write_legacy(at->mb, at->driver->langevin, at->beta);
-    at_mb__write_ze_file(at->mb, NULL);
-    at_driver__write(at->driver);
+    at__write(at, AT__FALSE);
   }
 
   // print suggestions

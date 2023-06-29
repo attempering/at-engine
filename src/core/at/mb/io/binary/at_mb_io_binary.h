@@ -20,15 +20,6 @@
 #ifndef AT_MB_IO_BINARY_H__
 #define AT_MB_IO_BINARY_H__
 
-#include "at_mb_io_binary.h"
-
-/* implementation headers */
-#include "../../at_mb_basic.h"
-#include "../../sm/at_mb_sm.h"
-#include "../../accum/at_mb_accum.h"
-#include "../../../distr/at_distr.h"
-
-#include "../../../../zcom/zcom.h"
 
 #include "v2/at_mb_io_binary_v2.h"
 #include "v3/at_mb_io_binary_v3.h"

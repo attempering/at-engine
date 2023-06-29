@@ -112,10 +112,6 @@ int at_mb_accum_winaccum_item__write_binary(
       goto ERR;
     }
 
-    if (at_utils_io_binary__write_int(io, item->jt, "winaccum_item->jt") != 0) {
-      goto ERR;
-    }
-
     if (at_utils_io_binary__write_double(io, item->amplifier, "winaccum_item->amplifier") != 0) {
       goto ERR;
     }

@@ -162,7 +162,7 @@ int at_utils_io_text__read_and_compare_bool(
     const char *name,
     at_bool_t val_ref)
 {
-  return at_utils_io_text__read_and_compare_bool(io, (int *) val, name, (int) val_ref);
+  return at_utils_io_text__read_and_compare_int(io, (int *) val, name, (int) val_ref);
 }
 
 

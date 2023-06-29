@@ -28,6 +28,8 @@ at_bool_t at__do_output_on_step(
     at_llong_t nst,
     at_bool_t do_on_first_step);
 
+void at__write(at_t *at, at_bool_t save_eh);
+
 void at__output(
     at_t *at,
     const at_params_step_t *step_params);
