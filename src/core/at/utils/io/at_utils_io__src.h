@@ -20,5 +20,6 @@
 #define AT_UTILS_IO__SRC_H__
 
 #include "binary/at_utils_io_binary__src.h"
+#include "text/at_utils_io_text__src.h"
 
 #endif

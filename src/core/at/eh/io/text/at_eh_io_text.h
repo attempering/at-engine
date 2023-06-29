@@ -16,18 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_EH_IO_H__
-#define AT_EH_IO_H__
+#ifndef AT_EH_IO_TEXT_H__
+#define AT_EH_IO_TEXT_H__
 
-#include "../at_eh__def.h"
+#include "../../at_eh__def.h"
 
-#include "binary/at_eh_io_binary.h"
-#include "text/at_eh_io_text.h"
+/* at_eh__read_text: read at_mb_t/eh data as text */
+int at_eh__read_text(at_eh_t *eh, const char *fn, int *version);
 
-#include "../../utils/at_utils.h"
-
-int at_eh__read(at_eh_t *eh, at_bool_t read_text_file);
-
-int at_eh__write(at_eh_t *eh, at_bool_t write_text_file);
+/* at_eh__write_text: write at_mb_t/eh data as text */
+int at_eh__write_text(at_eh_t *eh, const char *fn, int version);
 
 #endif

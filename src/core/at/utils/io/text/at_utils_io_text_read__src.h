@@ -16,59 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_IO_BINARY_READ__SRC_H__
-#define AT_UTILS_IO_BINARY_READ__SRC_H__
+#ifndef AT_UTILS_IO_TEXT_READ__SRC_H__
+#define AT_UTILS_IO_TEXT_READ__SRC_H__
 
-#include "at_utils_io_binary_read.h"
+#include "at_utils_io_text_read.h"
 
 #include "../../../../zcom/zcom.h"
 
 
-int at_utils_io_binary__init_read(
+int at_utils_io_text__init_read(
     at_utils_io_t *io,
     const char *module,
     const char *fn,
-    FILE *fp,
-    int endn)
+    FILE *fp)
 {
   io->module = module;
   io->fn = fn;
   io->fp = fp;
-  io->endn = endn;
 
   return 0;
 }
 
 
-int at_utils_io_binary__init_read_ex(
+int at_utils_io_text__init_read_ex(
     at_utils_io_t *io,
     const char *module,
     const char *fn)
 {
-  int itmp;
-
   io->module = module;
   io->fn = fn;
 
-  if ((io->fp = fopen(io->fn, "rb")) == NULL) {
-    fprintf(stderr, "Error@%s: cannot read binary file [%s].\n",
+  if ((io->fp = fopen(io->fn, "r")) == NULL) {
+    fprintf(stderr, "Error@%s: cannot read text file [%s].\n",
         io->module, io->fn);
     return -1;
   }
 
-  /* determine the endianness */
-  if ((io->endn = zcom_endn__rmatchi(&itmp, sizeof(int), io->fp)) < 0) {
-    fprintf(stderr, "Error@%s: itmp 0x%X cannot match sizeof(int) 0x%X\n",
-        io->module, (unsigned) itmp, (unsigned) sizeof(int));
-    goto ERR;
-  }
-
-  if (at_utils_io_binary__read_and_compare_int(io, NULL, "sizeof(double)", (int) sizeof(double)) != 0) {
-    goto ERR;
-  }
-
   io->version = 0;
-  if (at_utils_io_binary__read_int(io, &io->version, "version", 0) != 0) {
+  if (at_utils_io_text__read_int(io, &io->version, "version", 0) != 0) {
     goto ERR;
   }
 
@@ -82,7 +67,7 @@ ERR:
 
 
 
-void at_utils_io_binary__finish_read_ex(at_utils_io_t *io)
+void at_utils_io_text__finish_read_ex(at_utils_io_t *io)
 {
   if (io->fp) {
     fclose(io->fp);
@@ -90,7 +75,7 @@ void at_utils_io_binary__finish_read_ex(at_utils_io_t *io)
 }
 
 
-int at_utils_io_binary__read_int(
+int at_utils_io_text__read_int(
     at_utils_io_t *io,
     int *val,
     const char *name,
@@ -98,12 +83,7 @@ int at_utils_io_binary__read_int(
 {
   int val_tmp = 0;
 
-  if (zcom_endn__fread(&val_tmp, sizeof(int), 1, io->fp, io->endn) != 1) {
-    fprintf(stderr, "Error@%s: error in reading %s from %s\n",
-        io->module, name, io->fn);
-    return -1;
-  }
-
+  fscanf(io->fp, "%d", &val_tmp);
 
   if (flags & AT_UTILS_IO__NONNEGATIVE) {
     if (val_tmp < 0) {
@@ -135,7 +115,7 @@ int at_utils_io_binary__read_int(
 
 
 
-int at_utils_io_binary__read_and_compare_int(
+int at_utils_io_text__read_and_compare_int(
     at_utils_io_t *io,
     int *val,
     const char *name,
@@ -143,7 +123,7 @@ int at_utils_io_binary__read_and_compare_int(
 {
   int val_tmp = 0;
 
-  if (at_utils_io_binary__read_int(io, &val_tmp, name, 0) != 0) {
+  if (at_utils_io_text__read_int(io, &val_tmp, name, 0) != 0) {
     return -1;
   }
 
@@ -161,7 +141,7 @@ int at_utils_io_binary__read_and_compare_int(
 }
 
 
-int at_utils_io_binary__read_double(
+int at_utils_io_text__read_double(
     at_utils_io_t *io,
     double *val,
     const char *name,
@@ -169,11 +149,7 @@ int at_utils_io_binary__read_double(
 {
   double val_tmp = 0.0;
 
-  if (zcom_endn__fread(&val_tmp, sizeof(double), 1, io->fp, io->endn) != 1) {
-    fprintf(stderr, "Error@%s: error in reading %s from %s\n",
-        io->module, name, io->fn);
-    return -1;
-  }
+  fscanf(io->fp, "%lf", &val_tmp);
 
   if (flags & AT_UTILS_IO__NONNEGATIVE) {
     if (val_tmp < 0) {
@@ -202,7 +178,7 @@ int at_utils_io_binary__read_double(
 }
 
 
-int at_utils_io_binary__read_double_array(
+int at_utils_io_text__read_double_array(
     at_utils_io_t *io,
     int n,
     double *arr,
@@ -212,7 +188,7 @@ int at_utils_io_binary__read_double_array(
   int i;
 
   if (flags & AT_UTILS_IO__ARRAY_COUNT) {
-    if (at_utils_io_binary__read_and_compare_int(io, NULL, "_array_cnt_", n) != 0) {
+    if (at_utils_io_text__read_and_compare_int(io, NULL, "_array_cnt_", n) != 0) {
       return -1;
     }
   }
@@ -220,7 +196,7 @@ int at_utils_io_binary__read_double_array(
   for (i = 0; i < n; i++) {
     double item;
 
-    if (at_utils_io_binary__read_double(io, &item, name, flags) != 0) {
+    if (at_utils_io_text__read_double(io, &item, name, flags) != 0) {
       return -1;
     }
 
@@ -234,7 +210,7 @@ int at_utils_io_binary__read_double_array(
 
 
 
-int at_utils_io_binary__read_and_compare_double(
+int at_utils_io_text__read_and_compare_double(
     at_utils_io_t *io,
     double *val,
     const char *name,
@@ -243,7 +219,7 @@ int at_utils_io_binary__read_and_compare_double(
 {
   double val_tmp = 0.0;
 
-  if (at_utils_io_binary__read_double(io, &val_tmp, name, 0) != 0) {
+  if (at_utils_io_text__read_double(io, &val_tmp, name, 0) != 0) {
     return -1;
   }
 

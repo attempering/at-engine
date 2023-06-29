@@ -20,5 +20,7 @@
 #define AT_UTILS_IO_H__
 
 #include "binary/at_utils_io_binary.h"
+#include "text/at_utils_io_text.h"
+
 
 #endif

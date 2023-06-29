@@ -27,49 +27,6 @@
 
 
 
-int at__read_self_text(
-    at_t *at,
-    const char *fn)
-{
-  FILE *fp;
-
-  if ((fp = fopen(fn, "r")) == NULL) {
-    fprintf(stderr, "Error@at.io: failed to read %s\n", fn);
-    return -1;
-  }
-
-  if (fscanf(fp, "%lf%lf", &at->beta, &at->energy) != 2) {
-    fclose(fp);
-    return -1;
-  }
-
-  fclose(fp);
-
-  return 0;
-}
-
-
-
-int at__write_self_text(
-    at_t *at,
-    const char *fn)
-{
-  FILE *fp;
-
-  if ((fp = fopen(fn, "w")) == NULL) {
-    fprintf(stderr, "Error@at.io: failed to write %s\n", fn);
-    return -1;
-  }
-
-  fprintf(fp, "%.15e %.15e %.15e\n", at->beta, at->energy, at->force_scale);
-
-  fclose(fp);
-
-  return 0;
-}
-
-
-
 int at__write_self_binary(
     at_t *at,
     const char *fn)
@@ -135,6 +92,59 @@ ERR:
   return -1;
 }
 
+
+
+
+int at__read_self_text(
+    at_t *at,
+    const char *fn)
+{
+  at_utils_io_t io[1];
+
+  at_utils_io_text__init_read_ex(io, "at.io", fn);
+
+  if (at_utils_io_text__read_double(io, &at->beta, "at->beta",
+      AT_UTILS_IO__VERBOSE) != 0) {
+      goto ERR;
+  }
+
+  if (at_utils_io_text__read_double(io, &at->energy, "at->energy",
+      AT_UTILS_IO__VERBOSE) != 0) {
+      goto ERR;
+  }
+
+  at_utils_io_text__finish_read_ex(io);
+
+  return 0;
+
+ERR:
+
+  at_utils_io_text__finish_read_ex(io);
+
+  return -1;
+}
+
+
+
+int at__write_self_text(
+    at_t *at,
+    const char *fn)
+{
+  at_utils_io_t io[1];
+  const int version = 1;
+
+  at_utils_io_text__init_write_ex(io, "at.io", fn, version);
+
+  at_utils_io_text__write_double(io, at->beta, "at->beta");
+
+  at_utils_io_text__write_double(io, at->energy, "at->energy");
+
+  at_utils_io_text__write_double(io, at->force_scale, "at->force_scale");
+
+  at_utils_io_text__finish_write_ex(io);
+
+  return 0;
+}
 
 
 

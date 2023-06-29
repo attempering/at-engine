@@ -24,14 +24,22 @@
 
 /* include the source code of sub-modules */
 #include "binary/at_eh_io_binary__src.h"
+#include "text/at_eh_io_text__src.h"
 
 #include "../../../zcom/zcom.h"
 
-int at_eh__read(at_eh_t *eh)
+int at_eh__read(at_eh_t *eh, at_bool_t read_text_file)
 {
-  int ret = 0, version;
+  int ret = 0;
+  int version = 0;
 
-  if (eh != NULL && eh->mode != 0) {
+  if (eh == NULL || eh->mode == 0) {
+    return 0;
+  }
+
+  if (read_text_file) {
+    ret = at_eh__read_text(eh, eh->file, &version);
+  } else {
     ret = at_eh__read_binary(eh, eh->file, &version);
   }
 
@@ -40,16 +48,22 @@ int at_eh__read(at_eh_t *eh)
 
 
 
-int at_eh__write(at_eh_t *eh)
+int at_eh__write(at_eh_t *eh, at_bool_t write_text_file)
 {
-  int ret = 0;
-  const int version = 0;
+  int ret = 0, ret2 = 0;
+  const int version = 2;
 
-  if (eh != NULL && eh->mode != 0) {
-    ret = at_eh__write_binary(eh, eh->file, version);
+  if (eh == NULL || eh->mode == 0) {
+    return 0;
   }
 
-  return ret;
+  ret = at_eh__write_binary(eh, eh->file_binary, version);
+
+  if (write_text_file) {
+    ret2 = at_eh__write_text(eh, eh->file_text, version);
+  }
+
+  return ret || ret2;
 }
 
 
