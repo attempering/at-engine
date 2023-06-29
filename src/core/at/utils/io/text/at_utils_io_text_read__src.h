@@ -47,7 +47,7 @@ int at_utils_io_text__init_read_ex(
   io->fn = fn;
 
   if ((io->fp = fopen(io->fn, "r")) == NULL) {
-    fprintf(stderr, "Error@%s: cannot read text file [%s].\n",
+    fprintf(stderr, "Error@%s: failed to read text file [%s].\n",
         io->module, io->fn);
     return -1;
   }

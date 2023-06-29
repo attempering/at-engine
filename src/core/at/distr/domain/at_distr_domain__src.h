@@ -185,7 +185,7 @@ int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta,
   }
 
   if (check) {
-    zcom_util__exit_if (j < 0 || j >= domain->n, "beta = %d, %g, range = (%g, %g, %g)\n",
+    zcom_utils__exit_if (j < 0 || j >= domain->n, "beta = %d, %g, range = (%g, %g, %g)\n",
         j, beta, domain->beta_min, domain->beta_del, domain->beta_max);
   }
 

@@ -41,7 +41,7 @@ int at_mb__read_legacy(at_mb_t *mb, at_driver_langevin_t *langevin, double *beta
   ret = at_mb__read_binary_legacy(mb, langevin, beta, mb->av_file, &version);
 
   if (ret != 0) {
-    fprintf(stderr, "cannot load at_mb_t data from %s\n", mb->av_file);
+    fprintf(stderr, "failed to load at_mb_t data from %s\n", mb->av_file);
     return 1;
   }
 

@@ -209,7 +209,7 @@ double at_mb_shk__calc_shk_base(at_mb_shk_t *shk, double total_visits)
     }
     else
     {
-      zcom_util__exit_if(1, "invalid shk_mode: %d\n", shk->mode);
+      zcom_utils__exit_if(1, "invalid shk_mode: %d\n", shk->mode);
     }
 
     if (x < shk_val) {
@@ -236,8 +236,8 @@ double at_mb_shk__calc_inv_gamma(at_mb_shk_t *shk, double total_visits, int ib)
   //fprintf(stderr, "shk_val %d %g\n", ib, shk_val);
 
   if (shk->win_adjusted) { /* multiply the gauge */
-    zcom_util__exit_if (shk->win_mul == NULL, "window multiplier is null\n");
-    zcom_util__exit_if (ib < 0 || ib >= shk->n, "index %d out of range\n", ib);
+    zcom_utils__exit_if (shk->win_mul == NULL, "window multiplier is null\n");
+    zcom_utils__exit_if (ib < 0 || ib >= shk->n, "index %d out of range\n", ib);
 
     shk_val *= shk->win_mul[ib];
 

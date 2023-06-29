@@ -87,7 +87,7 @@ void at_driver_langevin_rng__cfg_init(
   fn = zcom_ssm__dup(ssm, "langevin-rng.dat");
   if (zcom_cfg__get(cfg, &fn, "rngfile,rng-file,langevin-rng-file", "%s") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->file = \"%s\", key: langevin-rng-file\n",
+    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->file = [%s], key: langevin-rng-file\n",
         fn);
   }
 

@@ -28,7 +28,7 @@ static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
 {
   int i;
 
-  zcom_util__exit_if (eh == NULL,
+  zcom_utils__exit_if (eh == NULL,
       "Error@at.eh: passing null pointer to at_eh__read_binary_low_level()\n");
 
   /* clear data before reading */
@@ -117,7 +117,7 @@ int at_eh__read_binary(at_eh_t *eh, const char *fn, int *version)
     return 0;
   }
 
-  zcom_util__exit_if (eh->mode != 1,
+  zcom_utils__exit_if (eh->mode != 1,
     "Error@at.eh: at_eh__read_binary(): failed validation: eh->mode == 1\n");
 
   if (at_utils_io_binary__init_read_ex(io, "at.eh.io.binary", fn) != 0) {
@@ -146,7 +146,7 @@ static int at_eh__write_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
 {
   int i;
 
-  zcom_util__exit_if (eh == NULL,
+  zcom_utils__exit_if (eh == NULL,
       "Error@at.eh: passing null pointer to at_eh__write_binary_low_level()\n");
 
   if (at_utils_io_binary__write_int(io, eh->n, "eh->n") != 0) {
@@ -216,7 +216,7 @@ int at_eh__write_binary(at_eh_t *eh, const char *fn, int version)
     return 0;
   }
 
-  zcom_util__exit_if (eh->mode != 1,
+  zcom_utils__exit_if (eh->mode != 1,
       "Error@at.eh: at_eh__write_binary(): failed validation: eh->mode == 1\n");
 
   at_utils_io_binary__init_write_ex(io, "at.eh.io.binary", fn, version);

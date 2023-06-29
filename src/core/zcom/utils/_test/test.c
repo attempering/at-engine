@@ -17,11 +17,11 @@
  */
 
 // gcc test.c aux.c
-#include "../util.h"
+#include "../utils.h"
 
 int main(int argc, char **argv)
 {
-  zcom_util__fatal("fatal %d\n", argc);
+  zcom_utils__fatal("fatal %d\n", argc);
 
   return 0;
 }

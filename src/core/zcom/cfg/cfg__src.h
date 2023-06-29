@@ -33,7 +33,7 @@ static char *zcom_cfg__standardize_key(zcom_cfg_t *cfg, const char *key_)
   if (cfg->flags & ZCOM_CFG__IGNORE_CASE) {
     /* convert every letter to lower case */
     for (p = key; *p != '\0'; p++) {
-      *p = zcom_util__tolower(*p);
+      *p = zcom_utils__tolower(*p);
     }
   }
 
@@ -120,7 +120,7 @@ static char **zcom_cfg__break_down_keys(zcom_cfg_t *cfg, const char *key_, size_
   }
 
   for (i = 0; i < *nkeys; i++) {
-    zcom_util__strip(keys[i]);
+    zcom_utils__strip(keys[i]);
     keys[i] = zcom_cfg__standardize_key(cfg, keys[i]);
   }
 
@@ -213,7 +213,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
   const char *comment_chars = "#%!;";
 
 
-  zcom_util__exit_if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL,
+  zcom_utils__exit_if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL,
     "Fatal@zcom.cfg: no memory for a new zcom_cfg_t object\n");
 
   cfg->ssm = NULL;
@@ -251,7 +251,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
 
       /* replace following CR LF by spaces for efficiency
          as the size of the key table == the number of blank lines */
-      for (j = i+1; j < size && zcom_util__isspace(p[j]); j++) {
+      for (j = i+1; j < size && zcom_utils__isspace(p[j]); j++) {
         p[j] = ' ';
       }
     }
@@ -293,7 +293,7 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
       }
     }
 
-    zcom_util__strip(p);
+    zcom_utils__strip(p);
 
     /* skip a blank or comment line */
     if (p[0] == '\0') {
@@ -309,11 +309,11 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
     *q = '\0';
     ent->val = q + 1;
 
-    zcom_util__strip(ent->key);
+    zcom_utils__strip(ent->key);
 
     ent->key = zcom_cfg__standardize_key(cfg, ent->key);
 
-    zcom_util__strip(ent->val);
+    zcom_utils__strip(ent->val);
 
   }
 

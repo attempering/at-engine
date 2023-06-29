@@ -51,14 +51,14 @@ int at_utils_io_binary__init_read_ex(
   io->fn = fn;
 
   if ((io->fp = fopen(io->fn, "rb")) == NULL) {
-    fprintf(stderr, "Error@%s: cannot read binary file [%s].\n",
+    fprintf(stderr, "Error@%s: failed to read binary file [%s].\n",
         io->module, io->fn);
     return -1;
   }
 
   /* determine the endianness */
   if ((io->endn = zcom_endn__rmatchi(&itmp, sizeof(int), io->fp)) < 0) {
-    fprintf(stderr, "Error@%s: itmp 0x%X cannot match sizeof(int) 0x%X\n",
+    fprintf(stderr, "Error@%s: itmp 0x%X failed to match sizeof(int) 0x%X\n",
         io->module, (unsigned) itmp, (unsigned) sizeof(int));
     goto ERR;
   }

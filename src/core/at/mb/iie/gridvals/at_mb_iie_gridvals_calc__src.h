@@ -83,7 +83,7 @@ static void at_mb_iie_lr__collect_2nd_order_moments(at_mb_iie_lr_t *lr)
   for (j = lr->js; j < lr->jt; j++) { /* loop over bins */
     at_mb_sm_t *sm = lr->sm0 + j;
 
-    if (sm->s < AT_MB_ACCUM_MIN_SIZE) {
+    if (sm->s < AT_MB_ACCUM__MIN_SIZE) {
       continue;
     }
 

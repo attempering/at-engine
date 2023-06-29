@@ -33,7 +33,7 @@ ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fn)
   }
 
   if ((fp = fopen(fn, "w")) == NULL) {
-    fprintf(stderr, "Error@zcom.mtrng: cannot save to %s.\n", fn);
+    fprintf(stderr, "Error@zcom.mtrng: failed to write %s.\n", fn);
     return 1;
   }
 
@@ -134,19 +134,19 @@ ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
 
     if (err) { /* fallback: to initialize from the seed */
 
-      fprintf(stderr, "Info@zcom.mtrng: cannot load file: \"%s\", init. from seed: %d directly [%d/%d].\n", fn, seed, mtrng->loaded, force_reload);
+      fprintf(stderr, "Info@zcom.mtrng: failed to load file: [%s], init. from seed: %d directly [%d/%d].\n", fn, seed, mtrng->loaded, force_reload);
 
       zcom_mtrng__init_from_seed(mtrng, seed);
 
     } else {
 
-      fprintf(stderr, "Info@zcom.mtrng: successfully loaded rng file \"%s\" (seed %d unused) [%d/%d].\n", fn, seed, mtrng->loaded, force_reload);
+      fprintf(stderr, "Info@zcom.mtrng: successfully loaded rng file [%s] (seed %d unused) [%d/%d].\n", fn, seed, mtrng->loaded, force_reload);
 
     }
 
     if (fn_backup != NULL) {
 
-      fprintf(stderr, "Info@zcom.mtrng: saved rng state file to \"%s\".\n", fn_backup);
+      fprintf(stderr, "Info@zcom.mtrng: saved rng state file to [%s].\n", fn_backup);
 
       zcom_mtrng__save(mtrng, fn_backup);
 

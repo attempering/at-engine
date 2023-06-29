@@ -36,7 +36,7 @@ void at_mb_accum_winaccum__normalize(
   at_mb_accum_winaccum_t *winaccum, int i)
 {
 
-  //zcom_util__exit_if(!winaccum->enabled,
+  //zcom_utils__exit_if(!winaccum->enabled,
   //    "Error@at.mb.accum.winaccum: winaccum is disabled\n");
   if (!winaccum->enabled) {
     return;
@@ -74,7 +74,7 @@ void at_mb_accum_winaccum__add(
   //fprintf(stderr, "at_mb_accum_winaccum__add() winaccum %p\n", winaccum);
   //fprintf(stderr, "at_mb_accum_winaccum__add() win %p\n", winaccum->win);
   //getchar();
-  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
+  zcom_utils__exit_if(!winaccum->enabled, "winaccum is disabled\n");
 
   int i, l;
   at_mb_win_t *win = winaccum->win;
@@ -104,7 +104,7 @@ void at_mb_accum_winaccum__calc_win_total(at_mb_accum_winaccum_t *winaccum, doub
 {
   int i;
 
-  zcom_util__exit_if(!winaccum->enabled, "winaccum is disabled\n");
+  zcom_utils__exit_if(!winaccum->enabled, "winaccum is disabled\n");
 
   for (i = 0; i < winaccum->n; i++) {
     win_total[i] = at_mb_accum_winaccum_item__calc_total(winaccum->items + i);
@@ -125,7 +125,7 @@ void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
   winaccum->n = n;
 
   winaccum->win = win;
-  zcom_util__exit_if (win == NULL,
+  zcom_utils__exit_if (win == NULL,
       "at_mb_win_t *win is NULL\n");
 
   winaccum->enabled = AT__TRUE;
@@ -135,7 +135,7 @@ void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
 
   if (winaccum->enabled) {
 
-    zcom_util__exit_if ((winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t))) == NULL,
+    zcom_utils__exit_if ((winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t))) == NULL,
         "Error@at.mb.accum.winaccum: no memory! var: winaccum->items, type: at_mb_sm_t\n");
 
     for (i = 0; i < n; i++) {

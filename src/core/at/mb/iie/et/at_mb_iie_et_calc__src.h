@@ -44,7 +44,7 @@ static double at_mb_iie_et__calc_et_single_bin(at_mb_iie_t *iie, int ib, int *qu
   /* choose windowed accumulator sums or plain sums */
   sm = at_mb_accum__get_proper_sums(iie->accum, ib, ib);
 
-  if (sm->s > AT_MB_ACCUM_MIN_SIZE) {
+  if (sm->s > AT_MB_ACCUM__MIN_SIZE) {
     *quality = 1;
     return sm->se / sm->s;
   } else {
@@ -69,7 +69,7 @@ static double at_mb_iie_et__calc_et_iie_lr(at_mb_iie_t *iie, int ib, int win_div
   js = iie->win->js_bin[ib];
   jt = iie->win->jt_bin[ib];
 
-  zcom_util__exit_if (js < 0 || js >= jt || jt > iie->n,
+  zcom_utils__exit_if (js < 0 || js >= jt || jt > iie->n,
       "invalid indices: js %d, jt %d, ib = %d/%d", js, jt, ib, iie->n);
 
   //fprintf(stderr, "ib %d, js %d, jt %d; %s:%d\n", ib, js, jt, __FILE__, __LINE__);
@@ -113,7 +113,7 @@ double at_mb_iie_et__calc_et(at_mb_iie_t *iie, int ib, int *quality)
   at_mb_iie_et_t *et = iie->et;
   at_mb_iie_et_item_t *item = et->items + ib;
 
-  zcom_util__exit_if (ib < 0 || ib >= iie->n,
+  zcom_utils__exit_if (ib < 0 || ib >= iie->n,
       "bad ib %d [0, %d).\n", ib, iie->n);
 
   et_val = at_mb_iie_et__calc_et_iie_lr(iie, ib, MB_IIE_LR__WIN_DIV_DEFAULT);

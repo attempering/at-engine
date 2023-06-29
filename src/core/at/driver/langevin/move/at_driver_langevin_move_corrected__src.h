@@ -218,7 +218,7 @@ static at_bool_t at_driver_langevin_move__accept(
   at_distr_domain_t *domain = langevin->distr->domain;
   at_bool_t accepted = AT__FALSE;
 
-  //zcom_util__exit_if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin),
+  //zcom_utils__exit_if (at_driver_langevin_move__new_beta_out_of_range(proposal, langevin),
   //    "out of boundary moves should have been filtered out\n");
 
   // Out-of-range moves should have been filtered out
@@ -231,7 +231,7 @@ static at_bool_t at_driver_langevin_move__accept(
 
   ib_new = at_distr__beta_to_index(langevin->distr, proposal->beta_new, 0);
 
-  zcom_util__exit_if((ib_new < 0 || ib_new >= domain->n),
+  zcom_utils__exit_if((ib_new < 0 || ib_new >= domain->n),
       "bad ib_new %d\n", ib_new);
 
   invwf_new = at_distr__calc_inv_weight(langevin->distr,

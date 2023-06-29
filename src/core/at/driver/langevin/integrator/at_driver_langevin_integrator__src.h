@@ -153,7 +153,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
 
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = at_mb_accum_winaccum_item__get_sums(accum->winaccum->items + ib, ib);
-      val = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+      val = at_mb_sm__get_mean(sm, AT_MB_ACCUM__MIN_SIZE);
       intgr->vals[ib] = val;
       //if (val == 0.0) {
       //  fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
@@ -166,7 +166,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
     // for better looping efficiency
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = accum->sums + ib;
-      val = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+      val = at_mb_sm__get_mean(sm, AT_MB_ACCUM__MIN_SIZE);
       intgr->vals[ib] = val;
       //if (val == 0.0) {
       //  fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);

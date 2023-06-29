@@ -277,7 +277,7 @@ double at_distr_weights__calc_inv_weight(const at_distr_weights_t *w, double bet
   //fprintf(stderr, "beta %g, invw %g, f %g\n", beta, invw, f);
   //getchar();
 
-  zcom_util__exit_if (invwf > invwf_max || invwf < invwf_min,
+  zcom_utils__exit_if (invwf > invwf_max || invwf < invwf_min,
       "bad invwf=%g, f=%g, beta=%g\n", invwf, beta);
 
   if (neg_dlnwf_dbeta != NULL) {

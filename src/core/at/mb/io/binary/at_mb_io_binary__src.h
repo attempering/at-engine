@@ -47,7 +47,7 @@ static int at_mb__read_binary_low_level(
   } else if (version == 3) {
     return at_mb__read_binary_v3_low_level(mb, fn, fp, endn);
   } else {
-    fprintf(stderr, "Error@at.mb: failed to read binary file \"%s\" of version %d\n",
+    fprintf(stderr, "Error@at.mb: failed to read binary file [%s] of version %d\n",
         fn, version);
   }
 
@@ -95,7 +95,7 @@ static int at_mb__write_binary_low_level(
   } else if (io->version == 3) {
     return at_mb__write_binary_v3_low_level(mb, io->fn, io->fp);
   } else {
-    fprintf(stderr, "Error@%s: failed to write binary file \"%s\" of version %d\n",
+    fprintf(stderr, "Error@%s: failed to write binary file [%s] of version %d\n",
         io->module, io->fn, io->version);
   }
 

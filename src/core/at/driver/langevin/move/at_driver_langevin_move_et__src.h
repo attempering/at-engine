@@ -36,8 +36,8 @@ static double at_driver_langevin_move__calc_et_single_bin(
   double et;
   at_mb_sm_t *sm = at_mb_accum__get_proper_sums(langevin->mb->accum, ib, ib);
 
-  if (sm->s > AT_MB_ACCUM_MIN_SIZE) {
-    et = at_mb_sm__get_mean(sm, AT_MB_ACCUM_MIN_SIZE);
+  if (sm->s > AT_MB_ACCUM__MIN_SIZE) {
+    et = at_mb_sm__get_mean(sm, AT_MB_ACCUM__MIN_SIZE);
   } else {
     et = def_val;
   }

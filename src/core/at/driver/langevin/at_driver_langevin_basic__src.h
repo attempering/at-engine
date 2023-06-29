@@ -120,7 +120,7 @@ int at_driver_langevin__cfg_init(
   {
     char *fn = zcom_ssm__dup(ssm, "langevin.dat");
     if (0 != zcom_cfg__get(cfg, &langevin->file, "langevin-file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->file = \"%s\", key: langevin-file\n", fn);
+      if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->file = [%s], key: langevin-file\n", fn);
     }
     langevin->file = at_utils__make_output_filename(ssm, data_dir, fn);
   }

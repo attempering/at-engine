@@ -72,7 +72,7 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
   }
 
   if ((fp = fopen((fname != NULL) ? fname : eh->fn_recon, "w")) == NULL) {
-    fprintf(stderr, "\rError@at.eh: cannot write reconstructed histogram [%s].\n",
+    fprintf(stderr, "\rError@at.eh: failed to write reconstructed histogram [%s].\n",
         eh->fn_recon);
     return 1;
   }
@@ -137,10 +137,10 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
       x += eh->recon[ie];
     }
 
-    x = (fabs(x) > AT_MB_ACCUM_MIN_SIZE) ? 1.0/(x*inc) : 1.0;
+    x = (fabs(x) > AT_MB_ACCUM__MIN_SIZE) ? 1.0/(x*inc) : 1.0;
 
     for (ie = imin; ie < imax; ie++) {
-      if (keep0 || eh->recon[ie] > AT_MB_ACCUM_MIN_SIZE) {
+      if (keep0 || eh->recon[ie] > AT_MB_ACCUM__MIN_SIZE) {
         fprintf(fp, "%g %.14E %g\n",
             base + (ie+del)*inc, eh->recon[ie]*x,
             distr->domain->barr[ib]);

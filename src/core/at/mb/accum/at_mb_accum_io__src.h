@@ -73,7 +73,7 @@ int at_mb_accum__read_binary(at_mb_accum_t *accum,
 {
   int i, itmp, ret;
 
-  zcom_util__exit_if (accum->sums == NULL,
+  zcom_utils__exit_if (accum->sums == NULL,
       "Error@at.mb.accum: accum->sums is null\n");
 
   for (i = 0; i < accum->n; i++) {
@@ -123,7 +123,7 @@ int at_mb_accum__write_binary(at_mb_accum_t *accum,
   at_mb_sm_t *sm;
 
   /* sums: normal data */
-  zcom_util__exit_if (accum->sums == NULL,
+  zcom_utils__exit_if (accum->sums == NULL,
       "Error@at.mb.accum: accum->sums is null\n");
 
   for (i = 0; i < accum->n; i++) {
@@ -163,7 +163,7 @@ int at_mb_accum__read_text(at_mb_accum_t *accum,
 
   (void) version;
 
-  zcom_util__exit_if (accum->sums == NULL,
+  zcom_utils__exit_if (accum->sums == NULL,
       "Error@at.mb.accum: accum->sums is null\n");
 
   {
@@ -242,7 +242,7 @@ int at_mb_accum__write_text(at_mb_accum_t *accum,
 
   (void) version;
 
-  zcom_util__exit_if (accum->sums == NULL,
+  zcom_utils__exit_if (accum->sums == NULL,
       "Error@at.mb.accum: accum->sums is null\n");
 
   fprintf(fp, "ACCUM_BEGIN\n");

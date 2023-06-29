@@ -43,7 +43,7 @@ static int at_mb__read_text_low_level(
   if (version == 3) {
     return at_mb__read_text_v3_low_level(mb, fn, fp);
   } else {
-    fprintf(stderr, "Error@at.mb.io: failed to read text file \"%s\" of version %d\n",
+    fprintf(stderr, "Error@at.mb.io: failed to read text file [%s] of version %d\n",
         fn, version);
   }
 
@@ -62,7 +62,7 @@ int at_mb__read_text(
   int i;
 
   if ((fp = fopen(fn, "r")) == NULL) {
-    fprintf(stderr, "Error@at.mb.io: cannot read text file [%s].\n", fn);
+    fprintf(stderr, "Error@at.mb.io: failed to read text file [%s].\n", fn);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
@@ -114,7 +114,7 @@ int at_mb__write_text_versioned(
   int i;
 
   if ((fp = fopen(fn, "w")) == NULL) {
-    fprintf(stderr, "Error@at.mb.io: cannot write text file [%s].\n", fn);
+    fprintf(stderr, "Error@at.mb.io: failed to write text file [%s].\n", fn);
     return -1;
   }
 

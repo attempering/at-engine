@@ -50,7 +50,7 @@ int at_utils_io_binary__init_write_ex(
   io->version = version;
 
   if ((io->fp = fopen(io->fn, "wb")) == NULL) {
-    fprintf(stderr, "Error@%s: cannot write binary file [%s].\n",
+    fprintf(stderr, "Error@%s: failed to write binary file [%s].\n",
         io->module, io->fn);
     return -1;
   }

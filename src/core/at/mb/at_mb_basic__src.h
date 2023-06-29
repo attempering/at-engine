@@ -116,13 +116,13 @@ int at_mb__cfg_init(
   {
     char *fn_binary = zcom_ssm__dup(ssm, "mb.dat");
     if (0 != zcom_cfg__get(cfg, &fn_binary, "mbav-file,mb-file,mb-binary-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_binary = \"%s\", key: mb-binary-file\n", fn_binary);
+      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_binary = [%s], key: mb-binary-file\n", fn_binary);
     }
     mb->file_binary = at_utils__make_output_filename(ssm, data_dir, fn_binary);
 
     char *fn_text = zcom_ssm__dup(ssm, "mb-text.dat");
     if (0 != zcom_cfg__get(cfg, &fn_text, "mb-text-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_text = \"%s\", key: mb-text-file\n",
+      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_text = [%s], key: mb-text-file\n",
         fn_text);
     }
     mb->file_text = at_utils__make_output_filename(ssm, data_dir, fn_text);
@@ -132,7 +132,7 @@ int at_mb__cfg_init(
   {
     char *fn_ze = zcom_ssm__dup(ssm, "ze.dat");
     if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->ze_file = \"%s\", key: ze-file\n", fn_ze);
+      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->ze_file = [%s], key: ze-file\n", fn_ze);
     }
     mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
 

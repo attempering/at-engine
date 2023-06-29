@@ -40,14 +40,15 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
     fname = mb->ze_file;
   }
 
-  zcom_util__exit_if (fname == NULL, "file name is NULL");
+  zcom_utils__exit_if (fname == NULL,
+      "Error@at.mb: file name is NULL");
 
   at_mb_accum__calc_win_total(mb->accum);
 
   at_mb_iie_gridvals__calc(mb);
 
   if ((fp = fopen(fname, "w")) == NULL) {
-    fprintf(stderr, "cannot open %s.\n", fname);
+    fprintf(stderr, "Error@at.mb: failed to open %s.\n", fname);
     return 1;
   }
 

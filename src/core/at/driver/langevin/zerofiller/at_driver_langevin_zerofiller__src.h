@@ -112,7 +112,7 @@ static double at_driver_langevin_zerofiller__get_raw_bin_value_from_proper_sum(
 
   *w = count;
 
-  if (count > AT_MB_ACCUM_MIN_SIZE) {
+  if (count > AT_MB_ACCUM__MIN_SIZE) {
 
     *has_val = 1;
 

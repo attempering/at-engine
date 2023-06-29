@@ -174,7 +174,7 @@ void at_mb_accum__cfg_init(
   accum->win = win;
 
   /* sums: normal data */
-  zcom_util__exit_if ((accum->sums = (at_mb_sm_t *) calloc((accum->n + 1), sizeof(at_mb_sm_t))) == NULL,
+  zcom_utils__exit_if ((accum->sums = (at_mb_sm_t *) calloc((accum->n + 1), sizeof(at_mb_sm_t))) == NULL,
       "Error@at.mb.accum: no memory! var: accum->sums, type: at_mb_sm_t\n");
 
   for (i = 0; i < accum->n; i++) {
@@ -184,7 +184,7 @@ void at_mb_accum__cfg_init(
   at_mb_accum_winaccum__cfg_init(accum->winaccum, n, win, cfg, verbose);
 
   /* win_total: total of sum.s over a multiple-bin temperature window */
-  zcom_util__exit_if ((accum->win_total = (double *) calloc(n, sizeof(double))) == NULL,
+  zcom_utils__exit_if ((accum->win_total = (double *) calloc(n, sizeof(double))) == NULL,
     "Error@at.mb.accum: no memory! var: accum->win_total, type: double\n");
 
   for (i = 0; i < n; i++) {

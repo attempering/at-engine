@@ -74,7 +74,7 @@ int at_utils_lockfile__init(
       // alert the user that the lock file exists
       // another simulation may be running
 
-      fprintf(stderr, "Error@at.utils.lockfile: lockfile \"%s\" already exists, "
+      fprintf(stderr, "Error@at.utils.lockfile: lockfile [%s] already exists, "
           "this probably means that a previous simulation is still running. "
           "If this is not so, please delete the file and restart the simulation.\n",
           lockfile->filename);

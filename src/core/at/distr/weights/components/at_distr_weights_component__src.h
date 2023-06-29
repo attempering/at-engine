@@ -74,7 +74,7 @@ static int at_distr_weights_component__parse_str(
 
   */
 
-  zcom_util__str_to_lower(comp_str);
+  zcom_utils__str_to_lower(comp_str);
 
   p = strchr(comp_str, ':');
 
@@ -93,7 +93,7 @@ static int at_distr_weights_component__parse_str(
     c->w_rel = 1.0;
   }
 
-  zcom_util__strip(comp_str);
+  zcom_utils__strip(comp_str);
 
   if (strncmp(comp_str, "gauss", 5) == 0
    || strncmp(comp_str, "norm", 4) == 0) {

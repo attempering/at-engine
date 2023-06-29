@@ -40,7 +40,7 @@ typedef struct at_mb_accum_winaccum_t_ {
 } at_mb_accum_winaccum_t;
 
 
-#define AT_MB_ACCUM_MIN_SIZE 1e-6
+#define AT_MB_ACCUM__MIN_SIZE 1e-6
 
 
 #endif

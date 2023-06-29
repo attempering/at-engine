@@ -216,14 +216,14 @@ int at_mb__read_binary_legacy(
   int endn;
 
   if ((fp = fopen(fname, "rb")) == NULL) {
-    fprintf(stderr, "cannot read binary file [%s].\n", fname);
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: failed to read binary file [%s].\n", fname);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
   /* determine file endian */
   if ((endn = zcom_endn__rmatchi(&itmp, sizeof(int), fp)) < 0) {
-    fprintf(stderr, "itmp 0x%X cannot match sizeof(int) 0x%X\n",
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: itmp 0x%X failed to match sizeof(int) 0x%X\n",
         (unsigned) itmp, (unsigned) sizeof(int));
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
@@ -268,18 +268,18 @@ static int at_mb__write_binary_legacy_low_level(
   (void) version;
 
   if (mb == NULL) {
-    fprintf(stderr, "passing null pointer to at_mb__write_binary_low_level\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: passing null pointer to at_mb__write_binary_low_level\n");
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
   /* n: number of temperature bins */
   if (zcom_endn__fwrite(&mb->distr->domain->n, sizeof(mb->distr->domain->n), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->distr->domain->n\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->distr->domain->n\n");
     goto ERR;
   }
   /* m: maximal number of bins in a window */
   if (zcom_endn__fwrite(&mb->win->max_win_bins, sizeof(mb->win->max_win_bins), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->m\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->m\n");
     goto ERR;
   }
 
@@ -287,7 +287,7 @@ static int at_mb__write_binary_legacy_low_level(
     int mb_order = 1;
 
     if (zcom_endn__fwrite(&mb_order, sizeof(mb_order), 1, fp, 1) != 1) {
-      fprintf(stderr, "error in writing mb_order\n");
+      fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb_order\n");
       goto ERR;
     }
   }
@@ -317,44 +317,44 @@ static int at_mb__write_binary_legacy_low_level(
 
     /* flags: combination of flags */
     if (zcom_endn__fwrite(&flags, sizeof(flags), 1, fp, 1) != 1) {
-      fprintf(stderr, "error in writing flags\n");
+      fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing flags\n");
       goto ERR;
     }
   }
 
   /* use_winaccum */
   if (zcom_endn__fwrite(&mb->accum->winaccum->enabled, sizeof(mb->accum->winaccum->enabled), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->accum->winaccum->enabled\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->accum->winaccum->enabled\n");
     goto ERR;
   }
 
   /* cnt_int: number of additional integer variables to be written to binary file */
   if (zcom_endn__fwrite(&mb->cnt_int, sizeof(mb->cnt_int), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->cnt_int\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->cnt_int\n");
     goto ERR;
   }
   /* cnt_dbl: number of additional double variables to be written to binary file */
   if (zcom_endn__fwrite(&mb->cnt_dbl, sizeof(mb->cnt_dbl), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->cnt_dbl\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->cnt_dbl\n");
     goto ERR;
   }
 
   {
     /* beta: current value of beta */
     if (zcom_endn__fwrite(&beta, sizeof(beta), 1, fp, 1) != 1) {
-      fprintf(stderr, "error in writing mb->beta\n");
+      fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->beta\n");
       goto ERR;
     }
   }
 
   /* total_visits: total number of visits, number of tempering */
   if (zcom_endn__fwrite(&mb->total_visits, sizeof(mb->total_visits), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->total_visits\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->total_visits\n");
     goto ERR;
   }
   /* shk_base: current generic shrink amplitude */
   if (zcom_endn__fwrite(&mb->shk->base, sizeof(mb->shk->base), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing mb->shk->base\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->shk->base\n");
     goto ERR;
   }
 
@@ -365,7 +365,7 @@ static int at_mb__write_binary_legacy_low_level(
   /* barr: temperature array */
   if ((mb->distr->domain->n > 0)
     && (zcom_endn__fwrite(mb->distr->domain->barr, sizeof(*(mb->distr->domain->barr)), mb->distr->domain->n, fp, 1) != (size_t) (mb->distr->domain->n))) {
-    fprintf(stderr, "error in writing mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing mb->distr->domain->barr, n = mb->distr->domain->n(%d)\n", mb->distr->domain->n);
     goto ERR;
   }
   /* et: bin-averaged internal energy */
@@ -400,23 +400,23 @@ int at_mb__write_binary_legacy(
   int size;
 
   if ((fp = fopen(fname, "wb")) == NULL) {
-    fprintf(stderr, "cannot write binary file [%s].\n", fname);
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: failed to write binary file [%s].\n", fname);
     fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
 
   size = (int) sizeof(int);
   if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing size\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing size\n");
     goto ERR;
   }
   size = (int) sizeof(double);
   if (zcom_endn__fwrite(&size, sizeof(size), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing size\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing size\n");
     goto ERR;
   }
   if (zcom_endn__fwrite(&ver, sizeof(ver), 1, fp, 1) != 1) {
-    fprintf(stderr, "error in writing ver\n");
+    fprintf(stderr, "Error@at.mb.io.binary.legacy: error in writing ver\n");
     goto ERR;
   }
 

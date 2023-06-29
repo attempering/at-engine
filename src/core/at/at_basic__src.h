@@ -71,7 +71,7 @@ static int at__cfg_init_self(
   {
     char *fn_binary = zcom_ssm__dup(ssm, "at.dat");
     if (0 != zcom_cfg__get(cfg, &fn_binary, "at-file,at-file-binary", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = \"%s\", key: at-file-binary\n",
+      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = [%s], key: at-file-binary\n",
           fn_binary);
     }
     at->file_binary = at_utils__make_output_filename(ssm, data_dir, fn_binary);
@@ -80,7 +80,7 @@ static int at__cfg_init_self(
   {
     char *fn_text = zcom_ssm__dup(ssm, "at-text.dat");
     if (0 != zcom_cfg__get(cfg, &fn_text, "at-file-text", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = \"%s\", key: at-file-text\n",
+      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = [%s], key: at-file-text\n",
           fn_text);
     }
     at->file_text = at_utils__make_output_filename(ssm, data_dir, fn_text);
@@ -194,7 +194,7 @@ int at__init(at_t *at,
 
   /* open configuration file */
   if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
-    fprintf(stderr, "\rError@at: cannot open configuration file %s.\n", cfg_filename);
+    fprintf(stderr, "\rError@at: failed to open configuration file %s.\n", cfg_filename);
     return -1;
   }
 
@@ -226,13 +226,13 @@ at_t *at__open(const char *cfg_filename,
   at_t *at;
 
   /* allocate memory for at_t */
-  zcom_util__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
+  zcom_utils__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
       "Fatal@at: no memory for a new object of at_t\n");
 
   at->cfg = NULL;
 
   /* call low level function */
-  zcom_util__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
+  zcom_utils__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
     "Error@at: error while reading configuration file %s\n", cfg_filename);
 
   return at;

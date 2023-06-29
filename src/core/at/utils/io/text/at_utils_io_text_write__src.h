@@ -48,7 +48,7 @@ int at_utils_io_text__init_write_ex(
   io->version = version;
 
   if ((io->fp = fopen(io->fn, "w")) == NULL) {
-    fprintf(stderr, "Error@%s: cannot write text file [%s].\n",
+    fprintf(stderr, "Error@%s: failed to write text file [%s].\n",
         io->module, io->fn);
     return -1;
   }

@@ -35,7 +35,7 @@ void at_mb_win__make_unres_windows_for_grid_estimators(
   int i, js, jt, idel;
   double bet, dbeta = 0.0;
 
-  zcom_util__exit_if (js_grid_unres == NULL || jt_grid_unres == NULL,
+  zcom_utils__exit_if (js_grid_unres == NULL || jt_grid_unres == NULL,
       "null pointer, js: %p, jt: %p",
       js_grid_unres, jt_grid_unres);
 
@@ -46,7 +46,7 @@ void at_mb_win__make_unres_windows_for_grid_estimators(
       case 1: dbeta = bwdel * bet; break;
       case 2: dbeta = bwdel * (bet * bet); break;
       default:
-        zcom_util__exit_if(1, "bad bwmod=%d\n", bwmod);
+        zcom_utils__exit_if(1, "bad bwmod=%d\n", bwmod);
         break;
     }
 
@@ -65,7 +65,7 @@ void at_mb_win__make_unres_windows_for_grid_estimators(
       jt = n;
     }
 
-    zcom_util__exit_if (i < js || i > jt,
+    zcom_utils__exit_if (i < js || i > jt,
       "bad window %d (%d,%d)\n", i, js, jt);
 
     js_grid_unres[i] = js;
@@ -160,7 +160,7 @@ static void at_mb_win__make_res_window_for_grid_estimators(int n, int i,
 
   }
 
-  zcom_util__exit_if (*jt - *js <= 0, "empty window (%d,%d) for %d\n", *js, *jt, i);
+  zcom_utils__exit_if (*jt - *js <= 0, "empty window (%d,%d) for %d\n", *js, *jt, i);
 }
 
 
@@ -207,7 +207,7 @@ int at_mb_win__init_bin2wins(at_mb_win_t *win)
   int i, j;
   at_mb_win_ids_t *wj;
 
-  zcom_util__exit_if ((win->bin2wins = (at_mb_win_ids_t *) calloc(n, sizeof(*win->bin2wins))) == NULL,
+  zcom_utils__exit_if ((win->bin2wins = (at_mb_win_ids_t *) calloc(n, sizeof(*win->bin2wins))) == NULL,
       "no memory for win->bin2wins of size %d", n);
 
   at_mb_win__calc_window_counts(win);
@@ -217,7 +217,7 @@ int at_mb_win__init_bin2wins(at_mb_win_t *win)
     
     wj->curr_id_ = 0;
 
-    zcom_util__exit_if ((wj->ids = (int *) calloc(wj->count, sizeof(int))) == NULL,
+    zcom_utils__exit_if ((wj->ids = (int *) calloc(wj->count, sizeof(int))) == NULL,
         "no memory for win->bin2wins[%d].ids count %d\n", j, wj->count);
   }
 
@@ -228,7 +228,7 @@ int at_mb_win__init_bin2wins(at_mb_win_t *win)
     for (j = js; j < jt; j++) {
       wj = win->bin2wins + j;
 
-      zcom_util__exit_if (wj->curr_id_ >= wj->count,
+      zcom_utils__exit_if (wj->curr_id_ >= wj->count,
           "win->bin2wins[%d].curr_id: %d >= %d, m: %d, win: %d, bin: %d, (js, jt) = [%d, %d).\n",
           j, wj->curr_id_, wj->count, i, j, js, jt);
 

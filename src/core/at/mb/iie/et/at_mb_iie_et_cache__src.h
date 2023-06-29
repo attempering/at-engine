@@ -168,7 +168,7 @@ double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib, int *quality)
   at_mb_iie_et_item_t *item = et->items + ib;
   double visits = 0;
 
-  zcom_util__exit_if (ib < 0 || ib >= iie->n,
+  zcom_utils__exit_if (ib < 0 || ib >= iie->n,
       "bad ib %d [0, %d).\n", ib, iie->n);
 
   if (at_mb_iie_et_item_cache__usable(item, iie, iie->et->cache_params, ib, &visits)) { // use the cache value if possible

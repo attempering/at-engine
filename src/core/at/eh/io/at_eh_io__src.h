@@ -38,9 +38,9 @@ int at_eh__read(at_eh_t *eh, at_bool_t read_text_file)
   }
 
   if (read_text_file) {
-    ret = at_eh__read_text(eh, eh->file, &version);
+    ret = at_eh__read_text(eh, eh->file_text, &version);
   } else {
-    ret = at_eh__read_binary(eh, eh->file, &version);
+    ret = at_eh__read_binary(eh, eh->file_binary, &version);
   }
 
   return ret;
