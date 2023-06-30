@@ -16,20 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_H__
-#define AT_UTILS_H__
+#include "at/utils/at_utils__src.h"
+#include "zcom/zcom__src.h"
 
-#include "sys/at_utils_sys.h"
-#include "at_utils_misc.h"
 
-#include "lockfile/at_utils_lockfile.h"
-#include "manifest/at_utils_manifest.h"
-#include "io/at_utils_io.h"
-#include "trace/at_utils_trace.h"
-#include "log/at_utils_log.h"
 
-#include "at_utils_basic.h"
 
-#include "../../zcom/zcom.h"
+int main(int argc, char **argv)
+{
+  at_utils_log_t log[1];
+  zcom_ssm_t *ssm;
 
-#endif
+  ssm = zcom_ssm__open();
+
+  at_utils_log__cfg_init(log, NULL, ssm, "atdata", AT__TRUE);
+
+  at_utils_log__push_mod(log, "module1");
+  at_utils_log__info(log, "ssm pointer %p\n", ssm);
+  at_utils_log__pop_mod(log);
+
+  at_utils_log__info(log, "Good bye!\n");
+
+  at_utils_log__finish(log);
+
+  zcom_ssm__close(ssm);
+
+  return 0;
+}

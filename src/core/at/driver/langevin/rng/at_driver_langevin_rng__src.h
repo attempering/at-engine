@@ -59,7 +59,7 @@ void at_driver_langevin_rng__reset(
       rng->file, seed, force_reload,
       fn_rng_backup);
 
-  rng->inited = 1;
+  rng->ready = AT__TRUE;
 }
 
 
@@ -102,7 +102,7 @@ void at_driver_langevin_rng__cfg_init(
 
 void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng)
 {
-  if (rng->inited) {
+  if (rng->ready) {
     if (rng->mtrng != NULL) {
       zcom_mtrng__save(rng->mtrng, rng->file);
       zcom_mtrng__close(rng->mtrng);

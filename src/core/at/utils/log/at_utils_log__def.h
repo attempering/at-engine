@@ -16,20 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_H__
-#define AT_UTILS_H__
+#ifndef AT_UTILS_LOG__DEF_H__
+#define AT_UTILS_LOG__DEF_H__
 
-#include "sys/at_utils_sys.h"
-#include "at_utils_misc.h"
+#include "../../context/at_context__def.h"
+#include "../modstack/at_utils_modstack__def.h"
+#include "../../../zcom/zcom.h"
 
-#include "lockfile/at_utils_lockfile.h"
-#include "manifest/at_utils_manifest.h"
-#include "io/at_utils_io.h"
-#include "trace/at_utils_trace.h"
-#include "log/at_utils_log.h"
-
-#include "at_utils_basic.h"
-
-#include "../../zcom/zcom.h"
+typedef struct at_utils_log_t_
+{
+  int ready;
+  char *file;
+  at_utils_modstack_t mods[1];
+  FILE *fp;
+} at_utils_log_t;
 
 #endif

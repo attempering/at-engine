@@ -32,7 +32,7 @@ void at_utils_manifest__cfg_init(
     const char *data_dir,
     at_bool_t verbose)
 {
-  manifest->inited = 1;
+  manifest->ready = AT__TRUE;
 
   manifest->filename = zcom_ssm__dup(ssm, "manifest.dat");
   if (zcom_cfg__get(cfg, &manifest->filename, "manifest-file", "%s") != 0)
@@ -65,7 +65,7 @@ FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest)
 
 void at_utils_manifest__close_file(at_utils_manifest_t *manifest)
 {
-  if (manifest->inited) {
+  if (manifest->ready) {
     //fprintf(stderr, "manifest->fp %p\n", manifest->fp);
     //if (manifest->fp) {fprintf(stderr, "error %d\n", ferror(manifest->fp)); getchar();}
 
@@ -79,9 +79,9 @@ void at_utils_manifest__close_file(at_utils_manifest_t *manifest)
 
 void at_utils_manifest__finish(at_utils_manifest_t *manifest)
 {
-  if (manifest->inited) {
+  if (manifest->ready) {
     at_utils_manifest__close_file(manifest);
-    manifest->inited = 0;
+    manifest->ready = AT__FALSE;
   }
 }
 

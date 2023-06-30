@@ -62,7 +62,7 @@ static void at__write_trace(at_t *at,
 {
   at_utils_trace_t *trace = at->utils->trace;
 
-  zcom_utils__exit_if (!trace->inited,
+  zcom_utils__exit_if (!trace->ready,
       "Error@at.io: log is not initialized!\n");
 
   at_bool_t do_trace = at_utils_trace__decide_do_trace(trace, step_params);

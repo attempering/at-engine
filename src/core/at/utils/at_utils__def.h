@@ -19,18 +19,21 @@
 #ifndef AT_UTILS__DEF_H__
 #define AT_UTILS__DEF_H__
 
+#include "modstack/at_utils_modstack__def.h"
 #include "lockfile/at_utils_lockfile__def.h"
 #include "manifest/at_utils_manifest__def.h"
 #include "io/at_utils_io__def.h"
+#include "log/at_utils_log__def.h"
 #include "trace/at_utils_trace__def.h"
 
 typedef struct at_utils_t_
 {
-  int inited;
+  int ready;
 
   at_utils_lockfile_t lockfile[1];
   at_utils_manifest_t manifest[1];
-  at_utils_trace_t trace[1];
+  at_utils_log_t log[1]; /* human-readable log file */
+  at_utils_trace_t trace[1]; /* plot-able linear log file */
 
   double thermostat_temp;
 

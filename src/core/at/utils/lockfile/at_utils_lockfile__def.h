@@ -23,7 +23,7 @@
 
 typedef struct at_utils_lockfile_t_
 {
-  at_bool_t inited;
+  at_bool_t ready;
   char *filename;
 } at_utils_lockfile_t;
 

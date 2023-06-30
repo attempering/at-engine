@@ -33,13 +33,13 @@ void at_utils_trace__cfg_init(at_utils_trace_t *trace,
     const char *data_dir,
     at_bool_t verbose)
 {
-  trace->filename = zcom_ssm__dup(ssm, "trace.dat");
-  if (zcom_cfg__get(cfg, &trace->filename, "trace-file", "%s") != 0)
+  char *fn = zcom_ssm__dup(ssm, "trace.dat");
+  if (zcom_cfg__get(cfg, &fn, "trace-file", "%s") != 0)
   {
-    if (verbose) fprintf(stderr, "Info@at.utils.trace: assuming default utils->trace->filename = \"trace.dat\", key: trace-file\n");
+    if (verbose) fprintf(stderr, "Info@at.utils.trace: assuming default utils->trace->file = [%s], key: trace-file\n",
+        fn);
   }
-
-  trace->filename = at_utils__make_output_filename(ssm, data_dir, trace->filename);
+  trace->file = at_utils__make_output_filename(ssm, data_dir, fn);
 
   /* nst_trace: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
   trace->nst_trace = -1;
@@ -50,14 +50,14 @@ void at_utils_trace__cfg_init(at_utils_trace_t *trace,
   // do not open trace file yet, at__open_log();
   trace->log = NULL;
 
-  trace->inited = 1;
+  trace->ready = AT__TRUE;
 }
 
 
 
 void at_utils_trace__finish(at_utils_trace_t *trace)
 {
-  if (trace->inited) {
+  if (trace->ready) {
     at_utils_trace__close_file(trace);
   }
 }
@@ -68,7 +68,7 @@ void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *mani
 {
   fprintf(manifest->fp, "utils->trace->nst_trace: int, %4d\n", trace->nst_trace);
 
-  fprintf(manifest->fp, "utils->trace->filename: char *, %s\n", trace->filename);
+  fprintf(manifest->fp, "utils->trace->file: char *, %s\n", trace->file);
 }
 
 
@@ -76,7 +76,7 @@ void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *mani
 
 zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation)
 {
-  trace->log = zcom_log__open(trace->filename,
+  trace->log = zcom_log__open(trace->file,
       (is_continuation ? ZCOM_LOG__APPEND : 0));
 
   return trace->log;

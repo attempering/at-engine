@@ -65,23 +65,26 @@ void at_utils__cfg_init(at_utils_t *utils, zcom_cfg_t *cfg,
 
   at_utils_manifest__cfg_init(utils->manifest, cfg, utils->ssm, utils->data_dir, verbose);
 
+  at_utils_log__cfg_init(utils->log, cfg, utils->ssm, utils->data_dir, verbose);
+
   at_utils_trace__cfg_init(utils->trace, cfg, utils->ssm, utils->data_dir, verbose);
 
-  utils->inited = 1;
+  utils->ready = AT__TRUE;
 }
 
 
 
 void at_utils__finish(at_utils_t *utils)
 {
+  at_utils_log__finish(utils->log);
   at_utils_trace__finish(utils->trace);
   at_utils_manifest__finish(utils->manifest);
   at_utils_lockfile__finish(utils->lockfile);
 
-  if (utils->inited) {
+  if (utils->ready) {
     zcom_ssm__close(utils->ssm);
     utils->ssm = NULL;
-    utils->inited = 0;
+    utils->ready = AT__FALSE;
   }
 
 }
@@ -93,6 +96,8 @@ void at_utils__manifest(at_utils_t *utils)
   at_utils_manifest__manifest(utils->manifest);
 
   at_utils_trace__manifest(utils->trace, utils->manifest);
+
+  at_utils_log__manifest(utils->log, utils->manifest);
 
   at_utils_manifest__print_double(utils->manifest, utils->thermostat_temp, "utils->thermostat_temp", "thermostat-temp");
 }

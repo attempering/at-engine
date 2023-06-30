@@ -1,5 +1,6 @@
 bins::
 	$(MAKE) $@ -C zcom
+	$(MAKE) $@ -C utils
 	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C driver
@@ -7,6 +8,7 @@ bins::
 
 clean::
 	$(MAKE) $@ -C zcom
+	$(MAKE) $@ -C utils
 	$(MAKE) $@ -C distr
 	$(MAKE) $@ -C mb
 	$(MAKE) $@ -C driver

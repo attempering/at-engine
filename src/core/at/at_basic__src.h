@@ -168,8 +168,10 @@ int at__cfg_init(at_t *at,
     }
   }
 
-  /* open the trace file using the proper (append or write) mode
+  /* open the log and trace files using the proper (append or write) mode
    * depending on whether it is a continuation run */
+  at_utils_log__open_file(at->utils->log, at->sys_params->is_continuation);
+
   at_utils_trace__open_file(at->utils->trace, at->sys_params->is_continuation);
 
   return 0;

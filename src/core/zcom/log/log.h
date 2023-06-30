@@ -24,6 +24,8 @@
 
 ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn, unsigned flags);
 
+ZCOM__INLINE int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list args);
+
 ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...);
 
 ZCOM__INLINE void zcom_log__close(zcom_log_t *log);

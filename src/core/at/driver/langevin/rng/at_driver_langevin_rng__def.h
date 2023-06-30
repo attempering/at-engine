@@ -23,7 +23,7 @@ typedef struct zcom_mtrng_t_ zcom_mtrng_t;
 
 typedef struct at_driver_langevin_rng_t_
 {
-  int inited;
+  int ready;
   char *file;
   zcom_mtrng_t *mtrng;
 } at_driver_langevin_rng_t;

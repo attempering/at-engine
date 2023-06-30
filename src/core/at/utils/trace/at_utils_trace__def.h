@@ -23,8 +23,8 @@
 
 typedef struct at_utils_trace_t_
 {
-  int inited;
-  char *filename;
+  int ready;
+  char *file;
   int nst_trace;
   zcom_log_t *log;
 } at_utils_trace_t;

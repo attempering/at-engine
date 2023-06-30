@@ -104,7 +104,7 @@ int at_utils_lockfile__init(
 
   } 
 
-  lockfile->inited = AT__TRUE;
+  lockfile->ready = AT__TRUE;
 
   return 0;
 }
@@ -115,7 +115,7 @@ void at_utils_lockfile__finish(
     at_utils_lockfile_t *lockfile)
 {
 
-  if (lockfile->inited) {
+  if (lockfile->ready) {
 
     if (at_utils_sys__file_exists(lockfile->filename)) {
 
