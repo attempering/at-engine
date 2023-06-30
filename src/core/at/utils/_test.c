@@ -16,8 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+// gcc -g _test.c -lm && valgrind --leak-check=full --show-leak-kinds=all ./a.out
+
 #include "at_utils__src.h"
-#include <stdio.h>
+#include "../../zcom/zcom__src.h"
 
 int main(void)
 {

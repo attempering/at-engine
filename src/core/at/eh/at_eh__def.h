@@ -25,8 +25,6 @@ typedef struct at_eh_t_
 {
   int        n;               /* number of temperature bins */
   int        mode;            /* 0: disable; 1: simple histogram */
-  int        bwmod;           /* 0: d(beta) 1: dT/T  2: d(kT) */
-  double     bwdel;           /* delta lnT */
 
   double     e_min;           /* minimal energy */
   double     e_max;           /* maximal energy */
@@ -38,10 +36,12 @@ typedef struct at_eh_t_
   char      *file_binary;     /* name of the binary file */
   char      *file_text;       /* name of the text file */
 
+  double    *his;       /* energy histogram data */
+
+  int        bwmod;           /* 0: d(beta) 1: dT/T  2: d(kT) */
+  double     bwdel;           /* delta lnT */
   int        recon_stride;    /* interval of reconstructing energy histograms */
   char      *file_recon;      /* name of reconstructed energy histogram */
-
-  double    *his;       /* energy histogram data */
   double    *recon;     /* temporary space for reconstructing histogram */
   int       *is;        /* indices for temperature windows (lower) */
   int       *it;        /* indices for temperature windows (higher) */

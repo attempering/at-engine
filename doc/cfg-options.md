@@ -670,7 +670,7 @@ The following set of options apply to behaviors to this functionality.
 
 #### IV.A.1. Energy histogram global switch
 
-* `ehist_mode`: energy histogram mode
+* `ehist-mode`: energy histogram mode
 
   * 0: disabled.
   * 1: simple histogram.
@@ -681,7 +681,7 @@ The following set of options apply to behaviors to this functionality.
 
 #### IV.A.2. Energy histogram output settings
 
-* `ehist_file` file name of the full energy histogram.
+* `ehist-file` file name of the full energy histogram.
 
   Default: "hist.bin".
 
@@ -691,7 +691,7 @@ The following set of options apply to behaviors to this functionality.
 
   Remarks: a negative or 0 value disable this feature.
 
-* `ehist_binary` whether to use binary format for the full histogram data.
+* `ehist-binary` whether to use binary format for the full histogram data.
 
   * 0: disabled, text.
   * 1: enabled, binary.
@@ -700,35 +700,35 @@ The following set of options apply to behaviors to this functionality.
 
 #### IV.A.3. Energy histogram energy range
 
-* `ehist_min` minimum potential energy
+* `ehist-min` minimum potential energy
 
   Default: -12.6e4.
 
-* `ehist_max` maximum potential energy
+* `ehist-max` maximum potential energy
 
   Default: -9.0e4.
 
-* `ehist_del` bin size of the potential energy histograms
+* `ehist-del` bin size of the potential energy histograms
 
   Default: 20.0 (GROMACS units).
 
 #### IV.A.4. Energy histogram options
 
-* `ehist_addahalf` whether to add half of delta E to represent every energy bin.
+* `ehist-addahalf` whether to add half of delta E to represent every energy bin.
 
   * 0: disabled
   * 1: enabled
 
   Default: 1.
 
-* `ehist_keepedge` whether to truncated bins of zero number of visits on both sides of the energy histogram before writing them to file.
+* `ehist-keepedge` whether to truncated bins of zero number of visits on both sides of the energy histogram before writing them to file.
 
   * 0: disabled
   * 1: enabled
 
   Default: 0.
 
-* `ehist_nozeroes` whether to write histogram entries
+* `ehist-nozeroes` whether to write histogram entries
   when the number of visits to the bin is zero.
 
   * 0: disabled
@@ -737,24 +737,24 @@ The following set of options apply to behaviors to this functionality.
   Default: 0.
 
   Remarks: It is recommended to turn this option off
-  `ehist_file` is to be used for gnuplot for plotting
+  `ehist-file` is to be used for gnuplot for plotting
   a two-dimensional diagram using the command `splot`.
 
 #### IV.A.5. Energy histogram, reweighted histogram settings
 
-* `ehist_mbin_file` file name of the reconstructed energy histogram.
+* `ehist-recon-file` (old `ehist_mbin_file`) file name of the reconstructed energy histogram.
 
   This file is always written in the text format.
 
   Default: "hist-recon.dat" (legacy file name "HMB").
 
-* `ehist_skip` number of temperatures to skip over when writing the reconstructed energy histogram.
+* `ehist-skip` number of temperatures to skip over when writing the reconstructed energy histogram.
 
 ##### Energy histogram, reweighed histogram, beta distribution
 
 Beta windowing methods
 
-* `ehist_mbin_mode`
+* `ehist-mbin_mode`
 
   * 0: beta mode
   * 1: lnT mode
@@ -764,16 +764,16 @@ Beta windowing methods
   
   Default: 1.
 
-* `ehist_delta_xxx`
+* `ehist-delta_xxx`
 
-  * `ehist_delta_beta`
+  * `ehist-delta_beta`
 
     Default: `0.02`.
 
-  * `ehist_delta_lnT`
+  * `ehist-delta_lnT`
 
     Default: `0.05`.
 
-  * `ehist_delta_kT`
+  * `ehist-delta_kT`
 
     Default: `0.10`.

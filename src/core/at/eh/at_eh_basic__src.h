@@ -66,8 +66,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   /* eh_bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
   eh->bwmod = 1;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->bwmod, "ehist-mbin-mode", "%d")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->bwmod = 1, key: ehist-mbin-mode\n");
+    if (0 != zcom_cfg__get(cfg, &eh->bwmod, "ehist-recon-mode,ehist_mbin_mode", "%d")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->bwmod = 1, key: ehist-recon-mode\n");
     }
     if ( !(eh->bwmod >= 0 && eh->bwmod <= 2) ) {
       fprintf(stderr, "eh->bwmod: failed validation: eh->bwmod >= 0 && eh->bwmod <= 2\n");
@@ -200,8 +200,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->file_recon = NULL;
   if (eh->mode) {
     char *fn_eh_recon = zcom_ssm__dup(ssm, "hist-recon.dat");
-    if (0 != zcom_cfg__get(cfg, &fn_eh_recon, "ehist-mbin-file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->file_recon = [%s], key: ehist-mbin-file\n", fn_eh_recon);
+    if (0 != zcom_cfg__get(cfg, &fn_eh_recon, "ehist-recon-file,ehist_mbin_file", "%s")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->file_recon = [%s], key: ehist-recon-file\n", fn_eh_recon);
     }
     eh->file_recon = at_utils__make_output_filename(ssm, data_dir, fn_eh_recon);
   }
@@ -335,7 +335,7 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   at_utils_manifest__print_int(manifest, eh->recon_stride, "eh->recon_stride", "ehist-recon-stride");
 
   /* eh_bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
-  at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist-mbin-mode");
+  at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist-recon-mode");
 
   if (eh->bwmod == 0) {
     at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-beta");
@@ -367,7 +367,7 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   at_utils_manifest__print_str(manifest, eh->file_text, "eh->file_text", "ehist-file-text");
 
   /* name of reconstructed energy histogram */
-  at_utils_manifest__print_str(manifest, eh->file_recon, "eh->file_recon", "ehist-mbin-file");
+  at_utils_manifest__print_str(manifest, eh->file_recon, "eh->file_recon", "ehist-recon-file");
 
   /* eh_his: energy histogram data */
   at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->e_n, "eh->his");
