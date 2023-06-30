@@ -27,26 +27,23 @@
 
 
 
-void at_utils_trace__cfg_init(at_utils_trace_t *trace,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+void at_utils_trace__conf_init(at_utils_trace_t *trace,
+    at_utils_conf_t *conf)
 {
-  char *fn = zcom_ssm__dup(ssm, "trace.dat");
-  if (zcom_cfg__get(cfg, &fn, "trace-file", "%s") != 0)
-  {
-    if (verbose) fprintf(stderr, "Info@at.utils.trace: assuming default utils->trace->file = [%s], key: trace-file\n",
-        fn);
-  }
-  trace->file = at_utils__make_output_filename(ssm, data_dir, fn);
+  at_utils_conf__push_mod(conf, "at.utils.trace");
+
+  at_utils_conf__get_filename(conf,
+      "trace-file",
+      &trace->file, "trace.dat",
+      "file");
 
   /* nst_trace: interval of writing trace file; -1: only when doing neighbor search, 0: disable */
-  trace->nst_trace = -1;
-  if (zcom_cfg__get(cfg, &trace->nst_trace, "nsttrace,nst-trace", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.utils.trace: assuming default utils->trace->nst_trace = %d, key: nst-trace\n",
-        trace->nst_trace);
-  }
+  at_utils_conf__get_int(conf,
+      "nsttrace,nst-trace",
+      &trace->nst_trace, -1,
+      "nst_trace");
+
+  at_utils_conf__pop_mod(conf);
 
   // do not open trace file yet, at__open_log();
   trace->log = NULL;

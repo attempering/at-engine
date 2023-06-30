@@ -22,11 +22,13 @@
 #include "sys/at_utils_sys.h"
 #include "at_utils_misc.h"
 
+#include "modstack/at_utils_modstack.h"
+#include "log/at_utils_log.h"
+#include "conf/at_utils_conf.h"
 #include "lockfile/at_utils_lockfile.h"
 #include "manifest/at_utils_manifest.h"
 #include "io/at_utils_io.h"
 #include "trace/at_utils_trace.h"
-#include "log/at_utils_log.h"
 
 #include "at_utils_basic.h"
 

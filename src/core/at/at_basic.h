@@ -27,41 +27,35 @@
 #define AT__INIT_IGNORE_LOCKFILE 0x0010
 
 
-#define AT__FINISH_CLOSE_CFG  0x0010
-
 
 /* initialize members of at_t from the configuration
  * file `cfg`, or if unavailable, from default values
  **/
 int at__cfg_init(at_t *at,
+    zcom_ssm_t *ssm,
     zcom_cfg_t *cfg,
     const at_params_sys_t *sys_params,
     at_flags_t flags);
 
-/* initialize the object at from the configuration file `cfg_filename`
+/* initialize the object at from the configuration file `cfg_file`
  * `flags` can be AT__INIT_VERBOSE
  * returns zero on success.
  * wrapper of at__cfg_init()
  **/
 int at__init(at_t *at,
-    const char *cfg_filename,
+    const char *cfg_file,
     const at_params_sys_t *sys_params,
     at_flags_t flags);
 
 /* return a pointer of an initialized at_t object
  * if possible, initial values are taken from configuration
- * file `cfg_filename`, otherwise default values are assumed
+ * file `cfg_file`, otherwise default values are assumed
  **/
-at_t *at__open(const char *cfg_filename,
+at_t *at__open(const char *cfg_file,
     const at_params_sys_t *sys_params,
     at_flags_t flags);
 
-/* close the at object
- *
- * With the flag AT__FINISH_CLOSE_CFG,
- * a non-NULL handle at->cfg will be closed.
- **/
-void at__finish(at_t *at, at_flags_t flags);
+void at__finish(at_t *at);
 
 /* close a pointer to at_t 
  * also free the memory allocated for `*at`

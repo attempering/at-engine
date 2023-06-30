@@ -61,33 +61,36 @@ static char *at_utils_lockfile__get_file_name(
 int at_utils_lockfile__init(
     at_utils_lockfile_t *lockfile,
     at_bool_t ignore_lockfile,
+    at_utils_log_t *log,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_bool_t verbose)
 {
   at_utils_lockfile__get_file_name(lockfile, ssm, data_dir);
 
+  at_utils_log__push_mod(log, "at.utils.lockfile");
+
   if (at_utils_sys__file_exists(lockfile->filename)) {
 
-    if (!ignore_lockfile) {
+    at_utils_log__exit_if (!ignore_lockfile,
+        log,
 
-      // alert the user that the lock file exists
-      // another simulation may be running
+        // inform the user that the lock file exists
+        // another simulation may be running
 
-      fprintf(stderr, "Error@at.utils.lockfile: lockfile [%s] already exists, "
-          "this probably means that a previous simulation is still running. "
-          "If this is not so, please delete the file and restart the simulation.\n",
-          lockfile->filename);
-
-      exit(1);
-    }
+        "lockfile [%s] already exists, "
+        "this probably means that a previous simulation is still running. "
+        "If this is not so, please delete the file and restart the simulation.\n",
+        lockfile->filename);
 
   } else {
 
     FILE *fp;
 
     if ((fp = fopen(lockfile->filename, "w")) == NULL) {
-      fprintf(stderr, "Warning@at.utils.lockfile: failed to create the lockfile %s\n", lockfile->filename);
+
+      at_utils_log__warning(log, "failed to create the lockfile %s\n", lockfile->filename);
+
     } else {
 
       fprintf(fp, "%ld\n", (long) time(NULL));
@@ -97,12 +100,14 @@ int at_utils_lockfile__init(
       fclose(fp);
 
       if (verbose) {
-        fprintf(stderr, "Info@at.utils.lockfile: successfully created the lockfile %s\n", lockfile->filename);
+        at_utils_log__info(log, "successfully created the lockfile %s\n", lockfile->filename);
       }
 
     }
 
   } 
+
+  at_utils_log__pop_mod(log);
 
   lockfile->ready = AT__TRUE;
 

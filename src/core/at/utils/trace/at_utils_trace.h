@@ -20,14 +20,12 @@
 #define AT_UTILS_TRACE_H__
 
 #include "at_utils_trace__def.h"
+#include "../conf/at_utils_conf.h"
 #include "../../params/at_params__def.h"
 
 
-void at_utils_trace__cfg_init(at_utils_trace_t *trace,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
+void at_utils_trace__conf_init(at_utils_trace_t *trace,
+    at_utils_conf_t *conf);
 
 zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation);
 

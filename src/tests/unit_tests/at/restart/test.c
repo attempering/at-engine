@@ -218,8 +218,8 @@ int do_test(const char *fn_cfg)
     printf("Failed.\n");
   }
 
-  at__finish(at1, AT__FINISH_CLOSE_CFG);
-  at__finish(at2, AT__FINISH_CLOSE_CFG);
+  at__finish(at1);
+  at__finish(at2);
 
   return 0;
 }

@@ -20,13 +20,11 @@
 #define AT_UTILS_MANIFEST_H__
 
 #include "at_utils_manifest__def.h"
+#include "../conf/at_utils_conf.h"
 
-void at_utils_manifest__cfg_init(
+void at_utils_manifest__conf_init(
     at_utils_manifest_t *manifest,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
+    at_utils_conf_t *conf);
 
 FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest);
 

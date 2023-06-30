@@ -16,26 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_BASIC_H__
-#define AT_UTILS_BASIC_H__
+#ifndef AT_UTILS_CONF__DEF_H__
+#define AT_UTILS_CONF__DEF_H__
 
+#include "../log/at_utils_log__def.h"
+#include "../../context/at_context__def.h"
+#include "../../../zcom/zcom.h"
 
-#include "at_utils__def.h"
+typedef struct at_utils_conf_t_
+{
+  int ready;
+  zcom_cfg_t *cfg; /* reference handle */
 
-#include "../../zcom/zcom.h"
-
-
-
-void at_utils__cfg_init(at_utils_t *utils,
-    zcom_ssm_t *ssm,
-    zcom_cfg_t *cfg,
-    at_bool_t is_continuation,
-    at_bool_t append_sim_id_to_data_dir, int sim_id,
-    at_bool_t ignore_lockfile, at_bool_t verbose);
-
-void at_utils__finish(at_utils_t *utils);
-
-void at_utils__manifest(at_utils_t *utils);
-
+  at_utils_log_t *log; /* reference handle for the log file */
+  zcom_ssm_t *ssm; /* reference handle for the string allocator */
+  const char *data_dir;
+  at_bool_t verbose;
+} at_utils_conf_t;
 
 #endif

@@ -101,12 +101,12 @@ static int at__cfg_init_self(
  * sys_params can be NULL, in which case, default system parameters
  * will be used */
 static int at__cfg_init_low_level(at_t *at,
+    zcom_ssm_t *ssm,
     zcom_cfg_t *cfg,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
   const char *data_dir;
-  zcom_ssm_t *ssm;
   at_bool_t ignore_lockfile = flags & AT__INIT_IGNORE_LOCKFILE;
   at_bool_t verbose = flags & AT__INIT_VERBOSE;
 
@@ -117,18 +117,14 @@ static int at__cfg_init_low_level(at_t *at,
   at_params_sys__init(at->sys_params, sys_params);
 
   /* initialize the utils objects such as manifest and trace */
-  at_utils__cfg_init(at->utils, cfg,
+  at_utils__cfg_init(at->utils, ssm, cfg,
+      at->sys_params->is_continuation,
       at->sys_params->multi_sims, at->sys_params->sim_id,
       ignore_lockfile, verbose);
 
-  /* initialize the log file */
-  at_utils_log__open_file(at->utils->log, at->sys_params->is_continuation);
-  at_utils_log__push_mod(at->utils->log, "at");
   at_utils_log__info(at->utils->log, "version %lld\n", (long long) AT__VERSION);
 
   data_dir = at->utils->data_dir;
-
-  ssm = at->utils->ssm;
 
   if (at_distr__cfg_init(at->distr, cfg, at->sys_params->boltz, verbose) != 0) {
     return -1;
@@ -153,12 +149,13 @@ static int at__cfg_init_low_level(at_t *at,
 
 
 int at__cfg_init(at_t *at,
+    zcom_ssm_t *ssm,
     zcom_cfg_t *cfg,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
   /* load settings from the configuration file */
-  at__cfg_init_low_level(at, cfg, sys_params, flags);
+  at__cfg_init_low_level(at, ssm, cfg, sys_params, flags);
 
   at->energy = 0.0;
 
@@ -171,58 +168,58 @@ int at__cfg_init(at_t *at,
     }
   }
 
-  /* open the trace file using the proper (append or write) mode
-   * depending on whether it is a continuation run */
-  at_utils_trace__open_file(at->utils->trace, at->sys_params->is_continuation);
-
   return 0;
 }
 
 
 
 int at__init(at_t *at,
-    const char *cfg_filename,
+    const char *cfg_file,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
-  zcom_cfg_t *cfg = NULL;
+  zcom_cfg_t *cfg;
 
-  at->cfg = NULL;
+  memset(at, 0, sizeof(*at));
+  at->ssm = NULL;
 
-  if (cfg_filename == NULL) {
+  if (cfg_file == NULL) {
     return -1;
   }
 
-  //fprintf(stderr, "Debug@at: at__init() from %s\n", cfg_filename);
+  //fprintf(stderr, "Debug@at: at__init() from %s\n", cfg_file);
+
+  if ((at->ssm = zcom_ssm__open()) == NULL) {
+    fprintf(stderr, "Error@at: failed to open configuration file %s.\n", cfg_file);
+    return -1;
+  }
 
   /* open configuration file */
-  if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
-    at_utils_log__error(at->utils->log, "failed to open configuration file %s.\n", cfg_filename);
+  if ((cfg = zcom_cfg__open(cfg_file, at->ssm,
+      ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
+    fprintf(stderr, "Error@at: failed to open configuration file %s.\n", cfg_file);
+    zcom_ssm__close(at->ssm);
     return -1;
   }
 
   /* call low level function */
-  if (at__cfg_init(at, cfg, sys_params, flags) != 0) {
-    at_utils_log__error(at->utils->log, "error while reading configuration file %s\n",
-        (cfg_filename ? cfg_filename : "NULL") );
-    zcom_cfg__close(cfg);
+  if (at__cfg_init(at, at->ssm, cfg, sys_params, flags) != 0) {
+    fprintf(stderr, "Error@at: error while reading configuration file %s\n",
+        (cfg_file ? cfg_file : "NULL") );
+    zcom_ssm__close(at->ssm);
     return -1;
   }
 
-  at_utils_log__info(at->utils->log, "successfully loaded configuration file %s\n", cfg_filename);
+  at_utils_log__info(at->utils->log, "successfully loaded configuration file %s\n", cfg_file);
 
-  /* save a handle for `cfg`
-   * Note: the `cfg` handle contains string data
-   * that may still be used throughout the program,
-   * So we keep the handle open and close it at the end. */
-  at->cfg = cfg;
+  zcom_cfg__close(cfg);
 
   return 0;
 }
 
 
 
-at_t *at__open(const char *cfg_filename,
+at_t *at__open(const char *cfg_file,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
@@ -232,18 +229,16 @@ at_t *at__open(const char *cfg_filename,
   zcom_utils__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
       "Fatal@at: no memory for a new object of at_t\n");
 
-  at->cfg = NULL;
-
   /* call low level function */
-  zcom_utils__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
-      "Error@at: error while reading configuration file %s\n", cfg_filename);
+  zcom_utils__exit_if (at__init(at, cfg_file, sys_params, flags) != 0,
+      "Error@at: error while reading configuration file %s\n", cfg_file);
 
   return at;
 }
 
 
 
-void at__finish(at_t *at, at_flags_t flags)
+void at__finish(at_t *at)
 {
   at_eh__finish(at->eh);
 
@@ -255,11 +250,8 @@ void at__finish(at_t *at, at_flags_t flags)
 
   at_utils__finish(at->utils);
 
-  if (flags & AT__FINISH_CLOSE_CFG) {
-    //fprintf(stderr, "at->cfg %p\n", at->cfg);
-    if (at->cfg != NULL) {
-      zcom_cfg__close(at->cfg);
-    }
+  if (at->ssm != NULL) {
+    zcom_ssm__close(at->ssm);
   }
 
   memset(at, 0, sizeof(*at));
@@ -268,7 +260,7 @@ void at__finish(at_t *at, at_flags_t flags)
 
 void at__close(at_t *at)
 {
-  at__finish(at, AT__FINISH_CLOSE_CFG);
+  at__finish(at);
   free(at);
 }
 

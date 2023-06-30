@@ -63,7 +63,7 @@ typedef struct at_t_ {
 
   at_utils_t      utils[1];     // utilities and everything else
 
-  zcom_cfg_t      *cfg;
+  zcom_ssm_t      *ssm; // string allocator
 
 } at_t;
 

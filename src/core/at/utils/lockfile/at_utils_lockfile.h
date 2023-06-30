@@ -20,11 +20,13 @@
 #define AT_UTILS_LOCKFILE_H__
 
 #include "at_utils_lockfile__def.h"
+#include "../log/at_utils_log.h"
 #include "../../../zcom/zcom.h"
 
 int at_utils_lockfile__init(
     at_utils_lockfile_t *lockfile,
     at_bool_t ignore_lockfile,
+    at_utils_log_t *log,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_bool_t verbose);

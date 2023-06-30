@@ -24,7 +24,7 @@
 typedef struct at_utils_manifest_t_
 {
   int ready;
-  char *filename;
+  char *file;
   FILE *fp;
   int arr_max_items;
 } at_utils_manifest_t;

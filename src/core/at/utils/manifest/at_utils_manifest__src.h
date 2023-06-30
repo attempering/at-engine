@@ -20,33 +20,29 @@
 #define AT_UTILS_MANIFEST__SRC_H__
 
 #include "at_utils_manifest.h"
+#include "../conf/at_utils_conf.h"
 
 #include "../../../zcom/zcom.h"
 
 
 
-void at_utils_manifest__cfg_init(
+void at_utils_manifest__conf_init(
     at_utils_manifest_t *manifest,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
   manifest->ready = AT__TRUE;
 
-  manifest->filename = zcom_ssm__dup(ssm, "manifest.dat");
-  if (zcom_cfg__get(cfg, &manifest->filename, "manifest-file", "%s") != 0)
-  {
-    if (verbose) fprintf(stderr, "Info@at.utils.manifest: assuming default utils->manifest->filename = \"manifest.dat\", key: manifest-file\n");
-  }
+  at_utils_conf__push_mod(conf, "at.utils.manifest");
 
-  manifest->filename = at_utils__make_output_filename(ssm, data_dir, manifest->filename);
+  at_utils_conf__get_filename(conf,
+      "manifest-file",
+      &manifest->file, "manifest.dat",
+      "file");
 
-  manifest->arr_max_items = 3;
-  if (zcom_cfg__get(cfg, &manifest->arr_max_items, "manifest-arr-max-items", "%d") != 0)
-  {
-    if (verbose) fprintf(stderr, "Info@at.utils.manifest: assuming default utils->manifest->arr_max_items = 3, key: manifest-arr-max-items\n");
-  }
+  at_utils_conf__get_int(conf,
+      "manifest-arr-max-items",
+      &manifest->arr_max_items, 3,
+      "arr_max_items");
 
   manifest->fp = NULL; // do not open it yet
 }
@@ -55,7 +51,7 @@ void at_utils_manifest__cfg_init(
 
 FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest)
 {
-  if ((manifest->fp = fopen(manifest->filename, "w")) != NULL) {
+  if ((manifest->fp = fopen(manifest->file, "w")) != NULL) {
     return manifest->fp;
   }
 
@@ -88,7 +84,7 @@ void at_utils_manifest__finish(at_utils_manifest_t *manifest)
 
 void at_utils_manifest__manifest(at_utils_manifest_t *manifest)
 {
-  fprintf(manifest->fp, "utils->manifest->filename: char *, %s\n", manifest->filename);
+  fprintf(manifest->fp, "utils->manifest->file: char *, %s\n", manifest->file);
 }
 
 

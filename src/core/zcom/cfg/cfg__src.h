@@ -197,7 +197,7 @@ int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt)
 
 
 /* load the whole configuration file into memory, parse it to entries */
-zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
+zcom_cfg_t *zcom_cfg__open(const char *fn, zcom_ssm_t *ssm, unsigned flags)
 {
   zcom_cfg_t *cfg;
   zcom_cfgent_t *ent;
@@ -216,7 +216,13 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
   zcom_utils__exit_if ((cfg = (zcom_cfg_t *) calloc(1, sizeof(zcom_cfg_t))) == NULL,
     "Fatal@zcom.cfg: no memory for a new zcom_cfg_t object\n");
 
-  cfg->ssm = NULL;
+  if (ssm != NULL) {
+    cfg->ssm = ssm;
+    cfg->ssm_internal = 0;
+  } else {
+    cfg->ssm = zcom_ssm__open();
+    cfg->ssm_internal = 1;
+  }
 
   cfg->flags = flags;
 
@@ -225,8 +231,6 @@ zcom_cfg_t *zcom_cfg__open(const char *fn, unsigned flags)
     free(cfg);
     return NULL;
   }
-
-  cfg->ssm = zcom_ssm__open();
 
   if (zcom_ssm__fget_all(cfg->ssm, &(cfg->buf), &size, fp) == NULL) {
     fprintf(stderr, "Error@zcom.cfg: error reading file %s\n", fn);
@@ -337,7 +341,9 @@ void zcom_cfg__close(zcom_cfg_t *cfg)
 
   free(cfg->ents);
   free(cfg->opts);
-  zcom_ssm__close(cfg->ssm);
+  if (cfg->ssm_internal) {
+    zcom_ssm__close(cfg->ssm);
+  }
   memset(cfg, 0, sizeof(*cfg));
   free(cfg);
 }

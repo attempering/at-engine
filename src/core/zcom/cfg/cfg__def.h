@@ -44,6 +44,7 @@ typedef struct zcom_cfg_t_ {
   unsigned flags;
   zcom_opt_t *opts;    /* user-requested options */
   zcom_ssm_t *ssm;
+  int ssm_internal;
 } zcom_cfg_t;
 
 
