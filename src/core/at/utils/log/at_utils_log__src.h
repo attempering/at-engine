@@ -25,6 +25,7 @@
 #include "../at_utils_misc.h"
 #include "../modstack/at_utils_modstack.h"
 #include "../manifest/at_utils_manifest__def.h"
+#include "../../../zcom/zcom.h"
 
 
 
@@ -103,6 +104,9 @@ void at_utils_log__pop_mod(at_utils_log_t *log)
 
 const char *at_utils_log__get_mod(at_utils_log_t *log)
 {
+  zcom_utils__exit_if (log == NULL,
+      "passing null pointer to at_utils_log__get_mod()");
+
   return at_utils_modstack__get(log->mods);
 }
 

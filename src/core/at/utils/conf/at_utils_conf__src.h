@@ -71,9 +71,12 @@ int at_utils_conf__get_int(
 {
   int tmp;
 
+  *var = val_def;
+
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%d") != 0) {
+
     if (conf->verbose) {
-      at_utils_log__info(conf->log, "assuming default %s = %g, key: %s\n",
+      at_utils_log__info(conf->log, "assuming default %s = %d, key: %s\n",
           name, val_def, keys);
     }
   }
@@ -92,6 +95,8 @@ int at_utils_conf__get_double(
     const char *name)
 {
   double tmp;
+
+  *var = val_def;
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%lf") != 0) {
     if (conf->verbose) {

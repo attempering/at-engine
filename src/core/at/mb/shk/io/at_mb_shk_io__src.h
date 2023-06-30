@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_SHK_IO_SRC_H__
-#define AT_MB_SHK_IO_SRC_H__
+#ifndef AT_MB_SHK_IO__SRC_H__
+#define AT_MB_SHK_IO__SRC_H__
 
 
 #include "at_mb_shk_io_binary__src.h"

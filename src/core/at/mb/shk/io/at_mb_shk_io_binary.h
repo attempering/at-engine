@@ -16,19 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MB_SHK_IO_TEXT_H__
-#define AT_MB_SHK_IO_TEXT_H__
+#ifndef AT_MB_SHK_IO_BINARY_H__
+#define AT_MB_SHK_IO_BINARY_H__
 
 
 #include "../at_mb_shk__def.h"
 #include "../../../utils/at_utils.h"
 
 
-int at_mb_shk__read_text(
+int at_mb_shk__read_binary(
     at_mb_shk_t *shk,
     at_utils_io_t *io);
 
-int at_mb_shk__write_text(
+int at_mb_shk__write_binary(
     at_mb_shk_t *shk,
     at_utils_io_t *io);
 

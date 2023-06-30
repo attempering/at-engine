@@ -27,8 +27,8 @@
 #include "conf/at_utils_conf__src.h"
 #include "lockfile/at_utils_lockfile__src.h"
 #include "manifest/at_utils_manifest__src.h"
+#include "trace/at_utils_trace__src.h"
 #include "io/at_utils_io__src.h"
-#include "log/at_utils_log__src.h"
 
 #include "at_utils_basic__src.h"
 
