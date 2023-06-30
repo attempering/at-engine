@@ -38,12 +38,10 @@ void at_utils_log__cfg_init(
   char *fn;
 
   fn = zcom_ssm__dup(ssm, "log.dat");
-  if (zcom_cfg__get(cfg, &fn, "log-file", "%s") != 0)
-  {
+  if (zcom_cfg__get(cfg, &fn, "log-file", "%s") != 0) {
     if (verbose) fprintf(stderr, "Info@at.utils.log: assuming default utils->log->file = [%s], key: log-file\n",
         fn);
   }
-
   log->file = at_utils__make_output_filename(ssm, data_dir, fn);
 
   log->fp = NULL;
@@ -133,15 +131,12 @@ static int at_utils_log__vprintf_level_0(
 }
 
 
-void at_utils_log__vprintf(
+static void at_utils_log__vprintf_file(
     at_utils_log_t *log,
+    const char *module,
     const char *type,
     const char *fmt, va_list args)
 {
-  const char *module = at_utils_log__get_mod(log);
-
-  at_utils_log__vprintf_level_0(module, type, stderr, fmt, args);
-
   if (log->fp == NULL) {
     at_utils_log__open_file(log, AT__FALSE);
   }
@@ -150,15 +145,29 @@ void at_utils_log__vprintf(
 }
 
 
+static void at_utils_log__vprintf_stderr(
+    const char *module,
+    const char *type,
+    const char *fmt, va_list args)
+{
+  at_utils_log__vprintf_level_0(module, type, stderr, fmt, args);
+}
+
+
 void at_utils_log__printf(
     at_utils_log_t *log,
     const char *type,
     const char *fmt, ...)
 {
+  const char *module = at_utils_log__get_mod(log);
   va_list args;
 
   va_start(args, fmt);
-  at_utils_log__vprintf(log, type, fmt, args);
+  at_utils_log__vprintf_file(log, module, type, fmt, args);
+  va_end(args);
+
+  va_start(args, fmt);
+  at_utils_log__vprintf_stderr(module, type, fmt, args);
   va_end(args);
 }
 
@@ -167,10 +176,15 @@ void at_utils_log__info(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
+  const char *module = at_utils_log__get_mod(log);
   va_list args;
 
   va_start(args, fmt);
-  at_utils_log__vprintf(log, "Info", fmt, args);
+  at_utils_log__vprintf_file(log, module, "Info", fmt, args);
+  va_end(args);
+
+  va_start(args, fmt);
+  at_utils_log__vprintf_stderr(module, "Info", fmt, args);
   va_end(args);
 }
 
@@ -179,10 +193,15 @@ void at_utils_log__warning(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
+  const char *module = at_utils_log__get_mod(log);
   va_list args;
 
   va_start(args, fmt);
-  at_utils_log__vprintf(log, "Warning", fmt, args);
+  at_utils_log__vprintf_file(log, module, "Warning", fmt, args);
+  va_end(args);
+
+  va_start(args, fmt);
+  at_utils_log__vprintf_stderr(module, "Warning", fmt, args);
   va_end(args);
 }
 
@@ -191,13 +210,41 @@ void at_utils_log__error(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
+  const char *module = at_utils_log__get_mod(log);
   va_list args;
 
   va_start(args, fmt);
-  at_utils_log__vprintf(log, "Error", fmt, args);
+  at_utils_log__vprintf_file(log, module, "Error", fmt, args);
+  va_end(args);
+
+  va_start(args, fmt);
+  at_utils_log__vprintf_stderr(module, "Error", fmt, args);
   va_end(args);
 }
 
+
+void at_utils_log__exit_if(
+    at_bool_t cond,
+    at_utils_log_t *log,
+    const char *fmt, ...)
+{
+  const char *module;
+  va_list args;
+
+  if (!cond) return;
+
+  module = at_utils_log__get_mod(log);
+
+  va_start(args, fmt);
+  at_utils_log__vprintf_file(log, module, "Error", fmt, args);
+  va_end(args);
+
+  va_start(args, fmt);
+  at_utils_log__vprintf_stderr(module, "Error", fmt, args);
+  va_end(args);
+
+  exit(1);
+}
 
 
 #endif

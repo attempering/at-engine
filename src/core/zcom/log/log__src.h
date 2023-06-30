@@ -78,13 +78,36 @@ ZCOM__INLINE int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list arg
 ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
 {
   va_list args;
-  int ret;
 
-  va_start(args, fmt);
-  ret = zcom_log__vprintf(log, fmt, args);
-  va_end(args);
+  if (log == NULL) {
+    return 1;
+  }
 
-  return ret;
+  if (log->fp == NULL) {
+    const char *aw = (log->flags & ZCOM_LOG__APPEND) ? "a" : "w";
+    if ((log->fp = fopen(log->fname, aw)) == NULL) {
+      fprintf(stderr, "failed to open %s\n", log->fname);
+      return 1;
+    }
+  }
+
+  if ((log->flags & ZCOM_LOG__NO_OUTPUT_FILE) == 0) {
+    va_start(args, fmt);
+    vfprintf(log->fp, fmt, args);
+    va_end(args);
+  }
+
+  if (log->flags & ZCOM_LOG__OUTPUT_SCREEN) {
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+  }
+
+  if (log->flags & ZCOM_LOG__FLUSH_AFTER) {
+    fflush(log->fp);
+  }
+
+  return 0;
 }
 
 

@@ -66,5 +66,9 @@ void at_utils_log__error(
     at_utils_log_t *log,
     const char *fmt, ...);
 
+void at_utils_log__exit_if(
+    at_bool_t cond,
+    at_utils_log_t *log,
+    const char *fmt, ...);
 
 #endif

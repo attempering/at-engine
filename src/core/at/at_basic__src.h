@@ -51,7 +51,7 @@ static void at__set_init_beta(at_t *at)
 
   at__update_force_scale(at);
 
-  fprintf(stderr, "Info@at: initial beta %g, force_scale %g\n",
+  at_utils_log__info(at->utils->log, "initial beta %g, force_scale %g\n",
       at->beta, at->force_scale);
 }
 
@@ -121,6 +121,11 @@ static int at__cfg_init_low_level(at_t *at,
       at->sys_params->multi_sims, at->sys_params->sim_id,
       ignore_lockfile, verbose);
 
+  /* initialize the log file */
+  at_utils_log__open_file(at->utils->log, at->sys_params->is_continuation);
+  at_utils_log__push_mod(at->utils->log, "at");
+  at_utils_log__info(at->utils->log, "version %lld\n", (long long) AT__VERSION);
+
   data_dir = at->utils->data_dir;
 
   ssm = at->utils->ssm;
@@ -152,8 +157,6 @@ int at__cfg_init(at_t *at,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
-  fprintf(stderr, "Info@at: version %d\n", AT__VERSION);
-
   /* load settings from the configuration file */
   at__cfg_init_low_level(at, cfg, sys_params, flags);
 
@@ -168,10 +171,8 @@ int at__cfg_init(at_t *at,
     }
   }
 
-  /* open the log and trace files using the proper (append or write) mode
+  /* open the trace file using the proper (append or write) mode
    * depending on whether it is a continuation run */
-  at_utils_log__open_file(at->utils->log, at->sys_params->is_continuation);
-
   at_utils_trace__open_file(at->utils->trace, at->sys_params->is_continuation);
 
   return 0;
@@ -196,19 +197,19 @@ int at__init(at_t *at,
 
   /* open configuration file */
   if ((cfg = zcom_cfg__open(cfg_filename, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
-    fprintf(stderr, "\rError@at: failed to open configuration file %s.\n", cfg_filename);
+    at_utils_log__error(at->utils->log, "failed to open configuration file %s.\n", cfg_filename);
     return -1;
   }
 
   /* call low level function */
   if (at__cfg_init(at, cfg, sys_params, flags) != 0) {
-    fprintf(stderr, "\rError@at: error while reading configuration file %s\n",
+    at_utils_log__error(at->utils->log, "error while reading configuration file %s\n",
         (cfg_filename ? cfg_filename : "NULL") );
     zcom_cfg__close(cfg);
     return -1;
   }
 
-  fprintf(stderr, "Info@at: successfully loaded configuration file %s\n", cfg_filename);
+  at_utils_log__info(at->utils->log, "successfully loaded configuration file %s\n", cfg_filename);
 
   /* save a handle for `cfg`
    * Note: the `cfg` handle contains string data
@@ -235,7 +236,7 @@ at_t *at__open(const char *cfg_filename,
 
   /* call low level function */
   zcom_utils__exit_if (at__init(at, cfg_filename, sys_params, flags) != 0,
-    "Error@at: error while reading configuration file %s\n", cfg_filename);
+      "Error@at: error while reading configuration file %s\n", cfg_filename);
 
   return at;
 }
