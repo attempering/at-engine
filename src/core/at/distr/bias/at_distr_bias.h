@@ -23,7 +23,7 @@
 #include "../../utils/at_utils.h"
 #include "../../../zcom/zcom.h"
 
-int at_distr_bias__cfg_init(at_distr_bias_t *bias, zcom_cfg_t *cfg, at_bool_t verbose);
+int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf);
 
 void at_distr_bias__finish(at_distr_bias_t *bias);
 

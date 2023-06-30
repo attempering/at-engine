@@ -64,54 +64,45 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
 
 
 
-int at_distr_domain__cfg_init(at_distr_domain_t *domain,
-    zcom_cfg_t *cfg, at_bool_t verbose)
+int at_distr_domain__conf_init(at_distr_domain_t *domain,
+    at_utils_conf_t *conf)
 {
   int i;
 
-  /* read beta_min and beta_max from the configuration file */
+  at_utils_conf__push_mod(conf, "at.distr.domain");
 
-  domain->beta_min = 0.2;
-  if (0 != zcom_cfg__get(cfg, &domain->beta_min, "beta-min", "%lf")) {
-    fprintf(stderr, "Warning@at.distr.domain: missing var: distr->domain->beta_min, key: beta-min, assuming %g\n", domain->beta_min);
-    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-  }
+  at_utils_conf__get_double(conf,
+      "beta-min",
+      &domain->beta_min, 0.2,
+      "beta_min");
 
-  if ( !(domain->beta_min >= 0.0) ) {
-    fprintf(stderr, "domain->beta_min: failed validation: distr->domain->beta_min %g > 1e-6\n",
+  if (domain->beta_min < 0.0) {
+    at_utils_log__error(conf->log, "domain->beta_min: failed validation: distr->domain->beta_min %g > 1e-6\n",
         domain->beta_min);
-    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
-
-  domain->beta_max = 0.4;
-  if (0 != zcom_cfg__get(cfg, &domain->beta_max, "beta-max", "%lf")) {
-    fprintf(stderr, "Warning@at.distr.domain: missing var: distr->domain->beta_max, key: beta-max, assuming %g\n", domain->beta_max);
-    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-  }
+  at_utils_conf__get_double(conf,
+      "beta-max",
+      &domain->beta_max, 0.4,
+      "beta_max");
 
   //printf("domain->beta_min %g, domain->beta_max %g\n", domain->beta_min, domain->beta_max); getchar();
 
-  if ( !(domain->beta_max >= domain->beta_min) ) {
-    fprintf(stderr, "distr->domain->beta_max: failed validation: domain->beta_max %g > domain->beta_min %g\n",
+  if (domain->beta_max < domain->beta_min) {
+    at_utils_log__error(conf->log, "distr->domain->beta_max: failed validation: domain->beta_max %g > domain->beta_min %g\n",
         domain->beta_max, domain->beta_min);
-    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
     goto ERR;
   }
 
   /* beta_del: bin size of beta */
-  domain->beta_del = 0.005;
+  at_utils_conf__get_double(conf,
+      "beta-del",
+      &domain->beta_del, 0.005,
+      "beta_del");
 
-  if (0 != zcom_cfg__get(cfg, &domain->beta_del, "beta-del", "%lf")) {
-    fprintf(stderr, "Warning@at.distr.domain: missing var: distr->domain->beta_del, key: beta-del, assuming %g\n",
-        domain->beta_del);
-    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-  }
-
-  if ( !(domain->beta_del > 1e-6) ) {
-    fprintf(stderr, "distr->domain->beta_del: failed validation: domain->beta_del > 1e-6\n");
-    if (verbose) fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+  if (domain->beta_del < 1e-6) {
+    at_utils_log__error(conf->log, "distr->domain->beta_del: failed validation: domain->beta_del > 1e-6\n");
     goto ERR;
   }
 
@@ -122,24 +113,21 @@ int at_distr_domain__cfg_init(at_distr_domain_t *domain,
   //getchar();
 
   /* barr: temperature array */
-  if ((domain->barr = (double *) calloc((domain->n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.distr.domain: no memory! var: distr->domain->barr, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  at_utils_log__exit_if ((domain->barr = (double *) calloc((domain->n + 1), sizeof(double))) == NULL,
+      conf->log, "no memory! var: distr->domain->barr, type: double\n");
 
   for (i = 0; i < domain->n+1; i++) {
     domain->barr[i] = domain->beta_min + i * domain->beta_del;
   }
 
   /* check beta array */
-  if ( !(at_distr_domain__check_barr(domain) == 0) ) {
-    fprintf(stderr, "Info@at.distr.domain: check beta array\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  at_utils_log__exit_if (at_distr_domain__check_barr(domain) != 0,
+      conf->log, "check beta array\n");
+
   /* fix beta_max to a bin boundary */
   domain->beta_max = domain->beta_min + domain->beta_del * domain->n;
+
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 

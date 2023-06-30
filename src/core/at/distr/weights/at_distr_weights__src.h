@@ -46,8 +46,10 @@ static void at_distr_weights__init_ens_exp(at_distr_weights_t *w)
 
 
 
-int at_distr_weights__cfg_init(at_distr_weights_t *w,
-    at_distr_domain_t *domain, zcom_cfg_t *cfg, at_bool_t verbose)
+int at_distr_weights__conf_init(
+    at_distr_weights_t *w,
+    at_distr_domain_t *domain,
+    at_utils_conf_t *conf)
 {
   int i;
 
@@ -55,57 +57,58 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   w->beta_max = domain->beta_max;
   w->n = domain->n;
 
-  /* ens_exp: ensemble exponent of beta */
-  w->ens_exp = 1.0;
-  if (0 != zcom_cfg__get(cfg, &w->ens_exp, "ensemble-factor,ensemble-exp,ensemble-exponent", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.distr.weights: assuming default distr->weights->ens_exp = 1.0, key: ensemble-exponent\n");
-  }
+  at_utils_conf__push_mod(conf, "at.distr.weights");
+
+  //at_utils_log__info(conf->log, "w->n %d\n", w->n); getchar();
+
+  //printf("w %p\n", w); getchar();
+  at_utils_conf__get_double(conf,
+      "ensemble-factor,ensemble-exp,ensemble-exponent",
+      &w->ens_exp, 1.0, "exponent");
+
+  //fprintf(stderr, "ens_exp %g\n", w->ens_exp); getchar();
 
   at_distr_weights__init_ens_exp(w);
 
-  /* flat ensemble mode */
-  w->mode = 0;
-  if (0 != zcom_cfg__get(cfg, &w->mode, "ensemble-mode", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.distr.weights: assuming default distr->weights->mode = 0, key: ensemble-mode\n");
-  }
+  at_utils_conf__get_int(conf,
+      "ensemble-mode",
+      &w->mode, 0, "mode");
 
   /* default values */
   w->beta0 = 0.5 * (w->beta_min + w->beta_max);
   w->inv_sigma2 = 1.0;
   w->c = 0.0;
 
-  if(w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN) {
+  if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN) {
 
-    if (verbose) fprintf(stderr, "Info@at.distr.weights: single-Gaussian distribution mode\n");
+    at_utils_log__info(conf->log, "single-Gaussian distribution mode\n");
 
-    if (0 != zcom_cfg__get(cfg, &w->beta0, "ensemble-beta0", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.distr.weights: assuming default distr->weights->beta0 = 0.5 * (w->beta_max + w->beta_min), key: ensemble-beta0\n");
-    }
+    at_utils_conf__get_double(conf,
+        "ensemble-beta0",
+        &w->beta0, 0.0, "ensemble_beta0");
 
-    w->sigma = 1.0;
-    if (0 != zcom_cfg__get(cfg, &w->sigma, "ensemble-sigma", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.distr.weights: assuming default distr->weights->sigma = 1.0, key: ensemble-sigma\n");
-    }
+    at_utils_conf__get_double(conf,
+        "ensemble-sigma",
+        &w->sigma, 0.0, "ensemble_sigma");
 
     if (w->sigma <= 0) {
-      fprintf(stderr, "Error@at.distr.weights: sigma %lf is not positive!\n", w->sigma);
+      at_utils_log__error(conf->log, "sigma %lf is not positive!\n", w->sigma);
       goto ERR;
     }
 
     w->inv_sigma2 = 1.0/w->sigma/w->sigma;
 
-  } else if(w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL) {
+  } else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL) {
 
-    if (verbose) fprintf(stderr, "Info@at.distr.weights: single-exponential distribution mode\n");
+    at_utils_log__info(conf->log, "single-exponential distribution mode\n");
 
-    w->c = 0.0;
-    if (0 != zcom_cfg__get(cfg, &w->c, "ensemble-c", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.distr.weights: assuming default distr->weights->c = 0.0, key: ensemble-c\n");
-    }
+    at_utils_conf__get_double(conf,
+        "ensemble-c",
+        &w->c, 0.0, "ensemble_c");
 
-  } else if(w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
+  } else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
 
-    at_distr_weights_components__cfg_init(w->components, domain, cfg, verbose);
+    at_distr_weights_components__conf_init(w->components, domain, conf);
 
   } else if(w->mode != 0) {
 
@@ -115,16 +118,17 @@ int at_distr_weights__cfg_init(at_distr_weights_t *w,
   }
 
   /* ens_w: array of ensemble weights at bin boundaries */
-  if ((w->ens_w = (double *) calloc((w->n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.distr.weights: no memory! var: w->ens_w, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  w->ens_w = (double *) calloc((w->n + 1), sizeof(double));
+  at_utils_log__exit_if (w->ens_w == NULL,
+      conf->log,
+      "no memory! var: w->ens_w, type: double\n");
 
   for (i = 0; i <= w->n; i++) {
     double invw = at_distr_weights__calc_inv_weight(w, domain->barr[i], NULL, NULL, NULL);
     w->ens_w[i] = 1.0/invw;
   }
+
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 
@@ -213,9 +217,8 @@ static double at_distr_weights__calc_f_factor(const at_distr_weights_t *w,
   }
   else
   {
-    fprintf(stderr, "Error@at.distr.weights: unknown mode %d\n",
+    zcom_utils__fatal("Error@at.distr.weights: unknown mode %d\n",
         w->mode);
-    exit(1);
   }
 
   if (p_neg_df_dbeta != NULL) {

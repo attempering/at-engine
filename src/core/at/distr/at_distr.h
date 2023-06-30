@@ -27,7 +27,7 @@
 
 #include "../utils/at_utils.h"
 
-int at_distr__cfg_init(at_distr_t *distr, zcom_cfg_t *cfg, double boltz, at_bool_t verbose);
+int at_distr__conf_init(at_distr_t *distr, at_utils_conf_t *conf, double boltz);
 
 void at_distr__finish(at_distr_t *distr);
 

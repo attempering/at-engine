@@ -119,24 +119,22 @@ static int at_distr_weights_component__parse_str(
 }
 
 
-static int at_distr_weights_component__cfg_init(
+static int at_distr_weights_component__conf_init(
     at_distr_weights_component_t *c,
     int ic,
-    zcom_cfg_t *cfg, at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
   char *key;
-  zcom_ssm_t *ssm = cfg->ssm;
+  zcom_ssm_t *ssm = conf->ssm;
   char *comp_str = NULL;
 
   key = zcom_ssm__dup(ssm, "ensemble-component-000000000000000000000000");
   sprintf(key, "ensemble-component-%d", ic+1);
 
-  if (0 != zcom_cfg__get(cfg, &comp_str, key, "%s")) {
-    if (verbose) fprintf(stderr, "Info@at.distr.weights.components: assuming default component %d, key: %s\n",
-        ic, key);
-
-    comp_str = zcom_ssm__dup(ssm, "flat,1.0");
-  }
+  at_utils_conf__get_str(conf,
+      key,
+      &comp_str, zcom_ssm__dup(ssm, "flat,1.0"),
+      key);
 
   c->id = ic;
   c->key = key;

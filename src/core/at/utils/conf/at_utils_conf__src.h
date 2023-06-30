@@ -36,7 +36,9 @@ void at_utils_conf__init(at_utils_conf_t *conf,
   conf->cfg = cfg;
   conf->ssm = ssm;
   conf->data_dir = data_dir;
+
   conf->log = log;
+
   conf->verbose = verbose;
 
   conf->ready = AT__TRUE;
@@ -62,6 +64,22 @@ void at_utils_conf__pop_mod(at_utils_conf_t *conf)
 }
 
 
+static void at_utils_conf__get_key_and_name(const char *keys, const char **key, const char **name)
+{
+  const char *p = strrchr(keys, ',');
+
+  if (p != NULL) {
+    *key = p + 1;
+  } else {
+    *key = keys;
+  }
+
+  if (*name == NULL) {
+    *name = *key;
+  }
+}
+
+
 int at_utils_conf__get_int(
     at_utils_conf_t *conf,
     const char *keys,
@@ -69,15 +87,18 @@ int at_utils_conf__get_int(
     int val_def,
     const char *name)
 {
+  const char *key;
   int tmp;
 
-  *var = val_def;
+  at_utils_conf__get_key_and_name(keys, &key, &name);
+
+  tmp = val_def;
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%d") != 0) {
 
     if (conf->verbose) {
       at_utils_log__info(conf->log, "assuming default %s = %d, key: %s\n",
-          name, val_def, keys);
+          name, val_def, key);
     }
   }
 
@@ -94,14 +115,17 @@ int at_utils_conf__get_double(
     double val_def,
     const char *name)
 {
+  const char *key;
   double tmp;
 
-  *var = val_def;
+  at_utils_conf__get_key_and_name(keys, &key, &name);
+
+  tmp = val_def;
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%lf") != 0) {
     if (conf->verbose) {
       at_utils_log__info(conf->log, "assuming default %s = %g, key: %s\n",
-          name, val_def, keys);
+          name, val_def, key);
     }
   }
 
@@ -119,13 +143,16 @@ int at_utils_conf__get_str(
     const char *val_def,
     const char *name)
 {
+  const char *key;
   char *tmp = zcom_ssm__dup(conf->ssm, val_def);
+
+  at_utils_conf__get_key_and_name(keys, &key, &name);
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%s") != 0) {
     if (conf->verbose) {
       at_utils_log__info(conf->log, "assuming default %s->%s = \"%s\", key: %s\n",
           at_utils_log__get_mod(conf->log),
-          name, val_def, keys);
+          name, val_def, key);
     }
   }
 
@@ -142,7 +169,7 @@ int at_utils_conf__get_filename(
     const char *val_def,
     const char *name)
 {
-  char *fn;
+  char *fn = NULL;
 
   at_utils_conf__get_str(conf, keys, &fn, val_def, name);
 
@@ -150,6 +177,45 @@ int at_utils_conf__get_filename(
 
   return 0;
 }
+
+
+int at_utils_conf__get_bool(
+    at_utils_conf_t *conf,
+    const char *keys,
+    at_bool_t *var,
+    at_bool_t val_def,
+    const char *name)
+{
+  const char *str_val_def = (val_def ? "true" : "false");
+  char *str_val = NULL;
+
+  at_utils_conf__get_str(conf, keys, &str_val, str_val_def, name);
+
+  if (val_def) {
+
+    if (strcmp(str_val, "0") == 0
+     || strcmp(str_val, "false") == 0
+     || strcmp(str_val, "off") == 0) {
+      *var = AT__FALSE;
+    } else {
+      *var = AT__TRUE;
+    }
+
+  } else {
+
+    if (strcmp(str_val, "1") == 0
+     || strcmp(str_val, "true") == 0
+     || strcmp(str_val, "on") == 0) {
+      *var = AT__TRUE;
+    } else {
+      *var = AT__FALSE;
+    }
+
+  }
+
+  return 0;
+}
+
 
 
 #endif

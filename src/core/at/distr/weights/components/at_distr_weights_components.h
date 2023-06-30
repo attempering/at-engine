@@ -27,9 +27,10 @@
 
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-int at_distr_weights_components__cfg_init(
+int at_distr_weights_components__conf_init(
     at_distr_weights_components_t *c,
-    at_distr_domain_t *domain, zcom_cfg_t *cfg, at_bool_t verbose);
+    at_distr_domain_t *domain,
+    at_utils_conf_t *conf);
 
 void at_distr_weights_components__finish(at_distr_weights_components_t *c);
 

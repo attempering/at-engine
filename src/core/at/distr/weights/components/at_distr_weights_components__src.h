@@ -29,9 +29,10 @@
 
 
 
-int at_distr_weights_components__cfg_init(
+int at_distr_weights_components__conf_init(
     at_distr_weights_components_t *c,
-    at_distr_domain_t *domain, zcom_cfg_t *cfg, at_bool_t verbose)
+    at_distr_domain_t *domain,
+    at_utils_conf_t *conf)
 {
   int ic;
 
@@ -39,16 +40,18 @@ int at_distr_weights_components__cfg_init(
   c->beta_max = domain->beta_max;
   c->n = domain->n;
 
-  if (verbose) fprintf(stderr, "Info@at.distr.weights: multiple-component distribution mode\n");
-
-  /* flat ensemble mode */
-  c->n_components = 1;
-  if (0 != zcom_cfg__get(cfg, &c->n_components, "ensemble-n-components", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.distr.weights.components: assuming a single component, key: ensemble-n-components\n");
+  if (conf->verbose) {
+    at_utils_log__info(conf->log, "multiple-component distribution mode\n");
   }
 
+  /* flat ensemble mode */
+  at_utils_conf__get_int(conf,
+      "ensemble-n-compnents",
+      &c->n_components, 1,
+      "n_components");
+
   if (c->n_components <= 0) {
-    if (verbose) fprintf(stderr, "Error@at.distr.weights.components: invalid number of components %d\n",
+    at_utils_log__error(conf->log, "invalid number of components %d\n",
         c->n_components);
     c->n_components = 0;
     c->components = NULL;
@@ -56,13 +59,12 @@ int at_distr_weights_components__cfg_init(
   }
 
   c->components = (at_distr_weights_component_t *) calloc(c->n_components, sizeof(at_distr_weights_component_t));
-  if (c->components == NULL) {
-    fprintf(stderr, "Fatal@at.distr.weights.components: no memory for components %d\n", c->n_components);
-    exit(-1);
-  }
+  at_utils_log__exit_if (c->components == NULL,
+      conf->log,
+      "no memory for %d components\n", c->n_components);
 
   for (ic = 0; ic < c->n_components; ic++) {
-    at_distr_weights_component__cfg_init(c->components + ic, ic, cfg, verbose);
+    at_distr_weights_component__conf_init(c->components + ic, ic, conf);
   }
 
   return 0;

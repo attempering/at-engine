@@ -67,4 +67,11 @@ int at_utils_conf__get_filename(
     const char *val_def,
     const char *name);
 
+int at_utils_conf__get_bool(
+    at_utils_conf_t *conf,
+    const char *keys,
+    at_bool_t *var,
+    at_bool_t val_def,
+    const char *name);
+
 #endif

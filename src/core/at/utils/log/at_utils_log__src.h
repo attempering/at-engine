@@ -94,18 +94,27 @@ void at_utils_log__close_file(at_utils_log_t *log)
 
 void at_utils_log__push_mod(at_utils_log_t *log, const char *mod)
 {
+  if (log == NULL) {
+    return;
+  }
+
   at_utils_modstack__push(log->mods, mod);
 }
 
-void at_utils_log__pop_mod(at_utils_log_t *log)
+const char *at_utils_log__pop_mod(at_utils_log_t *log)
 {
-  at_utils_modstack__pop(log->mods);
+  if (log == NULL) {
+    return NULL;
+  }
+
+  return at_utils_modstack__pop(log->mods);
 }
 
 const char *at_utils_log__get_mod(at_utils_log_t *log)
 {
-  zcom_utils__exit_if (log == NULL,
-      "passing null pointer to at_utils_log__get_mod()");
+  if (log == NULL) {
+    return NULL;
+  }
 
   return at_utils_modstack__get(log->mods);
 }
@@ -163,8 +172,16 @@ void at_utils_log__printf(
     const char *type,
     const char *fmt, ...)
 {
-  const char *module = at_utils_log__get_mod(log);
+  const char *module;
   va_list args;
+
+  if (log == NULL) { /* fall back to fprintf(stderr, fmt, ...) */
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+  }
+
+  module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
   at_utils_log__vprintf_file(log, module, type, fmt, args);
@@ -180,8 +197,10 @@ void at_utils_log__info(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module = at_utils_log__get_mod(log);
+  const char *module;
   va_list args;
+
+  module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
   at_utils_log__vprintf_file(log, module, "Info", fmt, args);
@@ -197,8 +216,10 @@ void at_utils_log__warning(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module = at_utils_log__get_mod(log);
+  const char *module;
   va_list args;
+
+  module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
   at_utils_log__vprintf_file(log, module, "Warning", fmt, args);
@@ -214,8 +235,10 @@ void at_utils_log__error(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module = at_utils_log__get_mod(log);
+  const char *module;
   va_list args;
+
+  module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
   at_utils_log__vprintf_file(log, module, "Error", fmt, args);

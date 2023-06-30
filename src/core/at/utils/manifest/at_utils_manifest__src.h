@@ -44,6 +44,8 @@ void at_utils_manifest__conf_init(
       &manifest->arr_max_items, 3,
       "arr_max_items");
 
+  at_utils_conf__pop_mod(conf);
+
   manifest->fp = NULL; // do not open it yet
 }
 
@@ -108,6 +110,10 @@ void at_utils_manifest__print_double(at_utils_manifest_t *manifest,
   FILE *fp = manifest->fp;
 
   if (cfg_key != NULL) {
+    //fprintf(fp, "variable: %s\n", var);
+    //fprintf(fp, "(double %s)\n", cfg_key);
+    //fprintf(fp, "value: %g\n", value);
+
     fprintf(fp, "%s (double %s): %g\n", var, cfg_key, value);
   } else {
     fprintf(fp, "%s (double): %g\n", var, value);
@@ -194,10 +200,15 @@ void at_utils_manifest__print_double_arr(at_utils_manifest_t *manifest,
   FILE *fp = manifest->fp;
   int arrmax = manifest->arr_max_items;
 
+  zcom_utils__exit_if (arr == NULL,
+    "at.utils.manifest: arr %s %d is NULL\n", name, n);
+
   fprintf(fp, "%s: dynamic double array of size %d: ", name, n);
 
   for (i = n-1; i >= 0; i--) {
-    if (arr[i] > 0) break;
+    if (arr[i] > 0) {
+      break;
+    }
   }
 
   if (i >= 0) {

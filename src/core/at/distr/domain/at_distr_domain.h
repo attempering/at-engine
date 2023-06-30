@@ -27,8 +27,8 @@
 void at_distr_domain__init_simple(at_distr_domain_t *domain,
     double beta_min, double beta_max, double beta_del);
 
-int at_distr_domain__cfg_init(at_distr_domain_t *domain,
-    zcom_cfg_t *cfg, at_bool_t verbose);
+int at_distr_domain__conf_init(at_distr_domain_t *domain,
+    at_utils_conf_t *conf);
 
 void at_distr_domain__finish(at_distr_domain_t *domain);
 

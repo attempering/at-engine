@@ -20,6 +20,7 @@
 #define AT_UTILS_LOG_H__
 
 #include "at_utils_log__def.h"
+#include "../manifest/at_utils_manifest__def.h"
 #include "../../params/at_params__def.h"
 
 
@@ -40,7 +41,7 @@ void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest);
 
 void at_utils_log__push_mod(at_utils_log_t *log, const char *mod);
 
-void at_utils_log__pop_mod(at_utils_log_t *log);
+const char *at_utils_log__pop_mod(at_utils_log_t *log);
 
 const char *at_utils_log__get_mod(at_utils_log_t *log);
 

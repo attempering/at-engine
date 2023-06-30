@@ -57,40 +57,28 @@ static void at__set_init_beta(at_t *at)
 
 
 
-static int at__cfg_init_self(
+static int at__conf_init_self(
     at_t *at,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
   at__set_init_beta(at);
 
   at->energy = 0.0;
 
-  {
-    char *fn_binary = zcom_ssm__dup(ssm, "at.dat");
-    if (0 != zcom_cfg__get(cfg, &fn_binary, "at-file,at-file-binary", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = [%s], key: at-file-binary\n",
-          fn_binary);
-    }
-    at->file_binary = at_utils__make_output_filename(ssm, data_dir, fn_binary);
-  }
+  at_utils_conf__get_filename(conf,
+      "at-file,at-file-binary",
+      &at->file_binary, "at.dat",
+      "file_binary");
 
-  {
-    char *fn_text = zcom_ssm__dup(ssm, "at-text.dat");
-    if (0 != zcom_cfg__get(cfg, &fn_text, "at-file-text", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at: assuming default at->file_binary = [%s], key: at-file-text\n",
-          fn_text);
-    }
-    at->file_text = at_utils__make_output_filename(ssm, data_dir, fn_text);
-  }
+  at_utils_conf__get_filename(conf,
+      "at-file-text",
+      &at->file_binary, "at-text.dat",
+      "file_text");
 
-  at->write_text_file = AT__FALSE;
-  if (0 != zcom_cfg__get(cfg, &at->write_text_file, "write-text-file", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at: assuming default at->write_text_file = %d, key: write-text-file\n",
-        at->write_text_file);
-  }
+  at_utils_conf__get_bool(conf,
+      "write-text-file",
+      &at->write_text_file, AT__FALSE,
+      "write_text_file");
 
   return 0;
 }
@@ -126,11 +114,11 @@ static int at__cfg_init_low_level(at_t *at,
 
   data_dir = at->utils->data_dir;
 
-  if (at_distr__cfg_init(at->distr, cfg, at->sys_params->boltz, verbose) != 0) {
+  if (at_distr__conf_init(at->distr, at->utils->conf, at->sys_params->boltz) != 0) {
     return -1;
   }
 
-  if (at__cfg_init_self(at, cfg, ssm, data_dir, verbose) != 0) {
+  if (at__conf_init_self(at, at->utils->conf) != 0) {
     return -1;
   }
 
