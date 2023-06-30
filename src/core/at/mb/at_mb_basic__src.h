@@ -104,13 +104,10 @@ int at_mb__cfg_init(
     IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->nst_save_av = 10000, key: mb-nst-save\n");
   }
 
-  /* use binary format in average file */
-  mb->use_binary_file = AT__TRUE;
-  /*
-  if (0 != zcom_cfg__get(cfg, &mb->use_binary_file, "mbav-binary,mb-use-binary-file", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->use_binary_file = 1, key: mb-use-binary-file\n");
+  mb->use_text_file = AT__FALSE;
+  if (0 != zcom_cfg__get(cfg, &mb->use_text_file, "mb-use-text-file", "%d")) {
+    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->use_text_file = 1, key: mb-use-text-file\n");
   }
-  */
 
   /* names of the average data file */
   {
@@ -219,7 +216,7 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
   at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "mb-nst-save");
 
   /* use binary format in mbav file */
-  at_utils_manifest__print_bool(manifest, mb->use_binary_file, "mb->use_binary_file", "mb-use-binary-file");
+  at_utils_manifest__print_bool(manifest, mb->use_text_file, "mb->use_text_file", "mb-use-text-file");
 
   /* name of the average file */
   at_utils_manifest__print_str(manifest, mb->file_binary, "mb->file_binary", "mb-binary-file");

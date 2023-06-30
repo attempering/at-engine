@@ -23,21 +23,23 @@
 
 typedef struct at_eh_t_
 {
-  int        n;         /* number of temperature bins */
-  int        mode;      /* 0: disable; 1: simple histogram */
-  int        recon_stride;      /* interval of reconstructing energy histograms */
-  int        bwmod;     /* 0: d(beta) 1: dT/T  2: d(kT) */
-  double     bwdel;     /* delta lnT */
-  double     min;       /* minimal energy */
-  double     max;       /* maximal energy */
-  double     del;       /* energy bin size */
-  int        cnt;       /* number of energy bins */
+  int        n;               /* number of temperature bins */
+  int        mode;            /* 0: disable; 1: simple histogram */
+  int        bwmod;           /* 0: d(beta) 1: dT/T  2: d(kT) */
+  double     bwdel;           /* delta lnT */
 
-  int        nst_save;     /* interval of writing histogram files */
-  at_bool_t  use_binary_file;
-  char      *file_binary;  /* name of the binary file */
-  char      *file_text;    /* name of the text file */
-  char      *fn_recon;     /* name of reconstructed energy histogram */
+  double     e_min;           /* minimal energy */
+  double     e_max;           /* maximal energy */
+  double     e_del;           /* energy bin size */
+  int        e_n;             /* number of energy bins */
+
+  int        nst_save;        /* interval of writing histogram files */
+  at_bool_t  use_text_file;   /* use text format for data storage */
+  char      *file_binary;     /* name of the binary file */
+  char      *file_text;       /* name of the text file */
+
+  int        recon_stride;    /* interval of reconstructing energy histograms */
+  char      *file_recon;      /* name of reconstructed energy histogram */
 
   double    *his;       /* energy histogram data */
   double    *recon;     /* temporary space for reconstructing histogram */
@@ -51,8 +53,8 @@ typedef struct at_eh_t_
   at_bool_t add_half_ebin;
   at_bool_t no_zeros;
 
-  double min_real;
-  double max_real;
+  double e_min_runtime;
+  double e_max_runtime;
 
 } at_eh_t;
 

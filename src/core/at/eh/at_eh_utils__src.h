@@ -30,20 +30,20 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
 {
   if (eh->mode > 0) { /* add to energy histogram */
 
-    int ie = (int)((e - eh->min)/eh->del);
+    int ie = (int)((e - eh->e_min)/eh->e_del);
 
-    if (e > eh->max_real) {
+    if (e > eh->e_max_runtime) {
       fprintf(stderr, "\rWarning@at: at->eh: energy point overflow %g, (%g, %g)\n",
-          e, eh->min_real, eh->max_real);
-      eh->max_real = e;
-    } else if (e < eh->min_real) {
+          e, eh->e_min_runtime, eh->e_max_runtime);
+      eh->e_max_runtime = e;
+    } else if (e < eh->e_min_runtime) {
       fprintf(stderr, "\rWarning@at: at->eh: energy point underflow %g, (%g, %g)\n",
-          e, eh->min_real, eh->max_real);
-      eh->min_real = e;
+          e, eh->e_min_runtime, eh->e_max_runtime);
+      eh->e_min_runtime = e;
     }
 
-    if (ie >= 0 && ie < eh->cnt) {
-      eh->his[ib*eh->cnt+ie] += 1.0;
+    if (ie >= 0 && ie < eh->e_n) {
+      eh->his[ib*eh->e_n+ie] += 1.0;
     }
 
   }
@@ -71,18 +71,18 @@ int at_eh__reconstruct(at_eh_t *eh, const char *fname)
     return -1;
   }
 
-  if ((fp = fopen((fname != NULL) ? fname : eh->fn_recon, "w")) == NULL) {
+  if ((fp = fopen((fname != NULL) ? fname : eh->file_recon, "w")) == NULL) {
     fprintf(stderr, "\rError@at.eh: failed to write reconstructed histogram [%s].\n",
-        eh->fn_recon);
+        eh->file_recon);
     return 1;
   }
 
   full = eh->keep_margins;
   keep0 = !eh->no_zeros;
   del = (eh->add_half_ebin) ? 0.5 : 0; /* for continuous system */
-  cols = eh->cnt;
-  base = eh->min;
-  inc = eh->del;
+  cols = eh->e_n;
+  base = eh->e_min;
+  inc = eh->e_del;
   db = distr->domain->beta_del;
 
   /* build lnZ */

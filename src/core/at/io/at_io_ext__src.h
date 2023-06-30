@@ -153,7 +153,7 @@ int at__load_data(at_t *at)
   }
 
   /* read previous at_mb_t data */
-  if (at_mb__read(mb, !mb->use_binary_file) != 0) {
+  if (at_mb__read(mb, mb->use_text_file) != 0) {
     fprintf(stderr, "Error@at.io: failed to load mb data\n");
     return 1;
   }
@@ -166,7 +166,7 @@ int at__load_data(at_t *at)
   }
 
   /* read previous energy histogram data */
-  if (at_eh__read(at->eh, !at->eh->use_binary_file) != 0) {
+  if (at_eh__read(at->eh, at->eh->use_text_file) != 0) {
     fprintf(stderr, "Error@at.io: failed to load energy histogram\n");
     return 2;
   }

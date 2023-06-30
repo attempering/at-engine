@@ -46,7 +46,7 @@ typedef struct at_mb_t_ {
 
   int       nst_refresh;    /* interval of recalculating et for all temperature */
   int       nst_save_av;    /* interval of writing the average and ze files */
-  at_bool_t use_binary_file;    /* use binary format in the average file */
+  at_bool_t use_text_file;  /* use text format in data storage */
   char      *file_binary;   /* name of the average data file (binary format) */
   char      *file_text;     /* name of the average data file (text format) */
   char      *ze_file;       /* name of ze file */

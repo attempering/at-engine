@@ -40,17 +40,17 @@ static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
   }
 
   /* eh_cnt: number of energy bins */
-  if (at_utils_io_binary__read_and_compare_int(io, NULL, "eh->cnt", eh->cnt) != 0) {
+  if (at_utils_io_binary__read_and_compare_int(io, NULL, "eh->e_n", eh->e_n) != 0) {
     goto ERR;
   }
 
   /* eh_min: minimal energy */
-  if (at_utils_io_binary__read_and_compare_double(io, NULL, "eh->min", eh->min, 1e-5) != 0) {
+  if (at_utils_io_binary__read_and_compare_double(io, NULL, "eh->e_min", eh->e_min, 1e-5) != 0) {
     goto ERR;
   }
 
   /* eh_del: energy bin size */
-  if (at_utils_io_binary__read_and_compare_double(io, NULL, "eh->del", eh->del, 1e-5) != 0) {
+  if (at_utils_io_binary__read_and_compare_double(io, NULL, "eh->e_del", eh->e_del, 1e-5) != 0) {
     goto ERR;
   }
 
@@ -67,9 +67,9 @@ static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
       goto ERR;
     }
 
-    if (jmin >= eh->cnt) {
-      fprintf(stderr, "Error@at.eh.io.binary: eh->his: base index %d out of boundary [0, eh->cnt=%d)\n",
-          jmin, eh->cnt);
+    if (jmin >= eh->e_n) {
+      fprintf(stderr, "Error@at.eh.io.binary: eh->his: base index %d out of boundary [0, eh->e_n=%d)\n",
+          jmin, eh->e_n);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
@@ -83,15 +83,15 @@ static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
       continue;
     }
 
-    if (jmin + size > eh->cnt) {
-      fprintf(stderr, "Error@at.eh: %s: invalid size %d, jmin=%d, [0, eh->cnt=%d)\n",
-          io->fn, size, jmin, eh->cnt);
+    if (jmin + size > eh->e_n) {
+      fprintf(stderr, "Error@at.eh: %s: invalid size %d, jmin=%d, [0, eh->e_n=%d)\n",
+          io->fn, size, jmin, eh->e_n);
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
 
     if (at_utils_io_binary__read_double_array(io, size,
-        eh->his + i * eh->cnt + jmin, "eh:arr",
+        eh->his + i * eh->e_n + jmin, "eh:arr",
         AT_UTILS_IO__NONNEGATIVE) != 0) {
       goto ERR;
     }
@@ -153,24 +153,24 @@ static int at_eh__write_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
     goto ERR;
   }
 
-  if (at_utils_io_binary__write_int(io, eh->cnt, "eh->cnt") != 0) {
+  if (at_utils_io_binary__write_int(io, eh->e_n, "eh->e_n") != 0) {
     goto ERR;
   }
 
-  if (at_utils_io_binary__write_double(io, eh->min, "eh->min") != 0) {
+  if (at_utils_io_binary__write_double(io, eh->e_min, "eh->e_min") != 0) {
     goto ERR;
   }
 
-  if (at_utils_io_binary__write_double(io, eh->del, "eh->del") != 0) {
+  if (at_utils_io_binary__write_double(io, eh->e_del, "eh->e_del") != 0) {
     goto ERR;
   }
 
 
   for (i = 0; i < eh->n; i++) {
-    double *pd = eh->his + i * eh->cnt;
+    double *pd = eh->his + i * eh->e_n;
     int jmin, jmax, size;
 
-    for (jmax = eh->cnt; jmax > 0 && pd[jmax-1] <= 0.0; jmax--)
+    for (jmax = eh->e_n; jmax > 0 && pd[jmax-1] <= 0.0; jmax--)
       ;
 
     for (jmin = 0; jmin < jmax && pd[jmin] <= 0.0; jmin++)

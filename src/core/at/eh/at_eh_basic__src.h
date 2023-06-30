@@ -36,8 +36,8 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   eh->mb = mb;
   eh->n = distr->domain->n;
 
-  eh->min_real = 0;
-  eh->max_real = 0;
+  eh->e_min_runtime = 0;
+  eh->e_max_runtime = 0;
 
   /* eh_mode: 0: disable; 1: simple histogram */
   eh->mode = 0;
@@ -119,48 +119,49 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
   }
 
   /* eh_min: minimal energy */
-  eh->min = -12.6e4;
+  eh->e_min = -12.6e4;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->min, "ehist-min,ehist-e-min", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->min = -12.6e4, key: ehist-e-min\n");
+    if (0 != zcom_cfg__get(cfg, &eh->e_min, "ehist-min,ehist-e-min", "%lf")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->e_min = -12.6e4, key: ehist-e-min\n");
     }
   }
-  eh->min_real = eh->min;
+  eh->e_min_runtime = eh->e_min;
 
   /* eh_max: maximal energy */
-  eh->max = -9.0e4;
+  eh->e_max = -9.0e4;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->max, "ehist-max,ehist-e-max", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->max = -9.0e4, key: ehist-e-max\n");
+    if (0 != zcom_cfg__get(cfg, &eh->e_max, "ehist-max,ehist-e-max", "%lf")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->e_max = -9.0e4, key: ehist-e-max\n");
     }
-    if ( !(eh->max > eh->min) ) {
-      fprintf(stderr, "eh->max: failed validation: eh->max > eh->min\n");
+    if ( !(eh->e_max > eh->e_min) ) {
+      fprintf(stderr, "eh->e_max: failed validation: eh->e_max > eh->e_min\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
   }
-  eh->max_real = eh->max;
+  eh->e_max_runtime = eh->e_max;
 
   /* eh_del: energy bin size */
-  eh->del = 20.0;
+  eh->e_del = 20.0;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->del, "ehist-del,ehist-e-del", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->del = 20.0, key: ehist-e-del\n");
+    if (0 != zcom_cfg__get(cfg, &eh->e_del, "ehist-del,ehist-e-del", "%lf")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->e_del = 20.0, key: ehist-e-del\n");
     }
-    if ( !(eh->del > 0) ) {
-      fprintf(stderr, "eh->del: failed validation: eh->del > 0\n");
+    if ( !(eh->e_del > 0) ) {
+      fprintf(stderr, "eh->e_del: failed validation: eh->e_del > 0\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       goto ERR;
     }
   }
 
   /* eh_cnt: number of energy bins */
-  eh->cnt = (int)((eh->max-eh->min)/eh->del - 1e-5 + 1);
-  /* eh_binary: binary format for ehist file */
-  eh->use_binary_file = 1;
+  eh->e_n = (int)((eh->e_max-eh->e_min)/eh->e_del - 1e-5 + 1);
+
+  eh->use_text_file = AT__FALSE;
   if (eh->mode) {
-    if (0 != zcom_cfg__get(cfg, &eh->use_binary_file, "ehist-binary,ehist-use-binary-file", "%d")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->binary = 1, key: ehist-use-binary-file\n");
+    if (0 != zcom_cfg__get(cfg, &eh->use_text_file, "ehist-use-text-file", "%d")) {
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->use_text_file = %d, key: ehist-use-text-file\n",
+          eh->use_text_file);
     }
   }
 
@@ -196,35 +197,35 @@ int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
 
 
   /* name of reconstructed energy histogram */
-  eh->fn_recon = NULL;
+  eh->file_recon = NULL;
   if (eh->mode) {
     char *fn_eh_recon = zcom_ssm__dup(ssm, "hist-recon.dat");
     if (0 != zcom_cfg__get(cfg, &fn_eh_recon, "ehist-mbin-file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->fn_recon = [%s], key: ehist-mbin-file\n", fn_eh_recon);
+      if (verbose) fprintf(stderr, "Info@at.eh: assuming default eh->file_recon = [%s], key: ehist-mbin-file\n", fn_eh_recon);
     }
-    eh->fn_recon = at_utils__make_output_filename(ssm, data_dir, fn_eh_recon);
+    eh->file_recon = at_utils__make_output_filename(ssm, data_dir, fn_eh_recon);
   }
 
   /* eh_his: energy histogram data */
   eh->his = NULL;
   if (eh->mode) {
-    if ((eh->his = (double *) calloc((eh->n*eh->cnt + 1), sizeof(double))) == NULL) {
+    if ((eh->his = (double *) calloc((eh->n*eh->e_n + 1), sizeof(double))) == NULL) {
       fprintf(stderr, "Error@at.eh: no memory! var: eh->his, type: double\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
-    for (i = 0; i < eh->n*eh->cnt; i++)
+    for (i = 0; i < eh->n*eh->e_n; i++)
       eh->his[i] = 0.0;
   }
   /* eh_recon: temporary space for reconstructing histogram */
   eh->recon = NULL;
   if (eh->mode) {
-    if ((eh->recon = (double *) calloc((eh->cnt + 1), sizeof(double))) == NULL) {
+    if ((eh->recon = (double *) calloc((eh->e_n + 1), sizeof(double))) == NULL) {
       fprintf(stderr, "Error@at.eh: no memory! var: eh->recon, type: double\n");
       fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
       exit(1);
     }
-    for (i = 0; i < eh->cnt; i++)
+    for (i = 0; i < eh->e_n; i++)
       eh->recon[i] = 0.0;
   }
   /* eh_is: indices for temperature windows (lower) */
@@ -297,11 +298,11 @@ void at_eh__clear(at_eh_t *eh)
   }
 
   if (eh->mode) {
-    for (i = 0; i < eh->n*eh->cnt; i++) {
+    for (i = 0; i < eh->n*eh->e_n; i++) {
       eh->his[i] = 0.0;
     }
 
-    for (i = 0; i < eh->cnt; i++) {
+    for (i = 0; i < eh->e_n; i++) {
       eh->recon[i] = 0.0;
     }
   }
@@ -345,19 +346,18 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   }
 
   /* eh_min: minimal energy */
-  at_utils_manifest__print_double(manifest, eh->min, "eh->min", "ehist-e-min");
+  at_utils_manifest__print_double(manifest, eh->e_min, "eh->e_min", "ehist-e-min");
 
   /* eh_max: maximal energy */
-  at_utils_manifest__print_double(manifest, eh->max, "eh->max", "ehist-e-max");
+  at_utils_manifest__print_double(manifest, eh->e_max, "eh->e_max", "ehist-e-max");
 
   /* eh_del: energy bin size */
-  at_utils_manifest__print_double(manifest, eh->del, "eh->del", "ehist-e-del");
+  at_utils_manifest__print_double(manifest, eh->e_del, "eh->e_del", "ehist-e-del");
 
   /* eh_cnt: number of energy bins */
-  at_utils_manifest__print_int(manifest, eh->cnt, "eh->cnt", NULL);
+  at_utils_manifest__print_int(manifest, eh->e_n, "eh->e_n", NULL);
 
-  /* eh_binary: binary format for ehist file */
-  at_utils_manifest__print_bool(manifest, eh->use_binary_file, "eh->use_binary_file", "ehist-use-binary-file");
+  at_utils_manifest__print_bool(manifest, eh->use_text_file, "eh->use_text_file", "ehist-use-text-file");
 
   /* eh_nst_save: interval of writing histogram files */
   at_utils_manifest__print_int(manifest, eh->nst_save, "eh->nst_save", "ehist-nst-save");
@@ -367,13 +367,13 @@ void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
   at_utils_manifest__print_str(manifest, eh->file_text, "eh->file_text", "ehist-file-text");
 
   /* name of reconstructed energy histogram */
-  at_utils_manifest__print_str(manifest, eh->fn_recon, "eh->fn_recon", "ehist-mbin-file");
+  at_utils_manifest__print_str(manifest, eh->file_recon, "eh->file_recon", "ehist-mbin-file");
 
   /* eh_his: energy histogram data */
-  at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->cnt, "eh->his");
+  at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->e_n, "eh->his");
 
   /* eh_recon: temporary space for reconstructing histogram */
-  at_utils_manifest__print_double_arr(manifest, eh->recon, eh->cnt, "eh->recon");
+  at_utils_manifest__print_double_arr(manifest, eh->recon, eh->e_n, "eh->recon");
 
   /* eh_is: indices for temperature windows (lower) */
   at_utils_manifest__print_int_arr(manifest, eh->is, eh->n + 1, "eh->is");

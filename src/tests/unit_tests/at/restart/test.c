@@ -92,7 +92,7 @@ void save_data(at_t *at, const char *data_dir)
 
     at->eh->file_binary = at_utils__make_output_filename(ssm, data_dir, "ehist.dat");
     at->eh->file_text = at_utils__make_output_filename(ssm, data_dir, "ehist-text.dat");
-    at->eh->fn_recon = at_utils__make_output_filename(ssm, data_dir, "ehist-recon.dat");
+    at->eh->file_recon = at_utils__make_output_filename(ssm, data_dir, "ehist-recon.dat");
   }
 
   at__write_self(at);

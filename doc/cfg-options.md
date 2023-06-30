@@ -57,52 +57,63 @@ The format of each option is
 key = value
 ```
 
-You can freely add spaces before and after the equal sign `=`.
+You can freely add spaces before and after the equal sign "`=`".
 
 The keys are case insensitive.
-The dashes `-` and underscores `_`
+The dashes "`-`" and underscores "`_`"
 are regarded as the same in the keys.
-For example, `beta_min` and `Beta-Min`
+For example, `beta-min` and `Beta_Min`
 mean the same thing.
+
+For backward compatibility, we will give alias key names
+from the legacy program.
+For example,
+
+  `mb-del-kT` (old: `mbest_delta_kT`)
+
+means that `mbest_delta_kT` is the legacy key name for `mb-del-kT`,
+both are mapped to the same variable.
+
+The legacy keys are supported and may be removed in future releases.
 
 ### Summary of most important parameters
 
-The following options are possibly among the most important ones.
+The following options are among the most important ones.
 
-* `beta_min`, `beta_max`, `beta_del`
-* `T0`
-* `ensemble_factor`, `ensemble_mode`
-* `Tdt`
+* `beta-min`, `beta-max`, `beta-del`
+* `thermostat-temp` (old: `T0`)
+* `ensemble-factor`, `ensemble-mode`
+* `langevin-dt` (old: `Tdt`)
 
 ## II. Basic tempering parameters
 
 ### II.A. Temperature range and binning
 
 Temperature range is specified in terms of
-the reciprocal temperature `beta = 1/(k*T)` in GROMACS units,
-where `k` is the Boltzmann constant
+the reciprocal temperature `beta = 1/(k*T)`,
+where `k` is the Boltzmann constant.
 
 In the GROMACS units, `k = 0.0083145112`,
 so `T = 300K` corresponds to a value of about `beta = 0.4009`,
 and `T = 600K` a value of about `beta = 0.2045`.
 
-* `beta_min`: minimal reciprocal temperature
+* `beta-min`: minimal reciprocal temperature
 
-  Variable: `at->distr->domain->beta_min`.
-
-  Default: none.
-
-* `beta_max`: maximal reciprocal temperature
-
-  Variable: `at->distr->domain->beta_max`.
+  Variable: `at->distr->domain->beta-min`.
 
   Default: none.
 
-* `beta_del`: bin width of the reciprocal temperature
+* `beta-max`: maximal reciprocal temperature
+
+  Variable: `at->distr->domain->beta-max`.
+
+  Default: none.
+
+* `beta-del`: bin width of the reciprocal temperature
 
   Conditions: > 1e-6.
 
-  Variable: `at->distr->domain->beta_del`.
+  Variable: `at->distr->domain->beta-del`.
 
   Default: 0.0001.
 
@@ -110,17 +121,17 @@ and `T = 600K` a value of about `beta = 0.2045`.
 
 Internally, the temperature grid points are represented by
 the reciprocal temperature `beta` instead of `T` or `k*T`.
-Thus, it is common to choose values of `beta_min` and `beta_max`
-to be decent multiples of `beta_del`, which can minimize
+Thus, it is common to choose values of `beta-min` and `beta-max`
+to be decent multiples of `beta-del`, which can minimize
 undesirable effects on round-off errors.
 
-For example, if `beta_del = 0.0001`,
-it is better to use values of `beta_min = 0.2`
-and `beta_max = 0.41` instead of values of
-`beta_min = 0.20045275` and `beta_max = 0.4009055`.
+For example, if `beta-del = 0.0001`,
+it is better to use values of `beta-min = 0.2`
+and `beta-max = 0.41` instead of values of
+`beta-min = 0.20045275` and `beta-max = 0.4009055`.
 
 In principle the bin size should scale with the system size `n`
-as `beta_del ~ 1/sqrt(n)`.
+as `beta-del ~ 1/sqrt(n)`.
 A finer bin size is recommended for very large systems.
 
 ### II.B. Thermostat temperature
@@ -138,8 +149,8 @@ A finer bin size is recommended for very large systems.
 
 ### II.C. Overall temperature distribution
 
-In the program, the overall temperature distribution
-is characterized by two factors, `f` and `w`
+In the program, the overall temperature distribution density
+is given by the product of two factors, `f` and `w`
 
 `rho(beta) d beta = f(beta) w(beta) d beta`
 
@@ -147,10 +158,10 @@ is characterized by two factors, `f` and `w`
 
 The `w(beta)` factor is given by this equation:
 
-`w(beta) = 1/beta^{ensemble_factor}`
+`w(beta) = 1/beta^{ensemble-factor}`
 
-* `ensemble_factor`: ensemble exponent for beta.
-  d(beta) / beta^{ensemble_factor}
+* `ensemble-factor`: ensemble exponent for beta.
+  d(beta) / beta^{ensemble-factor}
 
   Default: 1.0.
 
@@ -164,43 +175,44 @@ The `f(beta)` factor has three possibilities.
           This is the case that falls back to the classic
           adaptive tempering algorithm.
 
-* Type 1. Gaussian distribution: `f(beta) = exp[-(beta - beta0)^2/(2 sigma^2)]`
+* Type 1. single Gaussian distribution:
+          `f(beta) = exp[-(beta - beta0)^2/(2 sigma^2)]`
           This is the new distribution suggested by the PCST paper.
 
-* Type 2. Exponential distribution: `f(beta) = exp(-c beta)`.
+* Type 2. Exponential distribution:
+          `f(beta) = exp(-c beta)`.
           This case is not documented, and only for used for testing.
 
-* Type 3. Composite distributions.
+* Type 3. Composite distribution.
 
 Options:
 
-* `ensemble_mode`: distribution type selector.
+* `ensemble-mode`: distribution type selector.
 
-  * 0: flat
-  * 1: Gaussian, w(beta) ~ exp[-(beta - beta0)^2/(2 sigma^2)]
-  * 2: exponential, w(beta) ~ exp(-c beta);
+  * 0: flat.
+  * 1: single Gaussian.
+  * 2: exponential.
+  * 3: composite distribution.
 
   Default: 0 (flat distribution).
 
 * Type 1 options:
 
-  * `ensemble_beta0`:
+  $$w(\beta) = \exp[-(\beta - \beta_0)^2/(2 \sigma^2)]$$
 
-    Conditions: applicable only to `ensemble_mode == 1`
+  * `ensemble-beta0` for $\beta_0$.
 
-    Default: `0.5 * (beta_min + beta_max)`.
+    Default: `0.5 * (beta-min + beta-max)`.
 
-  * `ensemble_sigma`:
-
-    Conditions: applicable only to `ensemble_mode == 1`
+  * `ensemble-sigma` for $\sigma$.
 
     Default: 1.0.
 
 * Type 2 options:
 
-  * `ensemble_c`: the value of c in the exponential beta distribution
+  $$f(\beta) = \exp(-c \beta)$$
 
-    Conditions: applicable only to `ensemble_mode == 2`
+  * `ensemble-c` for $c$.
 
     Default: 0.0.
 
@@ -208,32 +220,77 @@ Options:
 
 * Type 3 options:
 
-  TODO.
+  $$f(\beta) = \sum_{i=1}^n w_i f_i(\beta).$$
+
+  * `ensemble-n-components` for $n$: number of components
+
+  * `ensemble-component-1`, `ensemble-component-2`, ...
+
+    ensemble component specifications.
+
+    Each component specification follows the following format:
+
+    `type,weight[:parameters]`
+
+    * `type` gives the type of the component, which can be
+      "`flat`" or "`gaussian`".
+
+    * `weight` is $w_i$ in the equation.
+
+    * If `type` is "`flat`", then no parameter is needed.
+
+      For example:
+
+      `ensemble-component-1=flat,1.2`
+
+      means that the first component is a flat distribution
+      with the relative weight being $1.2$, i.e.,
+
+      $w_1 f_1(\beta) = 1.2$.
+
+    * If `type` is "`gaussian`", the parameters contains
+      two numbers for the center $\beta_0$ and $\sigma$
+      respectively, separated by comma.
+
+      For example:
+
+      `ensemble-component-2=gaussian,0.7:0.75,0.05`
+
+      means that the second component $f_2$ is a Gaussian distribution,
+      with the relative weight $w_2 = 0.7$.
+      The center $\beta_0$ and width $sigma$
+      for the component is given by $0.75$ and $0.05$, respectively.
+      That is,
+
+      $w_2 f_2(\beta) = 0.7 \exp[-\frac{1}{2}((\beta - 0.75)/0.05)^2]$
 
 ### II.D. Bias potential settings
 
 Bias potential settings apply where there is specifically assigned bias potential.
 
-`H = kappa * H0 + epsilon * H1`
+$$H = \kappa H_0 + \epsilon H_1$$
 
 where
 
-* `H0` is the original Hamiltonian function.
-* `H1` is the bias potential.
+* $H_0$ is the original Hamiltonian function.
+* $H_1$ is the bias potential.
 
-* `kappa = 1 - (T - Tref)*(1 - kappa0)/(Tmax - Tref)` if `T > Tref`
-  or `kappa = 1` if `T < Tref`
+* $\kappa = 1 - (T - T_{ref})*(1 - \kappa_0)/(T_{max} - T_{ref})$
+  if $T > T_{ref}$
+  or
+  $\kappa = 1$ if $T < T_{ref}$
 
-* `epsilon = epsilon0 * (T - Tref) / (Tmax - Tref)` if `T > Tref`
-  or `epsilon=0` if `T < Tref`
+* $\epsilon = \epsilon_0 (T - T_{ref}) / (T_{max} - T_{ref})$
+  if $T > T_{ref}$
+  or $epsilon=0$ if $T < T_{ref}$
 
-With the default values `kappa0 = 1, epsilon0 = 0`,
-we have `kappa = 1, epsilon = 0` no matter the temperature.
-That means, `H = H0`.
+With the default values $\kappa_0 = 1, \epsilon_0 = 0$,
+we have $\kappa = 1, \epsilon = 0$ no matter the temperature.
+That means, $H = H_0$.
 
 The options are given below:
 
-* `boost_mode`: enable the bias potential
+* `boost-mode`: enable the bias potential
 
   * 0: disabled
   * 1: enabled
@@ -242,19 +299,19 @@ The options are given below:
 
   Default: 0.
 
-* `boost_Tref`: reference temperature
+* `boost-Tref`: reference temperature
 
   Variable: `at->distr->bias->ref_temp`.
 
   Default: 300.0 (unit is K).
 
-* `kappa0`: kappa0, magnitude of the original Hamiltonian
+* `kappa0`: $\kappa_0$, magnitude of the original Hamiltonian
 
   Variable: `at->distr->bias->kappa0`.
 
   Default: 1.0.
 
-* `epsilon0`: epsilon0, magnitude of the bias potential
+* `epsilon0`: $\epsilon_0$, magnitude of the bias potential
 
   Variable: `at->distr->bias->epsilon0`.
 
@@ -323,32 +380,32 @@ Multiple-bin estimator settings share the prefix of `mbest_`
 
   Default: 1
 
-* `mb-del-xxx` (`mbest_delta_xxx`): window size.
+* `mb-del-xxx` (old: `mbest_delta_xxx`): window size.
 
   The following options are all mapped to a single variable `mb->bwdel`.
 
-  * `mb-del-lnT` (`mbest_delta_lnT`): half window width in terms of `d(lnT)`,
+  * `mb-del-lnT` (old: `mbest_delta_lnT`): half window width in terms of `d(lnT)`,
       only applicable for `mb-mbin-mode == 1`.
 
-    Conditions: `mb->bwdel > beta_del/beta_max`
+    Conditions: `mb->bwdel > beta-del/beta-max`
 
     Default: 0.05 (in terms of percentage of T).
 
-  * `mb-del-beta` (`mbest_delta_beta`): half window width in terms of `beta`,
+  * `mb-del-beta` (old: `mbest_delta_beta`): half window width in terms of `beta`,
       only applicable for `mb-mbin-mode == 0`.
 
-    Conditions: `mb->bwdel > beta_del`.
+    Conditions: `mb->bwdel > beta-del`.
 
     Default: 0.02 (in terms of beta).
 
-  * `mb-del-kT` (`mbest_delta_kT`): half window width in terms of `kT`,
+  * `mb-del-kT` (old: `mbest_delta_kT`): half window width in terms of `kT`,
       only applicable for `mb-mbin-mode == 2`.
 
-    Conditions: `mb->bwdel > beta_del/pow(m, 2.0)`
+    Conditions: `mb->bwdel > beta-del/pow(m, 2.0)`
 
     Default: 0.1 (in terms of kT = 1.0/beta).
 
-* `mb-use-sym-wins` (`mbest_sym_mbin`): force symmetric windows.
+* `mb-use-sym-wins` (old: `mbest_sym_mbin`): force symmetric windows.
 
   Symmetric means being symmetric in the beta space.
 
@@ -441,19 +498,19 @@ There are three modes of calculating shk_base.
 
 2. In mode 1 (which is the default mode), the program uses the following formula
 
-    `shk_base = max{ min{ shrink0, shrinkamp / t }, shrinkmin }`
+    `shk-base = max{ min{ shrink-init, shrink-amp / t }, shrink-min }`
 
     where t is defined as the total number of visits divided by
     the number of temperature bins.
 
 3. Mode 2 is a slight modification of mode 1, the formula is
 
-    `shk_base = max{ min{ shrink0, shrinkamp / t^{shrinkexp} }, shrinkmin }`
+    `shk-base = max{ min{ shrink-init, shrink-amp / t^{shrink-exp} }, shrink-min }`
 
     With shk_exp = 1.0, it reduces to the same formula used in mode 1.
 
 Shrinking can be terminated when the total number of steps
-exceeds `shrinkstop`.  When shrinking is stopped, the shrinking factor
+exceeds `shrink-stop`.  When shrinking is stopped, the shrinking factor
 is zero and `gamma` is unity.  So we recover the normal averaging
 scheme.
 .
@@ -528,11 +585,15 @@ scheme.
 
 ##### II.G.5.a. Full average file
 
-* `mbav_file`: file name for the multiple-bin average files
+* `mb-binary-file` (old:`mbav_file`): binary file name for the multiple-bin averages
 
-  Default: "mb.av"
+  Default: "mb.dat" (old: "mb.av").
 
-* `nstav`: frequency of writing averager files.
+* `mb-text-file`: text file name for the multiple-bin averages
+
+  Default: "mb-text.dat".
+
+* `mb-nst-save` (old: `nstav`): frequency of writing averager files in number of simulation steps.
 
   The files written include `ze_file`, `rng_file`, `mbav_file`.
 
@@ -543,14 +604,12 @@ scheme.
   * a negative or 0 value disables this feature.
   * the writing will occur in the final MD step no matter how large the value is.
 
-* `mbav_binary`: output using binary format
+* `mb-use-text-file`: load data from the text file.
 
   * 0: disabled, text.
   * 1: enabled, binary.
 
   Default: 1.
-
-  Remark: this option is deprecated: a binary file is always output even when you demand a text one.
 
 ##### II.G.5.b. thermodynamic quantities file
 
