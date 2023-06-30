@@ -27,14 +27,11 @@
 
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-int at_mb__cfg_init(
+int at_mb__conf_init(
     at_mb_t *mb,
     at_distr_t *distr,
-    zcom_cfg_t *cfg,
-    double boltz,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
+    at_utils_conf_t *conf,
+    double boltz);
 
 void at_mb__finish(at_mb_t *mb);
 

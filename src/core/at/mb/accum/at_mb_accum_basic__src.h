@@ -163,9 +163,9 @@ void at_mb_accum__normalize(at_mb_accum_t *accum)
 }
 
 
-void at_mb_accum__cfg_init(
+void at_mb_accum__conf_init(
     at_mb_accum_t *accum, int n, at_mb_win_t *win,
-    zcom_cfg_t *cfg, at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
   int i;
 
@@ -181,7 +181,7 @@ void at_mb_accum__cfg_init(
     at_mb_sm__init(accum->sums+i);
   }
 
-  at_mb_accum_winaccum__cfg_init(accum->winaccum, n, win, cfg, verbose);
+  at_mb_accum_winaccum__conf_init(accum->winaccum, n, win, conf);
 
   /* win_total: total of sum.s over a multiple-bin temperature window */
   zcom_utils__exit_if ((accum->win_total = (double *) calloc(n, sizeof(double))) == NULL,

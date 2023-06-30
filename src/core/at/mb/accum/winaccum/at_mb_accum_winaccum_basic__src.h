@@ -115,11 +115,14 @@ void at_mb_accum_winaccum__calc_win_total(at_mb_accum_winaccum_t *winaccum, doub
 
 
 
-void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
+void at_mb_accum_winaccum__conf_init(
+    at_mb_accum_winaccum_t *winaccum,
     int n, at_mb_win_t *win,
-    zcom_cfg_t *cfg, at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
   int i;
+
+  at_utils_conf__push_mod(conf, "at.mb.accum.winaccum");
 
   //fprintf(stderr, "n %d, %s:%d\n", n, __FILE__, __LINE__);
 
@@ -129,10 +132,10 @@ void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
   zcom_utils__exit_if (win == NULL,
       "at_mb_win_t *win is NULL\n");
 
-  winaccum->enabled = AT__TRUE;
-  if (0 != zcom_cfg__get(cfg, &winaccum->enabled, "mbest-damp,mb-use-win-accum", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.accum.winaccum: assuming default mb->accum->winaccum->enabled = 1, key: mb-use-win-accum\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "mbest-damp,mb-use-win-accum",
+      &winaccum->enabled, AT__TRUE,
+      "enabled");
 
   if (winaccum->enabled) {
 
@@ -148,6 +151,8 @@ void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
     winaccum->items = NULL;
 
   }
+
+  at_utils_conf__pop_mod(conf);
 
 }
 

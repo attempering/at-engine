@@ -41,50 +41,44 @@ static void at_mb_iie_et_item__clear(at_mb_iie_et_item_t *item)
 
 
 
-void at_mb_iie_et__cfg_init(at_mb_iie_et_t *et, at_mb_t *mb, zcom_cfg_t *cfg, at_bool_t verbose)
+void at_mb_iie_et__conf_init(at_mb_iie_et_t *et, at_mb_t *mb, at_utils_conf_t *conf)
 {
   int i;
 
+  at_utils_conf__push_mod(conf, "at.mb.iie.et");
+
   et->n = mb->distr->domain->n;
 
-  if ((et->items = (at_mb_iie_et_item_t *) calloc(et->n, sizeof(at_mb_iie_et_item_t))) == NULL) {
-    fprintf(stderr, "Error@at.mb.iie.et: no memory! var: et_items, type: at_mb_iie_et_item_t\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  et->items = (at_mb_iie_et_item_t *) calloc(et->n, sizeof(at_mb_iie_et_item_t));
+
+  at_utils_log__exit_if (et->items == NULL,
+      conf->log, "no memory! var: et_items, type: at_mb_iie_et_item_t\n");
 
   for (i = 0; i < et->n; i++) {
     at_mb_iie_et_item__clear(et->items + i);
     et->items[i].ib = i;
   }
 
-  et->cache_params->enabled = AT__FALSE;
-  if (0 != zcom_cfg__get(cfg, &et->cache_params->enabled, "et-cache-enabled", "%d")) {
-    if (verbose) {
-      fprintf(stderr, "Info@at.mb.iie.et: assuming default mb->iie->et->cache_params->enabled = %d, key: et-cache-enabled\n",
-          et->cache_params->enabled);
-    }
-  }
+  at_utils_conf__get_bool(conf,
+      "et-cache-enabled",
+      &et->cache_params->enabled, AT__FALSE,
+      "cached_enabled");
 
   if (et->cache_params->enabled) {
 
-    et->cache_params->lifespan = 10.0;
-    if (0 != zcom_cfg__get(cfg, &et->cache_params->lifespan, "et-cache-lifespan", "%lf")) {
-      if (verbose) {
-        fprintf(stderr, "Info@at.mb.iie.et: assuming default mb->iie->et->cache_params->lifespan = %lf, key: et-cache-lifespan\n",
-            et->cache_params->lifespan);
-      }
-    }
+    at_utils_conf__get_double(conf,
+        "et-cache-lifespan",
+        &et->cache_params->lifespan, 10.0,
+        "lifespan");
 
-    et->cache_params->min_visits = 100.0;
-    if (0 != zcom_cfg__get(cfg, &et->cache_params->min_visits, "et-cache-min-visits", "%lf")) {
-      if (verbose) {
-        fprintf(stderr, "Info@at.mb.iie.et: assuming default mb->iie->et->cache_params->min_visits = %lf, key: et-cache-min-visits\n",
-            et->cache_params->min_visits);
-      }
-    }
+    at_utils_conf__get_double(conf,
+        "et-cache-min-visits",
+        &et->cache_params->min_visits, 100.0,
+        "min_visits");
 
   }
+
+  at_utils_conf__pop_mod(conf);
 
 }
 

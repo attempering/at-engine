@@ -29,9 +29,10 @@
 
 void at_mb_accum_winaccum__calc_win_total(at_mb_accum_winaccum_t *winaccum, double *win_total);
 
-void at_mb_accum_winaccum__cfg_init(at_mb_accum_winaccum_t *winaccum,
+void at_mb_accum_winaccum__conf_init(
+    at_mb_accum_winaccum_t *winaccum,
     int n, at_mb_win_t *win,
-    zcom_cfg_t *cfg, at_bool_t verbose);
+    at_utils_conf_t *conf);
 
 void at_mb_accum_winaccum__clear(at_mb_accum_winaccum_t *winaccum);
 

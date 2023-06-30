@@ -31,7 +31,7 @@
 typedef struct at_mb_t_ at_mb_t;
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
-int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_t verbose);
+int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf);
 
 void at_mb_shk__finish(at_mb_shk_t *shk);
 

@@ -31,8 +31,8 @@
 #include "../../../zcom/zcom.h"
 
 
-void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
-    zcom_cfg_t *cfg, at_bool_t verbose)
+void at_mb_iie__conf_init(at_mb_iie_t *iie, at_mb_t *mb,
+    at_utils_conf_t *conf)
 {
   iie->n = mb->distr->domain->n;
   iie->use_single_bin = mb->use_single_bin;
@@ -40,9 +40,9 @@ void at_mb_iie__cfg_init(at_mb_iie_t *iie, at_mb_t *mb,
   iie->accum = mb->accum;
 
   at_mb_iie_zerofiller__init(iie->zf, mb);
-  at_mb_iie_lr__cfg_init(iie->lr, iie->zf, mb, cfg, verbose);
-  at_mb_iie_et__cfg_init(iie->et, mb, cfg, verbose);
-  at_mb_iie_gridvals__cfg_init(iie->gridvals, mb, cfg, verbose);
+  at_mb_iie_lr__conf_init(iie->lr, iie->zf, mb, conf);
+  at_mb_iie_et__conf_init(iie->et, mb, conf);
+  at_mb_iie_gridvals__conf_init(iie->gridvals, mb, conf);
 
 }
 

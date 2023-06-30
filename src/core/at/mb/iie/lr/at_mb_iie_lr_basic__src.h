@@ -31,32 +31,34 @@
 
 
 /* global initialization */
-void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_mb_t *mb, zcom_cfg_t *cfg, at_bool_t verbose)
+void at_mb_iie_lr__conf_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_mb_t *mb,
+    at_utils_conf_t *conf)
 {
   lr->mb = mb;
   lr->zerofiller = zf;
 
-  /* frac_min: minimum acceptable coefficient during left/right combination */
-  lr->frac_min = 0.0;
-  if (0 != zcom_cfg__get(cfg, &lr->frac_min, "mbest_fracmin,mbest-frac-min,mb-frac-min,mb-min-frac", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.iie.lr: assuming default mb->iie->lr->frac_min = 0.0, key: mb-min-frac\n");
-  }
+  at_utils_conf__push_mod(conf, "at.mb.iie.lr");
 
-  lr->min_size = AT_MB_IIE_LR__DEFAULT_MIN_SIZE;
-  if (0 != zcom_cfg__get(cfg, &lr->min_size, "mbest_min_size,mb-min-size", "%lf")) {
-    if (verbose) {
-      fprintf(stderr, "Info@at.mb.iie.lr: assuming default mb->iie->lr->min_size = %lf, key: mb-min-size\n",
-          AT_MB_IIE_LR__DEFAULT_MIN_SIZE);
-    }
-  }
+  /* frac_min: minimum acceptable coefficient during left/right combination */
+  at_utils_conf__get_double(conf,
+      "mbest_fracmin,mbest-frac-min,mb-frac-min,mb-min-frac",
+      &lr->frac_min, 0.0,
+      "frac_min");
+
+  at_utils_conf__get_double(conf,
+      "mbest_min_size,mb-min-size",
+      &lr->min_size, AT_MB_IIE_LR__DEFAULT_MIN_SIZE,
+      "min_size");
 
   /* cv_shift_max: maximum fraction for shifting energy fluctuations
    * If the heat capacity cv is monotonic, it should be 0.0,
    * For the Ising model, it can restrain the magnitude */
-  lr->cv_shift_max = 1.0;
-  if (0 != zcom_cfg__get(cfg, &lr->cv_shift_max, "mbest_cvshiftmax,mbest-cv-shift-max,mb-cv-shift-max,mb-max-cv-shift", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.iie.lr: assuming default mb->iie->lr->cv_shift_max = 1.0, key: mb-max-cv-shift\n");
-  }
+  at_utils_conf__get_double(conf,
+      "mbest_cvshiftmax,mbest-cv-shift-max,mb-cv-shift-max,mb-max-cv-shift",
+      &lr->cv_shift_max, 1.0,
+      "cv_shift_max");
+
+  at_utils_conf__pop_mod(conf);
 
 }
 

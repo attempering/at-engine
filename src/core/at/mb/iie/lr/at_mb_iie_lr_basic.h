@@ -26,8 +26,8 @@
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 
 /* global initialization */
-void at_mb_iie_lr__cfg_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf,
-    at_mb_t *mb, zcom_cfg_t *cfg, at_bool_t verbose);
+void at_mb_iie_lr__conf_init(at_mb_iie_lr_t *lr, at_mb_iie_zerofiller_t *zf, at_mb_t *mb,
+    at_utils_conf_t *conf);
 
 void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr);
 

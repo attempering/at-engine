@@ -123,7 +123,7 @@ static int at__cfg_init_low_level(at_t *at,
   }
 
   /* initialize the multiple-bin estimator */
-  at_mb__cfg_init(at->mb, at->distr, cfg, at->sys_params->boltz, ssm, data_dir, verbose);
+  at_mb__conf_init(at->mb, at->distr, at->utils->conf, at->sys_params->boltz);
 
   /* initialize the beta driver, i.e., the Langevin equation */
   at_driver__conf_init(at->driver, at->distr, at->mb, at->utils->conf);

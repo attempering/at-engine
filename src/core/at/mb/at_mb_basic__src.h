@@ -36,19 +36,15 @@
 
 
 
-
-#define IF_VERBOSE_FPRINTF  if(verbose) fprintf
-
-int at_mb__cfg_init(
+int at_mb__conf_init(
     at_mb_t *mb,
     at_distr_t *distr,
-    zcom_cfg_t *cfg,
-    double boltz,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+    at_utils_conf_t *conf,
+    double boltz)
 {
   int i, n;
+
+  at_utils_conf__push_mod(conf, "at.mb");
 
   if (mb == NULL) {
     fprintf(stderr, "Error@at.mb: null pointer to at_mb_t\n");
@@ -65,83 +61,76 @@ int at_mb__cfg_init(
 
   //printf("mb->flags %u\n", mb->flags); getchar();
 
-  /* compute heat capacity */
-  mb->need_cv = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->need_cv, "mbest_needcv,mb-need-cv", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->need_cv = 1, key: mb-need-cv\n");
-  }
+  /* whether to compute the heat capacity */
+  at_utils_conf__get_bool(conf,
+      "mbest_needcv,mb-need-cv",
+      &mb->need_cv, AT__TRUE,
+      "need_cv");
 
   /* use symmetric windows */
-  mb->use_sym_wins = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->use_sym_wins, "mbest_sym_mbin,mb-use-sym-wins", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->use_sym_wins = 1, key: mb-use-sym-wins\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "mbest_sym_mbin,mb-use-sym-wins",
+      &mb->use_sym_wins, AT__TRUE,
+      "use_sym_wins");
 
   /* force the single bin estimator */
-  mb->use_single_bin = 0;
-  if (0 != zcom_cfg__get(cfg, &mb->use_single_bin, "mbest_single_bin,mb-use-single-bin", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->use_single_bin = 0, key: mb-use-single-bin\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "mbest_single_bin,mb-use-single-bin",
+      &mb->use_single_bin, AT__FALSE,
+      "use_single_bin");
 
   /* being verbose */
-  mb->verbose = 1;
-  if (0 != zcom_cfg__get(cfg, &mb->verbose, "mbest-verbose", "%u")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->verbose = 1, key: mbest-verbose\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "mbest_verbose,mb-verbose",
+      &mb->verbose, AT__TRUE,
+      "verbose");
 
-  at_mb_win__cfg_init(mb->win, cfg, mb);
+  at_mb_win__cfg_init(mb->win, conf->cfg, mb);
 
   /* nst_refresh: interval of recalculating et for all temperatures */
-  mb->nst_refresh = 10000;
-  if (0 != zcom_cfg__get(cfg, &mb->nst_refresh, "nstrefresh,nst-refresh,mb-nst-refresh", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->nst_refresh = %d, key: mb-nst-refresh\n",
-        mb->nst_refresh);
-  }
+  at_utils_conf__get_int(conf,
+      "nstrefresh,nst-refresh,mb-nst-refresh",
+      &mb->nst_refresh, 10000,
+      "nst_refresh");
 
   /* nst_save_av: interval of writing mbav and ze files */
-  mb->nst_save_av = 10000;
-  if (0 != zcom_cfg__get(cfg, &mb->nst_save_av, "nstav,nst-av,mb-nst-save", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->nst_save_av = 10000, key: mb-nst-save\n");
-  }
+  at_utils_conf__get_int(conf,
+      "nstav,nst-av,mb-nst-save",
+      &mb->nst_save_av, 10000,
+      "nst_save_av");
 
-  mb->use_text_file = AT__FALSE;
-  if (0 != zcom_cfg__get(cfg, &mb->use_text_file, "mb-use-text-file", "%d")) {
-    IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->use_text_file = 1, key: mb-use-text-file\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "mb-use-text-file",
+      &mb->use_text_file, AT__FALSE,
+      "use_text_file");
 
   /* names of the average data file */
-  {
-    char *fn_binary = zcom_ssm__dup(ssm, "mb.dat");
-    if (0 != zcom_cfg__get(cfg, &fn_binary, "mbav-file,mb-file,mb-binary-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_binary = [%s], key: mb-binary-file\n", fn_binary);
-    }
-    mb->file_binary = at_utils__make_output_filename(ssm, data_dir, fn_binary);
+  at_utils_conf__get_filename(conf,
+      "mbav-file,mb-file,mb-binary-file",
+      &mb->file_binary, "mb.dat",
+      "file_binary");
 
-    char *fn_text = zcom_ssm__dup(ssm, "mb-text.dat");
-    if (0 != zcom_cfg__get(cfg, &fn_text, "mb-text-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->file_text = [%s], key: mb-text-file\n",
-        fn_text);
-    }
-    mb->file_text = at_utils__make_output_filename(ssm, data_dir, fn_text);
-  }
+  at_utils_conf__get_filename(conf,
+      "mb-text-file",
+      &mb->file_text, "mb-text.dat",
+      "file_text");
 
   /* ze_file: name of ze file */
-  {
-    char *fn_ze = zcom_ssm__dup(ssm, "ze.dat");
-    if (0 != zcom_cfg__get(cfg, &mb->ze_file, "ze-file", "%s")) {
-      IF_VERBOSE_FPRINTF(stderr, "Info@at.mb: assuming default mb->ze_file = [%s], key: ze-file\n", fn_ze);
-    }
-    mb->ze_file = at_utils__make_output_filename(ssm, data_dir, fn_ze);
+  at_utils_conf__get_filename(conf,
+      "ze-file",
+      &mb->ze_file, "ze.dat",
+      "ze_file");
 
-    mb->ze_init_file = at_utils__make_output_filename(ssm, data_dir, "ze-init.dat");
-  }
+  at_utils_conf__get_filename(conf,
+      "ze-init-file",
+      &mb->ze_init_file, "ze-init.dat",
+      "ze_init_file");
 
   /* visits: number of visits */
-  if ((mb->visits = (double *) calloc((n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.mb: no memory! var: mb->visits, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  mb->visits = (double *) calloc((n + 1), sizeof(double));
+  at_utils_log__exit_if (mb->visits == NULL,
+      conf->log,
+      "no memory! var: mb->visits, type: double\n");
   for (i = 0; i < n; i++) {
     mb->visits[i] = 0.0;
   }
@@ -149,11 +138,13 @@ int at_mb__cfg_init(
   /* total_visits: total number of visits, number of tempering */
   mb->total_visits = 0.0;
 
-  at_mb_iie__cfg_init(mb->iie, mb, cfg, verbose);
+  at_mb_iie__conf_init(mb->iie, mb, conf);
 
-  at_mb_accum__cfg_init(mb->accum, distr->domain->n, mb->win, cfg, verbose);
+  at_mb_accum__conf_init(mb->accum, distr->domain->n, mb->win, conf);
 
-  at_mb_shk__cfg_init(mb->shk, cfg, mb, verbose);
+  at_mb_shk__conf_init(mb->shk, mb, conf);
+
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 
@@ -162,8 +153,6 @@ ERR:
   return -1;
 
 }
-
-#undef IF_VERBOSE_FPRINTF
 
 
 

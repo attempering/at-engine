@@ -32,48 +32,46 @@
 #include "../../../zcom/zcom.h"
 
 
-int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_t verbose)
+int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
 {
   at_distr_domain_t *domain = mb->distr->domain;
   at_distr_weights_t *w = mb->distr->weights;
   int i;
 
+  at_utils_conf__push_mod(conf, "at.mb.shk");
+
   shk->n = domain->n;
 
   /* shk_base: current generic shrink amplitude */
   shk->base = 0.0;
-  /* shk_win_adjusted: adjust shrink according to temperature window width */
-  shk->win_adjusted = AT__TRUE;
-  if (0 != zcom_cfg__get(cfg, &shk->win_adjusted, "shrink-mbin-adjust", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->win_adjusted = 1, key: shrink-mbin-adjust\n");
-  }
 
-  shk->init = 0.01;
-  if (0 != zcom_cfg__get(cfg, &shk->init, "shrink0,shrink-init", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->init = 0.01, key: shrink-init\n");
-  }
-  if ( !(shk->init < 0.9 && shk->init >= 0.0) ) {
-    fprintf(stderr, "Error@at.mb.shk: shk->max: failed validation: mb->shk->init < 0.9 && shk->init >= 0.0\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+  /* shk_win_adjusted: adjust shrink according to temperature window width */
+  at_utils_conf__get_bool(conf,
+      "shrink-mbin-adjust,shrink-win-adjusted",
+      &shk->win_adjusted, AT__TRUE,
+      "win_adjusted");
+
+  at_utils_conf__get_double(conf,
+      "shrink0,shrink-init",
+      &shk->init, 0.01,
+      "init");
+  if (shk->init >= 0.9 || shk->init < 0.0) {
+    at_utils_log__error(conf->log, "shk->init: failed validation: shk->init < 0.9 && shk->init >= 0.0\n");
     goto ERR;
   }
 
-  shk->max = 0.01;
-  if (0 != zcom_cfg__get(cfg, &shk->max, "shrink-max", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->max = 0.01, key: shrink-init\n");
-  }
-  if ( !(shk->max < 0.9 && shk->max >= 0.0) ) {
-    fprintf(stderr, "Error@at.mb.shk: shk->max: failed validation: mb->shk->max < 0.9 && shk->max >= 0.0\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+  at_utils_conf__get_double(conf,
+      "shrink-max",
+      &shk->max, 0.01,
+      "max");
+  if (shk->max >= 0.9 || shk->max < 0.0) {
+    at_utils_log__error(conf->log, "shk->max: failed validation: shk->max < 0.9 && shk->max >= 0.0\n");
     goto ERR;
   }
 
   /* shk_win_mul: array used of modulation shrinking factors */
-  if ((shk->win_mul = (double *) calloc(shk->n, sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.mb.shk: no memory! var: shk->win_mul, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  at_utils_log__exit_if ((shk->win_mul = (double *) calloc(shk->n, sizeof(double))) == NULL,
+      conf->log, "no memory! var: shk->win_mul, type: double\n");
 
   for (i = 0; i < shk->n; i++) {
     double beta_midpoint = at_distr_domain__get_bin_center(domain, i);
@@ -85,43 +83,40 @@ int at_mb_shk__cfg_init(at_mb_shk_t *shk, zcom_cfg_t *cfg, at_mb_t *mb, at_bool_
   //getchar();
 
   /* shk_mode: 0: const, 1: amp/t, 2: amp/t^exp */
-  shk->mode = 1;
-  if (0 != zcom_cfg__get(cfg, &shk->mode, "shrink-mode", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->mode = 1, key: shrink-mode\n");
-  }
+  at_utils_conf__get_int(conf,
+      "shrink-mode",
+      &shk->mode, 1,
+      "mode");
   if ( !(shk->mode >= 0 && shk->mode <= 2) ) {
-    fprintf(stderr, "Error@at.mb.shk: shk->mode: failed validation: mb->shk->mode >= 0 && shk->mode <= 2\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    at_utils_log__error(conf->log, "shk->mode: failed validation: shk->mode >= 0 && shk->mode <= 2\n");
     goto ERR;
   }
 
   /* shk_min: minimal value for enforcing acc. sampling */
-  shk->min = 0.0;
-  if (0 != zcom_cfg__get(cfg, &shk->min, "shrinkmin,shrink-min", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->min = 0.0, key: shrink-min\n");
-  }
+  at_utils_conf__get_double(conf,
+      "shrinkmin,shrink-min",
+      &shk->min, 0.0,
+      "min");
 
   /* shk_stop: stop shrinking after this number of steps */
-  shk->stop = -1;
-  if (0 != zcom_cfg__get(cfg, &shk->stop, "shrinkstop,shrink-stop", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->stop = -1, key: shrink-stop\n");
-  }
+  at_utils_conf__get_double(conf,
+      "shrinkstop,shrink-stop",
+      &shk->stop, -1,
+      "stop");
 
   /* shk_amp: amp t^(-exp) */
-  shk->amp = 0.1;
-  if (shk->mode >= 1) {
-    if (0 != zcom_cfg__get(cfg, &shk->amp, "shrinkamp,shrink-amp", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->amp = 0.1, key: shrink-amp\n");
-    }
-  }
+  at_utils_conf__get_double(conf,
+      "shrinkamp,shrink-amp",
+      &shk->amp, 0.1,
+      "amp");
 
   /* shk_exp: amp t^(-exp) */
-  shk->exp = 1.0;
-  if (shk->mode >= 2) {
-    if (0 != zcom_cfg__get(cfg, &shk->exp, "shrinkexp,shrink-exp", "%lf")) {
-      if (verbose) fprintf(stderr, "Info@at.mb.shk: assuming default mb->shk->exp = 1.0, key: shrink-exp\n");
-    }
-  }
+  at_utils_conf__get_double(conf,
+      "shrinkexp,shrink-exp",
+      &shk->exp, 1.0,
+      "exp");
+
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 

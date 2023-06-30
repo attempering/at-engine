@@ -45,8 +45,9 @@ at_mb_sm_t *at_mb_accum__get_proper_sums0_and_winaccum_item(
 
 void at_mb_accum__normalize(at_mb_accum_t *accum);
 
-void at_mb_accum__cfg_init(at_mb_accum_t *accum, int n, at_mb_win_t *win,
-    zcom_cfg_t *cfg, at_bool_t verbose);
+void at_mb_accum__conf_init(
+    at_mb_accum_t *accum, int n, at_mb_win_t *win,
+    at_utils_conf_t *conf);
 
 void at_mb_accum__clear(at_mb_accum_t *accum);
 

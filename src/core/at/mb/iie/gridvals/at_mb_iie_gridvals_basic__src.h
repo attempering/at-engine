@@ -38,22 +38,17 @@ static void at_mb_iie_gridvals_item__clear(at_mb_iie_gridvals_item_t *item)
 
 
 
-void at_mb_iie_gridvals__cfg_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
-    zcom_cfg_t *cfg, at_bool_t verbose)
+void at_mb_iie_gridvals__conf_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
+    at_utils_conf_t *conf)
 {
   int i, n = mb->distr->domain->n;
 
-  (void) cfg;
-  (void) verbose;
-
   gridvals->n = n;
 
-  gridvals->items = NULL;
-  if ((gridvals->items = (at_mb_iie_gridvals_item_t *) calloc((n + 1), sizeof(at_mb_iie_gridvals_item_t))) == NULL) {
-    fprintf(stderr, "Error@at.mb.iie.gridvals: no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  gridvals->items = (at_mb_iie_gridvals_item_t *) calloc((n + 1), sizeof(at_mb_iie_gridvals_item_t));
+  at_utils_log__exit_if (gridvals->items == NULL,
+    conf->log, "no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
+
   for (i = 0; i <= n; i++) {
     at_mb_iie_gridvals_item__clear(gridvals->items + i);
   }
