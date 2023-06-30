@@ -26,14 +26,11 @@
 
 #include "../utils/at_utils.h"
 
-int at_driver__cfg_init(
+int at_driver__conf_init(
     at_driver_t *driver,
     at_distr_t *distr,
     at_mb_t *mb,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
+    at_utils_conf_t *conf);
 
 void at_driver__finish(at_driver_t *driver);
 

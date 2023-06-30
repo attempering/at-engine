@@ -25,14 +25,11 @@
 #include "../../distr/at_distr.h"
 #include "../../mb/at_mb.h"
 
-int at_driver_langevin__cfg_init(
+int at_driver_langevin__conf_init(
     at_driver_langevin_t *langevin,
     at_distr_t *distr,
     at_mb_t *mb,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
+    at_utils_conf_t *conf);
 
 void at_driver_langevin__clear(at_driver_langevin_t *langevin);
 

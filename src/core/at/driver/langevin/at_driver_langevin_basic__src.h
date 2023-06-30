@@ -29,63 +29,59 @@
 #include "integrator/at_driver_langevin_integrator.h"
 
 
-int at_driver_langevin__cfg_init(
+int at_driver_langevin__conf_init(
     at_driver_langevin_t *langevin,
     at_distr_t *distr,
     at_mb_t *mb,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
   langevin->distr = distr;
 
   langevin->mb = mb;
 
+  at_utils_conf__push_mod(conf, "at.driver.langevin");
+
   /* dt: time step for the temperature Langevin eq */
-  langevin->dt = 1e-5;
-  if (0 != zcom_cfg__get(cfg, &langevin->dt, "Tdt,T-dt,langevin-T-dt,langevin-dt", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->dt = 1e-5, key: langevin-dt\n");
-  }
+  at_utils_conf__get_double(conf,
+      "Tdt,T-dt,langevin-T-dt,langevin-dt",
+      &langevin->dt, 1e-5,
+      "dt");
 
   /* dTmax: maximal amount of temperature change in a step */
-  langevin->dTmax = 25.0;
-  if (0 != zcom_cfg__get(cfg, &langevin->dTmax, "dTmax,dT-max,langevin-max-dT,langevin-dT-max", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->dTmax = 25.0, key: langevin-dT-max\n");
-  }
+  at_utils_conf__get_double(conf,
+      "dTmax,dT-max,langevin-max-dT,langevin-dT-max",
+      &langevin->dTmax, 1.0,
+      "dTmax");
 
   /* whether to apply the Metropolisation correction */
-  langevin->corrected = 1;
-  if (0 != zcom_cfg__get(cfg, &langevin->corrected, "langevin-corrected", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->corrected = 1, key: langevin-corrected\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "langevin-corrected",
+      &langevin->corrected, AT__TRUE,
+      "corrected");
 
   /* whether to avoid crossing over unvisited bins */
-  langevin->no_skip = 1;
-  if (0 != zcom_cfg__get(cfg, &langevin->no_skip, "langevin-no-skip", "%d")) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->no_skip = 1, key: langevin-no-skip\n");
-  }
+  at_utils_conf__get_bool(conf,
+      "langevin-no-skip",
+      &langevin->no_skip, AT__TRUE,
+      "no_skip");
 
   /* minimum number of visits before moving out of a bin */
-  langevin->bin_min_visits = 1;
-  if (0 != zcom_cfg__get(cfg, &langevin->bin_min_visits, "langevin-bin-min-visits", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->bin_min_visits = %g, key: langevin-bin-min-visits\n",
-        langevin->bin_min_visits);
-  }
+  at_utils_conf__get_double(conf,
+      "langevin-bin-min-visits",
+      &langevin->bin_min_visits, 1.0,
+      "bin_min_visits");
 
 #ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
-  langevin->corr_bin_min_visits = langevin->bin_min_visits;
-  if (0 != zcom_cfg__get(cfg, &langevin->corr_bin_min_visits, "langevin-corr-bin-min-visits", "%lf")) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->corr_bin_min_visits = %g, key: langevin-corr-bin-min-visits\n",
-        langevin->corr_bin_min_visits);
-  }
+  at_utils_conf__get_double(conf,
+      "langevin-corr-bin-min-visits",
+      &langevin->corr_bin_min_visits, langevin->bin_min_visits,
+      "corr_bin_min_visits");
 #endif
 
-  langevin->nst_suggest = 100000;
-  if (zcom_cfg__get(cfg, &langevin->nst_suggest, "langevin-nst-suggest,langevin-nst-suggestion", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->nst_suggest = %d, key: langevin-nst-suggestion\n",
-        langevin->nst_suggest);
-  }
+  at_utils_conf__get_int(conf,
+      "langevin-nst-suggest,langevin-nst-suggestion",
+      &langevin->nst_suggest, 100000,
+      "nst_suggest");
 
   /* number of rejected Langevin moves */
   langevin->rejects = 0.0;
@@ -96,13 +92,7 @@ int at_driver_langevin__cfg_init(
 
   // initialize the integrator
   {
-    int use_zerofiller;
-
-    if (langevin->no_skip) {
-      use_zerofiller = 0;
-    } else {
-      use_zerofiller = 1;
-    }
+    at_bool_t use_zerofiller = !langevin->no_skip;
 
     at_driver_langevin_integrator__init(
         langevin->integrator,
@@ -115,15 +105,14 @@ int at_driver_langevin__cfg_init(
   langevin->integrate_func = NULL;
 
   // initialize the random number generator
-  at_driver_langevin_rng__cfg_init(langevin->rng, cfg, ssm, data_dir, verbose);
+  at_driver_langevin_rng__conf_init(langevin->rng, conf);
 
-  {
-    char *fn = zcom_ssm__dup(ssm, "langevin.dat");
-    if (0 != zcom_cfg__get(cfg, &langevin->file, "langevin-file", "%s")) {
-      if (verbose) fprintf(stderr, "Info@at.driver.langevin: assuming default driver->langevin->file = [%s], key: langevin-file\n", fn);
-    }
-    langevin->file = at_utils__make_output_filename(ssm, data_dir, fn);
-  }
+  at_utils_conf__get_filename(conf,
+      "langevin-file",
+      &langevin->file, "langevin.dat",
+      "file");
+
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 }

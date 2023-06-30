@@ -97,7 +97,8 @@ int at_utils_conf__get_int(
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%d") != 0) {
 
     if (conf->verbose) {
-      at_utils_log__info(conf->log, "assuming default %s = %d, key: %s\n",
+      at_utils_log__info(conf->log, "assuming default %s.%s = %d, key: %s\n",
+          at_utils_log__get_mod(conf->log),
           name, val_def, key);
     }
   }
@@ -124,7 +125,8 @@ int at_utils_conf__get_double(
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%lf") != 0) {
     if (conf->verbose) {
-      at_utils_log__info(conf->log, "assuming default %s = %g, key: %s\n",
+      at_utils_log__info(conf->log, "assuming default %s.%s = %g, key: %s\n",
+          at_utils_log__get_mod(conf->log),
           name, val_def, key);
     }
   }
@@ -150,7 +152,7 @@ int at_utils_conf__get_str(
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%s") != 0) {
     if (conf->verbose) {
-      at_utils_log__info(conf->log, "assuming default %s->%s = \"%s\", key: %s\n",
+      at_utils_log__info(conf->log, "assuming default %s.%s = \"%s\", key: %s\n",
           at_utils_log__get_mod(conf->log),
           name, val_def, key);
     }
@@ -187,14 +189,26 @@ int at_utils_conf__get_bool(
     const char *name)
 {
   const char *str_val_def = (val_def ? "true" : "false");
-  char *str_val = NULL;
+  const char *key;
+  char *str_val = zcom_ssm__dup(conf->ssm, str_val_def);
 
-  at_utils_conf__get_str(conf, keys, &str_val, str_val_def, name);
+  at_utils_conf__get_key_and_name(keys, &key, &name);
+
+  if (zcom_cfg__get(conf->cfg, &str_val, keys, "%s") != 0) {
+    if (conf->verbose) {
+      at_utils_log__info(conf->log, "assuming default %s.%s = %s, key: %s\n",
+          at_utils_log__get_mod(conf->log),
+          name, str_val_def, key);
+    }
+  }
+
+  zcom_utils__str_to_lower(str_val);
 
   if (val_def) {
 
     if (strcmp(str_val, "0") == 0
      || strcmp(str_val, "false") == 0
+     || strcmp(str_val, "no") == 0
      || strcmp(str_val, "off") == 0) {
       *var = AT__FALSE;
     } else {
@@ -205,6 +219,7 @@ int at_utils_conf__get_bool(
 
     if (strcmp(str_val, "1") == 0
      || strcmp(str_val, "true") == 0
+     || strcmp(str_val, "yes") == 0
      || strcmp(str_val, "on") == 0) {
       *var = AT__TRUE;
     } else {

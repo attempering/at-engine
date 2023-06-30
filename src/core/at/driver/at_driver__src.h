@@ -31,29 +31,29 @@
 
 
 
-int at_driver__cfg_init(
+int at_driver__conf_init(
     at_driver_t *driver,
     at_distr_t *distr,
     at_mb_t *mb,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
-  at_driver_langevin__cfg_init(
-    driver->langevin, distr, mb,
-    cfg, ssm, data_dir, verbose);
+  at_driver_langevin__conf_init(
+    driver->langevin, distr, mb, conf);
 
-  /* nsttemp: frequency of tempering, 0: disable, -1: only ns */
-  driver->nsttemp = -1;
-  if (zcom_cfg__get(cfg, &driver->nsttemp, "nsttemp,nst-temp,nst-tempering", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at.driver: assuming default driver->nsttemp = -1, key: nst-tempering\n");
-  }
+  at_utils_conf__push_mod(conf, "at.driver");
 
-  driver->move_repeats = 1;
-  if (zcom_cfg__get(cfg, &driver->move_repeats, "move-repeats", "%d") != 0) {
-    if (verbose) fprintf(stderr, "Info@at.driver: assuming default driver->move_repeats = 1, key: move-repeats\n");
-  }
+  /* frequency of tempering, 0: disable, -1: only neighbor-search steps */
+  at_utils_conf__get_int(conf,
+      "nsttemp,nst-temp,nst-tempering",
+      &driver->nsttemp, -1,
+      "nst_tempering");
+
+  at_utils_conf__get_int(conf,
+      "move-repeats",
+      &driver->move_repeats, 1,
+      "move_repeats");
+
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 }

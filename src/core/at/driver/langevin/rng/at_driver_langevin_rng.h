@@ -27,11 +27,9 @@ void at_driver_langevin_rng__reset(at_driver_langevin_rng_t *rng, uint32_t seed,
 
 int at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng);
 
-void at_driver_langevin_rng__cfg_init(at_driver_langevin_rng_t *rng,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose);
+void at_driver_langevin_rng__conf_init(
+    at_driver_langevin_rng_t *rng,
+    at_utils_conf_t *conf);
 
 void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng);
 

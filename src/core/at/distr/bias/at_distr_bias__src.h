@@ -24,11 +24,13 @@
 
 int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf)
 {
+  at_utils_conf__push_mod(conf, "at.distr.bias");
+
   /* enabled : 0: disable; 1:enable */
   at_utils_conf__get_bool(conf,
       "boost-mode",
       &bias->enabled, AT__FALSE,
-      "mode");
+      "enabled");
 
   if (bias->enabled) {
 
@@ -52,6 +54,7 @@ int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf)
 
   }
 
+  at_utils_conf__pop_mod(conf);
 
   return 0;
 

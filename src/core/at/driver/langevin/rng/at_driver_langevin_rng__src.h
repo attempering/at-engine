@@ -75,27 +75,22 @@ int at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng)
 
 
 
-void at_driver_langevin_rng__cfg_init(
+void at_driver_langevin_rng__conf_init(
     at_driver_langevin_rng_t *rng,
-    zcom_cfg_t *cfg,
-    zcom_ssm_t *ssm,
-    const char *data_dir,
-    at_bool_t verbose)
+    at_utils_conf_t *conf)
 {
-  char *fn;
+  at_utils_conf__push_mod(conf, "at.driver.langevin.rng");
 
-  fn = zcom_ssm__dup(ssm, "langevin-rng.dat");
-  if (zcom_cfg__get(cfg, &fn, "rngfile,rng-file,langevin-rng-file", "%s") != 0)
-  {
-    if (verbose) fprintf(stderr, "Info@at.driver.langevin.rng: assuming default langevin->rng->file = [%s], key: langevin-rng-file\n",
-        fn);
-  }
+  at_utils_conf__get_filename(conf,
+      "rngfile,rng-file,langevin-rng-file",
+      &rng->file, "langevin-rng.dat",
+      "file");
 
-  rng->file = at_utils__make_output_filename(ssm, data_dir, fn);
+  at_utils_conf__pop_mod(conf);
 
   rng->mtrng = NULL;
 
-  at_driver_langevin_rng__reset(rng, 0, ssm, data_dir, "langevin-rng-init.dat");
+  at_driver_langevin_rng__reset(rng, 0, conf->ssm, conf->data_dir, "langevin-rng-init.dat");
 }
 
 
