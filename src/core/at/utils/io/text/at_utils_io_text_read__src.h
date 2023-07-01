@@ -21,9 +21,6 @@
 
 #include "at_utils_io_text_read.h"
 
-#include "../../../../zcom/zcom.h"
-
-
 int at_utils_io_text__init_read(
     at_utils_io_t *io,
     const char *module,

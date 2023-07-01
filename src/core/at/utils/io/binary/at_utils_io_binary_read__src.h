@@ -21,8 +21,6 @@
 
 #include "at_utils_io_binary_read.h"
 
-#include "../../../../zcom/zcom.h"
-
 
 int at_utils_io_binary__init_read(
     at_utils_io_t *io,

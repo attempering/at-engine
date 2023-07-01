@@ -24,8 +24,6 @@
 #include "../at_mb_accum_winaccum_item_utils.h"
 
 #include "../../../../../utils/at_utils.h"
-#include "../../../../../../zcom/zcom.h"
-
 
 
 int at_mb_accum_winaccum_item__read_binary(

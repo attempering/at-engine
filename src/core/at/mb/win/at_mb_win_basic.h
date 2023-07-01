@@ -25,8 +25,6 @@
 #include "../at_mb__def.h"
 #include "../../utils/at_utils.h"
 
-#include <stdio.h>
-
 
 /* windows for unrestricted grid values
  * They can used for reconstructing energy histograms.
@@ -64,7 +62,7 @@ void at_mb_win__make_res_windows_for_grid_estimators(int n,
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 typedef struct at_mb_t_ at_mb_t;
 
-int at_mb_win__cfg_init(at_mb_win_t *win, zcom_cfg_t *cfg, at_mb_t *mb);
+int at_mb_win__conf_init(at_mb_win_t *win, at_utils_conf_t *conf, at_mb_t *mb);
 
 void at_mb_win__finish(at_mb_win_t *win);
 

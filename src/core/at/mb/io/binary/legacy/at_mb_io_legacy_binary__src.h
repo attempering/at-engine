@@ -28,9 +28,6 @@
 #include "../accum/at_mb_accum.h"
 #include "../../distr/at_distr.h"
 
-#include "../../../zcom/zcom.h"
-
-
 
 static int at_mb__read_binary_legacy_low_level(
     at_mb_t *mb,

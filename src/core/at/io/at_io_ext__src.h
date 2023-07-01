@@ -23,8 +23,6 @@
 
 #include "at_io_ext.h"
 
-#include "../../zcom/zcom.h"
-
 #include "../params/at_params.h"
 #include "../utils/at_utils.h"
 #include "../distr/at_distr.h"

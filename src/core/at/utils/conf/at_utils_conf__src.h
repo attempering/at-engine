@@ -20,8 +20,6 @@
 #define AT_UTILS_CONF__SRC_H__
 
 #include "at_utils_conf.h"
-
-#include "../../../zcom/zcom.h"
 #include "../at_utils_misc.h"
 
 

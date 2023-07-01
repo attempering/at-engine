@@ -24,7 +24,6 @@
 
 /* implementation dependent headers */
 #include "../../at_mb_basic.h"
-#include "../../../../zcom/zcom.h"
 #include "../../accum/at_mb_accum.h"
 #include "../zerofiller/at_mb_iie_zerofiller.h"
 

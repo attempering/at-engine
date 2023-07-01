@@ -23,7 +23,6 @@
 #include "at_misc.h"
 #include "at_move.h"
 
-#include "../zcom/zcom.h"
 #include "utils/at_utils.h"
 
 

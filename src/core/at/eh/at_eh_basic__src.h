@@ -23,9 +23,6 @@
 #include "../mb/win/at_mb_win.h"
 #include "../distr/at_distr.h"
 
-#include "../../zcom/zcom.h"
-
-
 int at_eh__cfg_init(at_eh_t *eh, at_mb_t *mb, zcom_cfg_t *cfg,
     zcom_ssm_t *ssm, const char *data_dir, at_bool_t verbose)
 {

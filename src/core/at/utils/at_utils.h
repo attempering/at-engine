@@ -32,6 +32,4 @@
 
 #include "at_utils_basic.h"
 
-#include "../../zcom/zcom.h"
-
 #endif

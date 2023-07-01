@@ -21,9 +21,6 @@
 
 #include "at_driver_langevin_rng.h"
 
-#include "../../../../zcom/zcom.h"
-
-
 
 void at_driver_langevin_rng__reset(
     at_driver_langevin_rng_t *rng, uint32_t seed,

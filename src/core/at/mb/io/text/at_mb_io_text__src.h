@@ -22,8 +22,6 @@
 
 #include "at_mb_io_text.h"
 #include "../../../utils/at_utils.h"
-#include "../../../../zcom/zcom.h"
-
 #include "v3/at_mb_io_text_v3__src.h"
 
 

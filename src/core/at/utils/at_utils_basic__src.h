@@ -27,7 +27,6 @@
 #include "lockfile/at_utils_lockfile.h"
 #include "manifest/at_utils_manifest.h"
 #include "trace/at_utils_trace.h"
-#include "../../zcom/zcom.h"
 
 
 /* initialize the data directory */

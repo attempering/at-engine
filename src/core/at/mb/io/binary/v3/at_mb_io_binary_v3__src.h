@@ -29,9 +29,6 @@
 #include "../../../accum/at_mb_accum.h"
 #include "../../../../distr/at_distr.h"
 
-#include "../../../../../zcom/zcom.h"
-
-
 
 int at_mb__read_binary_v3_low_level(
     at_mb_t *mb,

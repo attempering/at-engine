@@ -25,9 +25,6 @@
 
 #include "../../sm/at_mb_sm.h"
 
-#include "../../../../zcom/zcom.h"
-
-
 
 
 /* normalize damping weight back to 1.0, averages are not affected

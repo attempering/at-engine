@@ -20,7 +20,6 @@
 #define AT_DISTR_BIAS__SRC_H__
 
 #include "at_distr_bias.h"
-#include "../../../zcom/zcom.h"
 
 int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf)
 {

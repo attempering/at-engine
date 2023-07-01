@@ -23,9 +23,6 @@
 #include "../conf/at_utils_conf.h"
 #include "../modstack/at_utils_modstack.h"
 
-#include "../../../zcom/zcom.h"
-
-
 
 void at_utils_manifest__conf_init(
     at_utils_manifest_t *manifest,

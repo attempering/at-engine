@@ -26,9 +26,6 @@
 
 #include "../distr/at_distr.h"
 
-#include "../../zcom/zcom.h"
-
-
 
 
 int at_mb__write_ze_file(at_mb_t *mb, const char *fname)

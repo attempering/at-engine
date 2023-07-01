@@ -26,8 +26,6 @@
 #include "weights/at_distr_weights__src.h"
 #include "bias/at_distr_bias__src.h"
 
-#include "../../zcom/zcom.h"
-
 
 
 int at_distr__conf_init(at_distr_t *distr, at_utils_conf_t *conf, double boltz)

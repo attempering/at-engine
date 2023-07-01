@@ -24,8 +24,6 @@
 #include "at_basic.h"
 #include "at_misc.h"
 
-#include "../zcom/zcom.h"
-
 #include "params/at_params.h"
 #include "utils/at_utils.h"
 #include "distr/at_distr.h"

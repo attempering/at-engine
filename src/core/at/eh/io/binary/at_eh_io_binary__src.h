@@ -21,7 +21,6 @@
 
 #include "at_eh_io_binary.h"
 #include "../../at_eh_basic.h"
-#include "../../../../zcom/zcom.h"
 
 
 static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)

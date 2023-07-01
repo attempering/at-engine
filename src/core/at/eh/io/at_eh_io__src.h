@@ -26,8 +26,6 @@
 #include "binary/at_eh_io_binary__src.h"
 #include "text/at_eh_io_text__src.h"
 
-#include "../../../zcom/zcom.h"
-
 int at_eh__read(at_eh_t *eh, at_bool_t read_text_file)
 {
   int ret = 0;

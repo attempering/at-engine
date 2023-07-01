@@ -21,8 +21,6 @@
 
 #include "at_eh_io_text.h"
 #include "../../at_eh_basic.h"
-#include "../../../../zcom/zcom.h"
-
 
 static int at_eh__read_text_low_level(at_eh_t *eh, at_utils_io_t *io)
 {

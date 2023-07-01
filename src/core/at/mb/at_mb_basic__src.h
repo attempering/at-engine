@@ -31,7 +31,6 @@
 #include "accum/at_mb_accum.h"
 
 
-#include "../../zcom/zcom.h"
 #include "../utils/at_utils.h"
 
 
@@ -85,7 +84,7 @@ int at_mb__conf_init(
       &mb->verbose, AT__TRUE,
       "verbose");
 
-  at_mb_win__cfg_init(mb->win, conf->cfg, mb);
+  at_mb_win__conf_init(mb->win, conf, mb);
 
   /* nst_refresh: interval of recalculating et for all temperatures */
   at_utils_conf__get_int(conf,

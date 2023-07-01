@@ -21,7 +21,6 @@
 
 #include "at_distr_bias__def.h"
 #include "../../utils/at_utils.h"
-#include "../../../zcom/zcom.h"
 
 int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf);
 

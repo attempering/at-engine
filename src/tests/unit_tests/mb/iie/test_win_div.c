@@ -35,15 +35,10 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(at_distr_t *distr, at_mb_t *mb)
+void init_mb_object(at_utils_conf_t *conf, at_distr_t *distr, at_mb_t *mb)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = AT__FALSE;
-
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
-
-  zcom_cfg__close(cfg);
+  at_distr__conf_init(distr, conf, boltz);
+  at_mb__conf_init(mb, distr, conf, boltz);
 }
 
 
@@ -152,6 +147,7 @@ static int test_iie(at_mb_t *mb, double tol)
 
 int main(int argc, char **argv)
 {
+  at_utils_conf_t conf[1];
   at_distr_t distr[1];
   at_mb_t mb[1];
 
@@ -163,7 +159,8 @@ int main(int argc, char **argv)
 
   at_bool_t passed;
 
-  init_mb_object(distr, mb);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", AT__FALSE);
+  init_mb_object(conf, distr, mb);
 
   if (argc > 1) {
     test_exact = (argv[1][0] == 'x');
@@ -218,6 +215,7 @@ int main(int argc, char **argv)
   passed = test_iie(mb, tol);
 
   at_mb__finish(mb);
+  at_utils_conf__finish_ez(conf);
 
   if (passed) {
     printf("Passed.\n");

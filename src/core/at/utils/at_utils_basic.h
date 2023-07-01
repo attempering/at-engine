@@ -22,8 +22,6 @@
 
 #include "at_utils__def.h"
 
-#include "../../zcom/zcom.h"
-
 
 
 void at_utils__cfg_init(at_utils_t *utils,

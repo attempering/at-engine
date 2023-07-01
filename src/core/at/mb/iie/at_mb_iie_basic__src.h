@@ -28,7 +28,6 @@
 #include "gridvals/at_mb_iie_gridvals.h"
 
 #include "../at_mb__def.h"
-#include "../../../zcom/zcom.h"
 
 
 void at_mb_iie__conf_init(at_mb_iie_t *iie, at_mb_t *mb,

@@ -23,7 +23,6 @@
 #include "../at_mb_accum_winaccum.h"
 
 #include "../../../sm/at_mb_sm.h"
-#include "../../../../../zcom/zcom.h"
 
 
 int at_mb_accum_winaccum__read_text(

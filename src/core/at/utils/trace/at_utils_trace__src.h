@@ -20,8 +20,6 @@
 #define AT_UTILS_TRACE__SRC_H__
 
 #include "at_utils_trace.h"
-
-#include "../../../zcom/zcom.h"
 #include "../at_utils_misc.h"
 #include "../manifest/at_utils_manifest.h"
 

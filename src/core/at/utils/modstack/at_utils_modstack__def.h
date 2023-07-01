@@ -19,8 +19,6 @@
 #ifndef AT_UTILS_MODSTACK__DEF_H__
 #define AT_UTILS_MODSTACK__DEF_H__
 
-#include "../../../zcom/zcom.h"
-
 #define AT_UTILS_MODSTACK__STACK_MAX 256
 
 typedef struct at_utils_modstack_t_

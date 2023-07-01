@@ -23,7 +23,6 @@
 
 #include "../../../mb/at_mb__def.h"
 #include "../at_driver_langevin__def.h"
-#include "../../../../zcom/zcom.h"
 
 
 #include "at_driver_langevin_move_simple.h"

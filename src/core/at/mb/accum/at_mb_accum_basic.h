@@ -24,8 +24,6 @@
 #include "../at_mb__def.h"
 #include "../win/at_mb_win.h"
 #include "../shk/at_mb_shk.h"
-#include "../../../zcom/zcom.h"
-#include <stdio.h>
 
 
 at_mb_sm_t *at_mb_accum__get_sums(at_mb_accum_t *accum, int j);

@@ -23,7 +23,6 @@
 #include "at_mb_shk_io_binary.h"
 
 #include "../../../utils/at_utils.h"
-#include "../../../../zcom/zcom.h"
 
 
 

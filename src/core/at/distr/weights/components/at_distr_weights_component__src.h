@@ -22,7 +22,6 @@
 
 #include "at_distr_weights_components.h"
 #include "../../domain/at_distr_domain.h"
-#include "../../../../zcom/zcom.h"
 
 
 static int at_distr_weights_component__parse_gaussian_params(

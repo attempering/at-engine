@@ -21,9 +21,6 @@
 
 #include "at_driver_langevin_io.h"
 
-#include "../../../zcom/zcom.h"
-
-
 
 int at_driver_langevin__read_binary_legacy(
     at_driver_langevin_t *langevin,

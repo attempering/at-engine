@@ -27,10 +27,6 @@
 #include "../at_mb_basic.h"
 #include "../../distr/at_distr.h"
 
-#include <stdlib.h>
-
-#include "../../../zcom/zcom.h"
-
 
 int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
 {

@@ -22,7 +22,6 @@
 
 #include "at_distr_weights_components.h"
 #include "../../domain/at_distr_domain.h"
-#include "../../../../zcom/zcom.h"
 
 
 #include "at_distr_weights_component__src.h"

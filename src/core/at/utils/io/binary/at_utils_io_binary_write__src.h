@@ -21,9 +21,6 @@
 
 #include "at_utils_io_binary_write.h"
 
-#include "../../../../zcom/zcom.h"
-
-
 int at_utils_io_binary__init_write(
     at_utils_io_t *io,
     const char *module,

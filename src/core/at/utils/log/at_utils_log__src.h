@@ -21,11 +21,9 @@
 
 #include "at_utils_log.h"
 
-#include "../../../zcom/zcom.h"
 #include "../at_utils_misc.h"
 #include "../modstack/at_utils_modstack.h"
 #include "../manifest/at_utils_manifest__def.h"
-#include "../../../zcom/zcom.h"
 
 
 

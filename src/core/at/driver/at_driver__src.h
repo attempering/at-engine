@@ -27,7 +27,6 @@
 #include "../utils/at_utils.h"
 #include "../distr/at_distr.h"
 #include "../mb/at_mb.h"
-#include "../../zcom/zcom.h"
 
 
 

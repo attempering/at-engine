@@ -23,8 +23,6 @@
 #include "at_mb_shk_io_text.h"
 
 #include "../../../utils/at_utils.h"
-#include "../../../../zcom/zcom.h"
-
 
 
 int at_mb_shk__read_text(

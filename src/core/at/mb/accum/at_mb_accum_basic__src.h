@@ -26,9 +26,6 @@
 
 #include "../sm/at_mb_sm.h"
 
-#include "../../../zcom/zcom.h"
-
-
 
 /* return the origin of sums for the window estimator at win_id */
 static at_mb_sm_t *at_mb_accum__get_sums0(at_mb_accum_t *accum)
