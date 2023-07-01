@@ -25,15 +25,26 @@
 
 
 
-void at_utils_conf__init(at_utils_conf_t *conf,
+void at_utils_conf__init(
+    at_utils_conf_t *conf,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_utils_log_t *log,
     at_bool_t verbose);
 
-
 void at_utils_conf__finish(at_utils_conf_t *conf);
+
+/* easy initialization for testing programs */
+void at_utils_conf__init_ez(
+    at_utils_conf_t *conf,
+    const char *cfg_fn,
+    const char *data_dir,
+    at_bool_t verbose);
+
+/* cleaning up for __init_ez() */
+void at_utils_conf__finish_ez(
+    at_utils_conf_t *conf);
 
 void at_utils_conf__push_mod(at_utils_conf_t *conf, const char *mod);
 

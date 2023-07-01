@@ -40,7 +40,7 @@ void at_utils_log__cfg_init(
 
   fn = zcom_ssm__dup(ssm, "log.dat");
   if (zcom_cfg__get(cfg, &fn, "log-file", "%s") != 0) {
-    if (verbose) fprintf(stderr, "Info@at.utils.log: assuming default utils->log->file = [%s], key: log-file\n",
+    if (verbose) fprintf(stderr, "Info@at.utils.log: assuming default at.utils.log.file = \"%s\", key: log-file\n",
         fn);
   }
   log->file = at_utils__make_output_filename(ssm, data_dir, fn);

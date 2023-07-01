@@ -23,19 +23,22 @@
 int main(void)
 {
   at_distr_t distr[1];
-  zcom_cfg_t *cfg = NULL;
+  at_utils_conf_t conf[1];
   at_utils_manifest_t manifest[1];
   double boltz = 1.0;
   at_bool_t verbose = AT__TRUE;
 
-  at_utils_manifest__cfg_init(manifest, cfg, NULL, NULL, verbose);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+
+  at_utils_manifest__conf_init(manifest, conf);
   at_utils_manifest__open_file(manifest);
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_distr__conf_init(distr, conf, boltz);
   at_distr__manifest(distr, manifest);
   at_distr__finish(distr);
 
   at_utils_manifest__finish(manifest);
+  at_utils_conf__finish_ez(conf);
 
   return 0;
 }

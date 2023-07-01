@@ -26,16 +26,17 @@
 
 int main(void)
 {
+  at_utils_conf_t conf[1];
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_t driver[1];
-  zcom_cfg_t *cfg = NULL;
   at_bool_t verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
-  at_mb__cfg_init(mb, distr, cfg, 1.0, NULL, NULL, verbose);
-  at_driver__cfg_init(driver, distr, mb, cfg, NULL, NULL, verbose);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  at_distr__conf_init(distr, conf, boltz);
+  at_mb__conf_init(mb, distr, conf, 1.0);
+  at_driver__conf_init(driver, distr, mb, conf);
 
   at_driver_langevin_rng__reset(driver->langevin->rng, 1234,
       NULL, NULL, NULL);
@@ -43,6 +44,7 @@ int main(void)
   at_driver__finish(driver);
   at_mb__finish(mb);
   at_distr__finish(distr);
+  at_utils_conf__finish_ez(conf);
 
   return 0;
 }

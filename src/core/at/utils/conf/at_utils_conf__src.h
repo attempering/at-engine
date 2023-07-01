@@ -26,7 +26,8 @@
 
 
 
-void at_utils_conf__init(at_utils_conf_t *conf,
+void at_utils_conf__init(
+    at_utils_conf_t *conf,
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
@@ -45,10 +46,54 @@ void at_utils_conf__init(at_utils_conf_t *conf,
 }
 
 
-
 void at_utils_conf__finish(at_utils_conf_t *conf)
 {
+  memset(conf, '\0', sizeof(*conf));
   conf->ready = AT__FALSE;
+}
+
+
+void at_utils_conf__init_ez(
+    at_utils_conf_t *conf,
+    const char *cfg_fn,
+    const char *data_dir,
+    at_bool_t verbose)
+{
+  conf->ssm = zcom_ssm__open();
+
+  conf->data_dir = data_dir ? zcom_ssm__dup(conf->ssm, data_dir) : NULL;
+
+  if (cfg_fn != NULL) {
+    conf->cfg = zcom_cfg__open(cfg_fn, conf->ssm, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
+  } else {
+    conf->cfg = NULL;
+  }
+
+  conf->log = (at_utils_log_t *) calloc(1, sizeof(at_utils_log_t));
+  zcom_utils__exit_if (conf->log == NULL,
+      "Error@at.utils.conf: no memory for conf->log");
+
+  at_utils_log__cfg_init(conf->log, conf->cfg, conf->ssm, data_dir, verbose);
+
+  conf->verbose = verbose;
+
+  conf->ready = AT__TRUE;
+}
+
+
+void at_utils_conf__finish_ez(
+    at_utils_conf_t *conf)
+{
+  at_utils_log__finish(conf->log);
+  free(conf->log);
+
+  if (conf->cfg) {
+    zcom_cfg__close(conf->cfg);
+  }
+
+  zcom_ssm__close(conf->ssm);
+
+  at_utils_conf__finish(conf);
 }
 
 

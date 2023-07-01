@@ -187,7 +187,7 @@ void at_distr_weights__finish(at_distr_weights_t *w)
 static double at_distr_weights__calc_f_factor(const at_distr_weights_t *w,
     double beta, double *p_neg_df_dbeta)
 {
-  double f, neg_df_dbeta;
+  double f = 1.0, neg_df_dbeta;
 
   /* invwf: 1/w(beta)/f(beta);
    * f: f(beta);

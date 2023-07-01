@@ -26,16 +26,19 @@
 
 int main(void)
 {
+  at_utils_conf_t conf[1];
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_bool_t verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, NULL, boltz, verbose);
-  at_mb__cfg_init(mb, distr, NULL, boltz, NULL, NULL, verbose);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  at_distr__conf_init(distr, conf, boltz);
+  at_mb__conf_init(mb, distr, conf, boltz);
 
   at_mb__finish(mb);
   at_distr__finish(distr);
+  at_utils_conf__finish_ez(conf);
 
   return 0;
 }

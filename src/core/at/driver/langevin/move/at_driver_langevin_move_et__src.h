@@ -26,6 +26,7 @@
 /* implementation headers */
 #include "../../../mb/at_mb.h"
 
+extern int at_driver_langevin_move__debug__;
 
 
 static double at_driver_langevin_move__calc_et_single_bin(
