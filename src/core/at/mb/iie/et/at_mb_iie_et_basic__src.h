@@ -28,7 +28,7 @@
 #include "at_mb_iie_et_cache.h"
 
 
-double at_mb_iie_et__debug__ = 0;
+int at_mb_iie_et__debug__ = 0;
 
 
 static void at_mb_iie_et_item__clear(at_mb_iie_et_item_t *item)
@@ -105,13 +105,7 @@ void at_mb_iie_et__clear(at_mb_iie_et_t *et)
 
 void at_mb_iie_et__manifest(const at_mb_iie_et_t *et, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_bool(manifest, et->cache_params->enabled, "mb->iie->et->cache_params->enabled", "et-cache-enabled");
-
-  if (et->cache_params->enabled) {
-    at_utils_manifest__print_double(manifest, et->cache_params->lifespan, "mb->iie->et->cache_params->lifespan", "et-cache-lifespan");
-
-    at_utils_manifest__print_double(manifest, et->cache_params->min_visits, "mb->iie->et->cache_params->min_visits", "et-cache-min-visits");
-  }
+  at_mb_iie_et_cache_params__manifest(et->cache_params, manifest);
 }
 
 

@@ -139,19 +139,20 @@ ERR:
 
 void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.distr.weights");
 
-  at_utils_manifest__print_double(manifest, w->ens_exp, "distr->weights->ens_exp", "ensemble-factor");
+  at_utils_manifest__print_double(manifest, w->ens_exp, "ens_exp", "ensemble-factor");
 
-  at_utils_manifest__print_int(manifest, w->mode, "distr->weights->mode", "ensemble-mode");
+  at_utils_manifest__print_int(manifest, w->mode, "mode", "ensemble-mode");
 
   if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN) {
 
-    at_utils_manifest__print_double(manifest, w->beta0, "distr->weights->beta0", "ensemble-beta0");
-    at_utils_manifest__print_double(manifest, w->sigma, "distr->weights->sigma", "ensemble-sigma");
+    at_utils_manifest__print_double(manifest, w->beta0, "beta0", "ensemble-beta0");
+    at_utils_manifest__print_double(manifest, w->sigma, "sigma", "ensemble-sigma");
 
   } else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL) {
 
-    at_utils_manifest__print_double(manifest, w->c, "distr->weights->c", "ensemble-c");
+    at_utils_manifest__print_double(manifest, w->c, "c", "ensemble-c");
 
   } else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
 
@@ -160,8 +161,9 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
   }
 
   /* ens_w: array of ensemble weights at bin boundaries */
-  at_utils_manifest__print_double_arr(manifest, w->ens_w, w->n, "distr->weights->ens_w");
+  at_utils_manifest__print_double_arr(manifest, w->ens_w, w->n, "ens_w");
 
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

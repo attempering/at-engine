@@ -22,7 +22,7 @@
 /* integral identity based estimator of the bin-averaged energy
  * along with cache
  */
-#include "at_mb_iie_et__def.h"
+#include "../at_mb_iie_et__def.h"
 
 
 typedef struct at_mb_t_ at_mb_t;

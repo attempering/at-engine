@@ -23,19 +23,19 @@
 
 
 void at_utils_modstack__init(
-    at_utils_modstack_t *st);
+    at_utils_modstack_t *mods);
 
 void at_utils_modstack__finish(
-    at_utils_modstack_t *st);
+    at_utils_modstack_t *mods);
 
 const char *at_utils_modstack__push(
-    at_utils_modstack_t *st,
+    at_utils_modstack_t *mods,
     const char *name);
 
 const char *at_utils_modstack__pop(
-    at_utils_modstack_t *st);
+    at_utils_modstack_t *mods);
 
 const char *at_utils_modstack__get(
-    at_utils_modstack_t *st);
+    at_utils_modstack_t *mods);
 
 #endif

@@ -16,18 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_MANIFEST__DEF_H__
-#define AT_UTILS_MANIFEST__DEF_H__
+#ifndef AT_MB_IIE_ET_CACHE__DEF_H__
+#define AT_MB_IIE_ET_CACHE__DEF_H__
 
-#include "../modstack/at_utils_modstack__def.h"
+typedef struct at_mb_t_ at_mb_t;
 
-typedef struct at_utils_manifest_t_
-{
-  int ready;
-  char *file;
-  FILE *fp;
-  int arr_max_items;
-  at_utils_modstack_t mods[1];
-} at_utils_manifest_t;
+
+
+typedef struct at_mb_iie_et_item_cache_t_ {
+
+  /* do we need this field?
+     It should be the same as at_mb_iie_et_item_t.value */
+  //double value;
+
+  /* if the tags are the same, it means the raw data
+   * the integral identity draw from have not changed
+   *
+   * we can set it to be total number of visits to
+   * the window accumulator.
+   * */
+  double visits;
+
+  double expires;
+
+} at_mb_iie_et_item_cache_t;
+
+
+typedef struct at_mb_iie_et_cache_params_t_ {
+  int enabled;
+  double lifespan;
+  double min_visits; /* minimal number of visits */
+} at_mb_iie_et_cache_params_t;
+
 
 #endif

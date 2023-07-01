@@ -48,7 +48,9 @@ void at_utils_conf__finish_ez(
 
 void at_utils_conf__push_mod(at_utils_conf_t *conf, const char *mod);
 
-void at_utils_conf__pop_mod(at_utils_conf_t *conf);
+const char *at_utils_conf__pop_mod(at_utils_conf_t *conf);
+
+const char *at_utils_conf__get_mod(at_utils_conf_t *conf);
 
 int at_utils_conf__get_int(
     at_utils_conf_t *conf,

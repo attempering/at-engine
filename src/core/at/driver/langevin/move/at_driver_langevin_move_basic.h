@@ -29,7 +29,7 @@
 
 
 
-typedef struct langevin_move_proposal_t_ {
+typedef struct at_driver_langevin_move_proposal_t_ {
   double current_energy;
   double invwf;
   double time_step;
@@ -44,7 +44,7 @@ typedef struct langevin_move_proposal_t_ {
   int ib_new;
   int ib_new_prop;
   at_bool_t apply_metropolisation;
-} langevin_move_proposal_t;
+} at_driver_langevin_move_proposal_t;
 
 
 /* check if the minimum stay requirement has been met */
@@ -54,20 +54,24 @@ int at_driver_langevin_move__check_min_visits(
     double beta_old);
 
 int at_driver_langevin_move__propose(
-    langevin_move_proposal_t *proposal,
+    at_driver_langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin,
     double current_energy,
     double beta_old,
     int ib,
     double invwf,
     double neg_dlnwf_dbeta,
-    int cheap_av_energy,
-    int apply_dkt_max,
+    at_bool_t cheap_av_energy,
+    at_bool_t apply_dkt_max,
     double *bin_av_energy);
+
+void at_driver_langevin_move__set_beta_new_prop(
+    at_driver_langevin_move_proposal_t *proposal,
+    at_distr_domain_t *domain);
 
 /* moderate the stride in the beta space */
 at_bool_t at_driver_langevin_move__moderate_stride(
-    langevin_move_proposal_t *proposal,
+    at_driver_langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin);
 
 #endif

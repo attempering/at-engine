@@ -23,58 +23,58 @@
 
 
 void at_utils_modstack__init(
-    at_utils_modstack_t *st)
+    at_utils_modstack_t *mods)
 {
-  st->curr = 0;
-  st->stack[0] = NULL;
+  mods->curr = 0;
+  mods->stack[0] = NULL;
 }
 
 
 void at_utils_modstack__finish(
-    at_utils_modstack_t *st)
+    at_utils_modstack_t *mods)
 {
-  st->curr = 0;
+  mods->curr = 0;
 }
 
 
 const char *at_utils_modstack__push(
-    at_utils_modstack_t *st,
+    at_utils_modstack_t *mods,
     const char *name)
 {
-  if (st->curr >= AT_UTILS_MODSTACK__STACK_MAX - 1) {
+  if (mods->curr >= AT_UTILS_MODSTACK__STACK_MAX - 1) {
     fprintf(stderr, "Error@at.utils.modstack: stack overflow for %s\n",
         name);
     return NULL;
   }
 
-  st->stack[++st->curr] = name;
+  mods->stack[++mods->curr] = name;
 
   return name;
 }
 
 
 const char *at_utils_modstack__pop(
-    at_utils_modstack_t *st)
+    at_utils_modstack_t *mods)
 {
   const char *name = NULL;
 
-  if (st->curr <= 0) {
+  if (mods->curr <= 0) {
     fprintf(stderr, "Error@at.utils.modstack: stack@%d underflow for %s\n",
-        st->curr, (name ? name : "(null)"));
+        mods->curr, (name ? name : "(null)"));
     return NULL;
   }
 
-  name = st->stack[st->curr--];
+  name = mods->stack[mods->curr--];
 
   return name;
 }
 
 
 const char *at_utils_modstack__get(
-    at_utils_modstack_t *st)
+    at_utils_modstack_t *mods)
 {
-  if (st->curr > 0 && st->curr < AT_UTILS_MODSTACK__STACK_MAX) {
-    return st->stack[st->curr];
+  if (mods->curr > 0 && mods->curr < AT_UTILS_MODSTACK__STACK_MAX) {
+    return mods->stack[mods->curr];
   }
 
   return NULL;

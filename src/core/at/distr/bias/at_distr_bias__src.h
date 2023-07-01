@@ -70,15 +70,19 @@ void at_distr_bias__finish(at_distr_bias_t *bias)
 
 void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_bool(manifest, bias->enabled, "distr->bias->enabled", "boost-mode");
+  at_utils_manifest__push_mod(manifest, "at.distr.bias");
+
+  at_utils_manifest__print_bool(manifest, bias->enabled, "enabled", "boost-mode");
 
   if (bias->enabled) {
-    at_utils_manifest__print_bool(manifest, bias->ref_temp, "distr->bias->ref_temp", "boost-Tref");
+    at_utils_manifest__print_bool(manifest, bias->ref_temp, "ref_temp", "boost-Tref");
 #ifdef AT__PCST_COMPAT
-    at_utils_manifest__print_bool(manifest, bias->kappa0, "distr->bias->kappa0", "kappa0");
-    at_utils_manifest__print_bool(manifest, bias->epsilon0, "distr->bias->epsilon0", "epsilon0");
+    at_utils_manifest__print_bool(manifest, bias->kappa0, "kappa0", "kappa0");
+    at_utils_manifest__print_bool(manifest, bias->epsilon0, "epsilon0", "epsilon0");
 #endif
   }
+
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

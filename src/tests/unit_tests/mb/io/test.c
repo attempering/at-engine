@@ -40,7 +40,7 @@ long ntimes = 100000;
 void init_mb_objects(at_distr_t *distr, at_mb_t *mb1, at_mb_t *mb2)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = 0;
+  at_bool_t verbose = AT__FALSE;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);
 
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
   at_distr_t distr[1];
   at_mb_t mb1[1], mb2[1];
 
-  int passed;
+  at_bool_t passed;
 
   init_mb_objects(distr, mb1, mb2);
 

@@ -103,9 +103,15 @@ void at_utils_conf__push_mod(at_utils_conf_t *conf, const char *mod)
 }
 
 
-void at_utils_conf__pop_mod(at_utils_conf_t *conf)
+const char *at_utils_conf__pop_mod(at_utils_conf_t *conf)
 {
-  at_utils_log__pop_mod(conf->log);
+  return at_utils_log__pop_mod(conf->log);
+}
+
+
+const char *at_utils_conf__get_mod(at_utils_conf_t *conf)
+{
+  return at_utils_log__get_mod(conf->log);
 }
 
 

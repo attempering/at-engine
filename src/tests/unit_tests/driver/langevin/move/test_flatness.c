@@ -53,19 +53,16 @@ double custom_integrate_func(at_mb_t *mb, double beta_old, double beta_new)
 
 
 
-void init_distr_mb_langevin_objects(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
+void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+    at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_distr__conf_init(distr, conf, boltz);
 
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
+  at_mb__conf_init(mb, distr, conf, boltz);
 
-  at_driver_langevin__cfg_init(langevin, distr, mb, cfg, NULL, NULL, verbose);
-
-  zcom_cfg__close(cfg);
+  at_driver_langevin__conf_init(langevin, distr, mb, conf);
 }
 
 
@@ -107,7 +104,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
   zcom_mtrng_t mtrng[1];
   double vis_min = 1e10, vis_max = 0, flatness;
   int n = domain->n;
-  int passed = 0;
+  at_bool_t passed = AT__FALSE;
 
   zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
 
@@ -151,12 +148,15 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
 
 int main(int argc, char **argv)
 {
+  at_utils_conf_t conf[1];
+  at_bool_t verbose = AT__TRUE;
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_langevin_t langevin[1];
-  int passed;
+  at_bool_t passed;
 
-  init_distr_mb_langevin_objects(distr, mb, langevin);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  init_distr_mb_langevin_objects(conf, distr, mb, langevin);
 
   // override the time step from the configuration file 
   if (argc > 1) {
@@ -176,6 +176,7 @@ int main(int argc, char **argv)
   at_distr__finish(distr);
   at_mb__finish(mb);
   at_driver_langevin__finish(langevin);
+  at_utils_conf__finish_ez(conf);
 
   if (passed) {
     printf("Passed.\n");

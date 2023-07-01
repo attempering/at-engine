@@ -71,11 +71,15 @@ void at_driver__manifest(
     const at_driver_t *driver,
     at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.langevin");
+
+  at_utils_manifest__print_int(manifest, driver->nsttemp, "nsttemp", "nst-tempering");
+
+  at_utils_manifest__print_int(manifest, driver->move_repeats, "move_repeats", "move-repeats");
+
+  at_utils_manifest__pop_mod(manifest);
+
   at_driver_langevin__manifest(driver->langevin, manifest);
-
-  at_utils_manifest__print_int(manifest, driver->nsttemp, "driver->nsttemp", "nst-tempering");
-
-  at_utils_manifest__print_int(manifest, driver->move_repeats, "driver->move_repeats", "move-repeats");
 }
 
 

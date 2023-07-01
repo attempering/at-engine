@@ -22,6 +22,8 @@
 #include "sys/at_utils_sys.h"
 #include "../../zcom/zcom.h"
 
+const char *at_utils__bool_to_str(at_bool_t val);
+
 char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, const char *fn);
 
 #endif

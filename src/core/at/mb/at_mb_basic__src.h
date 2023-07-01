@@ -127,10 +127,11 @@ int at_mb__conf_init(
       "ze_init_file");
 
   /* visits: number of visits */
-  mb->visits = (double *) calloc((n + 1), sizeof(double));
+  mb->visits = (double *) calloc(n, sizeof(double));
   at_utils_log__exit_if (mb->visits == NULL,
       conf->log,
-      "no memory! var: mb->visits, type: double\n");
+      "no memory for mb->visits of size %d, type: double\n",
+      n);
   for (i = 0; i < n; i++) {
     mb->visits[i] = 0.0;
   }
@@ -184,41 +185,45 @@ void at_mb__clear(at_mb_t *mb)
 
 void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.mb");
+
   /* compute heat capacity */
-  at_utils_manifest__print_bool(manifest, mb->need_cv, "mb->need_cv", "mb-need-cv");
+  at_utils_manifest__print_bool(manifest, mb->need_cv, "need_cv", "mb-need-cv");
 
   /* use symmetrical window */
-  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "mb->use_sym_wins", "mb-use-sym-wins");
+  at_utils_manifest__print_bool(manifest, mb->use_sym_wins, "use_sym_wins", "mb-use-sym-wins");
 
   /* use single bin estimator */
-  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "mb->use_single_bin", "mb-use-single-bin");
+  at_utils_manifest__print_bool(manifest, mb->use_single_bin, "use_single_bin", "mb-use-single-bin");
 
   /* being verbose */
-  at_utils_manifest__print_bool(manifest, mb->verbose, "mb->verbose", "mb-verbose");
+  at_utils_manifest__print_bool(manifest, mb->verbose, "verbose", "mb-verbose");
 
   at_mb_win__manifest(mb->win, manifest);
 
   /* interval of recalculating et for all temperature */
-  at_utils_manifest__print_int(manifest, mb->nst_refresh, "mb->nst_refresh", "mb-nst-refresh");
+  at_utils_manifest__print_int(manifest, mb->nst_refresh, "nst_refresh", "mb-nst-refresh");
 
   /* interval of writing mbav and ze files */
-  at_utils_manifest__print_int(manifest, mb->nst_save_av, "mb->nst_save_av", "mb-nst-save");
+  at_utils_manifest__print_int(manifest, mb->nst_save_av, "nst_save_av", "mb-nst-save");
 
   /* use binary format in mbav file */
-  at_utils_manifest__print_bool(manifest, mb->use_text_file, "mb->use_text_file", "mb-use-text-file");
+  at_utils_manifest__print_bool(manifest, mb->use_text_file, "use_text_file", "mb-use-text-file");
 
   /* name of the average file */
-  at_utils_manifest__print_str(manifest, mb->file_binary, "mb->file_binary", "mb-binary-file");
-  at_utils_manifest__print_str(manifest, mb->file_text, "mb->file_text", "mb-text-file");
+  at_utils_manifest__print_str(manifest, mb->file_binary, "file_binary", "mb-binary-file");
+  at_utils_manifest__print_str(manifest, mb->file_text, "file_text", "mb-text-file");
 
   /* name of ze file */
-  at_utils_manifest__print_str(manifest, mb->ze_file, "mb->ze_file", "ze-file");
+  at_utils_manifest__print_str(manifest, mb->ze_file, "ze_file", "ze-file");
 
   /* number of visits */
-  at_utils_manifest__print_double_arr(manifest, mb->visits, mb->distr->domain->n, "mb->visits");
+  at_utils_manifest__print_double_arr(manifest, mb->visits, mb->distr->domain->n, "visits");
 
   /* total number of visits, number of tempering */
-  at_utils_manifest__print_double(manifest, mb->total_visits, "mb->total_visits", NULL);
+  at_utils_manifest__print_double(manifest, mb->total_visits, "total_visits", NULL);
+
+  at_utils_manifest__pop_mod(manifest);
 
   at_mb_shk__manifest(mb->shk, manifest);
 

@@ -35,20 +35,17 @@ long ntimes = 100000;
 
 
 
-void init_distr_mb_and_langevin(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
+void init_distr_mb_and_langevin(at_utils_conf_t *conf,
+    at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_distr__conf_init(distr, conf, boltz);
 
   // beta_min and beta_max are to be read from the configuration file
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
+  at_mb__conf_init(mb, distr, conf, boltz);
 
-  at_driver_langevin__cfg_init(langevin, mb->distr, mb, cfg, NULL, NULL, verbose);
-
-  zcom_cfg__close(cfg);
+  at_driver_langevin__conf_init(langevin, mb->distr, mb, conf);
 }
 
 
@@ -101,7 +98,7 @@ static int test_fill_range(at_mb_t *mb, at_driver_langevin_t *langevin)
 
   int i;
 
-  int passed = 1;
+  at_bool_t passed = AT__FALSE;
   int n = mb->distr->domain->n;
 
   at_driver_langevin_zerofiller__init(zf, n);
@@ -111,7 +108,7 @@ static int test_fill_range(at_mb_t *mb, at_driver_langevin_t *langevin)
   for (i = 0; i < n; i++) {
     fprintf(stderr, "%d: %g %g\n", i, raw_data[i], zf->vals[i]);
     if (zf->vals[i] == 0.0) {
-      passed = 0;
+      passed = AT__FALSE;
     }
   }
 
@@ -127,18 +124,22 @@ static int test_fill_range(at_mb_t *mb, at_driver_langevin_t *langevin)
 
 int main(void)
 {
+  at_utils_conf_t conf[1];
+  at_bool_t verbose = AT__TRUE;
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_langevin_t langevin[1];
-  int passed;
+  at_bool_t passed;
 
-  init_distr_mb_and_langevin(distr, mb, langevin);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  init_distr_mb_and_langevin(conf, distr, mb, langevin);
 
   passed = test_fill_range(mb, langevin);
 
   at_distr__finish(mb->distr);
   at_mb__finish(mb);
   at_driver_langevin__finish(langevin);
+  at_utils_conf__finish_ez(conf);
 
   if (passed) {
     printf("Passed.\n");

@@ -29,7 +29,7 @@ int main(void)
   at_utils_conf_t conf[1];
   at_distr_t distr[1];
   at_mb_t mb[1];
-  at_bool_t verbose = 0;
+  at_bool_t verbose = AT__FALSE;
   double boltz = 1.0;
 
   at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);

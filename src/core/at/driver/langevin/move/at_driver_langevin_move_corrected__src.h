@@ -26,9 +26,9 @@
 
 
 
-const int at_driver_langevin_move_corrected__use_cheap_av_energy_for_backward_move = 0;
-const int at_driver_langevin_move_corrected__use_cheap_av_energy_for_forward_move = 0;
-const int at_driver_langevin_move_corrected__apply_dkt_max = 0;
+const at_bool_t at_driver_langevin_move_corrected__use_cheap_av_energy_for_backward_move = AT__FALSE;
+const at_bool_t at_driver_langevin_move_corrected__use_cheap_av_energy_for_forward_move = AT__FALSE;
+const at_bool_t at_driver_langevin_move_corrected__apply_dkt_max = AT__FALSE;
 
 
 
@@ -191,7 +191,7 @@ static double at_driver_langevin_move__calc_lng_ratio(
 /* return if the new temperature proposed by the Langevin equation
  * should be accepted according to the Metropolisation rule */
 static at_bool_t at_driver_langevin_move__new_beta_out_of_range(
-    const langevin_move_proposal_t *proposal,
+    const at_driver_langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin)
 {
   at_distr_domain_t *domain = langevin->distr->domain;
@@ -204,7 +204,7 @@ static at_bool_t at_driver_langevin_move__new_beta_out_of_range(
 /* return if the new temperature proposed by the Langevin equation
  * should be accepted according to the Metropolisation rule */
 static at_bool_t at_driver_langevin_move__accept(
-    const langevin_move_proposal_t *proposal,
+    const at_driver_langevin_move_proposal_t *proposal,
     at_driver_langevin_t *langevin)
 {
   int ib_new;
@@ -310,7 +310,7 @@ static at_bool_t at_driver_langevin_move__accept(
 
 
 static at_bool_t at_driver_langevin_move__decide_to_apply_metropolisation(
-    langevin_move_proposal_t *proposal,
+    at_driver_langevin_move_proposal_t *proposal,
     const at_driver_langevin_t *langevin)
 {
   at_bool_t apply_metropolisation = AT__TRUE;
@@ -361,12 +361,12 @@ double at_driver_langevin__move_corrected(
     at_mb_t *mb,
     double current_energy,
     double beta_old,
-    int ib,
+    int ib_old,
     double invwf,
     double neg_dlnwf_dbeta,
     double *bin_av_energy)
 {
-  langevin_move_proposal_t proposal[1];
+  at_driver_langevin_move_proposal_t proposal[1];
 
   double beta = beta_old;
   at_bool_t stride_moderated = AT__FALSE;
@@ -382,7 +382,7 @@ double at_driver_langevin__move_corrected(
       proposal,
       langevin,
       current_energy,
-      beta_old, ib,
+      beta_old, ib_old,
       invwf, neg_dlnwf_dbeta,
       at_driver_langevin_move_corrected__use_cheap_av_energy_for_forward_move,
       at_driver_langevin_move_corrected__apply_dkt_max,
@@ -395,6 +395,9 @@ double at_driver_langevin__move_corrected(
   } else {
 
     at_bool_t apply_metropolisation;
+
+    at_driver_langevin_move__set_beta_new_prop(
+        proposal, langevin->distr->domain);
 
     stride_moderated = at_driver_langevin_move__moderate_stride(
         proposal, langevin);
@@ -427,7 +430,9 @@ double at_driver_langevin__move_corrected(
 
     //if (proposal->ib_new_prop == 0
     // || proposal->ib_new_prop == langevin->distr->domain->n-1) {
-    //  fprintf(stderr, "Info@at.driver.langevin.move: a proposed boundary trip %d => %d ~ %d, accepted %d\n", proposal->ib_old, proposal->ib_new_prop, proposal->ib_new, accepted);
+    //  fprintf(stderr, "Info@at.driver.langevin.move: a proposed boundary trip %d => %d ~ %d, accepted %s\n",
+    //      proposal->ib_old, proposal->ib_new_prop, proposal->ib_new,
+    //      at_utils__bool_to_str(accepted));
     //}
 
   }
@@ -440,8 +445,8 @@ double at_driver_langevin__move_corrected(
     fprintf(stderr, "at_driver_langevin__move_corrected(), %s:%d\n", __FILE__, __LINE__);
     fprintf(stderr, "  beta %g => %g\n", proposal->beta_old, proposal->beta_new);
     fprintf(stderr, "  kT %g => %g\n", proposal->kt_old, proposal->kt_new);
-    fprintf(stderr, "  stride_moderated %d\n", stride_moderated);
-    fprintf(stderr, "  accepted %d\n", accepted);
+    fprintf(stderr, "  stride_moderated %s\n", at_utils__bool_to_str(stride_moderated));
+    fprintf(stderr, "  accepted %s\n", at_utils__bool_to_str(accepted));
     fprintf(stderr, "\n");
     if (at_driver_langevin_move__debug__ >= 3) {
       getchar();

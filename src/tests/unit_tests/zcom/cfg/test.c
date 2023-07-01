@@ -7,7 +7,7 @@ int test_ignore_dashes(const char *fn)
   char *second_key = NULL;
   double third_key = 0;
 
-  cfg = zcom_cfg__open(fn, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__IGNORE_DASHES);
+  cfg = zcom_cfg__open(fn, NULL, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__IGNORE_DASHES);
 
   if (zcom_cfg__get(cfg, &first_key, "First-Key", "%d") != 0) {
     fprintf(stderr, "failed to find first-key from %s\n", fn);
@@ -40,7 +40,7 @@ int test_allow_dashes(const char *fn)
   char *second_key = NULL;
   double third_key = 0;
 
-  cfg = zcom_cfg__open(fn, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
+  cfg = zcom_cfg__open(fn, NULL, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
 
   if (zcom_cfg__get(cfg, &first_key, "First-Key", "%d") != 0) {
     fprintf(stderr, "failed to find first-key from %s\n", fn);

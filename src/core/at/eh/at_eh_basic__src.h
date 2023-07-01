@@ -324,71 +324,75 @@ void at_eh__finish(at_eh_t *eh)
 
 void at_eh__manifest(const at_eh_t* eh, at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.eh");
+
   /* eh_mode: 0: disable; 1: simple histogram */
-  at_utils_manifest__print_int(manifest, eh->mode, "eh->mode", "ehist-mode");
+  at_utils_manifest__print_int(manifest, eh->mode, "mode", "ehist-mode");
 
   if (eh->mode == 0) {
     return;
   }
 
   /* interval of reconstructing energy histograms */
-  at_utils_manifest__print_int(manifest, eh->recon_stride, "eh->recon_stride", "ehist-recon-stride");
+  at_utils_manifest__print_int(manifest, eh->recon_stride, "recon_stride", "ehist-recon-stride");
 
   /* eh_bwmod: 0: d(beta) 1: dT/T  2: d(kT) */
-  at_utils_manifest__print_double(manifest, eh->bwmod, "eh->bwmod", "ehist-recon-mode");
+  at_utils_manifest__print_double(manifest, eh->bwmod, "bwmod", "ehist-recon-mode");
 
   if (eh->bwmod == 0) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-beta");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "bwdel", "ehist-del-beta");
   } else if (eh->bwmod == 1) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-lnT");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "bwdel", "ehist-del-lnT");
   } else if (eh->bwmod == 2) {
-    at_utils_manifest__print_double(manifest, eh->bwdel, "eh->bwdel", "ehist-del-kT");
+    at_utils_manifest__print_double(manifest, eh->bwdel, "bwdel", "ehist-del-kT");
   }
 
   /* eh_min: minimal energy */
-  at_utils_manifest__print_double(manifest, eh->e_min, "eh->e_min", "ehist-e-min");
+  at_utils_manifest__print_double(manifest, eh->e_min, "e_min", "ehist-e-min");
 
   /* eh_max: maximal energy */
-  at_utils_manifest__print_double(manifest, eh->e_max, "eh->e_max", "ehist-e-max");
+  at_utils_manifest__print_double(manifest, eh->e_max, "e_max", "ehist-e-max");
 
   /* eh_del: energy bin size */
-  at_utils_manifest__print_double(manifest, eh->e_del, "eh->e_del", "ehist-e-del");
+  at_utils_manifest__print_double(manifest, eh->e_del, "e_del", "ehist-e-del");
 
   /* eh_cnt: number of energy bins */
-  at_utils_manifest__print_int(manifest, eh->e_n, "eh->e_n", NULL);
+  at_utils_manifest__print_int(manifest, eh->e_n, "e_n", NULL);
 
-  at_utils_manifest__print_bool(manifest, eh->use_text_file, "eh->use_text_file", "ehist-use-text-file");
+  at_utils_manifest__print_bool(manifest, eh->use_text_file, "use_text_file", "ehist-use-text-file");
 
   /* eh_nst_save: interval of writing histogram files */
-  at_utils_manifest__print_int(manifest, eh->nst_save, "eh->nst_save", "ehist-nst-save");
+  at_utils_manifest__print_int(manifest, eh->nst_save, "nst_save", "ehist-nst-save");
 
   /* name of ehist files */
-  at_utils_manifest__print_str(manifest, eh->file_binary, "eh->file_binary", "ehist-file-binary");
-  at_utils_manifest__print_str(manifest, eh->file_text, "eh->file_text", "ehist-file-text");
+  at_utils_manifest__print_str(manifest, eh->file_binary, "file_binary", "ehist-file-binary");
+  at_utils_manifest__print_str(manifest, eh->file_text, "file_text", "ehist-file-text");
 
   /* name of reconstructed energy histogram */
-  at_utils_manifest__print_str(manifest, eh->file_recon, "eh->file_recon", "ehist-recon-file");
+  at_utils_manifest__print_str(manifest, eh->file_recon, "file_recon", "ehist-recon-file");
 
   /* eh_his: energy histogram data */
-  at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->e_n, "eh->his");
+  at_utils_manifest__print_double_arr(manifest, eh->his, eh->n*eh->e_n, "his");
 
   /* eh_recon: temporary space for reconstructing histogram */
-  at_utils_manifest__print_double_arr(manifest, eh->recon, eh->e_n, "eh->recon");
+  at_utils_manifest__print_double_arr(manifest, eh->recon, eh->e_n, "recon");
 
   /* eh_is: indices for temperature windows (lower) */
-  at_utils_manifest__print_int_arr(manifest, eh->is, eh->n + 1, "eh->is");
+  at_utils_manifest__print_int_arr(manifest, eh->is, eh->n + 1, "is");
 
   /* eh_it: indices for temperature windows (higher) */
-  at_utils_manifest__print_int_arr(manifest, eh->it, eh->n + 1, "eh->it");
+  at_utils_manifest__print_int_arr(manifest, eh->it, eh->n + 1, "it");
 
   /* whether to add a half energy bin width in output */
-  at_utils_manifest__print_bool(manifest, eh->add_half_ebin, "eh->add_half_ebin", "ehist-add-half-ebin");
+  at_utils_manifest__print_bool(manifest, eh->add_half_ebin, "add_half_ebin", "ehist-add-half-ebin");
 
   /* whether to keep empty margin */
-  at_utils_manifest__print_bool(manifest, eh->keep_margins, "eh->keep_margins", "ehist-keep-margins");
+  at_utils_manifest__print_bool(manifest, eh->keep_margins, "keep_margins", "ehist-keep-margins");
 
   /* whether to include empty energy bins in the output */
-  at_utils_manifest__print_bool(manifest, eh->no_zeros, "eh->no_zeros", "ehist-no-zeros");
+  at_utils_manifest__print_bool(manifest, eh->no_zeros, "no_zeros", "ehist-no-zeros");
+
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

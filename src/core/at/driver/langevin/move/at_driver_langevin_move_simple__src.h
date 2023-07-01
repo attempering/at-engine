@@ -31,15 +31,15 @@ double at_driver_langevin__move_simple(
     at_mb_t *mb,
     double current_energy,
     double beta_old,
-    int ib,
+    int ib_old,
     double invwf,
     double neg_dlnwf_dbeta,
     double *bin_av_energy)
 {
-  const int cheap_av_energy = 0;
-  const int apply_dkt_max = 1;
+  const at_bool_t cheap_av_energy = AT__FALSE;
+  const at_bool_t apply_dkt_max = AT__TRUE;
 
-  langevin_move_proposal_t proposal[1];
+  at_driver_langevin_move_proposal_t proposal[1];
   double beta;
   at_distr_domain_t *domain = langevin->distr->domain;
 
@@ -55,7 +55,7 @@ double at_driver_langevin__move_simple(
       proposal,
       langevin,
       current_energy,
-      beta_old, ib,
+      beta_old, ib_old,
       invwf, neg_dlnwf_dbeta,
       cheap_av_energy,
       apply_dkt_max,

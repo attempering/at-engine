@@ -137,27 +137,31 @@ void at_driver_langevin__finish(at_driver_langevin_t *langevin)
 
 void at_driver_langevin__manifest(const at_driver_langevin_t *langevin, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_str(manifest, langevin->file, "driver->langevin->file", "langevin-file");
+  at_utils_manifest__push_mod(manifest, "at.driver.langevin");
 
-  at_utils_manifest__print_double(manifest, langevin->dt, "driver->langevin->dt", "langevin-dt");
+  at_utils_manifest__print_str(manifest, langevin->file, "file", "langevin-file");
 
-  at_utils_manifest__print_double(manifest, langevin->dTmax, "driver->langevin->dTmax", "langevin-dT-max");
+  at_utils_manifest__print_double(manifest, langevin->dt, "dt", "langevin-dt");
 
-  at_utils_manifest__print_double(manifest, langevin->rejects, "driver->langevin->rejects", NULL);
+  at_utils_manifest__print_double(manifest, langevin->dTmax, "dTmax", "langevin-dT-max");
 
-  at_utils_manifest__print_double(manifest, langevin->total, "driver->langevin->total", NULL);
+  at_utils_manifest__print_double(manifest, langevin->rejects, "rejects", NULL);
 
-  at_utils_manifest__print_bool(manifest, langevin->corrected, "driver->langevin->corrected", "langevin-corrected");
+  at_utils_manifest__print_double(manifest, langevin->total, "total", NULL);
 
-  at_utils_manifest__print_bool(manifest, langevin->no_skip, "driver->langevin->no_skip", "langevin-no-skip");
+  at_utils_manifest__print_bool(manifest, langevin->corrected, "corrected", "langevin-corrected");
 
-  at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "driver->langevin->bin_min_visits", "langevin-bin-min-visits");
+  at_utils_manifest__print_bool(manifest, langevin->no_skip, "no_skip", "langevin-no-skip");
+
+  at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "bin_min_visits", "langevin-bin-min-visits");
 
 #ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
-  at_utils_manifest__print_double(manifest, langevin->corr_bin_min_visits, "driver->langevin->corr_bin_min_visits", "langevin-corr-bin-min-visits");
+  at_utils_manifest__print_double(manifest, langevin->corr_bin_min_visits, "corr_bin_min_visits", "langevin-corr-bin-min-visits");
 #endif
 
-  at_utils_manifest__print_int(manifest, langevin->nst_suggest, "driver->langevin->nst_suggest", "langevin-nst-suggestion");
+  at_utils_manifest__print_int(manifest, langevin->nst_suggest, "nst_suggest", "langevin-nst-suggestion");
+
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

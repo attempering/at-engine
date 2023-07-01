@@ -62,8 +62,9 @@ static double at_driver_langevin_move__calc_et_iie(
     fprintf(stderr, "  et %g (default %g)\n", et, def_val);
     fprintf(stderr, "  ib %d\n", (int) ib);
     fprintf(stderr, "  quality %d\n", quality);
-    fprintf(stderr, "  cache enabled %d, hit %d\n",
-        iie->et->cache_params->enabled, iie->et->cache_hit);
+    fprintf(stderr, "  cache enabled %s, hit %s\n",
+        at_utils__bool_to_str(iie->et->cache_params->enabled),
+        at_utils__bool_to_str(iie->et->cache_hit));
     fprintf(stderr, "\n");
   }
 
@@ -89,7 +90,7 @@ double at_driver_langevin_move__calc_et(
     at_driver_langevin_t *langevin,
     int ib,
     double def_val,
-    int cheap_av_energy)
+    at_bool_t cheap_av_energy)
 {
   if (cheap_av_energy) {
 
@@ -119,7 +120,7 @@ double at_driver_langevin_move__calc_dkt_deterministic(
     double neg_dlnwf_dbeta,
     double current_energy,
     double *bin_av_energy,
-    int cheap_av_energy)
+    at_bool_t cheap_av_energy)
 {
   double delta;
 
@@ -133,7 +134,7 @@ double at_driver_langevin_move__calc_dkt_deterministic(
 
   if (at_driver_langevin_move__debug__ >= 2) {
     fprintf(stderr, "at_driver_langevin_move__calc_dkt_deterministic() %s:%d\n", __FILE__, __LINE__);
-    fprintf(stderr, "  cheap_av_energy %d\n", cheap_av_energy);
+    fprintf(stderr, "  cheap_av_energy %s\n", at_utils__bool_to_str(cheap_av_energy));
     fprintf(stderr, "  ib %d\n", (int) ib);
     fprintf(stderr, "  current_energy %g\n", current_energy);
     fprintf(stderr, "  bin_av_energy %g\n", *bin_av_energy);

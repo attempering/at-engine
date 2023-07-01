@@ -72,13 +72,18 @@ void at_mb_iie_lr__finish(at_mb_iie_lr_t *lr)
 
 void at_mb_iie_lr__manifest(const at_mb_iie_lr_t *lr, at_utils_manifest_t *manifest)
 {
-  /* minimal allowable coefficient during left/right combination */
-  at_utils_manifest__print_double(manifest, lr->frac_min, "mb->iie->lr->frac_min", "mb-min-frac");
+  at_utils_manifest__push_mod(manifest, "at.mb.iie.lr");
 
-  at_utils_manifest__print_double(manifest, lr->min_size, "mb->iie->lr->min_size", "mb-min-size");
+  /* minimal allowable coefficient during left/right combination */
+  at_utils_manifest__print_double(manifest, lr->frac_min, "frac_min", "mb-min-frac");
+
+  at_utils_manifest__print_double(manifest, lr->min_size, "min_size", "mb-min-size");
 
   /* maximal fraction for shift energy fluct. if cv is monotonic, it should be 0.0, for Ising model, it can restrain the magnitude */
-  at_utils_manifest__print_double(manifest, lr->cv_shift_max, "mb->iie->lr->cv_shift_max", "mb-max-cv-shift");
+  at_utils_manifest__print_double(manifest, lr->cv_shift_max, "cv_shift_max", "mb-max-cv-shift");
+
+  at_utils_manifest__pop_mod(manifest);
+
 }
 
 #endif

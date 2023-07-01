@@ -38,7 +38,7 @@ long ntimes = 100000;
 void init_mb_object(at_distr_t *distr, at_mb_t *mb)
 {
   zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = 0;
+  at_bool_t verbose = AT__FALSE;
 
   at_distr__cfg_init(distr, cfg, boltz, verbose);
   at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
@@ -115,7 +115,7 @@ static int test_iie(at_mb_t *mb, double tol)
   at_distr_domain_t *domain = mb->distr->domain;
   int ib;
   int stride = (int) (domain->n / 5);
-  int passed = 1;
+  at_bool_t passed = AT__FALSE;
 
   if (stride < 1) {
     stride = 1;
@@ -141,7 +141,7 @@ static int test_iie(at_mb_t *mb, double tol)
 
     if (fabs(et_legacy - et_ref) > tol
       || fabs(et_paper - et_ref) > tol) {
-      passed = 0;
+      passed = AT__FALSE;
     }
 
   }
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 
   double fill_prob = 1.0;
 
-  int passed;
+  at_bool_t passed;
 
   init_mb_object(distr, mb);
 

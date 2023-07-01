@@ -26,6 +26,12 @@
 
 
 
+const char *at_utils__bool_to_str(at_bool_t val)
+{
+  return val ? "true" : "false";
+}
+
+
 char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, const char *fn)
 {
   char *buf;

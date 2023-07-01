@@ -35,19 +35,16 @@ long ntimes = 100000;
 
 
 
-void init_distr_mb_and_langevin(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
+void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+    at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = 0;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_distr__conf_init(distr, conf, boltz);
 
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
+  at_mb__conf_init(mb, distr, conf, boltz);
 
-  at_driver_langevin__cfg_init(langevin, distr, mb, cfg, NULL, NULL, verbose);
-
-  zcom_cfg__close(cfg);
+  at_driver_langevin__conf_init(langevin, distr, mb, conf);
 }
 
 
@@ -102,7 +99,7 @@ static int test_integrate(at_mb_t *mb, at_driver_langevin_t *langevin, double fi
 {
   double *raw_data = mb_mock_sm_moments(mb, fill_prob);
   at_distr_domain_t *domain = mb->distr->domain;
-  int passed;
+  at_bool_t passed;
 
   at_driver_langevin_integrator_t intgr[1];
   at_driver_langevin_zerofiller_t *zf = intgr->zerofiller;
@@ -141,11 +138,16 @@ static int test_integrate(at_mb_t *mb, at_driver_langevin_t *langevin, double fi
 
 int main(int argc, char **argv)
 {
+  at_utils_conf_t conf[1];
+  at_bool_t verbose = AT__TRUE;
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_langevin_t langevin[1];
   double fill_prob = 0.5;
-  int passed;
+  at_bool_t passed;
+
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  init_distr_mb_langevin_objects(conf, distr, mb, langevin);
 
   init_distr_mb_and_langevin(distr, mb, langevin);
 
@@ -158,6 +160,7 @@ int main(int argc, char **argv)
   at_distr__finish(mb->distr);
   at_mb__finish(mb);
   at_driver_langevin__finish(langevin);
+  at_utils_conf__finish_ez(conf);
 
   if (passed) {
     printf("Passed.\n");

@@ -40,6 +40,10 @@ plot "beta_hist_0.dat" u 1:3 w l, "beta_hist_1.dat" u 1:3 w l, exp(-((x-0.3)/0.0
 #include "veritools/utilities/histogram/histogram.h"
 
 
+extern int at_driver_langevin_move__debug__;
+extern int at_mb_iie_et__debug__;
+
+
 double boltz = 1.0;
 
 
@@ -50,19 +54,26 @@ double gaussian_sigma = 100.0;
 int nsteps = 100000;
 
 
-void init_distr_mb_langevin_objects(at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
+void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+    at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = 0;
   double boltz = 1.0;
+  at_utils_manifest_t manifest[1]; 
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_distr__conf_init(distr, conf, boltz);
 
-  at_mb__cfg_init(mb, distr, cfg, boltz, NULL, NULL, verbose);
+  at_mb__conf_init(mb, distr, conf, boltz);
 
-  at_driver_langevin__cfg_init(langevin, distr, mb, cfg, NULL, NULL, verbose);
+  at_driver_langevin__conf_init(langevin, distr, mb, conf);
 
-  zcom_cfg__close(cfg);
+  at_utils_manifest__conf_init(manifest, conf);
+  at_utils_manifest__open_file(manifest);
+
+  at_distr__manifest(distr, manifest);
+  at_mb__manifest(mb, manifest);
+  at_driver_langevin__manifest(langevin, manifest);
+
+  at_utils_manifest__finish(manifest);
 }
 
 
@@ -92,7 +103,7 @@ void mb_mock_exact_moments(at_mb_t *mb)
 
 
 int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langevin,
-    int corrected, int nsteps)
+    at_bool_t corrected, int nsteps)
 {
   at_distr_domain_t *domain = mb->distr->domain;
   int step;
@@ -110,7 +121,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
   char fn_hist[FILENAME_MAX];
   at_mb_sm_t sm_beta[1];
 
-  int passed = 0;
+  at_bool_t passed = AT__FALSE;
 
   zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
 
@@ -127,7 +138,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
   // and stride moderation
   // as we have already the exact moments
   langevin->bin_min_visits = 0;
-  langevin->no_skip = 0;
+  langevin->no_skip = AT__FALSE;
 
   // uncomment the next two lines to print diagnostic information
   //at_driver_langevin_move__debug__ = 2;
@@ -182,23 +193,24 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
     double beta_mean = at_mb_sm__get_mean(sm_beta, 0);
     double beta_std = at_mb_sm__get_std(sm_beta, 0);
 
-    fprintf(stderr, "corrected [%d], beta: %g (%g, %g%%) +/- %g (%g, %g%%)\n",
-        corrected, beta_mean, beta_c, (beta_mean/beta_c-1)*100,
+    fprintf(stderr, "corrected: %s, beta: %g (%g, %g%%) +/- %g (%g, %g%%)\n",
+        at_utils__bool_to_str(corrected),
+        beta_mean, beta_c, (beta_mean/beta_c-1)*100,
         beta_std, beta_sigma, (beta_std/beta_sigma-1)*100);
 
     if (fabs(beta_std/beta_sigma - 1) < 0.02
      && fabs(beta_mean/beta_c - 1) < 0.001) {
-      passed = 1;
+      passed = AT__TRUE;
     } else {
-      passed = 0;
+      passed = AT__FALSE;
     }
   }
 
 
   if (corrected) {
-    sprintf(fn_hist, "beta_hist_corrected.dat");
+    sprintf(fn_hist, "beta-hist-corrected.dat");
   } else {
-    sprintf(fn_hist, "beta_hist_uncorrected.dat");
+    sprintf(fn_hist, "beta-hist-uncorrected.dat");
   }
 
   histogram__save(hist, fn_hist);
@@ -213,13 +225,16 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
 
 int main(int argc, char **argv)
 {
+  at_utils_conf_t conf[1];
+  at_bool_t verbose = AT__FALSE;
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_langevin_t langevin[1];
-  int langevin_corrected;
-  int passed;
+  at_bool_t langevin_corrected;
+  at_bool_t passed;
 
-  init_distr_mb_langevin_objects(distr, mb, langevin);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  init_distr_mb_langevin_objects(conf, distr, mb, langevin);
 
   // override the time step from the configuration file 
   if (argc > 1) {
@@ -231,18 +246,19 @@ int main(int argc, char **argv)
   mb_mock_exact_moments(mb);
 
   // test the uncorrected Langevin equation
-  //langevin_corrected = 0;
+  //langevin_corrected = AT__FALSE;
   //fprintf(stderr, "Testing Langevin move dt=%g without correction:\n", langevin->dt);
   //test_langevin_move_no_cfg_sampling(mb, langevin, langevin_corrected, nsteps);
 
   // test the corrected Langevin equation
-  langevin_corrected = 1;
+  langevin_corrected = AT__TRUE;
   fprintf(stderr, "Testing Langevin move dt=%g with correction:\n", langevin->dt);
   passed = test_langevin_move_no_cfg_sampling(mb, langevin, langevin_corrected, nsteps);
 
   at_distr__finish(mb->distr);
   at_mb__finish(mb);
   at_driver_langevin__finish(langevin);
+  at_utils_conf__finish_ez(conf);
 
   if (passed) {
     printf("Passed.\n");

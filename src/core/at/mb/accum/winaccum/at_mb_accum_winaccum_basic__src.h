@@ -175,13 +175,16 @@ void at_mb_accum_winaccum__finish(at_mb_accum_winaccum_t *winaccum)
 {
   int i;
 
-  if (!winaccum->enabled) return;
+  if (!winaccum->enabled) {
+    return;
+  }
 
   for (i = 0; i < winaccum->n; i++) {
     at_mb_accum_winaccum_item__finish(winaccum->items+i);
   }
 
   free(winaccum->items);
+  winaccum->items = NULL;
 }
 
 

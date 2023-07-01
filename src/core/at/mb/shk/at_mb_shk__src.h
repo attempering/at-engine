@@ -137,6 +137,8 @@ void at_mb_shk__finish(at_mb_shk_t *shk) {
 
 void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.mb.shk");
+
   /* current generic shrink amplitude */
   at_utils_manifest__print_double(manifest, shk->base, "mb->shk->base", NULL);
 
@@ -167,6 +169,8 @@ void at_mb_shk__manifest(const at_mb_shk_t *shk, at_utils_manifest_t *manifest)
     /* shk_exp: amp t^(-exp) */
     at_utils_manifest__print_double(manifest, shk->exp, "mb->shk->exp", "shrink-exp");
   }
+
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

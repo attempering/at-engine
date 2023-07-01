@@ -21,6 +21,7 @@
 
 #include "at_utils_manifest.h"
 #include "../conf/at_utils_conf.h"
+#include "../modstack/at_utils_modstack.h"
 
 #include "../../../zcom/zcom.h"
 
@@ -45,6 +46,8 @@ void at_utils_manifest__conf_init(
       "arr_max_items");
 
   at_utils_conf__pop_mod(conf);
+
+  at_utils_modstack__init(manifest->mods);
 
   manifest->fp = NULL; // do not open it yet
 }
@@ -79,71 +82,102 @@ void at_utils_manifest__finish(at_utils_manifest_t *manifest)
 {
   if (manifest->ready) {
     at_utils_manifest__close_file(manifest);
+    at_utils_modstack__finish(manifest->mods);
     manifest->ready = AT__FALSE;
   }
 }
 
 
+
+void at_utils_manifest__push_mod(at_utils_manifest_t *manifest, const char *mod)
+{
+  at_utils_modstack__push(manifest->mods, mod);
+}
+
+
+const char *at_utils_manifest__pop_mod(at_utils_manifest_t *manifest)
+{
+  return at_utils_modstack__pop(manifest->mods);
+}
+
+
+const char *at_utils_manifest__get_mod(at_utils_manifest_t *manifest)
+{
+  return at_utils_modstack__get(manifest->mods);
+}
+
+
+
 void at_utils_manifest__manifest(at_utils_manifest_t *manifest)
 {
-  fprintf(manifest->fp, "utils->manifest->file: char *, %s\n", manifest->file);
+  fprintf(manifest->fp, "at.utils.manifest.file: char *, %s\n", manifest->file);
+}
+
+
+
+static void at_utils_manifest__print_var_name(at_utils_manifest_t *manifest,
+    const char *name, const char *type, const char *cfg_key)
+{
+  FILE *fp = manifest->fp;
+
+  const char *module = at_utils_manifest__get_mod(manifest); 
+  
+  if (module != NULL) {
+    fprintf(fp, "%s.", module);
+  }
+
+  fprintf(fp, "%s ", name);
+
+  if (cfg_key != NULL) {
+    fprintf(fp, "(%s %s): ", type, cfg_key);
+  } else {
+    fprintf(fp, "(%s): ", type);
+  }
 }
 
 
 
 void at_utils_manifest__print_int(at_utils_manifest_t *manifest,
-    int value, const char *var, const char *cfg_key)
+    int value, const char *name, const char *cfg_key)
 {
   FILE *fp = manifest->fp;
 
-  if (cfg_key != NULL) {
-    fprintf(fp, "%s (int %s): %d\n", var, cfg_key, value);
-  } else {
-    fprintf(fp, "%s (int): %d\n", var, value);
-  }
+  at_utils_manifest__print_var_name(manifest, name, "int", cfg_key);
+
+  fprintf(fp, "%d\n", value);
 }
 
 
 void at_utils_manifest__print_double(at_utils_manifest_t *manifest,
-    double value, const char *var, const char *cfg_key)
+    double value, const char *name, const char *cfg_key)
 {
   FILE *fp = manifest->fp;
 
-  if (cfg_key != NULL) {
-    //fprintf(fp, "variable: %s\n", var);
-    //fprintf(fp, "(double %s)\n", cfg_key);
-    //fprintf(fp, "value: %g\n", value);
+  at_utils_manifest__print_var_name(manifest, name, "double", cfg_key);
 
-    fprintf(fp, "%s (double %s): %g\n", var, cfg_key, value);
-  } else {
-    fprintf(fp, "%s (double): %g\n", var, value);
-  }
+  fprintf(fp, "%g\n", value);
 }
 
 
 void at_utils_manifest__print_str(at_utils_manifest_t *manifest,
-    const char *value, const char *var, const char *cfg_key)
+    const char *value, const char *name, const char *cfg_key)
 {
   FILE *fp = manifest->fp;
 
-  if (cfg_key != NULL) {
-    fprintf(fp, "%s (str %s): %s\n", var, cfg_key, value);
-  } else {
-    fprintf(fp, "%s (str): %s\n", var, value);
-  }
+  at_utils_manifest__print_var_name(manifest, name, "str", cfg_key);
+
+  fprintf(fp, "%s\n", value);
 }
 
 
 void at_utils_manifest__print_bool(at_utils_manifest_t *manifest,
-    at_bool_t value, const char *var, const char *cfg_key)
+    at_bool_t value, const char *name, const char *cfg_key)
 {
   FILE *fp = manifest->fp;
 
-  if (cfg_key != NULL) {
-    fprintf(fp, "%s (bool %s): %s\n", var, cfg_key, (value ? "true" : "false"));
-  } else {
-    fprintf(fp, "%s (bool): %s\n", var, (value ? "true" : "false"));
-  }
+  at_utils_manifest__print_var_name(manifest, name, "bool", cfg_key);
+
+  fprintf(fp, "%s\n", at_utils__bool_to_str(value));
 }
 
 
@@ -153,29 +187,34 @@ void at_utils_manifest__print_int_arr(at_utils_manifest_t *manifest,
 {
   int i, pacnt;
   FILE *fp = manifest->fp;
-  int arrmax = manifest->arr_max_items;
+  int arr_max = manifest->arr_max_items;
 
-  fprintf(fp, "%s: dynamic int array of size %d: ", name, n);
+  zcom_utils__exit_if (arr == NULL,
+    "at.utils.manifest: arr %s %d is NULL\n", name, n);
+
+  at_utils_manifest__print_var_name(manifest, name, "int *", NULL);
+
+  fprintf(fp, "[size %d] ", n);
 
   for (i = n-1; i >= 0; i--) {
     if (arr[i] > 0) break;
   }
 
   if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && n > 6) {
+    if ((arr_max < 0 || arr_max > 3) && n > 6) {
       fprintf(fp, "\n");
     }
     for (pacnt = 0, i = 0; i < n; i++) {
-      if (i == arrmax && i < n-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) {
+      if (i == arr_max && i < n-arr_max) {
+        if (arr_max > 3 && pacnt % 10 != 0) {
           fprintf(fp, "\n");
         }
         fprintf(fp, "..., ");
-        if (arrmax > 3) {
+        if (arr_max > 3) {
           fprintf(fp, "\n");
         }
       }
-      if (arrmax >= 0 && i >= arrmax && i < (n-arrmax)) {
+      if (arr_max >= 0 && i >= arr_max && i < (n-arr_max)) {
         continue;
       }
       fprintf(fp, "%4d, ", arr[i]);
@@ -198,12 +237,14 @@ void at_utils_manifest__print_double_arr(at_utils_manifest_t *manifest,
 {
   int i, pacnt;
   FILE *fp = manifest->fp;
-  int arrmax = manifest->arr_max_items;
+  int arr_max = manifest->arr_max_items;
 
   zcom_utils__exit_if (arr == NULL,
     "at.utils.manifest: arr %s %d is NULL\n", name, n);
 
-  fprintf(fp, "%s: dynamic double array of size %d: ", name, n);
+  at_utils_manifest__print_var_name(manifest, name, "double *", NULL);
+
+  fprintf(fp, "[size %d] ", n);
 
   for (i = n-1; i >= 0; i--) {
     if (arr[i] > 0) {
@@ -212,20 +253,20 @@ void at_utils_manifest__print_double_arr(at_utils_manifest_t *manifest,
   }
 
   if (i >= 0) {
-    if ((arrmax < 0 || arrmax > 3) && n > 6) {
+    if ((arr_max < 0 || arr_max > 3) && n > 6) {
       fprintf(fp, "\n");
     }
     for (pacnt = 0, i = 0; i < n; i++) {
-      if (i == arrmax && i < n-arrmax) {
-        if (arrmax > 3 && pacnt % 10 != 0) {
+      if (i == arr_max && i < n-arr_max) {
+        if (arr_max > 3 && pacnt % 10 != 0) {
           fprintf(fp, "\n");
         }
         fprintf(fp, "..., ");
-        if (arrmax > 3) {
+        if (arr_max > 3) {
           fprintf(fp, "\n");
         }
       }
-      if (arrmax >= 0 && i >= arrmax && i < (n-arrmax)) {
+      if (arr_max >= 0 && i >= arr_max && i < (n-arr_max)) {
         continue;
       }
       fprintf(fp, "%g, ", arr[i]);

@@ -30,7 +30,7 @@ int main(void)
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_t driver[1];
-  at_bool_t verbose = 0;
+  at_bool_t verbose = AT__FALSE;
   double boltz = 1.0;
 
   at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);

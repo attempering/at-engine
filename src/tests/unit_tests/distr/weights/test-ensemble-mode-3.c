@@ -67,10 +67,10 @@ void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
 
 int main(int argc, char **argv)
 {
-  at_distr_t distr[1];
   const char *cfg_fn = "ensemble-mode-3.cfg";
-  zcom_cfg_t *cfg = NULL;
+  at_utils_conf_t conf[1];
   at_utils_manifest_t manifest[1];
+  at_distr_t distr[1];
   double boltz = 1.0;
   at_bool_t verbose = AT__TRUE;
 
@@ -78,23 +78,21 @@ int main(int argc, char **argv)
     cfg_fn = argv[1];
   }
 
-  cfg = zcom_cfg__open(cfg_fn, NULL, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
+  at_utils_conf__init_ez(conf, cfg_fn, "atdata", verbose);
 
-  at_utils_manifest__cfg_init(manifest, cfg, NULL, NULL, verbose);
+  at_utils_manifest__conf_init(manifest, conf);
   at_utils_manifest__open_file(manifest);
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_distr__conf_init(distr, conf, boltz);
   at_distr__manifest(distr, manifest);
 
-  test_distr(cfg, distr);
+  test_distr(conf->cfg, distr);
 
   at_distr__finish(distr);
 
   at_utils_manifest__finish(manifest);
 
-  if (cfg != NULL) {
-    zcom_cfg__close(cfg);
-  }
+  at_utils_conf__finish_ez(conf);
 
   return 0;
 }

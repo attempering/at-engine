@@ -60,11 +60,11 @@ typedef struct at_driver_langevin_t_
 
   /* the Metropolisation correction makes sure the correctness
    * of the algorithm for a large time step */
-  int     corrected;    /* whether to apply the Metropolisation correction */
+  at_bool_t corrected;    /* whether to apply the Metropolisation correction */
 
   /* the following parameters help improve the initial stability
    * of the algorithm related to large time steps */
-  int     no_skip;        /* whether to avoid crossing over unvisited bins */
+  at_bool_t no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
 
 #ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS

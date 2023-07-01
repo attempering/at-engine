@@ -149,15 +149,19 @@ void at_distr_domain__finish(at_distr_domain_t *domain)
 
 void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest)
 {
-  at_utils_manifest__print_double(manifest, domain->beta_min, "distr->domain->beta_min", "beta-min");
+  at_utils_manifest__push_mod(manifest, "at.distr.domain");
 
-  at_utils_manifest__print_double(manifest, domain->beta_max, "distr->domain->beta_max", "beta-max");
+  at_utils_manifest__print_double(manifest, domain->beta_min, "beta_min", "beta-min");
 
-  at_utils_manifest__print_double(manifest, domain->beta_del, "distr->domain->beta_del", "beta-del");
+  at_utils_manifest__print_double(manifest, domain->beta_max, "beta_max", "beta-max");
 
-  at_utils_manifest__print_int(manifest, domain->n, "distr->domain->n", NULL);
+  at_utils_manifest__print_double(manifest, domain->beta_del, "beta_del", "beta-del");
 
-  at_utils_manifest__print_double_arr(manifest, domain->barr, domain->n+1, "distr->domain->barr");
+  at_utils_manifest__print_int(manifest, domain->n, "n", NULL);
+
+  at_utils_manifest__print_double_arr(manifest, domain->barr, domain->n+1, "barr");
+
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

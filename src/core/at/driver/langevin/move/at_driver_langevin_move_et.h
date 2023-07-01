@@ -31,7 +31,7 @@ double at_driver_langevin_move__calc_et(
     at_driver_langevin_t *langevin,
     int ib,
     double def_val,
-    int check_av_energy);
+    at_bool_t check_av_energy);
 
 
 /* deterministic part of the kT-based Langevin equation */
@@ -42,7 +42,7 @@ double at_driver_langevin_move__calc_dkt_deterministic(
     double neg_dlnwf_dbeta,
     double current_energy,
     double *bin_av_energy,
-    int cheap_av_energy);
+    at_bool_t cheap_av_energy);
 
 
 #endif
