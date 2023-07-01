@@ -103,7 +103,7 @@ int at_utils_io_binary__write_int_array(
     at_utils_io_binary__write_int(io, n, "_array_count_");
   }
 
-  if (zcom_endn__fwrite(arr, sizeof(int), n, io->fp, io->endn) != n) {
+  if (zcom_endn__fwrite(arr, sizeof(int), n, io->fp, io->endn) != (size_t) n) {
     fprintf(stderr, "Error@%s: error in writing %s of size %d to %s\n",
         io->module, name, n, io->fn);
     return -1;
@@ -153,7 +153,7 @@ int at_utils_io_binary__write_double_array(
   }
 
   if (n > 0) {
-    if (zcom_endn__fwrite(arr, sizeof(double), n, io->fp, io->endn) != n) {
+    if (zcom_endn__fwrite(arr, sizeof(double), n, io->fp, io->endn) != (size_t) n) {
       fprintf(stderr, "Error@%s: error in writing %s of size %d to %s\n",
           io->module, name, n, io->fn);
       return -1;

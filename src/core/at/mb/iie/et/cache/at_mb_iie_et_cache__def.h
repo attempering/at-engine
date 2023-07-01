@@ -43,7 +43,7 @@ typedef struct at_mb_iie_et_item_cache_t_ {
 
 
 typedef struct at_mb_iie_et_cache_params_t_ {
-  int enabled;
+  at_bool_t enabled;
   double lifespan;
   double min_visits; /* minimal number of visits */
 } at_mb_iie_et_cache_params_t;

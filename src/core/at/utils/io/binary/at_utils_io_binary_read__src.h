@@ -161,7 +161,7 @@ int at_utils_io_binary__read_and_compare_int(
 
 int at_utils_io_binary__read_bool(
     at_utils_io_t *io,
-    int *val,
+    at_bool_t *val,
     const char *name,
     unsigned long flags)
 {
