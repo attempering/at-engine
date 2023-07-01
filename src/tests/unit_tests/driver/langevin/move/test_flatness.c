@@ -67,28 +67,6 @@ void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
 
 
 
-void mb_mock_exact_moments(at_mb_t *mb)
-{
-  int i;
-  at_mb_sm_t *sm;
-  at_distr_domain_t *domain = mb->distr->domain;
-
-  for (i = 0; i < domain->n; i++) {
-    sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
-    double beta = at_distr_domain__get_bin_center(domain, i);
-    double epot = -beta * (gaussian_sigma * gaussian_sigma);
-
-    sm->s = 1.0;
-    sm->se = epot;
-    sm->se2 = gaussian_sigma * gaussian_sigma;
-    sm->se3 = 0;
-  }
-
-  mb->accum->winaccum->enabled = AT__FALSE;
-}
-
-
-
 int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
     int nsteps)
 {
@@ -163,9 +141,6 @@ int main(int argc, char **argv)
     langevin->dt = atof(argv[1]);
     fprintf(stderr, "Langevin dt: %g\n", langevin->dt); //getchar();
   }
-
-  // manufacture exact moments data
-  mb_mock_exact_moments(mb);
 
   if (exact_beta_sampling) {
     langevin->integrate_func = custom_integrate_func;

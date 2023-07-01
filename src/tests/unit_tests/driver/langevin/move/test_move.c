@@ -96,6 +96,8 @@ void mb_mock_exact_moments(at_mb_t *mb)
     sm->se = epot;
     sm->se2 = gaussian_sigma * gaussian_sigma;
     sm->se3 = 0;
+
+    mb->visits[i] = 1.0;
   }
 
 }

@@ -189,9 +189,8 @@ void at_mb_iie_lr__collect_moments(at_mb_iie_lr_t *lr)
       } else if (lr->win_div == MB_IIE_LR__WIN_DIV_PAPER) {
         lr->tb = -0.5 * var;
       } else {
-        fprintf(stderr, "Fatal: unknown window convention ib %d, window boundary %d\n",
-            lr->ib, lr->jb);
-        exit(1);
+        zcom_utils__fatal("unknown window division convention %d, ib %d, window boundary %d\n",
+            lr->win_div, lr->ib, lr->jb);
       }
     }
 

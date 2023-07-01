@@ -49,6 +49,9 @@ void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
   zcom_mtrng_t mtrng[1];
   at_distr_domain_t *domain = mb->distr->domain;
 
+  // use the plain sums for simplicity
+  mb->accum->winaccum->enabled = AT__FALSE;
+
   zcom_mtrng__init_from_seed(mtrng, time(NULL));
 
   for (i = 0; i < domain->n; i++) {
@@ -110,7 +113,7 @@ static int test_iie(at_mb_t *mb, double tol)
   at_distr_domain_t *domain = mb->distr->domain;
   int ib;
   int stride = (int) (domain->n / 5);
-  at_bool_t passed = AT__FALSE;
+  at_bool_t passed = AT__TRUE;
 
   if (stride < 1) {
     stride = 1;
@@ -151,7 +154,7 @@ int main(int argc, char **argv)
   at_distr_t distr[1];
   at_mb_t mb[1];
 
-  int test_exact = 0;
+  at_bool_t test_exact = AT__FALSE;
 
   double tol;
 
