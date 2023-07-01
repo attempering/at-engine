@@ -25,4 +25,6 @@
 
 #include "io/at_eh_io__src.h"
 
+#include "recon/at_eh_recon__src.h"
+
 #endif

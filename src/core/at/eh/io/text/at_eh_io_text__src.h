@@ -163,6 +163,8 @@ static int at_eh__write_text_low_level(at_eh_t *eh, at_utils_io_t *io)
     goto ERR;
   }
 
+  at_utils_io_text__writeln(io);
+
   for (i = 0; i < eh->n; i++) {
     double *pd = eh->his + i * eh->e_n;
     int jmin, jmax, size;
@@ -190,6 +192,8 @@ static int at_eh__write_text_low_level(at_eh_t *eh, at_utils_io_t *io)
     if (at_utils_io_text__write_int(io, size, "eh:size") != 0) {
       goto ERR;
     }
+
+    at_utils_io_text__writeln(io);
 
     if (at_utils_io_text__write_double_array(io, size, pd+jmin, "eh:arr",
         0) != 0) {

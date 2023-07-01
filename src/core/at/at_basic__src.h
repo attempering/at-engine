@@ -70,7 +70,7 @@ static int at__conf_init_self(
 
   at_utils_conf__get_filename(conf,
       "at-file-text",
-      &at->file_binary, "at-text.dat",
+      &at->file_text, "at-text.dat",
       "file_text");
 
   at_utils_conf__get_bool(conf,
@@ -92,7 +92,6 @@ static int at__cfg_init_low_level(at_t *at,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
-  const char *data_dir;
   at_bool_t ignore_lockfile = flags & AT__INIT_IGNORE_LOCKFILE;
   at_bool_t verbose = flags & AT__INIT_VERBOSE;
 
@@ -109,8 +108,6 @@ static int at__cfg_init_low_level(at_t *at,
       ignore_lockfile, verbose);
 
   at_utils_log__info(at->utils->log, "version %lld\n", (long long) AT__VERSION);
-
-  data_dir = at->utils->data_dir;
 
   if (at_distr__conf_init(at->distr, at->utils->conf, at->sys_params->boltz) != 0) {
     return -1;

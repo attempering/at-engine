@@ -32,4 +32,7 @@
 /* IO routines */
 #include "io/at_eh_io.h"
 
+#include "recon/at_eh_recon.h"
+
+
 #endif

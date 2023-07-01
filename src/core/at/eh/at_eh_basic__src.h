@@ -30,7 +30,6 @@ int at_eh__conf_init(at_eh_t *eh,
 {
   int i;
   at_distr_t *distr = mb->distr;
-  at_distr_domain_t *domain = distr->domain;
 
   eh->mb = mb;
   eh->n = distr->domain->n;
@@ -94,7 +93,7 @@ int at_eh__conf_init(at_eh_t *eh,
       "use_text_file");
 
   /* eh_nst_save: interval of writing histogrm files */
-  at_utils_conf__get_double(conf,
+  at_utils_conf__get_int(conf,
       "nsthist,nst-hist,ehist-nst-save",
       &eh->nst_save, 100000,
       "nst_save");
@@ -171,7 +170,7 @@ void at_eh__finish(at_eh_t *eh)
   at_eh_recon__finish(eh->recon);
   if (eh->his != NULL) {
     free(eh->his);
-    eh->his;
+    eh->his = NULL;
   }
 }
 

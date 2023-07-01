@@ -34,6 +34,8 @@ int at_utils_io_text__init_write(
   return 0;
 }
 
+
+
 int at_utils_io_text__init_write_ex(
     at_utils_io_t *io,
     const char *module,
@@ -67,6 +69,14 @@ void at_utils_io_text__finish_write_ex(at_utils_io_t *io)
 }
 
 
+
+int at_utils_io_text__writeln(
+    at_utils_io_t *io)
+{
+  fprintf(io->fp, "\n");
+
+  return 0;
+}
 
 int at_utils_io_text__write_int(
     at_utils_io_t *io,
