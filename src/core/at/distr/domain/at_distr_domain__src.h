@@ -20,7 +20,6 @@
 #define AT_DISTR_DOMAIN__SRC_H__
 
 #include "at_distr_domain.h"
-#include "../../../zcom/zcom.h"
 
 
 

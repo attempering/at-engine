@@ -32,6 +32,12 @@ void at_utils_manifest__close_file(at_utils_manifest_t *manifest);
 
 void at_utils_manifest__finish(at_utils_manifest_t *manifest);
 
+void at_utils_manifest__push_mod(at_utils_manifest_t *manifest, const char *mod);
+
+const char *at_utils_manifest__pop_mod(at_utils_manifest_t *manifest);
+
+const char *at_utils_manifest__get_mod(at_utils_manifest_t *manifest);
+
 void at_utils_manifest__manifest(at_utils_manifest_t *manifest);
 
 void at_utils_manifest__print_int(at_utils_manifest_t *manifest,
