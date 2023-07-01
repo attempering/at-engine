@@ -139,8 +139,12 @@ void at_mb_accum_winaccum__conf_init(
 
   if (winaccum->enabled) {
 
-    zcom_utils__exit_if ((winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t))) == NULL,
-        "Error@at.mb.accum.winaccum: no memory! var: winaccum->items, type: at_mb_sm_t\n");
+    //printf("n %d\n", n); getchar();
+
+    winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t));
+    at_utils_log__exit_if (winaccum->items == NULL,
+        conf->log,
+        "no memory! var: winaccum->items, type: at_mb_accum_winaccum_items_t\n");
 
     for (i = 0; i < n; i++) {
       at_mb_accum_winaccum_item__init(winaccum->items + i, i, winaccum->win);
@@ -173,18 +177,17 @@ void at_mb_accum_winaccum__clear(at_mb_accum_winaccum_t *winaccum)
 
 void at_mb_accum_winaccum__finish(at_mb_accum_winaccum_t *winaccum)
 {
-  int i;
+  if (winaccum->items != NULL) {
+ 
+    int i;
 
-  if (!winaccum->enabled) {
-    return;
+    for (i = 0; i < winaccum->n; i++) {
+      at_mb_accum_winaccum_item__finish(winaccum->items+i);
+    }
+
+    free(winaccum->items);
+    winaccum->items = NULL;
   }
-
-  for (i = 0; i < winaccum->n; i++) {
-    at_mb_accum_winaccum_item__finish(winaccum->items+i);
-  }
-
-  free(winaccum->items);
-  winaccum->items = NULL;
 }
 
 

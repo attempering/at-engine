@@ -39,6 +39,10 @@ double at_mb_iie_et__calc_et_cached(at_mb_iie_t *iie, int ib, int *quality);
 
 void at_mb_iie_et_item_cache__clear(at_mb_iie_et_item_cache_t *cache);
 
+void at_mb_iie_et_cache_params__manifest(
+    const at_mb_iie_et_cache_params_t *cache_params,
+    at_utils_manifest_t *manifest);
+
 
 
 #endif

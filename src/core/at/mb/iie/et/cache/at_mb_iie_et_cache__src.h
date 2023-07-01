@@ -21,7 +21,7 @@
 
 
 
-#include "../at_mb_iie_et_cache.h"
+#include "at_mb_iie_et_cache.h"
 #include "../../../accum/at_mb_accum.h"
 #include "../../../at_mb.h"
 #include "../../../../utils/at_utils.h"
@@ -232,7 +232,7 @@ void at_mb_iie_et_cache_params__manifest(const at_mb_iie_et_cache_params_t *cach
 
   at_utils_manifest__print_bool(manifest, cache_params->enabled, "enabled", "et-cache-enabled");
 
-  if (et->cache_params->enabled) {
+  if (cache_params->enabled) {
     at_utils_manifest__print_double(manifest, cache_params->lifespan, "lifespan", "et-cache-lifespan");
 
     at_utils_manifest__print_double(manifest, cache_params->min_visits, "min_visits", "et-cache-min-visits");

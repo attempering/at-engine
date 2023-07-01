@@ -222,10 +222,8 @@ void at_mb_accum__finish(at_mb_accum_t *accum)
 
   free(accum->win_total);
 
-  if (accum->winaccum->enabled) {
-    //fprintf(stderr, "at_mb_accum__finish() %p %p\n", accum, accum->winaccum); getchar();
-    at_mb_accum_winaccum__finish(accum->winaccum);
-  }
+  //fprintf(stderr, "at_mb_accum__finish() %p %p\n", accum, accum->winaccum); getchar();
+  at_mb_accum_winaccum__finish(accum->winaccum);
 }
 
 
