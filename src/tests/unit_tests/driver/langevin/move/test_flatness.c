@@ -127,13 +127,12 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
 int main(int argc, char **argv)
 {
   at_utils_conf_t conf[1];
-  at_bool_t verbose = AT__TRUE;
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_driver_langevin_t langevin[1];
   at_bool_t passed;
 
-  at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", AT__FALSE);
   init_distr_mb_langevin_objects(conf, distr, mb, langevin);
 
   // override the time step from the configuration file 

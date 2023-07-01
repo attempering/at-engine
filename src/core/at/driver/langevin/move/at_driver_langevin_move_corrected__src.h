@@ -405,7 +405,7 @@ double at_driver_langevin__move_corrected(
     apply_metropolisation = at_driver_langevin_move__decide_to_apply_metropolisation(
         proposal, langevin);
 
-    fprintf(stderr, "apply_metropolisation %s\n", at_utils__bool_to_str(apply_metropolisation));
+    //fprintf(stderr, "apply_metropolisation %s, %s:%d\n", at_utils__bool_to_str(apply_metropolisation), __FILE__, __LINE__);
 
     if (apply_metropolisation) {
 

@@ -16,46 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_EH__DEF_H__
-#define AT_EH__DEF_H__
+#ifndef AT_EH_RECON__DEF_H__
+#define AT_EH_RECON__DEF_H__
 
-#include "../mb/at_mb__def.h"
-#include "recon/at_eh_recon__def.h"
-
-typedef struct at_eh_t_
+typedef struct at_eh_recon_t_
 {
   int        n;               /* number of temperature bins */
-  int        mode;            /* 0: disable; 1: simple histogram */
 
   double     e_min;           /* minimal energy */
   double     e_max;           /* maximal energy */
   double     e_del;           /* energy bin size */
   int        e_n;             /* number of energy bins */
 
-  int        nst_save;        /* interval of writing histogram files */
-  at_bool_t  use_text_file;   /* use text format for data storage */
-  char      *file_binary;     /* name of the binary file */
-  char      *file_text;       /* name of the text file */
+  int        bwmod;           /* 0: d(beta) 1: dT/T  2: d(kT) */
+  double     bwdel;           /* delta lnT */
+  int        stride;    /* interval of reconstructing energy histograms */
+  char      *file;      /* name of reconstructed energy histogram */
+  double    *recon;     /* temporary space for reconstructing histogram */
+  int       *is;        /* indices for temperature windows (lower) */
+  int       *it;        /* indices for temperature windows (higher) */
 
-  double    *his;       /* energy histogram data */
-
-  unsigned   flags;
-  at_mb_t    *mb;       /* reference handle */
-
-  at_bool_t keep_margins;
-  at_bool_t add_half_ebin;
-  at_bool_t no_zeros;
-
-  double e_min_runtime;
-  double e_max_runtime;
-
-  at_eh_recon_t recon[1];
-
-} at_eh_t;
-
-/* Legacy IO flags */
-#define   AT_EH__ADD_HALF_EBIN  0x00010000    /* add a half energy bin width in output */
-#define   AT_EH__KEEP_MARGINS   0x00020000    /* keep zero edge at sides */
-#define   AT_EH__NO_ZEROS       0x00040000    /* do not output zeroes */
+} at_eh_recon_t;
 
 #endif

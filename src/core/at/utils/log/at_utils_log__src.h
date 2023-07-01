@@ -47,6 +47,8 @@ void at_utils_log__cfg_init(
 
   at_utils_modstack__init(log->mods);
 
+  log->print_to_stderr = AT__TRUE;
+
   log->ready = AT__TRUE;
 }
 
@@ -185,9 +187,11 @@ void at_utils_log__printf(
   at_utils_log__vprintf_file(log, module, type, fmt, args);
   va_end(args);
 
-  va_start(args, fmt);
-  at_utils_log__vprintf_stderr(module, type, fmt, args);
-  va_end(args);
+  if (log->print_to_stderr) {
+    va_start(args, fmt);
+    at_utils_log__vprintf_stderr(module, type, fmt, args);
+    va_end(args);
+  }
 }
 
 
@@ -204,9 +208,11 @@ void at_utils_log__info(
   at_utils_log__vprintf_file(log, module, "Info", fmt, args);
   va_end(args);
 
-  va_start(args, fmt);
-  at_utils_log__vprintf_stderr(module, "Info", fmt, args);
-  va_end(args);
+  if (log->print_to_stderr) {
+    va_start(args, fmt);
+    at_utils_log__vprintf_stderr(module, "Info", fmt, args);
+    va_end(args);
+  }
 }
 
 
@@ -223,9 +229,11 @@ void at_utils_log__warning(
   at_utils_log__vprintf_file(log, module, "Warning", fmt, args);
   va_end(args);
 
-  va_start(args, fmt);
-  at_utils_log__vprintf_stderr(module, "Warning", fmt, args);
-  va_end(args);
+  if (log->print_to_stderr) {
+    va_start(args, fmt);
+    at_utils_log__vprintf_stderr(module, "Warning", fmt, args);
+    va_end(args);
+  }
 }
 
 
@@ -242,9 +250,11 @@ void at_utils_log__error(
   at_utils_log__vprintf_file(log, module, "Error", fmt, args);
   va_end(args);
 
-  va_start(args, fmt);
-  at_utils_log__vprintf_stderr(module, "Error", fmt, args);
-  va_end(args);
+  if (log->print_to_stderr) {
+    va_start(args, fmt);
+    at_utils_log__vprintf_stderr(module, "Error", fmt, args);
+    va_end(args);
+  }
 }
 
 
@@ -264,9 +274,11 @@ void at_utils_log__exit_if(
   at_utils_log__vprintf_file(log, module, "Error", fmt, args);
   va_end(args);
 
-  va_start(args, fmt);
-  at_utils_log__vprintf_stderr(module, "Error", fmt, args);
-  va_end(args);
+  if (log->print_to_stderr) {
+    va_start(args, fmt);
+    at_utils_log__vprintf_stderr(module, "Error", fmt, args);
+    va_end(args);
+  }
 
   exit(1);
 }

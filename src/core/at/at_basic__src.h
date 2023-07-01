@@ -127,7 +127,7 @@ static int at__cfg_init_low_level(at_t *at,
   at_driver__conf_init(at->driver, at->distr, at->mb, at->utils->conf);
 
   /* initialize the energy histograms */
-  at_eh__cfg_init(at->eh, at->mb, cfg, ssm, data_dir, verbose);
+  at_eh__conf_init(at->eh, at->mb, at->utils->conf);
 
   return 0;
 }

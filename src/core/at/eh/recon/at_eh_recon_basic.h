@@ -16,20 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_LOG__DEF_H__
-#define AT_UTILS_LOG__DEF_H__
+#ifndef AT_EH_RECON_BASIC_H__
+#define AT_EH_RECON_BASIC_H__
 
-#include "../../context/at_context__def.h"
-#include "../modstack/at_utils_modstack__def.h"
-#include "../../../zcom/zcom.h"
+#include "../at_eh__def.h"
+#include "../../utils/at_utils.h"
 
-typedef struct at_utils_log_t_
-{
-  int ready;
-  char *file;
-  at_utils_modstack_t mods[1];
-  FILE *fp;
-  at_bool_t print_to_stderr;
-} at_utils_log_t;
+int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
+    at_utils_conf_t *conf);
+
+void at_eh_recon__clear(at_eh_recon_t *recon);
+
+void at_eh_recon__finish(at_eh_recon_t *recon);
+
+void at_eh_recon__manifest(const at_eh_recon_t* recon, at_utils_manifest_t *manifest);
 
 #endif
