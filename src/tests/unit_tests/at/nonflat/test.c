@@ -23,7 +23,7 @@ double sigma = 100.0;
 
 double *get_expected_distr(at_t *at)
 {
-  zcom_cfg_t *cfg = at->cfg;
+  zcom_cfg_t *cfg = at->utils->conf->cfg;
   double expo, beta0, sigma;
   at_distr_domain_t *domain = at->distr->domain;
   int i, n = domain->n;

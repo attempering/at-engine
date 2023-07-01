@@ -149,8 +149,6 @@ int main(int argc, char **argv)
   at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
   init_distr_mb_langevin_objects(conf, distr, mb, langevin);
 
-  init_distr_mb_and_langevin(distr, mb, langevin);
-
   if (argc > 1) {
     fill_prob = atof(argv[1]);
   }
