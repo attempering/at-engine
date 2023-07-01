@@ -199,8 +199,6 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
   /* being verbose */
   at_utils_manifest__print_bool(manifest, mb->verbose, "verbose", "mb-verbose");
 
-  at_mb_win__manifest(mb->win, manifest);
-
   /* interval of recalculating et for all temperature */
   at_utils_manifest__print_int(manifest, mb->nst_refresh, "nst_refresh", "mb-nst-refresh");
 
@@ -224,6 +222,8 @@ void at_mb__manifest(const at_mb_t *mb, at_utils_manifest_t *manifest)
   at_utils_manifest__print_double(manifest, mb->total_visits, "total_visits", NULL);
 
   at_utils_manifest__pop_mod(manifest);
+
+  at_mb_win__manifest(mb->win, manifest);
 
   at_mb_shk__manifest(mb->shk, manifest);
 

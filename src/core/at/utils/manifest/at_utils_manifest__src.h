@@ -194,7 +194,7 @@ void at_utils_manifest__print_int_arr(at_utils_manifest_t *manifest,
 
   at_utils_manifest__print_var_name(manifest, name, "int *", NULL);
 
-  fprintf(fp, "[size %d] ", n);
+  fprintf(fp, "[%d] ", n);
 
   for (i = n-1; i >= 0; i--) {
     if (arr[i] > 0) break;
@@ -244,7 +244,7 @@ void at_utils_manifest__print_double_arr(at_utils_manifest_t *manifest,
 
   at_utils_manifest__print_var_name(manifest, name, "double *", NULL);
 
-  fprintf(fp, "[size %d] ", n);
+  fprintf(fp, "[%d] ", n);
 
   for (i = n-1; i >= 0; i--) {
     if (arr[i] > 0) {

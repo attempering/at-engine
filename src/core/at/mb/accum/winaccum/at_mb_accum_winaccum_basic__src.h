@@ -196,9 +196,12 @@ void at_mb_accum_winaccum__finish(at_mb_accum_winaccum_t *winaccum)
 void at_mb_accum_winaccum__manifest(const at_mb_accum_winaccum_t *winaccum,
     at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.mb.accum.winaccum");
 
   /* use adaptive averaging */
-  at_utils_manifest__print_bool(manifest, winaccum->enabled, "mb->accum->winaccum->enabled", "mb-use-adaptive-averaging");
+  at_utils_manifest__print_bool(manifest, winaccum->enabled, "enabled", "mb-use-adaptive-averaging");
+
+  at_utils_manifest__pop_mod(manifest);
 
 }
 

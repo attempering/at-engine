@@ -233,9 +233,12 @@ void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *mani
   FILE *fp = manifest->fp;
   int arrmax = manifest->arr_max_items;
 
+  at_utils_manifest__push_mod(manifest, "at.mb.accum");
+
   /* sums: normal data */
   if (accum->sums != NULL) {
-    fprintf(fp, "mb->accum->sums: at_mb_sm_t array of accum->n:");
+    fprintf(fp, "%s.sums: array of accum->n:",
+        at_utils_manifest__get_mod(manifest));
 
     for (i = accum->n-1; i >= 0; i--) {
       if (accum->sums[i].s != 0) {
@@ -250,7 +253,7 @@ void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *mani
           fprintf(fp, "\n...\n");
         }
         if (arrmax >= 0 && i >= arrmax && i < (accum->n-arrmax)) continue;
-        fprintf(fp, "mb->accum->sums[%d]:\n", i);
+        fprintf(fp, "at.mb.accum.sums[%d]:\n", i);
         at_mb_sm__manifest(accum->sums+i, fp, arrmax);
       }
     } else {
@@ -258,11 +261,12 @@ void at_mb_accum__manifest(const at_mb_accum_t *accum, at_utils_manifest_t *mani
     }
   }
 
-  at_mb_accum_winaccum__manifest(accum->winaccum, manifest);
-
   /* win_total: total of sum.s over a multiple-bine temperature window */
-  at_utils_manifest__print_double_arr(manifest, accum->win_total, accum->n, "mb->accum->win_total");
+  at_utils_manifest__print_double_arr(manifest, accum->win_total, accum->n, "win_total");
 
+  at_utils_manifest__pop_mod(manifest);
+
+  at_mb_accum_winaccum__manifest(accum->winaccum, manifest);
 }
 
 

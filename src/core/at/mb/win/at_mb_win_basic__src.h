@@ -203,28 +203,33 @@ void at_mb_win__finish(at_mb_win_t *win)
 
 void at_mb_win__manifest(const at_mb_win_t *win, at_utils_manifest_t *manifest)
 {
+  at_utils_manifest__push_mod(manifest, "at.mb.win");
+
   /* 0: d(beta) 1: dT/T  2: d(kT) */
-  at_utils_manifest__print_int(manifest, win->bwmod, "mb->win->bwmod", "mb-mbin-mode");
+  at_utils_manifest__print_int(manifest, win->bwmod, "bwmod", "mb-mbin-mode");
 
   if (win->bwmod == 0) {
-    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mb-del-beta");
+    at_utils_manifest__print_double(manifest, win->bwdel, "bwdel", "mb-del-beta");
   } else if (win->bwmod == 1) {
-    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mb-del-lnT");
+    at_utils_manifest__print_double(manifest, win->bwdel, "bwdel", "mb-del-lnT");
   } else if (win->bwmod == 2) {
-    at_utils_manifest__print_double(manifest, win->bwdel, "mb->win->bwdel", "mb-del-kT");
+    at_utils_manifest__print_double(manifest, win->bwdel, "bwdel", "mb-del-kT");
   }
 
-  at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "mb->win->js_grid_unres");
+  at_utils_manifest__print_int_arr(manifest, win->js_grid_unres, win->n+1, "js_grid_unres");
 
-  at_utils_manifest__print_int_arr(manifest, win->jt_grid_unres, win->n+1, "mb->win->jt_grid_unres");
+  at_utils_manifest__print_int_arr(manifest, win->jt_grid_unres, win->n+1, "jt_grid_unres");
 
-  at_utils_manifest__print_int_arr(manifest, win->js_bin, win->n, "mb->win->js_bin");
+  at_utils_manifest__print_int_arr(manifest, win->js_bin, win->n, "js_bin");
 
-  at_utils_manifest__print_int_arr(manifest, win->jt_bin, win->n, "mb->win->jt_bin");
+  at_utils_manifest__print_int_arr(manifest, win->jt_bin, win->n, "jt_bin");
 
-  at_utils_manifest__print_int_arr(manifest, win->js_grid_res, win->n+1, "mb->win->js_grid_res");
+  at_utils_manifest__print_int_arr(manifest, win->js_grid_res, win->n+1, "js_grid_res");
 
-  at_utils_manifest__print_int_arr(manifest, win->jt_grid_res, win->n+1, "mb->win->jt_grid_res");
+  at_utils_manifest__print_int_arr(manifest, win->jt_grid_res, win->n+1, "jt_grid_res");
+
+  at_utils_manifest__pop_mod(manifest);
+
 }
 
 
