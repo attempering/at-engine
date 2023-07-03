@@ -36,6 +36,6 @@ const char *at_utils_modstack__pop(
     at_utils_modstack_t *mods);
 
 const char *at_utils_modstack__get(
-    at_utils_modstack_t *mods);
+    const at_utils_modstack_t *mods);
 
 #endif

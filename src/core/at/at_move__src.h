@@ -36,11 +36,11 @@ void at__update_force_scale(at_t *at)
 
 at_bool_t at__do_tempering_on_step(at_t *at, at_llong_t step, at_bool_t value_on_neg_nst_temp)
 {
-  int nst_temp = at->driver->nsttemp;
+  int nst_tempering = at->driver->nst_tempering;
 
-  if (nst_temp > 0 && (step % nst_temp == 0)) {
+  if (nst_tempering > 0 && (step % nst_tempering == 0)) {
     return AT__TRUE;
-  } else if (nst_temp <= 0) {
+  } else if (nst_tempering <= 0) {
     return value_on_neg_nst_temp;
   }
 

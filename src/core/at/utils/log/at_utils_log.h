@@ -31,6 +31,12 @@ void at_utils_log__cfg_init(
     const char *data_dir,
     at_bool_t verbose);
 
+/* initialize a logger for a fixed module */
+void at_utils_log__init_delegate(
+    at_utils_log_t *log_delegate,
+    at_utils_log_t *log_src,
+    const char *mod);
+
 void at_utils_log__open_file(at_utils_log_t *log, at_bool_t is_continuation);
 
 void at_utils_log__close_file(at_utils_log_t *log);
@@ -43,7 +49,7 @@ void at_utils_log__push_mod(at_utils_log_t *log, const char *mod);
 
 const char *at_utils_log__pop_mod(at_utils_log_t *log);
 
-const char *at_utils_log__get_mod(at_utils_log_t *log);
+const char *at_utils_log__get_mod(const at_utils_log_t *log);
 
 void at_utils_log__vprintf(
     at_utils_log_t *log,
@@ -64,6 +70,10 @@ void at_utils_log__warning(
     const char *fmt, ...);
 
 void at_utils_log__error(
+    at_utils_log_t *log,
+    const char *fmt, ...);
+
+void at_utils_log__fatal(
     at_utils_log_t *log,
     const char *fmt, ...);
 

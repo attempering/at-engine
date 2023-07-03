@@ -65,7 +65,7 @@ void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
   acc = at__get_move_acceptance_ratio(at);
 
-  fprintf(stderr, "Acceptance ratio: %g%%\n", acc*100.0);
+  at_utils_log__info(at->log, "acceptance ratio: %g%%\n", acc*100.0);
 }
 
 int main(int argc, char **argv)
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 
   run_at_md(at, mdsys, nsteps);
 
-  fprintf(stderr, "AT simulation finished successfully.\n");
+  at_utils_log__info(at->log, "AT simulation finished successfully.\n");
 
   mdsys__delete(mdsys);
 

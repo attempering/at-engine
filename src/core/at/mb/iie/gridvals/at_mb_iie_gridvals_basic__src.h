@@ -43,6 +43,8 @@ void at_mb_iie_gridvals__conf_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
 {
   int i, n = mb->distr->domain->n;
 
+  (void) conf;
+
   gridvals->n = n;
 
   at_utils__new_arr(gridvals->items, n+1, at_mb_iie_gridvals_item_t);

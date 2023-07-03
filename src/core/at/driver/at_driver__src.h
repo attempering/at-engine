@@ -36,15 +36,12 @@ int at_driver__conf_init(
     at_mb_t *mb,
     at_utils_conf_t *conf)
 {
-  at_driver_langevin__conf_init(
-    driver->langevin, distr, mb, conf);
-
   at_utils_conf__push_mod(conf, "at.driver");
 
   /* frequency of tempering, 0: disable, -1: only neighbor-search steps */
   at_utils_conf__get_int(conf,
       "nsttemp,nst-temp,nst-tempering",
-      &driver->nsttemp, -1,
+      &driver->nst_tempering, -1,
       "nst_tempering");
 
   at_utils_conf__get_int(conf,
@@ -53,6 +50,9 @@ int at_driver__conf_init(
       "move_repeats");
 
   at_utils_conf__pop_mod(conf);
+
+  at_driver_langevin__conf_init(
+    driver->langevin, distr, mb, conf);
 
   return 0;
 }
@@ -72,7 +72,7 @@ void at_driver__manifest(
 {
   at_utils_manifest__push_mod(manifest, "at.langevin");
 
-  at_utils_manifest__print_int(manifest, driver->nsttemp, "nsttemp", "nst-tempering");
+  at_utils_manifest__print_int(manifest, driver->nst_tempering, "nst_tempering", "nst-tempering");
 
   at_utils_manifest__print_int(manifest, driver->move_repeats, "move_repeats", "move-repeats");
 

@@ -56,6 +56,9 @@ int at_distr_weights__conf_init(
   w->beta_max = domain->beta_max;
   w->n = domain->n;
 
+  /* initialize a module-specific logger */
+  at_utils_log__init_delegate(w->log, conf->log, "at.distr.weights");
+
   at_utils_conf__push_mod(conf, "at.distr.weights");
 
   //at_utils_log__info(conf->log, "w->n %d\n", w->n); getchar();
@@ -99,7 +102,7 @@ int at_distr_weights__conf_init(
 
   } else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL) {
 
-    at_utils_log__info(conf->log, "single-exponential distribution mode\n");
+    at_utils_log__info(w->log, "single-exponential distribution mode\n");
 
     at_utils_conf__get_double(conf,
         "ensemble-c",
@@ -111,7 +114,7 @@ int at_distr_weights__conf_init(
 
   } else if(w->mode != 0) {
 
-    fprintf(stderr, "invalid ensemble mode\n");
+    at_utils_log__error(w->log, "invalid ensemble mode\n");
     goto ERR;
 
   }
@@ -173,6 +176,7 @@ void at_distr_weights__finish(at_distr_weights_t *w)
     at_distr_weights_components__finish(w->components);
   }
 
+  at_utils_log__finish(w->log);
 }
 
 
@@ -181,7 +185,8 @@ void at_distr_weights__finish(at_distr_weights_t *w)
  * f: f(beta);
  * *p_neg_df_dbeta: -df(beta)/dbeta;
  */
-static double at_distr_weights__calc_f_factor(const at_distr_weights_t *w,
+static double at_distr_weights__calc_f_factor(
+    const at_distr_weights_t *w,
     double beta, double *p_neg_df_dbeta)
 {
   double f = 1.0, neg_df_dbeta;
@@ -199,7 +204,8 @@ static double at_distr_weights__calc_f_factor(const at_distr_weights_t *w,
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
   {
     f = at_distr_weights_components__calc_f_factor(
-      w->components, beta, &neg_df_dbeta);
+      w->components, beta, &neg_df_dbeta,
+      ((at_distr_weights_t *) w)->log);
   }
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
   {
@@ -214,7 +220,8 @@ static double at_distr_weights__calc_f_factor(const at_distr_weights_t *w,
   }
   else
   {
-    zcom_utils__fatal("Error@at.distr.weights: unknown mode %d\n",
+    at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+        "unknown mode %d\n",
         w->mode);
   }
 
@@ -252,7 +259,8 @@ static double at_distr_weights__calc_invw_factor(const at_distr_weights_t *w, do
 }
 
 
-double at_distr_weights__calc_inv_weight(const at_distr_weights_t *w, double beta,
+double at_distr_weights__calc_inv_weight(
+    const at_distr_weights_t *w, double beta,
     double *neg_dlnwf_dbeta, double *pf, double *neg_df_dbeta)
 {
   double f, invw, invwf, neg_df_dbeta_ = 0.0;
@@ -277,7 +285,8 @@ double at_distr_weights__calc_inv_weight(const at_distr_weights_t *w, double bet
   //fprintf(stderr, "beta %g, invw %g, f %g\n", beta, invw, f);
   //getchar();
 
-  zcom_utils__exit_if (invwf > invwf_max || invwf < invwf_min,
+  at_utils_log__exit_if (invwf > invwf_max || invwf < invwf_min,
+      ((at_distr_weights_t *) w)->log,
       "bad invwf=%g, f=%g, beta=%g\n", invwf, beta);
 
   if (neg_dlnwf_dbeta != NULL) {

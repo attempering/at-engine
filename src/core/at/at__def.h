@@ -65,6 +65,8 @@ typedef struct at_t_ {
 
   zcom_ssm_t      *ssm; // string allocator
 
+  at_utils_log_t log[1]; /* module-specific logger */
+
 } at_t;
 
 

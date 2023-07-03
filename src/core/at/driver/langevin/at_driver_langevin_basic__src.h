@@ -39,6 +39,8 @@ int at_driver_langevin__conf_init(
 
   langevin->mb = mb;
 
+  at_utils_log__init_delegate(langevin->log, conf->log, "at.driver.langevin");
+
   at_utils_conf__push_mod(conf, "at.driver.langevin");
 
   /* dt: time step for the temperature Langevin eq */
@@ -131,6 +133,7 @@ void at_driver_langevin__finish(at_driver_langevin_t *langevin)
 {
   at_driver_langevin_integrator__finish(langevin->integrator);
   at_driver_langevin_rng__finish(langevin->rng);
+  at_utils_log__finish(langevin->log);
   memset(langevin, 0, sizeof(*langevin));
 }
 

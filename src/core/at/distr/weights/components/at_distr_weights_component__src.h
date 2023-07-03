@@ -26,11 +26,15 @@
 
 static int at_distr_weights_component__parse_gaussian_params(
     at_distr_weights_component_t *c,
-    char *params)
+    char *params,
+    at_utils_log_t *log)
 {
   if (params == NULL) {
-    fprintf(stderr, "Error@at.distr.weights.components: component %d (gaussian) has no parameters\n",
+
+    at_utils_log__error(log,
+        "component %d (gaussian) has no parameters\n",
         c->id);
+
     return -1;
   }
 
@@ -38,8 +42,11 @@ static int at_distr_weights_component__parse_gaussian_params(
   //getchar();
 
   if (sscanf(params, "%lf,%lf", &c->beta0, &c->sigma) != 2) {
-    fprintf(stderr, "Error@at.distr.weights.components: component %d (gaussian) does not have enough parameters\n",
+
+    at_utils_log__error(log,
+        "component %d (gaussian) does not have enough parameters\n",
         c->id);
+
     return -1;
   }
 
@@ -52,7 +59,8 @@ static int at_distr_weights_component__parse_gaussian_params(
 
 static int at_distr_weights_component__parse_str(
     at_distr_weights_component_t *c,
-    char *comp_str)
+    char *comp_str,
+    at_utils_log_t *log)
 {
   char *p;
   char *params = NULL;
@@ -99,7 +107,7 @@ static int at_distr_weights_component__parse_str(
 
     c->type = AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN;
 
-    at_distr_weights_component__parse_gaussian_params(c, params);
+    at_distr_weights_component__parse_gaussian_params(c, params, log);
 
   } else if (strncmp(comp_str, "flat", 4) == 0) {
 
@@ -107,10 +115,8 @@ static int at_distr_weights_component__parse_str(
 
   } else {
 
-    fprintf(stderr, "Error@at.distr.weights.components: invalid component type %s\n",
+    at_utils_log__fatal(log, "invalid component type %s\n",
         comp_str);
-
-    exit(1);
 
   }
 
@@ -138,7 +144,7 @@ static int at_distr_weights_component__conf_init(
   c->id = ic;
   c->key = key;
 
-  at_distr_weights_component__parse_str(c, comp_str);
+  at_distr_weights_component__parse_str(c, comp_str, conf->log);
 
   return 0;
 }
@@ -166,7 +172,9 @@ static int at_distr_weights_component__manifest(
 
 
 static double at_distr_weights_component__calc_f_factor(
-    const at_distr_weights_component_t *c, double beta, double *p_neg_df_dbeta)
+    const at_distr_weights_component_t *c,
+    double beta, double *p_neg_df_dbeta,
+    at_utils_log_t *log)
 {
   double f_comp = 0.0;
 
@@ -183,9 +191,10 @@ static double at_distr_weights_component__calc_f_factor(
 
   } else {
 
-    fprintf(stderr, "Error@at.distr.weights.components: unknown component type %d for %s\n",
+    *p_neg_df_dbeta = 0;
+
+    at_utils_log__fatal(log, "unknown component type %d for %s\n",
         c->id, c->key);
-    exit(1);
 
   }
 

@@ -35,7 +35,7 @@ int at_eh_recon__reconstruct(at_eh_recon_t *recon, at_eh_t *eh, const char *fn)
   int n = distr->domain->n;
   
   if ((fp = fopen((fn != NULL) ? fn : recon->file, "w")) == NULL) {
-    fprintf(stderr, "\rError@at.eh.recon: failed to write reconstructed histogram [%s].\n",
+    at_utils_log__error(eh->log, "failed to write reconstructed histogram [%s].\n",
         recon->file);
     return 1;
   }
@@ -61,7 +61,7 @@ int at_eh_recon__reconstruct(at_eh_recon_t *recon, at_eh_t *eh, const char *fn)
     js = recon->is[ib];
     jt = recon->it[ib];
     if (js < 0 || jt > n || js >= jt) {
-      fprintf(stderr, "bad window (%d, %d)\n", js, jt);
+      at_utils_log__error(eh->log, "bad window (%d, %d)\n", js, jt);
       return -1;
     }
 

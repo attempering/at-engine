@@ -145,7 +145,7 @@ int at_utils_conf__get_int(
     conf->log->print_to_stderr = conf->verbose;
     at_utils_log__info(conf->log, "assuming default %s = %d, key: %s\n",
         name, val_def, key);
-    conf->log->print_to_stderr = AT__FALSE;
+    conf->log->print_to_stderr = AT__TRUE;
   }
 
   *var = tmp;
@@ -172,7 +172,7 @@ int at_utils_conf__get_double(
     conf->log->print_to_stderr = conf->verbose;
     at_utils_log__info(conf->log, "assuming default %s = %g, key: %s\n",
         name, val_def, key);
-    conf->log->print_to_stderr = AT__FALSE;
+    conf->log->print_to_stderr = AT__TRUE;
   }
 
   *var = tmp;
@@ -241,7 +241,7 @@ int at_utils_conf__get_bool(
     conf->log->print_to_stderr = conf->verbose;
     at_utils_log__info(conf->log, "assuming default %s = %s, key: %s\n",
         name, str_val_def, key);
-    conf->log->print_to_stderr = AT__FALSE;
+    conf->log->print_to_stderr = AT__TRUE;
   }
 
   zcom_utils__str_to_lower(str_val);

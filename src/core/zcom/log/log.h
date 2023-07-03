@@ -30,6 +30,8 @@ ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...);
 
 ZCOM__INLINE void zcom_log__close(zcom_log_t *log);
 
+ZCOM__INLINE int zcom_log__flush(zcom_log_t *log);
+
 /* close & reopen log file to make sure that stuff is written to disk */
 ZCOM__INLINE int zcom_log__hard_flush(zcom_log_t *log);
 

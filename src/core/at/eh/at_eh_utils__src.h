@@ -22,8 +22,6 @@
 #include "at_eh_utils.h"
 
 #include "../distr/at_distr.h"
-#include <stdio.h>
-#include <math.h>
 
 
 void at_eh__add(at_eh_t *eh, int ib, double e)
@@ -33,11 +31,11 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
     int ie = (int)((e - eh->e_min)/eh->e_del);
 
     if (e > eh->e_max_runtime) {
-      fprintf(stderr, "\rWarning@at: at->eh: energy point overflow %g, (%g, %g)\n",
+      at_utils_log__warning(eh->log, "energy overflow %g, (%g, %g)\n",
           e, eh->e_min_runtime, eh->e_max_runtime);
       eh->e_max_runtime = e;
     } else if (e < eh->e_min_runtime) {
-      fprintf(stderr, "\rWarning@at: at->eh: energy point underflow %g, (%g, %g)\n",
+      at_utils_log__warning(eh->log, "energy point underflow %g, (%g, %g)\n",
           e, eh->e_min_runtime, eh->e_max_runtime);
       eh->e_min_runtime = e;
     }

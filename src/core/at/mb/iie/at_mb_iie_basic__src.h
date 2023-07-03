@@ -42,7 +42,6 @@ void at_mb_iie__conf_init(at_mb_iie_t *iie, at_mb_t *mb,
   at_mb_iie_lr__conf_init(iie->lr, iie->zf, mb, conf);
   at_mb_iie_et__conf_init(iie->et, mb, conf);
   at_mb_iie_gridvals__conf_init(iie->gridvals, mb, conf);
-
 }
 
 

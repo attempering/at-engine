@@ -28,15 +28,15 @@ ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn, unsigned flags)
   zcom_log_t *log;
 
   if ((log = (zcom_log_t *) calloc(1, sizeof(*log))) == NULL) {
-    fprintf(stderr, "Fatal: no memory for a new zcom_log_t object\n");
+    fprintf(stderr, "Fatal@zcom.log: no memory for a new zcom_log_t object\n");
     exit(1);
   }
 
   if (fn == NULL) {
-    fn = "LOG";
+    fn = "log.dat";
   }
 
-  log->fname = fn;
+  log->fn = fn;
   log->flags = flags;
 
   return log;
@@ -52,8 +52,8 @@ ZCOM__INLINE int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list arg
 
   if (log->fp == NULL) {
     const char *aw = (log->flags & ZCOM_LOG__APPEND) ? "a" : "w";
-    if ((log->fp = fopen(log->fname, aw)) == NULL) {
-      fprintf(stderr, "failed to open %s\n", log->fname);
+    if ((log->fp = fopen(log->fn, aw)) == NULL) {
+      fprintf(stderr, "failed to open %s\n", log->fn);
       return 1;
     }
   }
@@ -66,8 +66,8 @@ ZCOM__INLINE int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list arg
     vprintf(fmt, args);
   }
 
-  if (log->flags & ZCOM_LOG__FLUSH_AFTER) {
-    fflush(log->fp);
+  if (log->flags & ZCOM_LOG__FLUSH_AFTERWARD) {
+    zcom_log__flush(log);
   }
 
   return 0;
@@ -85,8 +85,8 @@ ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
 
   if (log->fp == NULL) {
     const char *aw = (log->flags & ZCOM_LOG__APPEND) ? "a" : "w";
-    if ((log->fp = fopen(log->fname, aw)) == NULL) {
-      fprintf(stderr, "failed to open %s\n", log->fname);
+    if ((log->fp = fopen(log->fn, aw)) == NULL) {
+      fprintf(stderr, "failed to open %s\n", log->fn);
       return 1;
     }
   }
@@ -103,8 +103,8 @@ ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
     va_end(args);
   }
 
-  if (log->flags & ZCOM_LOG__FLUSH_AFTER) {
-    fflush(log->fp);
+  if (log->flags & ZCOM_LOG__FLUSH_AFTERWARD) {
+    zcom_log__flush(log);
   }
 
   return 0;
@@ -128,15 +128,28 @@ ZCOM__INLINE void zcom_log__close(zcom_log_t *log)
 
 
 
+ZCOM__INLINE int zcom_log__flush(zcom_log_t *log)
+{
+  if (log->fp == NULL) {
+    return 1;
+  }
+
+  fflush(log->fp);
+
+  return 0;
+}
+
+
+
 /* close & reopen log file to make sure that stuff is written to disk */
 ZCOM__INLINE int zcom_log__hard_flush(zcom_log_t *log)
 {
-  if (log->fp == NULL || log->fname == NULL) return 1;
+  if (log->fp == NULL || log->fn == NULL) return 1;
 
   fclose(log->fp);
 
-  if ((log->fp = fopen(log->fname, "a")) == NULL) {
-    fprintf(stderr, "failed to open %s\n", log->fname);
+  if ((log->fp = fopen(log->fn, "a")) == NULL) {
+    fprintf(stderr, "failed to open %s\n", log->fn);
     return 1;
   }
 

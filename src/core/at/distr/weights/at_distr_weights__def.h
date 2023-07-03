@@ -20,7 +20,7 @@
 #define AT_DISTR_WEIGHTS__DEF_H__
 
 #include "../../context/at_context__def.h"
-
+#include "../../utils/at_utils__def.h"
 #include "components/at_distr_weights_components__def.h"
 
 enum {
@@ -56,6 +56,8 @@ typedef struct at_distr_weights_t_ {
   at_distr_weights_components_t components[1];
 
   double   *ens_w;        /* array of ensemble weights at bin boundaries */
+
+  at_utils_log_t log[1]; /* module-specific logger */
 
 } at_distr_weights_t;
 

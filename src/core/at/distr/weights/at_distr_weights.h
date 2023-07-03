@@ -34,7 +34,9 @@ int at_distr_weights__conf_init(
 
 void at_distr_weights__finish(at_distr_weights_t *w);
 
-void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t *manifest);
+void at_distr_weights__manifest(
+    const at_distr_weights_t *w,
+    at_utils_manifest_t *manifest);
 
 /* return the inverse of overall temperature weight
  *
@@ -51,7 +53,11 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
  * are saved in *p_f and *p_neg_df_dbeta, respectively,
  * if the two pointers are not NULL.
  */
-double at_distr_weights__calc_inv_weight(const at_distr_weights_t *w, double beta,
-    double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
+double at_distr_weights__calc_inv_weight(
+    const at_distr_weights_t *w,
+    double beta,
+    double *neg_dlnwf_dbeta,
+    double *f,
+    double *neg_df_dbeta);
 
 #endif

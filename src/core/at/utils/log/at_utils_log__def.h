@@ -26,9 +26,10 @@
 typedef struct at_utils_log_t_
 {
   int ready;
-  char *file;
   at_utils_modstack_t mods[1];
+  char *file;
   FILE *fp;
+  at_bool_t is_delegate;
   at_bool_t print_to_stderr;
 } at_utils_log_t;
 

@@ -68,6 +68,8 @@ typedef struct at_mb_t_ {
 
   at_mb_iie_t  iie[1];
 
+  at_utils_log_t log[1]; /* module-specific logger */
+
 } at_mb_t;
 
 

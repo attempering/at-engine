@@ -71,7 +71,7 @@ const char *at_utils_modstack__pop(
 
 
 const char *at_utils_modstack__get(
-    at_utils_modstack_t *mods)
+    const at_utils_modstack_t *mods)
 {
   if (mods->curr > 0 && mods->curr < AT_UTILS_MODSTACK__STACK_MAX) {
     return mods->stack[mods->curr];

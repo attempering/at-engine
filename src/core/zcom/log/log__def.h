@@ -29,12 +29,12 @@
 
 typedef struct zcom_log_t_ {
   FILE *fp;
-  const char *fname;
+  const char *fn;
   unsigned flags;
 } zcom_log_t;
 
 #define ZCOM_LOG__OUTPUT_SCREEN   0x01
-#define ZCOM_LOG__FLUSH_AFTER     0x02
+#define ZCOM_LOG__FLUSH_AFTERWARD 0x02
 #define ZCOM_LOG__NO_OUTPUT_FILE  0x10
 #define ZCOM_LOG__APPEND          0x80
 

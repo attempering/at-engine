@@ -28,7 +28,7 @@ typedef struct at_driver_t_ {
 
   at_driver_langevin_t langevin[1];
 
-  int nsttemp;
+  int nst_tempering;
 
   int move_repeats;
 

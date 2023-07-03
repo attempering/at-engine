@@ -24,17 +24,19 @@
 
 
 /* check if domain->barr is arranged in an ascending order */
-static int at_distr_domain__check_barr(at_distr_domain_t *domain)
+static void at_distr_domain__check_barr(at_distr_domain_t *domain,
+    at_utils_log_t *log)
 {
   int i;
 
-  for (i = 0; i <= domain->n; i++)
+  for (i = 0; i <= domain->n; i++) {
     if (i > 0 && domain->barr[i] <= domain->barr[i-1]) {
-      fprintf(stderr, "barr should ascend: barr[%d] = %g, barr[%d] = %g\n",
+      at_utils_log__fatal(log,
+          "beta array has incorrect ordering: barr[%d] = %g, barr[%d] = %g\n",
           i, domain->barr[i], i-1, domain->barr[i-1]);
-      return 1;
     }
-  return 0;
+  }
+
 }
 
 
@@ -119,8 +121,7 @@ int at_distr_domain__conf_init(at_distr_domain_t *domain,
   }
 
   /* check beta array */
-  at_utils_log__exit_if (at_distr_domain__check_barr(domain) != 0,
-      conf->log, "check beta array\n");
+  at_distr_domain__check_barr(domain, conf->log);
 
   /* fix beta_max to a bin boundary */
   domain->beta_max = domain->beta_min + domain->beta_del * domain->n;

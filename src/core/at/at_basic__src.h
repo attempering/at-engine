@@ -49,7 +49,8 @@ static void at__set_init_beta(at_t *at)
 
   at__update_force_scale(at);
 
-  at_utils_log__info(at->utils->log, "initial beta %g, force_scale %g\n",
+  at_utils_log__info(at->log,
+      "initial beta %g, force_scale %g\n",
       at->beta, at->force_scale);
 }
 
@@ -101,13 +102,22 @@ static int at__cfg_init_low_level(at_t *at,
    * also initialize the data directory */
   at_params_sys__init(at->sys_params, sys_params);
 
-  /* initialize the utils objects such as manifest and trace */
+  /* initialize the utils objects such as
+     utils->log,
+     utils->conf,
+     utils->manifest
+     and
+     utils->trace
+   */
   at_utils__cfg_init(at->utils, ssm, cfg,
       at->sys_params->is_continuation,
       at->sys_params->multi_sims, at->sys_params->sim_id,
       ignore_lockfile, verbose);
 
-  at_utils_log__info(at->utils->log, "version %lld\n", (long long) AT__VERSION);
+  /* initialize a module specific logger */
+  at_utils_log__init_delegate(at->log, at->utils->log, "at");
+
+  at_utils_log__info(at->log, "version %lld\n", (long long) AT__VERSION);
 
   if (at_distr__conf_init(at->distr, at->utils->conf, at->sys_params->boltz) != 0) {
     return -1;
@@ -137,16 +147,20 @@ int at__cfg_init(at_t *at,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
-  /* load settings from the configuration file */
-  at__cfg_init_low_level(at, ssm, cfg, sys_params, flags);
+  /* load settings from the configuration file,
+     initializing objects in at->utils */
+  if (at__cfg_init_low_level(at, ssm, cfg, sys_params, flags) != 0) {
+    return -1;
+  }
 
   at->energy = 0.0;
 
-  /* we only load previous data if it's continuation */
+  /* we only load previous data if it's a continuation run */
   if (at->sys_params->is_continuation) {
     //fprintf(stderr, "is-cont: %d\n", at->sys_params->is_continuation);
     if (at__load_data(at) != 0) {
-      fprintf(stderr, "Error@at: This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
+      at_utils_log__error(at->log,
+          "This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
       return -1;
     }
   }
@@ -193,7 +207,7 @@ int at__init(at_t *at,
     return -1;
   }
 
-  at_utils_log__info(at->utils->log,
+  at_utils_log__info(at->log,
       "successfully loaded configuration file %s\n",
       cfg_file);
 

@@ -37,6 +37,8 @@ int at_eh__conf_init(at_eh_t *eh,
   eh->e_min_runtime = 0;
   eh->e_max_runtime = 0;
 
+  at_utils_log__init_delegate(eh->log, conf->log, "at.eh");
+
   at_utils_conf__push_mod(conf, "at.eh");
 
   /* eh_mode: 0: disable; 1: simple histogram */
@@ -46,8 +48,7 @@ int at_eh__conf_init(at_eh_t *eh,
       "mode");
 
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
-    fprintf(stderr, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
+    at_utils_log__error(eh->log, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
     goto ERR;
   }
 
@@ -163,6 +164,7 @@ void at_eh__clear(at_eh_t *eh)
 
 void at_eh__finish(at_eh_t *eh)
 {
+  at_utils_log__finish(eh->log);
   at_eh_recon__finish(eh->recon);
   if (eh->his != NULL) {
     free(eh->his);

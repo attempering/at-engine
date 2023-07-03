@@ -87,6 +87,8 @@ typedef struct at_driver_langevin_t_
 
   char *file; /* IO file name */
 
+  at_utils_log_t log[1]; /* module-specific logger */
+
 } at_driver_langevin_t;
 
 

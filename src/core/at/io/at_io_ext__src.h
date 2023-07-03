@@ -60,27 +60,15 @@ static void at__write_trace(at_t *at,
 {
   at_utils_trace_t *trace = at->utils->trace;
 
-  zcom_utils__exit_if (!trace->ready,
-      "Error@at.io: log is not initialized!\n");
+  at_utils_log__exit_if (!trace->ready,
+      at->log,
+      "trace is not initialized!\n");
 
   at_bool_t do_trace = at_utils_trace__decide_do_trace(trace, step_params);
 
   if (do_trace) {
-    zcom_log_t *zcom_log = trace->log;
 
-    if (zcom_log == NULL) {
-      zcom_log = at_utils_trace__open_file(trace, 0);
-    }
-
-    //fprintf(stderr, "step params %p, zcom_log %p\n", step_params, zcom_log);
-
-    if(step_params->flush_output) {
-      zcom_log->flags |= ZCOM_LOG__FLUSH_AFTER;
-    } else {
-      zcom_log->flags ^= ZCOM_LOG__FLUSH_AFTER;
-    }
-
-    zcom_log__printf(zcom_log,
+    at_utils_trace__printf(trace, step_params->flush_output,
         "%10.3f %5d %10.6f %12.3f %12.3f %10.6f %8.3f %8.5f %5.3f %g %g\n",
         step_params->step * at->sys_params->md_time_step,
         ib,
@@ -146,30 +134,30 @@ int at__load_data(at_t *at)
 
   /* read at's own data */
   if (at__read_self(at) != 0) {
-    fprintf(stderr, "Error@at.io: failed to load at's own data\n");
+    at_utils_log__error(at->log, "failed to load at's own data\n");
     return 1;
   }
 
   /* read previous at_mb_t data */
   if (at_mb__read(mb, mb->use_text_file) != 0) {
-    fprintf(stderr, "Error@at.io: failed to load mb data\n");
+    at_utils_log__error(at->log, "failed to load mb data\n");
     return 1;
   }
 
   at_mb__write_ze_file(mb, mb->ze_init_file);
 
   if (at_driver__read(at->driver) != 0) {
-    fprintf(stderr, "Error@at.io: failed to load driver data from %s\n", at->driver->langevin->file);
+    at_utils_log__error(at->log, "failed to load driver data from %s\n", at->driver->langevin->file);
     return 1;
   }
 
   /* read previous energy histogram data */
   if (at_eh__read(at->eh, at->eh->use_text_file) != 0) {
-    fprintf(stderr, "Error@at.io: failed to load energy histogram\n");
+    at_utils_log__error(at->log, "failed to load energy histogram\n");
     return 2;
   }
 
-  fprintf(stderr, "Info@at.io: successfully load previous data\n");
+  at_utils_log__info(at->log, "successfully load previous data\n");
 
   return 0;
 }

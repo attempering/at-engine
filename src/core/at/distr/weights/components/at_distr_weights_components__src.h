@@ -98,7 +98,8 @@ void at_distr_weights_components__finish(at_distr_weights_components_t *c)
  */
 double at_distr_weights_components__calc_f_factor(
     const at_distr_weights_components_t *c,
-    double beta, double *p_neg_df_dbeta)
+    double beta, double *p_neg_df_dbeta,
+    at_utils_log_t *log)
 {
   double f = 0, neg_df_dbeta = 0;
   int ic;
@@ -107,7 +108,7 @@ double at_distr_weights_components__calc_f_factor(
     double f_comp, neg_df_dbeta_comp;
 
     f_comp = at_distr_weights_component__calc_f_factor(
-        c->components + ic, beta, &neg_df_dbeta_comp);
+        c->components + ic, beta, &neg_df_dbeta_comp, log);
 
     f += f_comp;
     neg_df_dbeta += neg_df_dbeta_comp;

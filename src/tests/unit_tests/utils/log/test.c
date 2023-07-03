@@ -24,7 +24,7 @@
 
 int main(int argc, char **argv)
 {
-  at_utils_log_t log[1];
+  at_utils_log_t log[1], log2[1];
   zcom_ssm_t *ssm;
 
   ssm = zcom_ssm__open();
@@ -36,6 +36,10 @@ int main(int argc, char **argv)
   at_utils_log__pop_mod(log);
 
   at_utils_log__info(log, "Good bye!\n");
+
+  at_utils_log__init_delegate(log2, log, "delegate");
+  at_utils_log__info(log2, "I'm a delegate logger.\n");
+  at_utils_log__finish(log2);
 
   at_utils_log__finish(log);
 

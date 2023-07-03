@@ -40,6 +40,7 @@ void at_distr_weights_components__manifest(
 
 double at_distr_weights_components__calc_f_factor(
     const at_distr_weights_components_t *c,
-    double beta, double *p_neg_df_dbeta);
+    double beta, double *p_neg_df_dbeta,
+    at_utils_log_t *log);
 
 #endif

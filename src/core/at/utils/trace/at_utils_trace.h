@@ -27,7 +27,8 @@
 void at_utils_trace__conf_init(at_utils_trace_t *trace,
     at_utils_conf_t *conf);
 
-zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation);
+zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace,
+    at_bool_t is_continuation);
 
 void at_utils_trace__close_file(at_utils_trace_t *trace);
 
@@ -38,5 +39,9 @@ void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *mani
 at_bool_t at_utils_trace__decide_do_trace(at_utils_trace_t *trace,
     const at_params_step_t *step_params);
 
+void at_utils_trace__printf(
+    at_utils_trace_t *trace,
+    at_bool_t flush_afterward,
+    const char *fmt, ...);
 
 #endif

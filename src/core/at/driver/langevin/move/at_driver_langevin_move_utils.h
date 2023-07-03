@@ -29,7 +29,7 @@ double at_driver_langevin_move__get_acceptance_ratio(
     const at_driver_langevin_t *langevin);
 
 void at_driver_langevin_move__print_acceptance_ratio_suggestions(
-    const at_driver_langevin_t *langevin);
+    at_driver_langevin_t *langevin);
 
 
 #endif

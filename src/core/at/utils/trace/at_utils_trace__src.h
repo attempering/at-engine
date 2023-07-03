@@ -60,11 +60,16 @@ void at_utils_trace__finish(at_utils_trace_t *trace)
 
 
 
-void at_utils_trace__manifest(at_utils_trace_t *trace, at_utils_manifest_t *manifest)
+void at_utils_trace__manifest(at_utils_trace_t *trace,
+    at_utils_manifest_t *manifest)
 {
-  fprintf(manifest->fp, "utils->trace->nst_trace: int, %4d\n", trace->nst_trace);
+  at_utils_manifest__push_mod(manifest, "at.utils.trace");
 
-  fprintf(manifest->fp, "utils->trace->file: char *, %s\n", trace->file);
+  at_utils_manifest__print_int(manifest, trace->nst_trace, "nst_trace", "nst-trace");
+
+  at_utils_manifest__print_str(manifest, trace->file, "file", "trace-file");
+
+  at_utils_manifest__pop_mod(manifest);
 }
 
 
@@ -77,6 +82,7 @@ zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_cont
 
   return trace->log;
 }
+
 
 
 void at_utils_trace__close_file(at_utils_trace_t *trace)
@@ -112,6 +118,28 @@ at_bool_t at_utils_trace__decide_do_trace(at_utils_trace_t *trace,
   }
 
   return do_trace;
+}
+
+
+
+void at_utils_trace__printf(
+    at_utils_trace_t *trace,
+    at_bool_t flush_afterward,
+    const char *fmt, ...)
+{
+  va_list args;
+
+  if (trace->log == NULL) {
+    trace->log = at_utils_trace__open_file(trace, AT__FALSE);
+  }
+
+  va_start(args, fmt);
+  zcom_log__vprintf(trace->log, fmt, args);
+  va_end(args);
+
+  if (flush_afterward) {
+    zcom_log__flush(trace->log);
+  }
 }
 
 
