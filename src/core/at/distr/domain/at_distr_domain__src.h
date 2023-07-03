@@ -54,7 +54,7 @@ void at_distr_domain__init_simple(at_distr_domain_t *domain,
     free(domain->barr);
   }
 
-  domain->barr = (double *) calloc(n+1, sizeof(double));
+  at_utils__new_arr(domain->barr, n+1, double);
 
   for (i = 0; i <= n; i++) {
     domain->barr[i] = beta_min + beta_del * i;
@@ -111,9 +111,8 @@ int at_distr_domain__conf_init(at_distr_domain_t *domain,
   //fprintf(stderr, "domain->n %d\n", domain->n);
   //getchar();
 
-  /* barr: temperature array */
-  at_utils_log__exit_if ((domain->barr = (double *) calloc((domain->n + 1), sizeof(double))) == NULL,
-      conf->log, "no memory! var: distr->domain->barr, type: double\n");
+  /* barr: temperature beta array */
+  at_utils__new_arr(domain->barr, domain->n+1, double);
 
   for (i = 0; i < domain->n+1; i++) {
     domain->barr[i] = domain->beta_min + i * domain->beta_del;

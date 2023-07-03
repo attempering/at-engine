@@ -78,11 +78,8 @@ void at_mb_accum_winaccum_item__init(
   item->jt = win->jt_bin[i];
 
   m = item->jt - item->js;
-  if ((item->sums = (at_mb_sm_t *) calloc(m, sizeof(at_mb_sm_t))) == NULL) {
-    fprintf(stderr, "Error@at.mb.accum.winaccum: no memory for winaccum item->sums\n");
-    exit(1);
-  }
 
+  at_utils__new_arr(item->sums, m, at_mb_sm_t);
   for (j = 0; j < m; j++) {
     at_mb_sm__init(item->sums + j);
   }

@@ -110,11 +110,7 @@ int at_eh__conf_init(at_eh_t *eh,
       "file_text");
 
   /* eh_his: energy histogram data */
-  if ((eh->his = (double *) calloc((eh->n*eh->e_n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.eh: no memory! var: eh->his, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
+  at_utils__new_arr(eh->his, eh->n*eh->e_n, double);
   for (i = 0; i < eh->n*eh->e_n; i++) {
     eh->his[i] = 0.0;
   }

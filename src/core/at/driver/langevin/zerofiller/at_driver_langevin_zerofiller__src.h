@@ -35,55 +35,28 @@ int at_driver_langevin_zerofiller__init(
 
   zf->n = n;
 
-  if ((zf->w = (double *) calloc((n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.driver.langevin.zerofiller: no memory! var: zf->w, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-
-  for (i = 0; i < n+1; i++) {
+  at_utils__new_arr(zf->w, n+1, double);
+  for (i = 0; i <= n; i++) {
     zf->w[i] = 0;
   }
 
-  if ((zf->vals = (double *) calloc((n + 1), sizeof(double))) == NULL) {
-    fprintf(stderr, "Error@at.driver.langevin.zerofiller: no memory! var: zf->vals, type: double\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-
-  for (i = 0; i < n+1; i++) {
+  at_utils__new_arr(zf->vals, n+1, double);
+  for (i = 0; i <= n; i++) {
     zf->vals[i] = 0;
   }
 
-  if ((zf->has_vals = (int *) calloc((n + 1), sizeof(int))) == NULL) {
-    fprintf(stderr, "Error@at.driver.langevin.zerofiller: no memory! var: zf->has_vals, type: int\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-
-  for (i = 0; i < n+1; i++) {
+  at_utils__new_arr(zf->has_vals, n+1, int);
+  for (i = 0; i <= n; i++) {
     zf->has_vals[i] = 0;
   }
 
-
-  if ((zf->ib_from_left = (int *) calloc((n + 1), sizeof(int))) == NULL) {
-    fprintf(stderr, "Error@at.driver.langevin.zerofiller: no memory! var: zf->ib_from_left, type: int\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-
-  for (i = 0; i < n+1; i++) {
+  at_utils__new_arr(zf->ib_from_left, n+1, int);
+  for (i = 0; i <= n; i++) {
     zf->ib_from_left[i] = 0;
   }
 
-
-  if ((zf->ib_from_right = (int *) calloc((n + 1), sizeof(int))) == NULL) {
-    fprintf(stderr, "Error@at.driver.langevin.zerofiller: no memory! var: zf->ib_from_right, type: int\n");
-    fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-    exit(1);
-  }
-
-  for (i = 0; i < n+1; i++) {
+  at_utils__new_arr(zf->ib_from_right, n+1, int);
+  for (i = 0; i <= n; i++) {
     zf->ib_from_right[i] = 0;
   }
 

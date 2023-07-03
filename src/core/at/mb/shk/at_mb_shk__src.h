@@ -66,9 +66,7 @@ int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
   }
 
   /* shk_win_mul: array used of modulation shrinking factors */
-  at_utils_log__exit_if ((shk->win_mul = (double *) calloc(shk->n, sizeof(double))) == NULL,
-      conf->log, "no memory! var: shk->win_mul, type: double\n");
-
+  at_utils__new_arr(shk->win_mul, shk->n, double);
   for (i = 0; i < shk->n; i++) {
     double beta_midpoint = at_distr_domain__get_bin_center(domain, i);
     double invwf = at_distr_weights__calc_inv_weight(w, beta_midpoint, NULL, NULL, NULL);

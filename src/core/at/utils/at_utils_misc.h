@@ -26,4 +26,18 @@ const char *at_utils__bool_to_str(at_bool_t val);
 
 char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, const char *fn);
 
+#ifndef at_utils__new_arr
+#define at_utils__new_arr(x, n, type) \
+  if ((x = (type *) calloc(n, sizeof(*(x)))) == NULL) { \
+    fprintf(stderr, "Error@at.utils: no memory for %s (%s) x %lu\n", \
+        #x, #type, (unsigned long) (n)); \
+    exit(1); \
+}
+#endif
+
+#ifndef at_utils__new
+#define at_utils__new(x, type) at_utils__new_arr(x, 1, type)
+#endif
+
+
 #endif

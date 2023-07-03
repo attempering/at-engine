@@ -67,9 +67,7 @@ void at_utils_conf__init_ez(
     conf->cfg = NULL;
   }
 
-  conf->log = (at_utils_log_t *) calloc(1, sizeof(at_utils_log_t));
-  zcom_utils__exit_if (conf->log == NULL,
-      "Error@at.utils.conf: no memory for conf->log");
+  at_utils__new(conf->log, at_utils_log_t);
 
   at_utils_log__cfg_init(conf->log, conf->cfg, conf->ssm, data_dir, verbose);
 

@@ -48,11 +48,7 @@ void at_mb_iie_et__conf_init(at_mb_iie_et_t *et, at_mb_t *mb, at_utils_conf_t *c
 
   et->n = mb->distr->domain->n;
 
-  et->items = (at_mb_iie_et_item_t *) calloc(et->n, sizeof(at_mb_iie_et_item_t));
-
-  at_utils_log__exit_if (et->items == NULL,
-      conf->log, "no memory! var: et_items, type: at_mb_iie_et_item_t\n");
-
+  at_utils__new_arr(et->items, et->n, at_mb_iie_et_item_t);
   for (i = 0; i < et->n; i++) {
     at_mb_iie_et_item__clear(et->items + i);
     et->items[i].ib = i;

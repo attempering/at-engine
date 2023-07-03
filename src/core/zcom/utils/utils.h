@@ -30,8 +30,8 @@
 
 #include "../def/def.h"
 
-#ifndef zcom_utils__xnew
-#define zcom_utils__xnew(x, n) \
+#ifndef zcom_utils__new
+#define zcom_utils__new(x, n) \
   if (#n[0] != '1' && (n) <= 0) { \
     fprintf(stderr, "Error@zcom.utils: failed to allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
@@ -40,8 +40,8 @@
     exit(1); }
 #endif
 
-#ifndef zcom_utils__xrenew
-#define zcom_utils__xrenew(x, n) \
+#ifndef zcom_utils__renew
+#define zcom_utils__renew(x, n) \
   if ((n) <= 0) { \
     fprintf(stderr, "Error@zcom.utils: failed to allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \

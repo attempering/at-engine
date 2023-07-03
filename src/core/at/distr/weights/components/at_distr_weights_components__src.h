@@ -57,10 +57,7 @@ int at_distr_weights_components__conf_init(
     return -1;
   }
 
-  c->components = (at_distr_weights_component_t *) calloc(c->n_components, sizeof(at_distr_weights_component_t));
-  at_utils_log__exit_if (c->components == NULL,
-      conf->log,
-      "no memory for %d components\n", c->n_components);
+  at_utils__new_arr(c->components, c->n_components, at_distr_weights_component_t);
 
   for (ic = 0; ic < c->n_components; ic++) {
     at_distr_weights_component__conf_init(c->components + ic, ic, conf);

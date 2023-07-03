@@ -88,18 +88,12 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
   }
 
 
-  at_utils_log__exit_if ((win->js_grid_unres = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      conf->log,
-      "no memory! var: domain->js_grid_unres, type: int\n");
-
+  at_utils__new_arr(win->js_grid_unres, n+1, int);
   for (i = 0; i <= n; i++) {
     win->js_grid_unres[i] = 0;
   }
 
-  at_utils_log__exit_if ((win->jt_grid_unres = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      conf->log,
-      "no memory! var: win->jt_grid_unres, type: int\n");
-
+  at_utils__new_arr(win->jt_grid_unres, n+1, int);
   for (i = 0; i <= n; i++) {
     win->jt_grid_unres[i] = 0;
   }
@@ -108,25 +102,12 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
       win->bwmod, win->bwdel,
       win->js_grid_unres, win->jt_grid_unres);
 
-
-  // Note: without the conversion of `n` to unsigned,
-  // GCC issues the following warning
-  // warning: argument 1 range [18446744071562067968, 18446744073709551615]
-  // exceeds maximum object size 9223372036854775807 [-Walloc-size-larger-than=]
-  // for the next calloc line
-
-  at_utils_log__exit_if ((win->js_bin = (int *) calloc((unsigned) n, sizeof(int))) == NULL,
-      conf->log,
-      "no memory! var: win->js_bin, type: int\n");
-
+  at_utils__new_arr(win->js_bin, n, int);
   for (i = 0; i < n; i++) {
     win->js_bin[i] = 0;
   }
 
-  at_utils_log__exit_if ((win->jt_bin = (int *) calloc((unsigned) n, sizeof(int))) == NULL,
-      conf->log,
-      "no memory! var: win->jt_bin, type: int\n");
-
+  at_utils__new_arr(win->jt_bin, n, int);
   for (i = 0; i < n; i++) {
     win->jt_bin[i] = 0;
   }
@@ -147,18 +128,12 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
     }
   }
 
-  at_utils_log__exit_if ((win->js_grid_res = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      conf->log,
-      "no memory! var: mb->js_grid_res, type: int\n");
-
+  at_utils__new_arr(win->js_grid_res, n+1, int);
   for (i = 0; i <= n; i++) {
     win->js_grid_res[i] = 0;
   }
 
-  at_utils_log__exit_if ((win->jt_grid_res = (int *) calloc(n + 1, sizeof(int))) == NULL,
-      conf->log,
-      "no memory! var: win->jt_grid_res, type: int\n");
-
+  at_utils__new_arr(win->jt_grid_res, n+1, int);
   for (i = 0; i <= n; i++) {
     win->jt_grid_res[i] = 0;
   }

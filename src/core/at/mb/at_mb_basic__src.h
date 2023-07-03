@@ -126,11 +126,7 @@ int at_mb__conf_init(
       "ze_init_file");
 
   /* visits: number of visits */
-  mb->visits = (double *) calloc(n, sizeof(double));
-  at_utils_log__exit_if (mb->visits == NULL,
-      conf->log,
-      "no memory for mb->visits of size %d, type: double\n",
-      n);
+  at_utils__new_arr(mb->visits, n, double);
   for (i = 0; i < n; i++) {
     mb->visits[i] = 0.0;
   }

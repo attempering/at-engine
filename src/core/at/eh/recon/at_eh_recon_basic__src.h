@@ -111,34 +111,20 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
 
   /* eh_recon: temporary space for reconstructing histogram */
   {
-    if ((recon->recon = (double *) calloc((recon->e_n + 1), sizeof(double))) == NULL) {
-      fprintf(stderr, "Error@at.eh: no memory! var: recon->recon, type: double\n");
-      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-      exit(1);
-    }
-    for (i = 0; i < recon->e_n; i++)
+    at_utils__new_arr(recon->recon, recon->e_n, double);
+    for (i = 0; i < recon->e_n; i++) {
       recon->recon[i] = 0.0;
+    }
   }
 
-  /* eh_is: indices for temperature windows (lower) */
+  /* indices for grid estimators */
   {
-    if ((recon->is = (int *) calloc((recon->n + 2), sizeof(int))) == NULL) {
-      fprintf(stderr, "Error@at.eh: no memory! var: recon->is, type: int\n");
-      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-      exit(1);
-    }
+    at_utils__new_arr(recon->is, recon->e_n + 1, int);
     for (i = 0; i < recon->n + 1; i++) {
       recon->is[i] = 0;
     }
-  }
 
-  /* eh_it: indices for temperature windows (higher) */
-  {
-    if ((recon->it = (int *) calloc((recon->n + 2), sizeof(int))) == NULL) {
-      fprintf(stderr, "Error@at.eh: no memory! var: recon->it, type: int\n");
-      fprintf(stderr, "    src: %s:%d\n", __FILE__, __LINE__);
-      exit(1);
-    }
+    at_utils__new_arr(recon->it, recon->e_n + 1, int);
     for (i = 0; i < recon->n + 1; i++) {
       recon->it[i] = 0;
     }

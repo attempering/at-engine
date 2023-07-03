@@ -204,8 +204,7 @@ int at_mb_win__init_bin2wins(at_mb_win_t *win)
   int i, j;
   at_mb_win_ids_t *wj;
 
-  zcom_utils__exit_if ((win->bin2wins = (at_mb_win_ids_t *) calloc(n, sizeof(*win->bin2wins))) == NULL,
-      "no memory for win->bin2wins of size %d", n);
+  at_utils__new_arr(win->bin2wins, n, at_mb_win_ids_t);
 
   at_mb_win__calc_window_counts(win);
 
@@ -214,8 +213,7 @@ int at_mb_win__init_bin2wins(at_mb_win_t *win)
     
     wj->curr_id_ = 0;
 
-    zcom_utils__exit_if ((wj->ids = (int *) calloc(wj->count, sizeof(int))) == NULL,
-        "no memory for win->bin2wins[%d].ids count %d\n", j, wj->count);
+    at_utils__new_arr(wj->ids, wj->count, int);
   }
 
   for (i = 0; i < n; i++) {

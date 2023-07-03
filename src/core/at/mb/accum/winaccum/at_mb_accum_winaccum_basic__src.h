@@ -136,13 +136,7 @@ void at_mb_accum_winaccum__conf_init(
 
   if (winaccum->enabled) {
 
-    //printf("n %d\n", n); getchar();
-
-    winaccum->items = (at_mb_accum_winaccum_item_t *) calloc(n, sizeof(at_mb_accum_winaccum_item_t));
-    at_utils_log__exit_if (winaccum->items == NULL,
-        conf->log,
-        "no memory! var: winaccum->items, type: at_mb_accum_winaccum_items_t\n");
-
+    at_utils__new_arr(winaccum->items, n, at_mb_accum_winaccum_item_t);
     for (i = 0; i < n; i++) {
       at_mb_accum_winaccum_item__init(winaccum->items + i, i, winaccum->win);
     }

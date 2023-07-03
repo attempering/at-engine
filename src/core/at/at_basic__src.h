@@ -193,7 +193,9 @@ int at__init(at_t *at,
     return -1;
   }
 
-  at_utils_log__info(at->utils->log, "successfully loaded configuration file %s\n", cfg_file);
+  at_utils_log__info(at->utils->log,
+      "successfully loaded configuration file %s\n",
+      cfg_file);
 
   zcom_cfg__close(cfg);
 
@@ -209,8 +211,7 @@ at_t *at__open(const char *cfg_file,
   at_t *at;
 
   /* allocate memory for at_t */
-  zcom_utils__exit_if ((at = (at_t *) calloc(1, sizeof(at_t))) == NULL,
-      "Fatal@at: no memory for a new object of at_t\n");
+  at_utils__new(at, at_t);
 
   /* call low level function */
   zcom_utils__exit_if (at__init(at, cfg_file, sys_params, flags) != 0,

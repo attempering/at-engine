@@ -45,10 +45,7 @@ void at_mb_iie_gridvals__conf_init(at_mb_iie_gridvals_t *gridvals, at_mb_t *mb,
 
   gridvals->n = n;
 
-  gridvals->items = (at_mb_iie_gridvals_item_t *) calloc((n + 1), sizeof(at_mb_iie_gridvals_item_t));
-  at_utils_log__exit_if (gridvals->items == NULL,
-    conf->log, "no memory! var: mb->iie->gridvals->items, type: at_mb_iie_gridvals_item_t\n");
-
+  at_utils__new_arr(gridvals->items, n+1, at_mb_iie_gridvals_item_t);
   for (i = 0; i <= n; i++) {
     at_mb_iie_gridvals_item__clear(gridvals->items + i);
   }

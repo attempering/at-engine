@@ -50,9 +50,7 @@ int at_driver_langevin_integrator__init(
     at_driver_langevin_zerofiller__init(intgr->zerofiller, domain->n);
     intgr->vals = NULL;
   } else {
-    if ((intgr->vals = (double *) calloc(intgr->n, sizeof(double))) == NULL) {
-      fprintf(stderr, "no memory for at->mb->intgr->vals, %d of double\n", intgr->n);
-    }
+    at_utils__new_arr(intgr->vals, intgr->n, double);
   }
 
   return 0;
