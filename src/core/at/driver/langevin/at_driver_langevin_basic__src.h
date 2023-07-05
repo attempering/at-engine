@@ -33,7 +33,8 @@ int at_driver_langevin__conf_init(
     at_driver_langevin_t *langevin,
     at_distr_t *distr,
     at_mb_t *mb,
-    at_utils_conf_t *conf)
+    at_utils_conf_t *conf,
+    uint32_t rng_seed)
 {
   langevin->distr = distr;
 
@@ -107,7 +108,7 @@ int at_driver_langevin__conf_init(
   langevin->integrate_func = NULL;
 
   // initialize the random number generator
-  at_driver_langevin_rng__conf_init(langevin->rng, conf);
+  at_driver_langevin_rng__conf_init(langevin->rng, conf, rng_seed);
 
   at_utils_conf__get_filename(conf,
       "langevin-file",

@@ -36,7 +36,7 @@ int main(void)
   at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
   at_distr__conf_init(distr, conf, boltz);
   at_mb__conf_init(mb, distr, conf, 1.0);
-  at_driver__conf_init(driver, distr, mb, conf);
+  at_driver__conf_init(driver, distr, mb, conf, 0);
 
   at_driver_langevin_rng__reset(driver->langevin->rng, 1234,
       NULL, NULL, NULL);

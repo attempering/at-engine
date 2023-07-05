@@ -122,7 +122,8 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
 
 
 
-ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
+ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(
+    zcom_mtrng_t *mtrng,
     const char *fn, uint32_t seed, int force_reload,
     const char *fn_backup)
 {

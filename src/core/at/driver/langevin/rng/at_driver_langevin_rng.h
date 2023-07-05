@@ -29,7 +29,8 @@ int at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng);
 
 void at_driver_langevin_rng__conf_init(
     at_driver_langevin_rng_t *rng,
-    at_utils_conf_t *conf);
+    at_utils_conf_t *conf,
+    uint32_t seed);
 
 void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng);
 

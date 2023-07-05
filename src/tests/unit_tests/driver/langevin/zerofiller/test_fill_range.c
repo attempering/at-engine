@@ -45,7 +45,7 @@ void init_distr_mb_and_langevin(at_utils_conf_t *conf,
   // beta_min and beta_max are to be read from the configuration file
   at_mb__conf_init(mb, distr, conf, boltz);
 
-  at_driver_langevin__conf_init(langevin, mb->distr, mb, conf);
+  at_driver_langevin__conf_init(langevin, mb->distr, mb, conf, 0);
 }
 
 

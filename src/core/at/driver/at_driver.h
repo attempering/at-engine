@@ -30,7 +30,8 @@ int at_driver__conf_init(
     at_driver_t *driver,
     at_distr_t *distr,
     at_mb_t *mb,
-    at_utils_conf_t *conf);
+    at_utils_conf_t *conf,
+    uint32_t seed);
 
 void at_driver__finish(at_driver_t *driver);
 

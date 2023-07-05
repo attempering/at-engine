@@ -64,7 +64,7 @@ void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
 
   at_mb__conf_init(mb, distr, conf, boltz);
 
-  at_driver_langevin__conf_init(langevin, distr, mb, conf);
+  at_driver_langevin__conf_init(langevin, distr, mb, conf, 0);
 
   at_utils_manifest__conf_init(manifest, conf);
   at_utils_manifest__open_file(manifest);

@@ -29,7 +29,8 @@ int at_driver_langevin__conf_init(
     at_driver_langevin_t *langevin,
     at_distr_t *distr,
     at_mb_t *mb,
-    at_utils_conf_t *conf);
+    at_utils_conf_t *conf,
+    uint32_t rng_seed);
 
 void at_driver_langevin__clear(at_driver_langevin_t *langevin);
 

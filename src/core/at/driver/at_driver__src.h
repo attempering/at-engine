@@ -34,7 +34,8 @@ int at_driver__conf_init(
     at_driver_t *driver,
     at_distr_t *distr,
     at_mb_t *mb,
-    at_utils_conf_t *conf)
+    at_utils_conf_t *conf,
+    uint32_t rng_seed)
 {
   at_utils_conf__push_mod(conf, "at.driver");
 
@@ -52,7 +53,8 @@ int at_driver__conf_init(
   at_utils_conf__pop_mod(conf);
 
   at_driver_langevin__conf_init(
-    driver->langevin, distr, mb, conf);
+    driver->langevin, distr, mb, conf,
+    rng_seed);
 
   return 0;
 }

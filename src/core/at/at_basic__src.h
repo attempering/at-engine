@@ -131,7 +131,10 @@ static int at__cfg_init_low_level(at_t *at,
   at_mb__conf_init(at->mb, at->distr, at->utils->conf, at->sys_params->boltz);
 
   /* initialize the beta driver, i.e., the Langevin equation */
-  at_driver__conf_init(at->driver, at->distr, at->mb, at->utils->conf);
+  {
+    uint32_t rng_seed = (at->sys_params->sim_id*7 + 31415926) * (uint32_t) time(NULL); 
+    at_driver__conf_init(at->driver, at->distr, at->mb, at->utils->conf, rng_seed);
+  }
 
   /* initialize the energy histograms */
   at_eh__conf_init(at->eh, at->mb, at->utils->conf);
@@ -191,7 +194,7 @@ int at__init(at_t *at,
     return -1;
   }
 
-  /* open configuration file */
+  /* open a low-level configuration file reader */
   if ((cfg = zcom_cfg__open(cfg_file, at->ssm,
       ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
     fprintf(stderr, "Error@at: failed to open configuration file %s.\n", cfg_file);
@@ -207,11 +210,11 @@ int at__init(at_t *at,
     return -1;
   }
 
+  zcom_cfg__close(cfg);
+
   at_utils_log__info(at->log,
       "successfully loaded configuration file %s\n",
       cfg_file);
-
-  zcom_cfg__close(cfg);
 
   return 0;
 }
