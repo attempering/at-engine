@@ -24,19 +24,19 @@
 
 
 /* translate string values to actual ones through sscanf() */
-ZCOM__INLINE int zcom_opt__getval(zcom_opt_t *o, zcom_ssm_t *m);
+int zcom_opt__getval(zcom_opt_t *o, zcom_ssm_t *m);
 
 /* set properties of an option: fmt = "%b" for a switch */
-ZCOM__INLINE void zcom_opt__set(zcom_opt_t *o, const char *sflag, const char *key,
+void zcom_opt__set(zcom_opt_t *o, const char *sflag, const char *key,
     const char *fmt, void *ptr, const char *desc);
 
 /* print the value of o->ptr */
-ZCOM__INLINE void zcom_opt__print_ptr(zcom_opt_t *o);
+void zcom_opt__print_ptr(zcom_opt_t *o);
 
 /* search an option list, return an option whose variable address is p */
-ZCOM__INLINE zcom_opt_t *zcom_opt__find(zcom_opt_t *ls, int n, const void *p);
+zcom_opt_t *zcom_opt__find(zcom_opt_t *ls, int n, const void *p);
 
 /* search an option list to see if an option is explicitly set */
-ZCOM__INLINE int zcom_opt__isset(zcom_opt_t *ls, int n, const void *p, const char *var);
+int zcom_opt__isset(zcom_opt_t *ls, int n, const void *p, const char *var);
 
 #endif

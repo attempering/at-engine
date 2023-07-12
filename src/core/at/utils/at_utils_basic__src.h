@@ -65,12 +65,15 @@ static void at_utils__conf_init_self(at_utils_t *utils)
 }
 
 
-void at_utils__cfg_init(at_utils_t *utils,
+void at_utils__cfg_init(
+    at_utils_t *utils,
     zcom_ssm_t *ssm,
     zcom_cfg_t *cfg,
     at_bool_t is_continuation,
-    at_bool_t append_sim_id_to_data_dir, int sim_id,
-    at_bool_t ignore_lockfile, at_bool_t verbose)
+    at_bool_t append_sim_id_to_data_dir,
+    int sim_id,
+    at_bool_t ignore_lockfile,
+    at_bool_t verbose)
 {
   utils->ssm = ssm;
 
@@ -121,7 +124,12 @@ void at_utils__manifest(at_utils_t *utils)
 
   at_utils_log__manifest(utils->log, utils->manifest);
 
-  at_utils_manifest__print_double(utils->manifest, utils->thermostat_temp, "utils->thermostat_temp", "thermostat-temp");
+
+  at_utils_manifest__push_mod(utils->manifest, "at.utils");
+
+  at_utils_manifest__print_double(utils->manifest, utils->thermostat_temp, "thermostat_temp", "thermostat-temp");
+
+  at_utils_manifest__pop_mod(utils->manifest);
 }
 
 

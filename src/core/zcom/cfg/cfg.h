@@ -21,10 +21,10 @@
 
 #include "cfg__def.h"
 
-ZCOM__STRCLS zcom_cfg_t *zcom_cfg__open(const char *fn, zcom_ssm_t *ssm, unsigned flags);
-ZCOM__STRCLS void zcom_cfg__close(zcom_cfg_t *cfg);
-ZCOM__STRCLS int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc);
-ZCOM__STRCLS int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags);
-ZCOM__STRCLS int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt);
+zcom_cfg_t *zcom_cfg__open(const char *fn, zcom_ssm_t *ssm, unsigned flags);
+void zcom_cfg__close(zcom_cfg_t *cfg);
+int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc);
+int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags);
+int zcom_cfg__get(zcom_cfg_t *cfg, void *var, const char *key, const char *fmt);
 
 #endif

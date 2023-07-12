@@ -23,7 +23,7 @@
 #include "log.h"
 
 
-ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn, unsigned flags)
+zcom_log_t *zcom_log__open(const char *fn, unsigned flags)
 {
   zcom_log_t *log;
 
@@ -44,7 +44,7 @@ ZCOM__INLINE zcom_log_t *zcom_log__open(const char *fn, unsigned flags)
 
 
 
-ZCOM__INLINE int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list args)
+int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list args)
 {
   if (log == NULL) {
     return 1;
@@ -75,7 +75,7 @@ ZCOM__INLINE int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list arg
 
 
 
-ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
+int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
 {
   va_list args;
 
@@ -112,7 +112,7 @@ ZCOM__INLINE int zcom_log__printf(zcom_log_t *log, const char *fmt, ...)
 
 
 
-ZCOM__INLINE void zcom_log__close(zcom_log_t *log)
+void zcom_log__close(zcom_log_t *log)
 {
   if (log == NULL) {
     return;
@@ -128,7 +128,7 @@ ZCOM__INLINE void zcom_log__close(zcom_log_t *log)
 
 
 
-ZCOM__INLINE int zcom_log__flush(zcom_log_t *log)
+int zcom_log__flush(zcom_log_t *log)
 {
   if (log->fp == NULL) {
     return 1;
@@ -142,7 +142,7 @@ ZCOM__INLINE int zcom_log__flush(zcom_log_t *log)
 
 
 /* close & reopen log file to make sure that stuff is written to disk */
-ZCOM__INLINE int zcom_log__hard_flush(zcom_log_t *log)
+int zcom_log__hard_flush(zcom_log_t *log)
 {
   if (log->fp == NULL || log->fn == NULL) return 1;
 

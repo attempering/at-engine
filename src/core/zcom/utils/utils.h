@@ -84,8 +84,8 @@ ZCOM__INLINE void zcom_utils__perrmsg_(const char *file, int line, const char *w
     va_end(args);                             \
     exit(1);                                  \
   } }
-ZCOM__INLINE void zcom_utils__exit_if(int cond, const char *fmt, ...) PERRMSG__(cond)
-ZCOM__INLINE void zcom_utils__fatal(const char *fmt, ...) zcom_utils__PERRMSG__(1)
+void zcom_utils__exit_if(int cond, const char *fmt, ...) PERRMSG__(cond)
+void zcom_utils__fatal(const char *fmt, ...) zcom_utils__PERRMSG__(1)
 #undef zcom_utils__PERRMSG__
 
 #endif /* ZCOM__HAVE_VAM */
@@ -132,15 +132,15 @@ ZCOM__INLINE void zcom_utils__fatal(const char *fmt, ...) zcom_utils__PERRMSG__(
 #define zcom_utils__STR_LOWER    zcom_utils__STR_CASE
 
 /* remove leading and trailing spaces */
-ZCOM__INLINE char *zcom_utils__strip_(char *s, unsigned flags);
+char *zcom_utils__strip_(char *s, unsigned flags);
 
 #define zcom_utils__strip(s)  zcom_utils__strip_(s, zcom_utils__REMOVE_SPACES)
 #define zcom_utils__lstrip(s) zcom_utils__strip_(s, zcom_utils__REMOVE_LEADING_SPACES)
 #define zcom_utils__rstrip(s) zcom_utils__strip_(s, zcom_utils__REMOVE_TRAILING_SPACES)
 
 
-ZCOM__INLINE char *zcom_utils__str_to_lower(char *s);
-ZCOM__INLINE char *zcom_utils__str_to_upper(char *s);
+char *zcom_utils__str_to_lower(char *s);
+char *zcom_utils__str_to_upper(char *s);
 
 
 /* in the following macros,

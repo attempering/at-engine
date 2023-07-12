@@ -22,9 +22,9 @@
 #include "rng__def.h"
 
 /* save the current mt state to file */
-ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname);
+int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fname);
 
-ZCOM__INLINE void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed);
+void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed);
 
 /* load mt state from `fname`
  * The reason that this function is only an internal function
@@ -33,7 +33,7 @@ ZCOM__INLINE void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed)
  * will be a mess.
  * This is why we need another wrapper function to recover from
  * the failure case. */
-ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fname);
+int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fname);
 
 /* load mt state from `fname`,
  * or if it fails, use `seed` to initialize mt
@@ -43,24 +43,24 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
  * if force_reload == 0, then loading from file is not invoked
  * if a previous file loading operation is already performed.
  * */
-ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
+int zcom_mtrng__load_or_init_from_seed(zcom_mtrng_t *mtrng,
     const char *fn, uint32_t seed, int force_reload,
     const char *fn_backup);
 
-ZCOM__INLINE zcom_mtrng_t *zcom_mtrng__open(uint32_t seed);
+zcom_mtrng_t *zcom_mtrng__open(uint32_t seed);
 
-ZCOM__INLINE void zcom_mtrng__close(zcom_mtrng_t *mtrng);
+void zcom_mtrng__close(zcom_mtrng_t *mtrng);
 
 
 /* return an unsigned random number */
-ZCOM__INLINE uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng);
+uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng);
 
 /* return a uniformly distributed random number */
-ZCOM__INLINE double zcom_mtrng__rand01(zcom_mtrng_t *mtrng);
+double zcom_mtrng__rand01(zcom_mtrng_t *mtrng);
 
 /* return a normally distributed with zero mean and unit variance
  * using ratio method */
-ZCOM__INLINE double zcom_mtrng__rand_gauss(zcom_mtrng_t *mtrng);
+double zcom_mtrng__rand_gauss(zcom_mtrng_t *mtrng);
 
 
 #endif

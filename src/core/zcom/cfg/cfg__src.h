@@ -350,7 +350,7 @@ void zcom_cfg__close(zcom_cfg_t *cfg)
 
 
 /* register an option request, return the index */
-ZCOM__INLINE int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
+int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt, void *ptr, const char *desc)
 {
   int n = cfg->nopt++;
   zcom_opt_t *o;
@@ -376,7 +376,7 @@ ZCOM__INLINE int zcom_cfg__add(zcom_cfg_t *cfg, const char *key, const char *fmt
 
 /* match requested options with entries in cfg file
  * returns 0 if successful */
-ZCOM__INLINE int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
+int zcom_cfg__match(zcom_cfg_t *cfg, unsigned flags)
 {
   int i, j, ret = 0, verbose = flags & ZCOM_CFG__VERBOSE, must = flags & ZCOM_OPT__MANDATORY;
   zcom_opt_t *o;

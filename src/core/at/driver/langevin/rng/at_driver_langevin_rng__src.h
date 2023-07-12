@@ -24,7 +24,8 @@
 
 void at_driver_langevin_rng__reset(
     at_driver_langevin_rng_t *rng, uint32_t seed,
-    zcom_ssm_t *ssm, const char *data_dir, const char *fn_backup)
+    zcom_ssm_t *ssm, const char *data_dir,
+    const char *fn_backup)
 {
   int force_reload = 0;
   char* fn_rng_backup = NULL;

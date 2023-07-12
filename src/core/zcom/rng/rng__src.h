@@ -23,7 +23,7 @@
 
 
 /* save the current mt state to file */
-ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fn)
+int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fn)
 {
   FILE *fp;
   int k;
@@ -49,7 +49,7 @@ ZCOM__INLINE int zcom_mtrng__save(zcom_mtrng_t *mtrng, const char *fn)
 
 
 
-ZCOM__INLINE void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed)
+void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed)
 {
   int k;
 
@@ -75,7 +75,7 @@ ZCOM__INLINE void zcom_mtrng__init_from_seed(zcom_mtrng_t *mtrng, uint32_t seed)
  * will be a mess.
  * This is why we need another wrapper function to recover from
  * the failure case. */
-ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fname)
+int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fname)
 {
   int err = 1;
   FILE *fp;
@@ -122,7 +122,7 @@ ZCOM__INLINE int zcom_mtrng__load_from_file_(zcom_mtrng_t *mtrng, const char *fn
 
 
 
-ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(
+int zcom_mtrng__load_or_init_from_seed(
     zcom_mtrng_t *mtrng,
     const char *fn, uint32_t seed, int force_reload,
     const char *fn_backup)
@@ -168,7 +168,7 @@ ZCOM__INLINE int zcom_mtrng__load_or_init_from_seed(
 
 
 
-ZCOM__INLINE zcom_mtrng_t *zcom_mtrng__open(uint32_t seed)
+zcom_mtrng_t *zcom_mtrng__open(uint32_t seed)
 {
   zcom_mtrng_t *mtrng = (zcom_mtrng_t *) calloc(1, sizeof(zcom_mtrng_t));
   if (mtrng == NULL) {
@@ -183,7 +183,7 @@ ZCOM__INLINE zcom_mtrng_t *zcom_mtrng__open(uint32_t seed)
 
 
 
-ZCOM__INLINE void zcom_mtrng__close(zcom_mtrng_t *mtrng)
+void zcom_mtrng__close(zcom_mtrng_t *mtrng)
 {
   free(mtrng);
 }
@@ -191,7 +191,7 @@ ZCOM__INLINE void zcom_mtrng__close(zcom_mtrng_t *mtrng)
 
 
 /* return an unsigned random number */
-ZCOM__INLINE uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng)
+uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng)
 {
   uint32_t x;
   static const uint32_t mag01[2] = {0, 0x9908b0dfUL}; /* MATRIX_A */
@@ -231,7 +231,7 @@ ZCOM__INLINE uint32_t zcom_mtrng__rand_uint32(zcom_mtrng_t *mtrng)
 #undef ZCOM_RNG__MT_UMASK
 #undef ZCOM_RNG__MT_LMASK
 
-ZCOM__INLINE double zcom_mtrng__rand01(zcom_mtrng_t *mtrng)
+double zcom_mtrng__rand01(zcom_mtrng_t *mtrng)
 {
   return zcom_mtrng__rand_uint32(mtrng) * (1.0/4294967296.0);
 }
@@ -240,7 +240,7 @@ ZCOM__INLINE double zcom_mtrng__rand01(zcom_mtrng_t *mtrng)
 
 /* Gaussian distribution with zero mean and unit variance
  * using ratio method */
-ZCOM__INLINE double zcom_mtrng__rand_gauss(zcom_mtrng_t *mtrng)
+double zcom_mtrng__rand_gauss(zcom_mtrng_t *mtrng)
 {
   double x, y, u, v, q;
 

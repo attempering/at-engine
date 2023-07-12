@@ -23,18 +23,18 @@
 #include "ssm__def.h"
 
 
-ZCOM__STRCLS zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size);
+zcom_ssm_t *zcom_ssm__openx(int hash_bits, size_t block_size);
 
 
-ZCOM__STRCLS zcom_ssm_t *zcom_ssm__open(void);
+zcom_ssm_t *zcom_ssm__open(void);
 
 /* delete a string */
-ZCOM__STRCLS int zcom_ssm__del(zcom_ssm_t *m, char *s);
+int zcom_ssm__del(zcom_ssm_t *m, char *s);
 
 /* delete all strings */
-ZCOM__STRCLS int zcom_ssm__del_all(zcom_ssm_t *m);
+int zcom_ssm__del_all(zcom_ssm_t *m);
 
-ZCOM__STRCLS void zcom_ssm__close(zcom_ssm_t *m);
+void zcom_ssm__close(zcom_ssm_t *m);
 
 
 /*
@@ -51,17 +51,17 @@ ZCOM__STRCLS void zcom_ssm__close(zcom_ssm_t *m);
  * If flags & ZCOM_SSM__TASK_CONCAT:
  * append t after *ps. Equivalent to cpy if ps or *ps is NULL.
  * */
-ZCOM__STRCLS char *zcom_ssm__copy_or_concat(zcom_ssm_t *m,
+char *zcom_ssm__copy_or_concat(zcom_ssm_t *m,
     char **ps, const char *t, size_t min_size, unsigned flags);
 
-ZCOM__STRCLS char *zcom_ssm__copy(zcom_ssm_t *m, char **ps, const char *t);
+char *zcom_ssm__copy(zcom_ssm_t *m, char **ps, const char *t);
 
 /* *ps = *ps + t */
-ZCOM__STRCLS char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t);
+char *zcom_ssm__concat(zcom_ssm_t *m, char **ps, const char *t);
 
-ZCOM__STRCLS char *zcom_ssm__dup(zcom_ssm_t *m, const char *t);
+char *zcom_ssm__dup(zcom_ssm_t *m, const char *t);
 
-ZCOM__STRCLS char *zcom_ssm__new(zcom_ssm_t *m);
+char *zcom_ssm__new(zcom_ssm_t *m);
 
 
 
@@ -70,11 +70,11 @@ ZCOM__STRCLS char *zcom_ssm__new(zcom_ssm_t *m);
  * *pn is number of characters read (including '\n', but not the terminal null)
  * delim is the '\n' for reading a singe line
  * */
-ZCOM__STRCLS char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp);
+char *zcom_ssm__fgetx(zcom_ssm_t *m, char** ps, size_t *pn, int delim, FILE *fp);
 
 
-ZCOM__STRCLS char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp);
+char *zcom_ssm__fgets(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp);
 
-ZCOM__STRCLS char *zcom_ssm__fget_all(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp);
+char *zcom_ssm__fget_all(zcom_ssm_t *m, char **ps, size_t *pn, FILE *fp);
 
 #endif

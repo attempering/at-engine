@@ -110,4 +110,13 @@ ERR:
 }
 
 
+
+int at_mb__write_text(
+    at_mb_t *mb,
+    const char *fn)
+{
+  return at_mb__write_text_versioned(mb, fn, AT_MB__FILE_TEXT_VERSION_LATEST);
+}
+
+
 #endif

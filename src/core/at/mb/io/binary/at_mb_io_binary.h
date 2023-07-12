@@ -39,11 +39,9 @@ int at_mb__write_binary_versioned(
     int version);
 
 
-__inline int at_mb__write_binary(
+int at_mb__write_binary(
     at_mb_t *mb,
-    const char *fn) {
-  return at_mb__write_binary_versioned(mb, fn, AT_MB__FILE_BINARY_VERSION_LATEST);
-}
+    const char *fn);
 
 
 
