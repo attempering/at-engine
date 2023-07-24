@@ -30,25 +30,28 @@
 
 #include "../def/def.h"
 
+
+
 #ifndef zcom_utils__new
-#define zcom_utils__new(x, n) \
+#define zcom_utils__new(x, n, tp) \
   if (#n[0] != '1' && (n) <= 0) { \
     fprintf(stderr, "Error@zcom.utils: failed to allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
-  } else if ((x = calloc(n, sizeof(*(x)))) == NULL) { \
+  } else if ((x = (tp *) calloc(n, sizeof(*(x)))) == NULL) { \
     fprintf(stderr, "Error@zcom.utils: no memory for %s x %u\n", #x, (unsigned) (n)); \
     exit(1); }
 #endif
 
 #ifndef zcom_utils__renew
-#define zcom_utils__renew(x, n) \
+#define zcom_utils__renew(x, n, tp) \
   if ((n) <= 0) { \
     fprintf(stderr, "Error@zcom.utils: failed to allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
-  } else if ((x = realloc(x, (n)*sizeof(*(x)))) == NULL) { \
+  } else if ((x = (tp *) realloc(x, (n)*sizeof(*(x)))) == NULL) { \
     fprintf(stderr, "Error@zcom.utils: no memory for %s x %u\n", #x, (unsigned) (n)); \
     exit(1); }
 #endif
+
 
 
 void zcom_utils__perrmsg__(const char *file, int line, const char *reason,
@@ -95,6 +98,9 @@ void zcom_utils__fatal(const char *fmt, ...) zcom_utils__PERRMSG__(1)
     fprintf(stderr, "Error@zcom.utils: failed to open file %s\n", fn); err; }
 
 
+int zcom_utils__fexists(const char *fn);
+
+
 /* swap two variables */
 #ifndef zcom_utils__xtpswap
 #define zcom_utils__xtpswap(tp, x, y) { tp dum_; dum_ = (x); (x) = (y); (y) = dum_; }
@@ -104,9 +110,25 @@ void zcom_utils__fatal(const char *fmt, ...) zcom_utils__PERRMSG__(1)
 #define zcom_utils__intswap(x, y) zcom_utils__xtpswap(int, x, y)
 #endif
 
+int zcom_utils__intmin(int x, int y);
+int zcom_utils__intmax(int x, int y);
+int zcom_utils__int_confined(int x, int xmin, int xmax);
+int zcom_utils__intsqr(int x);
+int zcom_utils__get_pair_index(int i, int j, int n);
+int zcom_utils__parse_pair_index(int id, int n, int *i, int *j);
+
+
+
 #ifndef zcom_utils__dblswap
 #define zcom_utils__dblswap(x, y) zcom_utils__xtpswap(double, x, y)
 #endif
+
+double zcom_utils__dblmin(double x, double y);
+double zcom_utils__dblmax(double x, double y);
+double zcom_utils__dbl_confined(double x, double xmin, double xmax);
+double zcom_utils__dblhypot(double x, double y);
+double zcom_utils__dblround(double x, double dx);
+
 
 
 #define zcom_utils__isalnum(c)   isalnum((unsigned char)(c))
@@ -141,6 +163,11 @@ char *zcom_utils__strip_(char *s, unsigned flags);
 
 char *zcom_utils__str_to_lower(char *s);
 char *zcom_utils__str_to_upper(char *s);
+char *zcom_utils__strcnv(char *s, const char *t, size_t len, unsigned flags);
+
+
+#define strcmpnc(s, t) zcom_utils__strncmpnc(s, t, -1)
+int zcom_utils__strncmpnc(const char *s, const char *t, int n);
 
 
 /* in the following macros,

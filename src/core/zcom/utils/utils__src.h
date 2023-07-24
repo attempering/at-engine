@@ -54,8 +54,8 @@ int zcom_utils__fexists(const char *fn)
 }
 
 
-int zcom_utils__intmax(int x, int y) { return x > y ? x : y; }
 int zcom_utils__intmin(int x, int y) { return x < y ? x : y; }
+int zcom_utils__intmax(int x, int y) { return x > y ? x : y; }
 /* confine x within [xmin, xmax] */
 int zcom_utils__int_confined(int x, int xmin, int xmax)
   { return x < xmin ? xmin : x > xmax ? xmax : x; }
@@ -92,8 +92,6 @@ double zcom_utils__dblmin(double x, double y) { return x < y ? x : y; }
 double zcom_utils__dbl_confined(double x, double xmin, double xmax)
   { return x < xmin ? xmin : x > xmax ? xmax : x; }
 
-double zcom_utils__dblsqr(double x) { return x * x; }
-
 /* sqrt(x*x + y*y) */
 double zcom_utils__dblhypot(double x, double y)
 {
@@ -113,10 +111,6 @@ double zcom_utils__dblround(double x, double dx)
   if (x*dx > 0) return dx * (int)(x/dx + (.5 - DBL_EPSILON));
   else return -dx * (int)(-x/dx + (.5 - DBL_EPSILON));
 }
-
-void zcom_utils__dblcleararr(double *x, int n)
-  { int i; for (i = 0; i < n; i++) x[i] = 0.0; }
-
 
 
 
@@ -194,7 +188,6 @@ char *zcom_utils__strcnv(char *s, const char *t, size_t len, unsigned flags)
 }
 
 /* compare strings without case */
-#define strcmpnc(s, t) zcom_utils__strncmpnc(s, t, -1)
 int zcom_utils__strncmpnc(const char *s, const char *t, int n)
 {
   int i, cs, ct;

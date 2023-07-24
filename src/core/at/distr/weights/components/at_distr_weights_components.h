@@ -32,7 +32,8 @@ int at_distr_weights_components__conf_init(
     at_distr_domain_t *domain,
     at_utils_conf_t *conf);
 
-void at_distr_weights_components__finish(at_distr_weights_components_t *c);
+void at_distr_weights_components__finish(
+    at_distr_weights_components_t *c);
 
 void at_distr_weights_components__manifest(
     const at_distr_weights_components_t *c,
@@ -42,5 +43,14 @@ double at_distr_weights_components__calc_f_factor(
     const at_distr_weights_components_t *c,
     double beta, double *p_neg_df_dbeta,
     at_utils_log_t *log);
+
+void at_distr_weights_components__basic_init(
+    at_distr_weights_components_t *c,
+    at_distr_domain_t *domain,
+    int n_components);
+
+void at_distr_weights_components__unpack(
+    at_distr_weights_components_t *c);
+
 
 #endif

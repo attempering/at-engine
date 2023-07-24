@@ -26,9 +26,13 @@ double at__beta_to_temp(const at_t *at, double beta);
 
 double at__temp_to_beta(const at_t *at, double temp);
 
+double at__get_energy(at_t *at);
+
 void at__set_energy(at_t *at, double energy);
 
 double at__get_beta(const at_t *at);
+
+void at__set_beta(at_t *at, double beta);
 
 
 #endif

@@ -16,55 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_MISC__SRC_H__
-#define AT_MISC__SRC_H__
+#ifndef AT_DISTR_WEIGHTS_COMPONENT__DEF_H__
+#define AT_DISTR_WEIGHTS_COMPONENT__DEF_H__
 
-#include <unistd.h>
+#include "../../../context/at_context__def.h"
 
-#include "at_misc.h"
-
-#include "params/at_params.h"
-#include "utils/at_utils.h"
-#include "distr/at_distr.h"
-#include "mb/at_mb.h"
-#include "driver/at_driver.h"
-#include "eh/at_eh.h"
+enum {
+  AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT = 0,
+  AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN = 1,
+  AT_DISTR_WEIGHTS_COMPONENT_TYPE__COUNT
+};
 
 
+typedef struct at_distr_weights_component_t_ {
 
-double at__beta_to_temp(const at_t *at, double beta)
-{
-    return 1.0/(beta * at->sys_params->boltz);
-}
+  int id;
 
-double at__temp_to_beta(const at_t *at, double temp)
-{
-    return 1.0/(temp * at->sys_params->boltz);
-}
+  char *key; /* key from configuration file */
 
+  int type; /* %packed */
 
-double at__get_energy(at_t *at)
-{
-  return at->energy;
-}
+  double w_rel; /* relative weight, %packed */
 
+  double beta0; /* %packed */
 
-void at__set_energy(at_t *at, double energy)
-{
-  at->energy = energy;
-}
+  double sigma; /* %packed */
+
+  double inv_sigma_sqr;
+
+} at_distr_weights_component_t;
 
 
-double at__get_beta(const at_t *at)
-{
-  return at->beta;
-}
-
-
-void at__set_beta(at_t *at, double beta)
-{
-  at->beta = beta;
-}
 
 
 #endif

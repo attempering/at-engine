@@ -122,7 +122,7 @@ static zcom_ssm__ss_llist_node_t *zcom_ssm_llist_find_(zcom_ssm_t *m, const char
 
 
 
-void zcom_ssm_llist_print_(zcom_ssm_t *m, size_t hash_id, const char* tag)
+inline static void zcom_ssm_llist_print_(zcom_ssm_t *m, size_t hash_id, const char* tag)
 {
   zcom_ssm__ss_llist_node_t *head = m->base_ + hash_id;
   zcom_ssm__ss_llist_node_t *hp = head;

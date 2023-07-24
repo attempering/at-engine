@@ -19,32 +19,7 @@
 #ifndef AT_DISTR_WEIGHTS_COMPONENTS__DEF_H__
 #define AT_DISTR_WEIGHTS_COMPONENTS__DEF_H__
 
-#include "../../../context/at_context__def.h"
-
-enum {
-  AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT = 0,
-  AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN = 1,
-  AT_DISTR_WEIGHTS_COMPONENT_TYPE__COUNT
-};
-
-
-typedef struct at_distr_weights_component_t_ {
-
-  int id;
-
-  const char *key;
-
-  int type;
-
-  double w_rel; /* relative weight */
-
-  double beta0;
-
-  double sigma;
-
-  double inv_sigma_sqr;
-
-} at_distr_weights_component_t;
+#include "at_distr_weights_component__def.h"
 
 
 
@@ -54,7 +29,7 @@ typedef struct at_distr_weights_components_t_ {
   double    beta_max;
   int       n;
 
-  int n_components;
+  int       n_components;
   at_distr_weights_component_t *components;
 
 } at_distr_weights_components_t;

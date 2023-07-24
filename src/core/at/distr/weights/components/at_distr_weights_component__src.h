@@ -150,6 +150,17 @@ static int at_distr_weights_component__conf_init(
 }
 
 
+static void at_distr_weights_component__finish(
+    at_distr_weights_component_t *c)
+{
+  if (c->key != NULL) {
+    free(c->key);
+  }
+  memset(c, '\0', sizeof(*c));
+}
+
+
+
 static int at_distr_weights_component__manifest(
     const at_distr_weights_component_t *c,
     at_utils_manifest_t *manifest)
@@ -200,5 +211,16 @@ static double at_distr_weights_component__calc_f_factor(
 
   return f_comp;
 }
+
+
+static void at_distr_weights_component__unpack(
+    at_distr_weights_component_t *c,
+    int id)
+{
+  c->id = id;
+  c->key = NULL;
+  c->inv_sigma_sqr = 1.0/(c->sigma * c->sigma);
+}
+
 
 #endif

@@ -233,7 +233,8 @@ static double at_distr_weights__calc_f_factor(
 }
 
 
-static double at_distr_weights__calc_invw_factor(const at_distr_weights_t *w, double beta)
+static double at_distr_weights__calc_invw_factor(
+    const at_distr_weights_t *w, double beta)
 {
   double beta_r = beta / w->beta_max; /* to relative beta */
   double invw;
