@@ -185,12 +185,29 @@ typedef gmx_bool at_bool_t;
 
 
 #ifndef AT_MPI
-  #if defined(GMX_MPI) && GMX_MPI
-  #define AT_MPI 1
-  #else
-  #define AT_MPI 0
+
+  #if GMX_VERSION >= 20160000
+
+    /* modern versions, GMX_MPI is always defined as 0 or 1 */
+
+    #if defined(GMX_MPI)
+      #define AT_MPI GMX_MPI
+    #else
+      /* should never reach here */
+      #define AT_MPI 0
+    #endif
+
+  #else /* legacy versions <= 5.1 */
+
+    #if defined(GMX_MPI)
+      #define AT_MPI 1
+    #else
+      #define AT_MPI 0
+    #endif
+
   #endif
-#endif
+
+#endif /* defined(AT_MPI) */
 
 
 
