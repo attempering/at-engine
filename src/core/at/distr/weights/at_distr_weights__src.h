@@ -27,31 +27,11 @@
 
 
 
-static void at_distr_weights__init_ens_exp(at_distr_weights_t *w)
-{
-  const double eps = 1e-5;
-
-  int ifac = (int) (w->ens_exp + 0.5); /* round to nearest int */
-
-  if (fabs(w->ens_exp - ifac) < eps && ifac >= 0) {
-    w->ens_exp_is_int = AT__TRUE;
-    w->ens_exp_int = ifac;
-  } else {
-    w->ens_exp_is_int = AT__FALSE;
-    w->ens_exp_int = 0;
-  }
-
-}
-
-
-
 int at_distr_weights__conf_init(
     at_distr_weights_t *w,
     at_distr_domain_t *domain,
     at_utils_conf_t *conf)
 {
-  int i;
-
   w->beta_min = domain->beta_min;
   w->beta_max = domain->beta_max;
   w->n = domain->n;
@@ -119,12 +99,7 @@ int at_distr_weights__conf_init(
 
   }
 
-  /* ens_w: array of ensemble weights at bin boundaries */
-  at_utils__new_arr(w->ens_w, w->n + 1, double);
-  for (i = 0; i <= w->n; i++) {
-    double invw = at_distr_weights__calc_inv_weight(w, domain->barr[i], NULL, NULL, NULL);
-    w->ens_w[i] = 1.0/invw;
-  }
+  at_distr_weights__init_ens_w(w, domain);
 
   at_utils_conf__pop_mod(conf);
 
@@ -177,6 +152,51 @@ void at_distr_weights__finish(at_distr_weights_t *w)
   }
 
   at_utils_log__finish(w->log);
+}
+
+
+
+int at_distr_weights__get_n_components(
+    const at_distr_weights_t *w)
+{
+  if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
+    return w->components->n_components;
+  } else {
+    return 0;
+  }
+}
+
+
+
+void at_distr_weights__init_ens_exp(at_distr_weights_t *w)
+{
+  const double eps = 1e-5;
+
+  int ifac = (int) (w->ens_exp + 0.5); /* round to nearest int */
+
+  if (fabs(w->ens_exp - ifac) < eps && ifac >= 0) {
+    w->ens_exp_is_int = AT__TRUE;
+    w->ens_exp_int = ifac;
+  } else {
+    w->ens_exp_is_int = AT__FALSE;
+    w->ens_exp_int = 0;
+  }
+}
+
+
+
+void at_distr_weights__init_ens_w(
+    at_distr_weights_t *w,
+    at_distr_domain_t *domain)
+{
+  int i;
+
+  /* ens_w: array of ensemble weights at bin boundaries */
+  at_utils__new_arr(w->ens_w, w->n + 1, double);
+  for (i = 0; i <= w->n; i++) {
+    double invw = at_distr_weights__calc_inv_weight(w, domain->barr[i], NULL, NULL, NULL);
+    w->ens_w[i] = 1.0/invw;
+  }
 }
 
 

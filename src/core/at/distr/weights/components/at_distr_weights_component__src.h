@@ -213,14 +213,5 @@ static double at_distr_weights_component__calc_f_factor(
 }
 
 
-static void at_distr_weights_component__unpack(
-    at_distr_weights_component_t *c,
-    int id)
-{
-  c->id = id;
-  c->key = NULL;
-  c->inv_sigma_sqr = 1.0/(c->sigma * c->sigma);
-}
-
 
 #endif

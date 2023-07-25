@@ -38,6 +38,16 @@ void at_distr_weights__manifest(
     const at_distr_weights_t *w,
     at_utils_manifest_t *manifest);
 
+int at_distr_weights__get_n_components(
+    const at_distr_weights_t *w);
+
+void at_distr_weights__init_ens_exp(
+    at_distr_weights_t *w);
+
+void at_distr_weights__init_ens_w(
+    at_distr_weights_t *w,
+    at_distr_domain_t *domain);
+
 /* return the inverse of overall temperature weight
  *
  * The weight is a product of two components, f and w factor

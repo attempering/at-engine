@@ -49,8 +49,4 @@ void at_distr_weights_components__basic_init(
     at_distr_domain_t *domain,
     int n_components);
 
-void at_distr_weights_components__unpack(
-    at_distr_weights_components_t *c);
-
-
 #endif

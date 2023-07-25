@@ -34,7 +34,10 @@
 
 #ifndef zcom_utils__new
 #define zcom_utils__new(x, n, tp) \
-  if (#n[0] != '1' && (n) <= 0) { \
+  if (sizeof(*(x)) != sizeof(tp)) { \
+    fprintf(stderr, "Error@zcom.utils: declared type %s does not match variable %s\n", #tp, #x); \
+    exit(1); \
+  } else if (#n[0] != '1' && (n) <= 0) { \
     fprintf(stderr, "Error@zcom.utils: failed to allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
   } else if ((x = (tp *) calloc(n, sizeof(*(x)))) == NULL) { \
@@ -44,7 +47,10 @@
 
 #ifndef zcom_utils__renew
 #define zcom_utils__renew(x, n, tp) \
-  if ((n) <= 0) { \
+  if (sizeof(*(x)) != sizeof(tp)) { \
+    fprintf(stderr, "Error@zcom.utils: declared type %s does not match variable %s\n", #tp, #x); \
+    exit(1); \
+  } else if ((n) <= 0) { \
     fprintf(stderr, "Error@zcom.utils: failed to allocate %d objects for %s\n", (int) (n), #x); \
     exit(1); \
   } else if ((x = (tp *) realloc(x, (n)*sizeof(*(x)))) == NULL) { \

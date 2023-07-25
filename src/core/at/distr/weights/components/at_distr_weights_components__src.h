@@ -73,7 +73,8 @@ void at_distr_weights_components__manifest(
 {
   int ic;
 
-  at_utils_manifest__print_int(manifest, c->n_components, "distr->weights->components->n_components", "ensemble-n-components");
+  at_utils_manifest__print_int(manifest, c->n_components,
+      "distr->weights->components->n_components", "ensemble-n-components");
 
   for (ic = 0; ic < c->n_components; ic++) {
     at_distr_weights_component__manifest(c->components + ic, manifest);
@@ -131,13 +132,19 @@ double at_distr_weights_components__calc_f_factor(
 }
 
 
+
 void at_distr_weights_components__basic_init(
     at_distr_weights_components_t *c,
     at_distr_domain_t *domain,
     int n_components)
 {
   c->n_components = n_components;
-  zcom_utils__new(c->components, n_components, at_distr_weights_component_t);
+
+  if (n_components > 0) {
+    zcom_utils__new(c->components, n_components, at_distr_weights_component_t);
+  } else {
+    c->components = NULL;
+  }
 
   c->beta_min = domain->beta_min;
   c->beta_max = domain->beta_max;
@@ -145,17 +152,6 @@ void at_distr_weights_components__basic_init(
 
 }
 
-
-void at_distr_weights_components__unpack(
-    at_distr_weights_components_t *c)
-{
-  int i;
-
-  for (i = 0; i < c->n_components; i++) {
-    at_distr_weights_component__unpack(
-        &c->components[i], i);
-  }
-}
 
 
 #endif

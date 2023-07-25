@@ -28,8 +28,11 @@ char *at_utils__make_output_filename(zcom_ssm_t *ssm, const char *data_dir, cons
 
 #ifndef at_utils__new_arr
 #define at_utils__new_arr(x, n, type) \
-  if ((x = (type *) calloc(n, sizeof(*(x)))) == NULL) { \
-    fprintf(stderr, "Error@at.utils: no memory for %s (%s) x %lu\n", \
+  if (sizeof(*(x)) != sizeof(type)) { \
+    fprintf(stderr, "Error@at.utils: declared type `%s` does not match variable `%s`\n", #type, #x); \
+    exit(1); \
+  } else if ((x = (type *) calloc(n, sizeof(*(x)))) == NULL) { \
+    fprintf(stderr, "Error@at.utils: no memory for `%s` (%s) x %lu\n", \
         #x, #type, (unsigned long) (n)); \
     exit(1); \
 }

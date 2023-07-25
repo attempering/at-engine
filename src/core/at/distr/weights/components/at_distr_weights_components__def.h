@@ -30,6 +30,7 @@ typedef struct at_distr_weights_components_t_ {
   int       n;
 
   int       n_components;
+
   at_distr_weights_component_t *components;
 
 } at_distr_weights_components_t;

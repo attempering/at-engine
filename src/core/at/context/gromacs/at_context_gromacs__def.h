@@ -185,8 +185,10 @@ typedef gmx_bool at_bool_t;
 
 
 #ifndef AT_MPI
-  #ifdef GMX_MPI
+  #if defined(GMX_MPI) && GMX_MPI
   #define AT_MPI 1
+  #else
+  #define AT_MPI 0
   #endif
 #endif
 
