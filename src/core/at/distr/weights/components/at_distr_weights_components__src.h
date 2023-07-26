@@ -25,6 +25,7 @@
 
 
 #include "at_distr_weights_component__src.h"
+#include "at_distr_weights_components_order__src.h"
 
 
 

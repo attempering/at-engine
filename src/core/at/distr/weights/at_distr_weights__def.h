@@ -55,6 +55,9 @@ typedef struct at_distr_weights_t_ {
 
   at_distr_weights_components_t components[1];
 
+  /* compute an ordering parameter for sorting replicas */
+  double   q_order;
+
   double   *ens_w;        /* array of ensemble weights at bin boundaries */
 
   at_utils_log_t log[1]; /* module-specific logger */

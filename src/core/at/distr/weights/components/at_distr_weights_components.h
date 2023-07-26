@@ -24,6 +24,7 @@
 #include "at_distr_weights_components__def.h"
 #include "../../domain/at_distr_domain__def.h"
 #include "../../../utils/at_utils.h"
+#include "at_distr_weights_components_order.h"
 
 typedef struct zcom_cfg_t_ zcom_cfg_t;
 

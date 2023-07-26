@@ -24,6 +24,7 @@
 #include "../domain/at_distr_domain.h"
 
 #include "components/at_distr_weights_components__src.h"
+#include "at_distr_weights_order__src.h"
 
 
 
@@ -100,6 +101,8 @@ int at_distr_weights__conf_init(
   }
 
   at_distr_weights__init_ens_w(w, domain);
+
+  at_distr_weights__calc_q_order(w);
 
   at_utils_conf__pop_mod(conf);
 
