@@ -111,17 +111,29 @@ double at_distr_weights_components__calc_f_factor(
     double beta, double *p_neg_df_dbeta,
     at_utils_log_t *log)
 {
-  double f = 0, neg_df_dbeta = 0;
+  double f, neg_df_dbeta;
   int ic;
 
-  for (ic = 0; ic < c->n_components; ic++) {
-    double f_comp, neg_df_dbeta_comp;
+  if (c->n_components > 0) {
 
-    f_comp = at_distr_weights_component__calc_f_factor(
-        c->components + ic, beta, &neg_df_dbeta_comp, log);
+    f = 0.0;
+    neg_df_dbeta = 0.0;
 
-    f += f_comp;
-    neg_df_dbeta += neg_df_dbeta_comp;
+    for (ic = 0; ic < c->n_components; ic++) {
+      double f_comp, neg_df_dbeta_comp;
+
+      f_comp = at_distr_weights_component__calc_f_factor(
+          c->components + ic, beta, &neg_df_dbeta_comp, log);
+
+      f += f_comp;
+      neg_df_dbeta += neg_df_dbeta_comp;
+
+    }
+
+  } else {
+
+    f = 1.0;
+    neg_df_dbeta = 0.0;
 
   }
 

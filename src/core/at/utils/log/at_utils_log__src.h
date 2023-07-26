@@ -173,7 +173,8 @@ static int at_utils_log__vprintf_level_0(
     const char *module,
     const char *type,
     FILE *fp,
-    const char *fmt, va_list args)
+    const char *fmt,
+    va_list args)
 {
   if (fp == NULL) {
     return -1;
@@ -204,6 +205,12 @@ static void at_utils_log__vprintf_file(
   }
 
   if (log->fp == NULL && !log->is_delegate) {
+    if (log->file == NULL) {
+      at_utils_log__vprintf_level_0(module, type, stderr, fmt, args);
+      return;
+      //fprintf(stderr, "Error@at.utils.log: trying to print, module %s, type %s, fmt %s\n",
+      //    module, type, fmt);
+    }
     at_utils_log__open_file(log, AT__FALSE);
   }
 

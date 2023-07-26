@@ -139,6 +139,8 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
   /* ens_w: array of ensemble weights at bin boundaries */
   at_utils_manifest__print_double_arr(manifest, w->ens_w, w->n, "ens_w");
 
+  at_utils_manifest__print_double(manifest, w->q_order, "q_order", NULL);
+
   at_utils_manifest__pop_mod(manifest);
 }
 
@@ -197,7 +199,8 @@ void at_distr_weights__init_ens_w(
   /* ens_w: array of ensemble weights at bin boundaries */
   at_utils__new_arr(w->ens_w, w->n + 1, double);
   for (i = 0; i <= w->n; i++) {
-    double invw = at_distr_weights__calc_inv_weight(w, domain->barr[i], NULL, NULL, NULL);
+    double invw = at_distr_weights__calc_inv_weight(
+        w, domain->barr[i], NULL, NULL, NULL);
     w->ens_w[i] = 1.0/invw;
   }
 }
@@ -259,8 +262,15 @@ static double at_distr_weights__calc_f_factor(
 static double at_distr_weights__calc_invw_factor(
     const at_distr_weights_t *w, double beta)
 {
-  double beta_r = beta / w->beta_max; /* to relative beta */
+  double beta_r;
   double invw;
+
+  if (w->beta_max <= 0) {
+    at_utils_log__fatal((at_utils_log_t *) (w->log),
+        "invalid beta_max %g\n", w->beta_max);
+  }
+
+  beta_r = beta / w->beta_max; /* to relative beta */
 
   //fprintf(stderr, "beta_r %g, ens_exp %g, ens_exp_is_int %d, ens_exp_int %d\n",
   //  beta_r, w->ens_exp, w->ens_exp_is_int, w->ens_exp_int);
@@ -288,7 +298,10 @@ double at_distr_weights__calc_inv_weight(
     double *neg_dlnwf_dbeta, double *pf, double *neg_df_dbeta)
 {
   double f, invw, invwf, neg_df_dbeta_ = 0.0;
-  const double invwf_max = 1e6;
+
+  // with Gaussian distribution, the weights can be very small
+  // so invwf can be extremely large
+  const double invwf_max = 1e308;
   const double invwf_min = 1e-6;
 
   if (neg_df_dbeta == NULL) {
@@ -311,7 +324,8 @@ double at_distr_weights__calc_inv_weight(
 
   at_utils_log__exit_if (invwf > invwf_max || invwf < invwf_min,
       ((at_distr_weights_t *) w)->log,
-      "bad invwf=%g, f=%g, beta=%g\n", invwf, beta);
+      "bad invwf=%g, mode %d, exp %g (%d, %d), invw %g, f=%g, beta=%g/%g\n",
+      invwf, w->mode, w->ens_exp, w->ens_exp_int, w->ens_exp_is_int, invw, f, beta, w->beta_max);
 
   if (neg_dlnwf_dbeta != NULL) {
     *neg_dlnwf_dbeta = (w->ens_exp / beta)
