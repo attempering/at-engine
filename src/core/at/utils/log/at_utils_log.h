@@ -58,7 +58,6 @@ void at_utils_log__vprintf(
 
 void at_utils_log__printf(
     at_utils_log_t *log,
-    const char *type,
     const char *fmt, ...);
 
 void at_utils_log__info(

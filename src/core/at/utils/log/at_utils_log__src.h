@@ -179,10 +179,12 @@ static int at_utils_log__vprintf_level_0(
     return -1;
   }
 
-  if (module != NULL) {
-    fprintf(fp, "%s@%s: ", type, module);
-  } else {
-    fprintf(fp, "%s: ", type);
+  if (type != NULL) {
+    if (module != NULL) {
+      fprintf(fp, "%s@%s: ", type, module);
+    } else {
+      fprintf(fp, "%s: ", type);
+    }
   }
 
   vfprintf(fp, fmt, args);
@@ -220,7 +222,6 @@ static void at_utils_log__vprintf_stderr(
 
 void at_utils_log__printf(
     at_utils_log_t *log,
-    const char *type,
     const char *fmt, ...)
 {
   const char *module;
@@ -235,12 +236,12 @@ void at_utils_log__printf(
   module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, type, fmt, args);
+  at_utils_log__vprintf_file(log, module, NULL, fmt, args);
   va_end(args);
 
   if (log->print_to_stderr) {
     va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, type, fmt, args);
+    at_utils_log__vprintf_stderr(module, NULL, fmt, args);
     va_end(args);
   }
 }
