@@ -95,7 +95,7 @@ void at_utils_log__init_delegate(
 
 void at_utils_log__finish(at_utils_log_t *log)
 {
-  if (!log->ready) {
+  if (log == NULL || log->ready != AT__TRUE) {
     return;
   }
 
@@ -110,6 +110,10 @@ void at_utils_log__finish(at_utils_log_t *log)
 
 void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest)
 {
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
   at_utils_manifest__push_mod(manifest, "at.utils.log");
 
   at_utils_manifest__print_str(manifest, log->file, "file", "log-file");
@@ -121,6 +125,10 @@ void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest)
 
 void at_utils_log__open_file(at_utils_log_t *log, at_bool_t is_continuation)
 {
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
   log->fp = fopen(log->file,
       (is_continuation ? "a" : "w"));
 
@@ -132,6 +140,10 @@ void at_utils_log__open_file(at_utils_log_t *log, at_bool_t is_continuation)
 
 void at_utils_log__close_file(at_utils_log_t *log)
 {
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
   if (log->fp) {
     fclose(log->fp);
     log->fp = NULL;
@@ -141,7 +153,7 @@ void at_utils_log__close_file(at_utils_log_t *log)
 
 void at_utils_log__push_mod(at_utils_log_t *log, const char *mod)
 {
-  if (log == NULL) {
+  if (log == NULL || log->ready != AT__TRUE) {
     return;
   }
 
@@ -150,7 +162,7 @@ void at_utils_log__push_mod(at_utils_log_t *log, const char *mod)
 
 const char *at_utils_log__pop_mod(at_utils_log_t *log)
 {
-  if (log == NULL) {
+  if (log == NULL || log->ready != AT__TRUE) {
     return NULL;
   }
 
@@ -159,7 +171,7 @@ const char *at_utils_log__pop_mod(at_utils_log_t *log)
 
 const char *at_utils_log__get_mod(const at_utils_log_t *log)
 {
-  if (log == NULL) {
+  if (log == NULL || log->ready != AT__TRUE) {
     return NULL;
   }
 
@@ -200,7 +212,7 @@ static void at_utils_log__vprintf_file(
     const char *type,
     const char *fmt, va_list args)
 {
-  if (log == NULL) {
+  if (log == NULL || log->ready != AT__TRUE) {
     return;
   }
 
@@ -234,10 +246,8 @@ void at_utils_log__printf(
   const char *module;
   va_list args;
 
-  if (log == NULL) { /* fall back to fprintf(stderr, fmt, ...) */
-    va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
-    va_end(args);
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
   }
 
   module = at_utils_log__get_mod(log);
@@ -261,6 +271,10 @@ void at_utils_log__info(
   const char *module;
   va_list args;
 
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
   module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
@@ -281,6 +295,10 @@ void at_utils_log__warning(
 {
   const char *module;
   va_list args;
+
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
 
   module = at_utils_log__get_mod(log);
 
@@ -303,6 +321,10 @@ void at_utils_log__error(
   const char *module;
   va_list args;
 
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
   module = at_utils_log__get_mod(log);
 
   va_start(args, fmt);
@@ -323,6 +345,10 @@ void at_utils_log__fatal(
 {
   const char *module;
   va_list args;
+
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
 
   module = at_utils_log__get_mod(log);
 
@@ -349,7 +375,14 @@ void at_utils_log__exit_if(
   const char *module;
   va_list args;
 
-  if (!cond) return;
+  if (!cond) {
+    return;
+  }
+
+  if (log == NULL || log->ready != AT__TRUE) {
+    exit(1);
+    return;
+  }
 
   module = at_utils_log__get_mod(log);
 

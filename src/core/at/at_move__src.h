@@ -58,7 +58,7 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 
   temp_before = at__beta_to_temp(at, at->beta);
 
-  ib = at_distr__beta_to_index(at->distr, at->beta, 1);
+  ib = at_distr__beta_to_index(at->distr, at->beta, AT__TRUE);
 
   /* update energy data, change at->beta */
   /* repeat several times to change the temperature */

@@ -156,7 +156,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
   for (step = 0; step < nsteps; step++) {
 
     // calculate ib and invwf
-    ib = at_mb__beta_to_index(mb, beta, 1);
+    ib = at_distr__beta_to_index(mb->distr, beta, 1);
 
     invwf = at_distr__calc_inv_weight(mb->distr,
         beta, &neg_dlnwf_dbeta, NULL, NULL);

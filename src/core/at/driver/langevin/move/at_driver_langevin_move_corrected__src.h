@@ -229,7 +229,7 @@ static at_bool_t at_driver_langevin_move__accept(
   //  return AT__FALSE;
   //}
 
-  ib_new = at_distr__beta_to_index(langevin->distr, proposal->beta_new, 0);
+  ib_new = at_distr__beta_to_index(langevin->distr, proposal->beta_new, AT__FALSE);
 
   zcom_utils__exit_if((ib_new < 0 || ib_new >= domain->n),
       "bad ib_new %d\n", ib_new);

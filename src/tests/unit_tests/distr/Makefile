@@ -1,5 +1,11 @@
+sub_dirs = weights
+
 bins::
-	$(MAKE) $@ -C weights
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C weights
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

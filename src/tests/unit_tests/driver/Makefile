@@ -1,5 +1,11 @@
+sub_dirs = langevin
+
 bins::
-	$(MAKE) $@ -C langevin
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C langevin
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

@@ -1,7 +1,11 @@
+sub_dirs = cfg rng
+
 bins::
-	$(MAKE) $@ -C cfg
-	$(MAKE) $@ -C rng
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C cfg
-	$(MAKE) $@ -C rng
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

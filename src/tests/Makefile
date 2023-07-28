@@ -1,12 +1,14 @@
+sub_dirs = basic_test unit_tests sample_progs
+
 bins::
-	$(MAKE) $@ -C basic_tests
-	$(MAKE) $@ -C unit_tests
-	$(MAKE) $@ -C sample_progs
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C basic_tests
-	$(MAKE) $@ -C unit_tests
-	$(MAKE) $@ -C sample_progs
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 zip::
 	zip -r ../at-engine-tests_`date +'%Y-%m-%d-%H%M'`.zip \

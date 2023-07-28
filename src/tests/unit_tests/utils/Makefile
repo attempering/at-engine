@@ -1,5 +1,11 @@
+sub_dirs = log
+
 bins::
-	$(MAKE) $@ -C log
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C log
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

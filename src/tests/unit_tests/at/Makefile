@@ -1,7 +1,11 @@
+sub_dirs = nonflat restart
+
 bins::
-	$(MAKE) $@ -C nonflat
-	$(MAKE) $@ -C restart
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C nonflat
-	$(MAKE) $@ -C restart
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

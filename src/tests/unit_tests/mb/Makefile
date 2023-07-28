@@ -1,5 +1,11 @@
+sub_dirs = iie io
+
 bins::
-	$(MAKE) $@ -C iie
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C iie
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

@@ -1,7 +1,11 @@
+sub_dirs = e_fixed gaussian
+
 bins::
-	$(MAKE) $@ -C e_fixed
-	$(MAKE) $@ -C gaussian
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C e_fixed
-	$(MAKE) $@ -C gaussian
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;

@@ -1,18 +1,14 @@
+sub_dirs = zcom utils distr mb driver at
+
 bins::
-	$(MAKE) $@ -C zcom
-	$(MAKE) $@ -C utils
-	$(MAKE) $@ -C distr
-	$(MAKE) $@ -C mb
-	$(MAKE) $@ -C driver
-	$(MAKE) $@ -C at
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C zcom
-	$(MAKE) $@ -C utils
-	$(MAKE) $@ -C distr
-	$(MAKE) $@ -C mb
-	$(MAKE) $@ -C driver
-	$(MAKE) $@ -C at
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 zip::
 	zip -r ../at-engine-unit-tests_`date +'%Y-%m-%d-%H%M'`.zip \

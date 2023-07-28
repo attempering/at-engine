@@ -77,18 +77,12 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 }
 
 
-int at_mb__beta_to_index(at_mb_t *mb, double beta, at_bool_t check)
-{
-  return at_distr__beta_to_index(mb->distr, beta, check);
-}
-
-
 void at_mb__add(at_mb_t *mb, double e, double beta,
     int *pib, double *pinvwf, double *neg_dlnwf_dbeta)
 {
   double invwf, f = 1.0, neg_df_dbeta = 0.0;
 
-  int ib = at_mb__beta_to_index(mb, beta, AT__TRUE);
+  int ib = at_distr__beta_to_index(mb->distr, beta, AT__TRUE);
 
   *pib = ib;
 
