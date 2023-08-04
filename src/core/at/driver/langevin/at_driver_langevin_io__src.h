@@ -22,69 +22,6 @@
 #include "at_driver_langevin_io.h"
 
 
-int at_driver_langevin__read_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn,
-    FILE *fp,
-    int endn)
-{
-  at_utils_io_t io[1];
-
-  at_utils_io_binary__init_read(io, "at.driver.langevin", fn, fp, endn);
-
-  /* rate */
-  double rate = 0.0;
-  if (at_utils_io_binary__read_double(io, &rate, "langevin.rejection_rate",
-      AT_UTILS_IO__NONNEGATIVE)) {
-    goto ERR;
-  }
-
-  /* total: total number of attempts of using langevin equation */
-  if (at_utils_io_binary__read_double(io, &langevin->total, "langevin->total",
-      AT_UTILS_IO__VERBOSE | AT_UTILS_IO__NONNEGATIVE)) {
-    goto ERR;
-  }
-
-  langevin->rejects = round(langevin->total*rate);
-
-  return 0;
-
-ERR:
-  return 1;
-}
-
-
-
-int at_driver_langevin__write_binary_legacy(
-    at_driver_langevin_t *langevin,
-    const char *fn, FILE *fp)
-{
-  at_utils_io_t io[1];
-
-  at_utils_io_binary__init_write(io, "at.driver.langevin", fn, fp);
-
-  /* rejection rate */
-  {
-    double rate = (langevin->total > 1.0) ? (langevin->rejects/langevin->total) : 0.0;
-    if (at_utils_io_binary__write_double(io, rate, "langevin.rejection_rate") != 0) {
-      goto ERR;
-    }
-  }
-
-  /* total: total number of attempts of using langevin equation */
-  if (at_utils_io_binary__write_double(io, langevin->total, "langevin->total") != 0) {
-    goto ERR;
-  }
-
-  return 0;
-
-ERR:
-
-  return 1;
-}
-
-
-
 static int at_driver_langevin__read_self(at_driver_langevin_t *langevin)
 {
   const char *fn = langevin->file;

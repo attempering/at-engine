@@ -238,6 +238,7 @@ static int at_utils_log__vprintf_level_0(
     const char *module,
     const char *type,
     FILE *fp,
+    at_bool_t fp_is_terminal,
     const char *fmt,
     va_list args)
 {
@@ -246,10 +247,13 @@ static int at_utils_log__vprintf_level_0(
   }
 
   if (type != NULL) {
+    if (fp_is_terminal) {
+      fprintf(fp, "\r");
+    }
     if (module != NULL) {
-      fprintf(fp, "\r%s@%s: ", type, module);
+      fprintf(fp, "%s@%s: ", type, module);
     } else {
-      fprintf(fp, "\r%s: ", type);
+      fprintf(fp, "%s: ", type);
     }
   }
 
@@ -271,7 +275,7 @@ static void at_utils_log__vprintf_file(
 
   if (log->fp == NULL && !log->is_delegate) {
     if (log->file == NULL) {
-      at_utils_log__vprintf_level_0(module, type, stderr, fmt, args);
+      at_utils_log__vprintf_level_0(module, type, stderr, AT__TRUE, fmt, args);
       return;
       //fprintf(stderr, "Error@at.utils.log: trying to print, module %s, type %s, fmt %s\n",
       //    module, type, fmt);
@@ -279,7 +283,7 @@ static void at_utils_log__vprintf_file(
     at_utils_log__open_file(log, AT__FALSE);
   }
 
-  at_utils_log__vprintf_level_0(module, type, log->fp, fmt, args);
+  at_utils_log__vprintf_level_0(module, type, log->fp, AT__FALSE, fmt, args);
 }
 
 
@@ -288,7 +292,7 @@ static void at_utils_log__vprintf_stderr(
     const char *type,
     const char *fmt, va_list args)
 {
-  at_utils_log__vprintf_level_0(module, type, stderr, fmt, args);
+  at_utils_log__vprintf_level_0(module, type, stderr, AT__TRUE, fmt, args);
 }
 
 

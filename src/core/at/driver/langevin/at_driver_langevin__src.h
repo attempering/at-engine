@@ -23,6 +23,7 @@
 #include "at_driver_langevin_basic__src.h"
 
 #include "at_driver_langevin_io__src.h"
+#include "at_driver_langevin_io_legacy__src.h"
 
 #include "rng/at_driver_langevin_rng__src.h"
 

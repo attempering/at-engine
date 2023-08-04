@@ -76,7 +76,7 @@ static int at__conf_init_self(
 
   at_utils_conf__get_bool(conf,
       "write-text-file",
-      &at->write_text_file, AT__FALSE,
+      &at->write_text_file, AT__TRUE,
       "write_text_file");
 
   return 0;
