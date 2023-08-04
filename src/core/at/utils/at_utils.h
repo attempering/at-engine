@@ -22,6 +22,7 @@
 #include "sys/at_utils_sys.h"
 #include "at_utils_misc.h"
 
+#include "boolstack/at_utils_boolstack.h"
 #include "modstack/at_utils_modstack.h"
 #include "log/at_utils_log.h"
 #include "conf/at_utils_conf.h"

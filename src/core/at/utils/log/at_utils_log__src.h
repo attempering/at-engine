@@ -22,6 +22,7 @@
 #include "at_utils_log.h"
 
 #include "../at_utils_misc.h"
+#include "../boolstack/at_utils_boolstack.h"
 #include "../modstack/at_utils_modstack.h"
 #include "../manifest/at_utils_manifest.h"
 
@@ -64,7 +65,7 @@ void at_utils_log__cfg_init(
 
   at_utils_modstack__init(log->mods);
 
-  log->print_to_stderr = AT__TRUE;
+  at_utils_boolstack__init(log->echo, AT__TRUE);
 
   log->ready = AT__TRUE;
 }
@@ -86,7 +87,7 @@ void at_utils_log__init_delegate(
   at_utils_modstack__init(log_delegate->mods);
   at_utils_modstack__push(log_delegate->mods, mod);
 
-  log_delegate->print_to_stderr = AT__TRUE;
+  at_utils_boolstack__init(log_delegate->echo, AT__TRUE);
 
   log_delegate->ready = AT__TRUE;
 }
@@ -102,6 +103,8 @@ void at_utils_log__finish(at_utils_log_t *log)
   if (!log->is_delegate) {
     at_utils_log__close_file(log);
   }
+
+  at_utils_boolstack__finish(log->echo);
 
   at_utils_modstack__finish(log->mods);
 }
@@ -151,6 +154,24 @@ void at_utils_log__close_file(at_utils_log_t *log)
 }
 
 
+void at_utils_log__flush(at_utils_log_t *log, at_bool_t hard)
+{
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
+  if (log->fp) {
+    if (hard) {
+      // close and reopen the file
+      fclose(log->fp);
+      log->fp = fopen(log->file, "a");
+    } else {
+      fflush(log->fp);
+    }
+  }
+}
+
+
 void at_utils_log__push_mod(at_utils_log_t *log, const char *mod)
 {
   if (log == NULL || log->ready != AT__TRUE) {
@@ -181,6 +202,38 @@ const char *at_utils_log__get_mod(const at_utils_log_t *log)
 
 
 
+
+void at_utils_log__push_echo_state(at_utils_log_t *log, at_bool_t echo)
+{
+  if (log == NULL || log->ready != AT__TRUE) {
+    return;
+  }
+
+  at_utils_boolstack__push(log->echo, echo);
+}
+
+at_bool_t at_utils_log__pop_echo_state(at_utils_log_t *log)
+{
+  if (log == NULL || log->ready != AT__TRUE) {
+    return AT__FALSE;
+  }
+
+  return at_utils_boolstack__pop(log->echo);
+}
+
+at_bool_t at_utils_log__get_echo_state(const at_utils_log_t *log)
+{
+  if (log == NULL || log->ready != AT__TRUE) {
+    return AT__FALSE;
+  }
+
+  return at_utils_boolstack__get(log->echo);
+}
+
+
+
+
+
 static int at_utils_log__vprintf_level_0(
     const char *module,
     const char *type,
@@ -194,9 +247,9 @@ static int at_utils_log__vprintf_level_0(
 
   if (type != NULL) {
     if (module != NULL) {
-      fprintf(fp, "%s@%s: ", type, module);
+      fprintf(fp, "\r%s@%s: ", type, module);
     } else {
-      fprintf(fp, "%s: ", type);
+      fprintf(fp, "\r%s: ", type);
     }
   }
 
@@ -239,28 +292,36 @@ static void at_utils_log__vprintf_stderr(
 }
 
 
+
+/* template for at_utils_log__info()/warning()/error(), etc */
+#define AT_UTILS_LOG__TAGGED_PRINTF__(log, tag, fmt) \
+{ \
+  const char *module; \
+  va_list args; \
+  \
+  if (log == NULL || log->ready != AT__TRUE) { \
+    return; \
+  } \
+  module = at_utils_log__get_mod(log); \
+  \
+  va_start(args, fmt); \
+  at_utils_log__vprintf_file(log, module, tag, fmt, args); \
+  va_end(args); \
+  \
+  if (at_utils_boolstack__get(log->echo)) { \
+    va_start(args, fmt); \
+    at_utils_log__vprintf_stderr(module, tag, fmt, args); \
+    va_end(args); \
+  } \
+}
+
+
+
 void at_utils_log__printf(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module;
-  va_list args;
-
-  if (log == NULL || log->ready != AT__TRUE) {
-    return;
-  }
-
-  module = at_utils_log__get_mod(log);
-
-  va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, NULL, fmt, args);
-  va_end(args);
-
-  if (log->print_to_stderr) {
-    va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, NULL, fmt, args);
-    va_end(args);
-  }
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, NULL, fmt);
 }
 
 
@@ -268,24 +329,7 @@ void at_utils_log__info(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module;
-  va_list args;
-
-  if (log == NULL || log->ready != AT__TRUE) {
-    return;
-  }
-
-  module = at_utils_log__get_mod(log);
-
-  va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, "Info", fmt, args);
-  va_end(args);
-
-  if (log->print_to_stderr) {
-    va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, "Info", fmt, args);
-    va_end(args);
-  }
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Info", fmt);
 }
 
 
@@ -293,24 +337,7 @@ void at_utils_log__warning(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module;
-  va_list args;
-
-  if (log == NULL || log->ready != AT__TRUE) {
-    return;
-  }
-
-  module = at_utils_log__get_mod(log);
-
-  va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, "Warning", fmt, args);
-  va_end(args);
-
-  if (log->print_to_stderr) {
-    va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, "Warning", fmt, args);
-    va_end(args);
-  }
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Warning", fmt);
 }
 
 
@@ -318,24 +345,7 @@ void at_utils_log__error(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module;
-  va_list args;
-
-  if (log == NULL || log->ready != AT__TRUE) {
-    return;
-  }
-
-  module = at_utils_log__get_mod(log);
-
-  va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, "Error", fmt, args);
-  va_end(args);
-
-  if (log->print_to_stderr) {
-    va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, "Error", fmt, args);
-    va_end(args);
-  }
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Error", fmt);
 }
 
 
@@ -343,24 +353,7 @@ void at_utils_log__fatal(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module;
-  va_list args;
-
-  if (log == NULL || log->ready != AT__TRUE) {
-    return;
-  }
-
-  module = at_utils_log__get_mod(log);
-
-  va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, "Fatal", fmt, args);
-  va_end(args);
-
-  if (log->print_to_stderr) {
-    va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, "Fatal", fmt, args);
-    va_end(args);
-  }
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Fatal", fmt);
 
   exit(1);
 }
@@ -372,32 +365,15 @@ void at_utils_log__exit_if(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
-  const char *module;
-  va_list args;
-
   if (!cond) {
     return;
   }
 
-  if (log == NULL || log->ready != AT__TRUE) {
-    exit(1);
-    return;
-  }
-
-  module = at_utils_log__get_mod(log);
-
-  va_start(args, fmt);
-  at_utils_log__vprintf_file(log, module, "Fatal", fmt, args);
-  va_end(args);
-
-  if (log->print_to_stderr) {
-    va_start(args, fmt);
-    at_utils_log__vprintf_stderr(module, "Fatal", fmt, args);
-    va_end(args);
-  }
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Fatal", fmt);
 
   exit(1);
 }
+
 
 
 #endif

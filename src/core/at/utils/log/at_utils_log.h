@@ -43,13 +43,27 @@ void at_utils_log__close_file(at_utils_log_t *log);
 
 void at_utils_log__finish(at_utils_log_t *log);
 
+void at_utils_log__flush(at_utils_log_t *log, at_bool_t hard);
+
 void at_utils_log__manifest(at_utils_log_t *log, at_utils_manifest_t *manifest);
+
+
 
 void at_utils_log__push_mod(at_utils_log_t *log, const char *mod);
 
 const char *at_utils_log__pop_mod(at_utils_log_t *log);
 
 const char *at_utils_log__get_mod(const at_utils_log_t *log);
+
+
+
+void at_utils_log__push_echo_state(at_utils_log_t *log, at_bool_t echo);
+
+at_bool_t at_utils_log__pop_echo_state(at_utils_log_t *log);
+
+at_bool_t at_utils_log__get_echo_state(const at_utils_log_t *log);
+
+
 
 void at_utils_log__vprintf(
     at_utils_log_t *log,
@@ -80,5 +94,6 @@ void at_utils_log__exit_if(
     at_bool_t cond,
     at_utils_log_t *log,
     const char *fmt, ...);
+
 
 #endif

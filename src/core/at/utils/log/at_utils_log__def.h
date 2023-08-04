@@ -20,6 +20,7 @@
 #define AT_UTILS_LOG__DEF_H__
 
 #include "../../context/at_context__def.h"
+#include "../boolstack/at_utils_boolstack__def.h"
 #include "../modstack/at_utils_modstack__def.h"
 #include "../../../zcom/zcom.h"
 
@@ -30,7 +31,7 @@ typedef struct at_utils_log_t_
   char *file;
   FILE *fp;
   at_bool_t is_delegate;
-  at_bool_t print_to_stderr;
+  at_utils_boolstack_t echo[1]; // states of whether to print to stderr
 } at_utils_log_t;
 
 #endif

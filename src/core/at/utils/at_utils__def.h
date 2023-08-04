@@ -19,6 +19,7 @@
 #ifndef AT_UTILS__DEF_H__
 #define AT_UTILS__DEF_H__
 
+#include "boolstack/at_utils_boolstack__def.h"
 #include "modstack/at_utils_modstack__def.h"
 #include "log/at_utils_log__def.h"
 #include "conf/at_utils_conf__def.h"
