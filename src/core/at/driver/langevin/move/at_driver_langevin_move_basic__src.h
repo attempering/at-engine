@@ -84,7 +84,7 @@ int at_driver_langevin_move__propose(
 
   rand_mag = proposal->kt_old * sqrt(2.0 * proposal->time_step);
 
-  noise = zcom_mtrng__rand_gauss(langevin->rng->mtrng);
+  noise = zcom_rng_mt19937__rand_gauss(langevin->rng->mtrng);
 
   proposal->dkt_deterministic = at_driver_langevin_move__calc_dkt_deterministic(
       langevin,

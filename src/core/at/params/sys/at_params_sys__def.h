@@ -35,7 +35,7 @@ typedef struct at_params_sys_t_ {
   // if true, the data directory at->utils->data_dir
   // would be "atdata0", "atdata1", ...,
   // instead of "atdata"
-  at_bool_t multi_sims;
+  at_bool_t add_suffix;
 
 } at_params_sys_t;
 

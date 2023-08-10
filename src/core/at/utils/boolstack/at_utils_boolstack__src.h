@@ -23,7 +23,7 @@
 
 
 
-const char *at_utils_boolstack__bool_to_str(
+static const char *at_utils_boolstack__bool_to_str(
     at_bool_t value)
 {
   return value ? "true" : "false";

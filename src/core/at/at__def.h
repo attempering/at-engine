@@ -20,7 +20,7 @@
 #define AT__DEF_H__
 
 
-#define AT__VERSION  100010001LL
+#define AT__VERSION  1001002LL
 
 
 /* this header needs to be placed before zcom modules

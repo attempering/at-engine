@@ -121,17 +121,17 @@ int work(int argc, char **argv)
   at_llong_t step = 0;
   double epot = 0.0;
   const char *fn_cfg = "at.cfg";
-  zcom_mtrng_t mtrng[1];
+  zcom_rng_mt19937_t mtrng[1];
   at_params_step_t step_params[1];
 
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 
   at__manifest(at);
 
-  zcom_mtrng__init_from_seed(mtrng, 12345);
+  zcom_rng_mt19937__init_from_seed(mtrng, 12345);
 
   epot = -sigma * sigma * at__get_beta(at)
-         + sigma * zcom_mtrng__rand_gauss(mtrng);
+         + sigma * zcom_rng_mt19937__rand_gauss(mtrng);
 
   //fprintf(stderr, "0 %g %g\n", epot, at__get_beta(at));
 
@@ -144,7 +144,7 @@ int work(int argc, char **argv)
     step_params->flush_output = AT__FALSE;
 
     epot = -sigma * sigma * at__get_beta(at)
-         + sigma * zcom_mtrng__rand_gauss(mtrng);
+         + sigma * zcom_rng_mt19937__rand_gauss(mtrng);
 
     at__set_energy(at, epot);
 

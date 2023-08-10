@@ -46,18 +46,18 @@ void init_mb_object(at_utils_conf_t *conf, at_distr_t *distr, at_mb_t *mb)
 void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
-  zcom_mtrng_t mtrng[1];
+  zcom_rng_mt19937_t mtrng[1];
   at_distr_domain_t *domain = mb->distr->domain;
 
   // use the plain sums for simplicity
   mb->accum->winaccum->enabled = AT__FALSE;
 
-  zcom_mtrng__init_from_seed(mtrng, time(NULL));
+  zcom_rng_mt19937__init_from_seed(mtrng, time(NULL));
 
   for (i = 0; i < domain->n; i++) {
     at_mb_sm_t *sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
 
-    if (zcom_mtrng__rand01(mtrng) < fill_prob) {
+    if (zcom_rng_mt19937__rand_01(mtrng) < fill_prob) {
       double beta = at_distr_domain__get_bin_center(domain, i);
       double epot = -beta * (gaussian_sigma * gaussian_sigma);
 
@@ -82,18 +82,18 @@ void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 void mb_mock_sampling(at_mb_t *mb, long ntimes)
 {
   long t;
-  zcom_mtrng_t *rng = zcom_mtrng__open(time(NULL));
+  zcom_rng_mt19937_t *rng = zcom_rng_mt19937__open(time(NULL));
   at_distr_domain_t *domain = mb->distr->domain;
 
   for (t = 1; t <= ntimes; t++) {
-    double beta = domain->beta_min + zcom_mtrng__rand01(rng) * (domain->beta_max - domain->beta_min);
+    double beta = domain->beta_min + zcom_rng_mt19937__rand_01(rng) * (domain->beta_max - domain->beta_min);
 
     /* for the Gaussian energy model
      * Ec = - sigma^2 beta
      * and the energy fluctuation is sigma
      */
     double epot_c = -gaussian_sigma*gaussian_sigma * beta;
-    double epot = epot_c + gaussian_sigma * zcom_mtrng__rand_gauss(rng);
+    double epot = epot_c + gaussian_sigma * zcom_rng_mt19937__rand_gauss(rng);
     int ib;
     at_mb__add(mb, epot, beta, &ib, NULL, NULL);
 
@@ -104,7 +104,7 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
 
   printf("%30s\n", "");
 
-  zcom_mtrng__close(rng);
+  zcom_rng_mt19937__close(rng);
 }
 
 

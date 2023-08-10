@@ -36,7 +36,7 @@ void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
   at_params_step_t step_params[1];
   double acc;
 
-  zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
+  zcom_rng_mt19937__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
   mdsys__set_energy_at_beta(mdsys, at->beta);
 

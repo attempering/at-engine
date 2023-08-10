@@ -34,7 +34,7 @@ typedef struct at_distr_weights_component_t_ {
 
   char *key; /* key from configuration file */
 
-  int type; /* %packed */
+  int type; /* one of AT_DISTR_WEIGHTS_COMPONENT_TYPE__XXX, %packed */
 
   double w_rel; /* relative weight, %packed */
 

@@ -191,6 +191,7 @@ static void zcom_ssm_llist_remove_node_(zcom_ssm__ss_llist_node_t *hp, int free_
   if (free_node) {
     //fprintf(stderr, "freeing nodes %p & %p\n", (void *) h, (void *) h->s);
     free(h->s);
+    h->s = NULL;
     free(h);
   }
 }

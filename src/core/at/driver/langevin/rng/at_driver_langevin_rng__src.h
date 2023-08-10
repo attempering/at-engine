@@ -32,7 +32,7 @@ void at_driver_langevin_rng__reset(
 
   if (rng->mtrng == NULL) {
 
-    rng->mtrng = zcom_mtrng__open(seed);
+    rng->mtrng = zcom_rng_mt19937__open(seed);
 
   }
 
@@ -53,7 +53,7 @@ void at_driver_langevin_rng__reset(
 
   }
 
-  zcom_mtrng__load_or_init_from_seed(rng->mtrng,
+  zcom_rng_mt19937__load_or_init_from_seed(rng->mtrng,
       rng->file, seed, force_reload,
       fn_rng_backup);
 
@@ -65,7 +65,7 @@ void at_driver_langevin_rng__reset(
 int at_driver_langevin_rng__save(at_driver_langevin_rng_t *rng)
 {
   if (rng->mtrng) {
-    zcom_mtrng__save(rng->mtrng, rng->file);
+    zcom_rng_mt19937__save(rng->mtrng, rng->file);
   }
 
   return 0;
@@ -104,8 +104,8 @@ void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng)
 {
   if (rng->ready) {
     if (rng->mtrng != NULL) {
-      zcom_mtrng__save(rng->mtrng, rng->file);
-      zcom_mtrng__close(rng->mtrng);
+      zcom_rng_mt19937__save(rng->mtrng, rng->file);
+      zcom_rng_mt19937__close(rng->mtrng);
     }
   }
 }

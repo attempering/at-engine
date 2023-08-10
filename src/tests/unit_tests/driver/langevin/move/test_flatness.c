@@ -79,12 +79,12 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
   double neg_dlnwf_dbeta = 0.0;
   double ergt;
   double invwf;
-  zcom_mtrng_t mtrng[1];
+  zcom_rng_mt19937_t mtrng[1];
   double vis_min = 1e10, vis_max = 0, flatness;
   int n = domain->n;
   at_bool_t passed = AT__FALSE;
 
-  zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
+  zcom_rng_mt19937__init_from_seed(mtrng, 12345*time(NULL));
 
   fprintf(stderr, "beta %g (%g, %g)\n", beta, domain->beta_min, domain->beta_max);
 
@@ -92,7 +92,7 @@ int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
 
     // exact configuration sampling at the current temperature
     energy = -beta * (gaussian_sigma * gaussian_sigma)
-           + gaussian_sigma * zcom_mtrng__rand_gauss(mtrng);
+           + gaussian_sigma * zcom_rng_mt19937__rand_gauss(mtrng);
 
     at_mb__add(mb, energy, beta, &ib, &invwf, &neg_dlnwf_dbeta);
 

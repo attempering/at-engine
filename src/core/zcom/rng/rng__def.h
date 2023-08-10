@@ -56,22 +56,23 @@
 #endif
 
 
+#ifndef SCNu32
+  #if (defined(_MSC_VER) && (_MSC_VER >= 1300)) || defined(__BORLANDC__)
+    #define SCNu32 "I32u"
+  #else
+    #define SCNu32 "u"
+  #endif
+#endif
+
+#ifndef SCNu64
+  #if defined(_MSC_VER) || defined(__BORLANDC__)
+    #define SCNu64 "I64u"
+  #else
+    #define SCNu64 "llu"
+  #endif
+#endif
 
 
-
-
-/* Mersenne Twister was developed by Makoto Matsumoto and Takuji Nishimura */
-#define ZCOM_RNG__MT_N 624
-#define ZCOM_RNG__MT_M 397
-#define ZCOM_RNG__MT_UMASK 0x80000000UL /* most significant w-r bits */
-#define ZCOM_RNG__MT_LMASK 0x7fffffffUL /* least significant r bits */
-
-
-typedef struct zcom_mtrng_t_ {
-  int index; /* index of `arr` */
-  uint32_t arr[ZCOM_RNG__MT_N];
-  int loaded;
-} zcom_mtrng_t;
 
 
 #endif

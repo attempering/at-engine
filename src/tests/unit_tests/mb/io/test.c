@@ -37,18 +37,14 @@ long ntimes = 100000;
 
 
 
-void init_mb_objects(at_distr_t *distr, at_mb_t *mb1, at_mb_t *mb2)
+void init_mb_objects(at_utils_conf_t *conf,
+    at_distr_t *distr, at_mb_t *mb1, at_mb_t *mb2)
 {
-  zcom_cfg_t *cfg = zcom_cfg__open("at.cfg", ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
-  at_bool_t verbose = AT__FALSE;
+  at_distr__conf_init(distr, conf, boltz);
 
-  at_distr__cfg_init(distr, cfg, boltz, verbose);
+  at_mb__conf_init(mb1, distr, conf, boltz);
 
-  at_mb__cfg_init(mb1, distr, cfg, boltz, NULL, NULL, verbose);
-
-  at_mb__cfg_init(mb2, distr, cfg, boltz, NULL, NULL, verbose);
-
-  zcom_cfg__close(cfg);
+  at_mb__conf_init(mb2, distr, conf, boltz);
 }
 
 
@@ -57,18 +53,18 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
 {
   long t;
   const uint32_t seed = 12345;
-  zcom_mtrng_t *rng = zcom_mtrng__open(seed);
+  zcom_rng_mt19937_t *rng = zcom_rng_mt19937__open(seed);
   at_distr_domain_t *domain = mb->distr->domain;
 
   for (t = 1; t <= ntimes; t++) {
-    double beta = domain->beta_min + zcom_mtrng__rand01(rng) * (domain->beta_max - domain->beta_min);
+    double beta = domain->beta_min + zcom_rng_mt19937__rand_01(rng) * (domain->beta_max - domain->beta_min);
 
     /* for the Gaussian energy model
      * Ec = - sigma^2 beta
      * and the energy fluctuation is sigma
      */
     double epot_c = -gaussian_sigma*gaussian_sigma * beta;
-    double epot = epot_c + gaussian_sigma * zcom_mtrng__rand_gauss(rng);
+    double epot = epot_c + gaussian_sigma * zcom_rng_mt19937__rand_gauss(rng);
     int ib;
 
     at_mb__add(mb, epot, beta, &ib, NULL, NULL);
@@ -80,7 +76,7 @@ void mb_mock_sampling(at_mb_t *mb, long ntimes)
 
   printf("%30s\n", "");
 
-  zcom_mtrng__close(rng);
+  zcom_rng_mt19937__close(rng);
 }
 
 
@@ -88,10 +84,9 @@ static int test_io(at_mb_t *mb1, at_mb_t *mb2)
 {
   at_bool_t passed;
   const char *fn = "mb.dat";
-  const int version = 1;
   int version2 = 0;
 
-  at_mb__write_binary(mb1, fn, version);
+  at_mb__write_binary(mb1, fn);
 
   at_mb__read_binary(mb2, fn, &version2);
 
@@ -107,12 +102,14 @@ static int test_io(at_mb_t *mb1, at_mb_t *mb2)
 
 int main(int argc, char **argv)
 {
+  at_utils_conf_t conf[1];
   at_distr_t distr[1];
   at_mb_t mb1[1], mb2[1];
 
   at_bool_t passed;
 
-  init_mb_objects(distr, mb1, mb2);
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", AT__FALSE);
+  init_mb_objects(conf, distr, mb1, mb2);
 
   if (argc > 1) {
     ntimes = atol(argv[1]);

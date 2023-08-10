@@ -19,13 +19,13 @@
 #ifndef AT_DRIVER_LANGEVIN_RNG__DEF_H__
 #define AT_DRIVER_LANGEVIN_RNG__DEF_H__
 
-typedef struct zcom_mtrng_t_ zcom_mtrng_t;
+typedef struct zcom_rng_mt19937_t_ zcom_rng_mt19937_t;
 
 typedef struct at_driver_langevin_rng_t_
 {
   int ready;
   char *file;
-  zcom_mtrng_t *mtrng;
+  zcom_rng_mt19937_t *mtrng;
 } at_driver_langevin_rng_t;
 
 #endif

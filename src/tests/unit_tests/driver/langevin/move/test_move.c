@@ -118,14 +118,14 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
   double neg_dlnwf_dbeta = 0.0;
   double ergt;
   double invwf;
-  zcom_mtrng_t mtrng[1];
+  zcom_rng_mt19937_t mtrng[1];
   histogram_t hist[1];
   char fn_hist[FILENAME_MAX];
   at_mb_sm_t sm_beta[1];
 
   at_bool_t passed = AT__FALSE;
 
-  zcom_mtrng__init_from_seed(mtrng, 12345*time(NULL));
+  zcom_rng_mt19937__init_from_seed(mtrng, 12345*time(NULL));
 
   hist_beta_min = fmax(domain->beta_min, beta - 5*beta_sigma);
   hist_beta_max = fmin(domain->beta_max, beta + 5*beta_sigma);

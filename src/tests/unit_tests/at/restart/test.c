@@ -43,20 +43,20 @@ void do_sampling(at_t *at1, at_t *at2, long n_times, long t0)
 
   // This RNG is configuration sampling
   // and is independent of that for the Langevin equation.
-  zcom_mtrng_t rng[1];
+  zcom_rng_mt19937_t rng[1];
 
-  zcom_mtrng__init_from_seed(rng, t0);
+  zcom_rng_mt19937__init_from_seed(rng, t0);
 
   for (t = t0; t < t0+n_times; t++) {
 
-    double beta = domain->beta_min + zcom_mtrng__rand01(rng) * (domain->beta_max - domain->beta_min);
+    double beta = domain->beta_min + zcom_rng_mt19937__rand_01(rng) * (domain->beta_max - domain->beta_min);
 
     /* for the Gaussian energy model
      * Ec = - sigma^2 beta
      * and the energy fluctuation is sigma
      */
     double epot_c = -gaussian_sigma*gaussian_sigma * beta;
-    double epot = epot_c + gaussian_sigma * zcom_mtrng__rand_gauss(rng);
+    double epot = epot_c + gaussian_sigma * zcom_rng_mt19937__rand_gauss(rng);
 
     at__step(at1, epot, t, NULL);
 
@@ -170,7 +170,7 @@ int do_test(const char *fn_cfg)
   sys_params1->is_continuation = AT__FALSE;
   sys_params1->md_time_step = 0.002;
   sys_params1->sim_id = 0;
-  sys_params1->multi_sims = AT__FALSE;
+  sys_params1->add_suffix = AT__FALSE;
 
   if (at__init(at1, fn_cfg, sys_params1, AT__INIT_VERBOSE) != 0) {
     return -1;
@@ -193,7 +193,7 @@ int do_test(const char *fn_cfg)
   sys_params2->is_continuation = AT__TRUE;
   sys_params2->md_time_step = 0.002;
   sys_params2->sim_id = 0;
-  sys_params2->multi_sims = AT__FALSE;
+  sys_params2->add_suffix = AT__FALSE;
 
   if (at__init(at2, fn_cfg, sys_params2, AT__INIT_VERBOSE|AT__INIT_IGNORE_LOCKFILE) != 0) {
     return -1;

@@ -271,7 +271,7 @@ static at_bool_t at_driver_langevin_move__accept(
 
   } else {
 
-    double r = zcom_mtrng__rand01(langevin->rng->mtrng);
+    double r = zcom_rng_mt19937__rand_01(langevin->rng->mtrng);
 
     if (r < exp(ln_fac)) {
       accepted = AT__TRUE;

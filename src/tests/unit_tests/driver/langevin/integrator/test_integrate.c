@@ -53,17 +53,17 @@ double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
   at_mb_sm_t *sm;
-  zcom_mtrng_t mtrng[1];
+  zcom_rng_mt19937_t mtrng[1];
   double *data;
   at_distr_domain_t *domain = mb->distr->domain;
 
-  zcom_mtrng__init_from_seed(mtrng, 12345);
+  zcom_rng_mt19937__init_from_seed(mtrng, 12345);
 
   data = (double *) calloc(domain->n, sizeof(double));
 
   for (i = 0; i < domain->n; i++) {
 
-    if (zcom_mtrng__rand01(mtrng) < fill_prob) {
+    if (zcom_rng_mt19937__rand_01(mtrng) < fill_prob) {
 
       sm = at_mb_accum__get_proper_sums(mb->accum, i, i);
       double beta = at_distr_domain__get_bin_center(domain, i);

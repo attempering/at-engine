@@ -36,7 +36,7 @@ void run_at_md(at_t* at, at_llong_t nsteps)
   at_llong_t step = 0;
   at_params_step_t step_params[1];
 
-  zcom_mtrng__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
+  zcom_rng_mt19937__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
   for (step = 1; step <= nsteps; step++) {
 

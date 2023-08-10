@@ -111,7 +111,7 @@ static int at__cfg_init_low_level(at_t *at,
    */
   at_utils__cfg_init(at->utils, ssm, cfg,
       at->sys_params->is_continuation,
-      at->sys_params->multi_sims,
+      at->sys_params->add_suffix,
       at->sys_params->sim_id,
       ignore_lockfile, verbose);
 

@@ -16,11 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM__RNG__SRC_H__
-#define ZCOM__RNG__SRC_H__
+#ifndef ZCOM__RNG_UTILS_H__
+#define ZCOM__RNG_UTILS_H__
 
-#include "mt19937/rng_mt19937__src.h"
-#include "splitmix64/rng_splitmix64__src.h"
-#include "xoshiro256pp/rng_xoshiro256pp__src.h"
+
+inline static double zcom_rng__uint32_to_01__(uint32_t x) {
+  return x * (1.0/4294967296.0);
+}
+
+inline static double zcom_rng__uint64_to_01__(uint64_t x) {
+  return x * (1.0/18446744073709551616.0);
+}
+
+
+/* Gaussian distribution with zero mean and unit variance
+ * using the ratio method */
+#define ZCOM_RNG__BUILD_RAND_GAUSS__(gen, rand_01) \
+{ \
+  double x, y, u, v, q; \
+  do { \
+    u = 1 - rand_01(gen); \
+    v = 1.7156*(rand_01(gen) - .5);  /* >= 2*sqrt(2/e) */ \
+    x = u - 0.449871; \
+    y = fabs(v) + 0.386595; \
+    q = x*x  + y*(0.196*y - 0.25472*x); \
+    if (q < 0.27597) break; \
+  } while (q > 0.27846 || v*v > -4*u*u*log(u)); \
+  return v/u; \
+}
 
 #endif

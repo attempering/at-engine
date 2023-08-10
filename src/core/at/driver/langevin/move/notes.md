@@ -1,6 +1,6 @@
 # Notes
 
-## cheap evaluation vs full evaluation (using the integral identity)
+## Cheap evaluation vs full evaluation (using the integral identity)
 
 With the cheap evaluation, the bin average energy is estimated
 from a single bin instead of the more expensive integral identity.

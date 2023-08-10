@@ -21,79 +21,8 @@
 
 /* GROMACS context */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "at_context_gromacs_config__def.h"
 
-
-/*
- * Make sure GMX_VERSION is defined 
- *
- * For GROMACS 5.0 or later,
- * GMX_VERSION is defined in src/gromacs/version.h
- * under the build directory.
- *
- * For GROMACS 4.6
- * GMX_VERSION is defined in `include/version.h`
- * under the build directory `include`, and it is then
- * included in `include/sysstuff.h` under
- * the source directory `include`.
- * The latter is included in many other headers,
- * such as "typedefs.h"
- * Hopefully, one of these headers has been included
- * before this one, then GMX_VERSION is defined.
- *
- * If this is not so, we may resort to "config.h"
- * which defines two macros
- * that are removed in later versions of GROMACS,
- * which are `VERSION` and `USE_GROMACS_H`
- *
- **/
-#ifndef GMX_VERSION
-  #if (defined(VERSION) && defined(USE_VERSION_H))
-    #define GMX_VERSION 40608
-  #else
-    #include "gromacs/version.h"
-  #endif
-#endif
-
-
-/* GMX_VERSION should be defined now */
-#ifndef GMX_VERSION
-#error "GMX_VERSION is not defined"
-#endif
-
-/* Numerical GROMACS version, GMX_VERSION
- *
- * In GROMACS 4.6, we only have GMX_VERSION defined in compiling time in
- *  $(build)/include/version.h
- *
- * GMX_VERSION is major*10000 + minor*100 + patch
- *
- * For example, for GROMACS 4.6.7, major = 4, minor = 6, patch = 7,
- * GMX_VERSION = 40607.
- *
- *
- * In GROMACS 2021, we have GMX_VERSION_MAJOR, GMX_VERSION_MINOR and GMX_VERSION_PATCH
- * defined as integers, and GMX_VERSION is defined in
- *  $(build)/src/gromacs/version.h
- *
- * GMX_VERSION == 20210007 (major = 2021, minor = 0, patch = 7)
- * 
- **/
-
-
-
-/*
-#ifdef GMX_VERSION
-#error "GMX_VERSION is defined"
-#if GMX_VERSION < 50000
-#error "GROMACS 4 or earlier"
-#endif
-#else
-#error "$GMX_VERSION is not defined"
-#endif
-*/
 
 
 #if (GMX_VERSION >= 50000)
@@ -119,6 +48,7 @@
 #ifdef GMX_LIB_MPI
 #include <mpi.h>
 #endif
+
 #ifdef GMX_THREAD_MPI
 #include "tmpi.h"
 #endif

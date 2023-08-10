@@ -153,9 +153,6 @@ static int at_distr_weights_component__conf_init(
 static void at_distr_weights_component__finish(
     at_distr_weights_component_t *c)
 {
-  if (c->key != NULL) {
-    free(c->key);
-  }
   memset(c, '\0', sizeof(*c));
 }
 
