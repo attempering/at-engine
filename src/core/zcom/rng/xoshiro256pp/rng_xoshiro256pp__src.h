@@ -211,6 +211,28 @@ uint64_t zcom_rng_xoshiro256pp__next(zcom_rng_xoshiro256pp_t *xsr)
 }
 
 
+/* next() from xoshiro256+ for generating floating-point random numbers
+   The state evolution is the same as that for xoshiro256++ */
+static uint64_t zcom_rng_xoshiro256pp__xoshiro256p_next(zcom_rng_xoshiro256pp_t *xsr)
+{
+  uint64_t result = xsr->s[0] + xsr->s[3];
+
+  uint64_t t = xsr->s[1] << 17;
+
+  xsr->s[2] ^= xsr->s[0];
+  xsr->s[3] ^= xsr->s[1];
+  xsr->s[1] ^= xsr->s[2];
+  xsr->s[0] ^= xsr->s[3];
+
+  xsr->s[2] ^= t;
+
+  xsr->s[3] = zcom_rng_xoshiro256pp__rotl(xsr->s[3], 45);
+
+  return result;
+}
+
+
+
 /* This is the jump function for the generator. It is equivalent
    to 2^128 calls to __next(); it can be used to generate 2^128
    non-overlapping subsequences for parallel computations. */
@@ -293,7 +315,16 @@ uint32_t zcom_rng_xoshiro256pp__rand_uint32(zcom_rng_xoshiro256pp_t *xsr)
 
 double zcom_rng_xoshiro256pp__rand_01(zcom_rng_xoshiro256pp_t *xsr)
 {
-  return zcom_rng__uint64_to_01__(zcom_rng_xoshiro256pp__rand_uint64(xsr));
+  //uint64_t x = zcom_rng_xoshiro256pp__rand_uint64(xsr);
+
+  // xoshiro256+ is a slightly faster alternative to xoshiro256++
+  // with some vulnerability at the last bit.
+  // But for floating-point-number generations,
+  // the last 11 bit are discarded, and it is
+  // the recommended method of generation. 
+  uint64_t x = zcom_rng_xoshiro256pp__xoshiro256p_next(xsr);
+
+  return zcom_rng__uint64_to_01__(x);
 }
 
 

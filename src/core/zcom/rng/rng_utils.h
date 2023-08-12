@@ -20,12 +20,19 @@
 #define ZCOM__RNG_UTILS_H__
 
 
+#include <stdint.h>
+
+
 inline static double zcom_rng__uint32_to_01__(uint32_t x) {
-  return x * (1.0/4294967296.0);
+  return x * 0x1.0p-32;
+  //return x * (1.0/4294967296.0);
+  //return (double) x / (UINT32_MAX + 1.0);
 }
 
 inline static double zcom_rng__uint64_to_01__(uint64_t x) {
-  return x * (1.0/18446744073709551616.0);
+  return (x >> 11) * 0x1.0p-53;
+  //return x * (1.0/18446744073709551616.0);
+  //return (double) x / (UINT64_MAX + 1.0);
 }
 
 
