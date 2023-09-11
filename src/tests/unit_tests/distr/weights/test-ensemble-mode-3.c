@@ -21,12 +21,14 @@
 #include "zcom/zcom__src.h"
 
 
-void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
+static void test_distr(at_distr_t *distr)
 {
   at_distr_domain_t *domain = distr->domain;
   at_distr_weights_t *weights = distr->weights;
   int i, n = domain->n;
-  double beta, invwf, neg_dlnwf_dbeta, log_deriv;
+  double beta, invwf;
+  double neg_dlnwf_dbeta, neg_dlnwf_dbeta_simple;
+  double log_deriv;
   double *wf;
   const double tol = 10.0 * domain->beta_del;
   at_bool_t passed = AT__TRUE;
@@ -35,21 +37,27 @@ void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
 
   for (i = 0; i <= n; i++) {
     beta = domain->beta_min + i * domain->beta_del;
-    invwf = at_distr_weights__calc_inv_weight(weights, beta, NULL, NULL, NULL);
+    invwf = at_distr_weights__calc_inv_weight_bounded(
+        weights, beta, NULL, NULL, NULL);
     wf[i] = 1.0/invwf;
   }
 
   for (i = 0; i < n; i++) {
     beta = at_distr_domain__get_bin_center(domain, i);
 
-    at_distr_weights__calc_inv_weight(weights, beta, &neg_dlnwf_dbeta, NULL, NULL);
+    at_distr_weights__calc_inv_weight_bounded(
+        weights, beta, &neg_dlnwf_dbeta, NULL, NULL);
+
+    at_distr_weights__calc_inv_weight_simple(
+        weights, beta, &neg_dlnwf_dbeta_simple, NULL, NULL);
 
     log_deriv = log(wf[i]/wf[i+1])/domain->beta_del;
 
     if (fabs(log_deriv - neg_dlnwf_dbeta) > tol) {
-      printf("%.4f %.6f %.6f\n", beta, neg_dlnwf_dbeta, log_deriv);
+      printf("%d, %.4f: %.6f (bounded) %.6f (simple) %.6f (num. diff.)\n",
+          i, beta, neg_dlnwf_dbeta, neg_dlnwf_dbeta_simple, log_deriv);
       passed = AT__FALSE;
-    } 
+    }
 
     //printf("%.4f %.6f %.6f\n", beta, neg_dlnwf_dbeta, log_deriv);
   }
@@ -86,7 +94,7 @@ int main(int argc, char **argv)
   at_distr__conf_init(distr, conf, boltz);
   at_distr__manifest(distr, manifest);
 
-  test_distr(conf->cfg, distr);
+  test_distr(distr);
 
   at_distr__finish(distr);
 

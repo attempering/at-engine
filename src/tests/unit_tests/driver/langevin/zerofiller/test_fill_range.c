@@ -35,7 +35,7 @@ long ntimes = 100000;
 
 
 
-void init_distr_mb_and_langevin(at_utils_conf_t *conf,
+static void init_distr_mb_and_langevin(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   double boltz = 1.0;
@@ -50,7 +50,7 @@ void init_distr_mb_and_langevin(at_utils_conf_t *conf,
 
 
 
-double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
+static double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
   at_distr_domain_t *domain = mb->distr->domain;
@@ -98,8 +98,10 @@ static int test_fill_range(at_mb_t *mb, at_driver_langevin_t *langevin)
 
   int i;
 
-  at_bool_t passed = AT__FALSE;
+  at_bool_t passed = AT__TRUE;
   int n = mb->distr->domain->n;
+
+  (void) langevin;
 
   at_driver_langevin_zerofiller__init(zf, n);
 
@@ -108,6 +110,7 @@ static int test_fill_range(at_mb_t *mb, at_driver_langevin_t *langevin)
   for (i = 0; i < n; i++) {
     fprintf(stderr, "%d: %g %g\n", i, raw_data[i], zf->vals[i]);
     if (zf->vals[i] == 0.0) {
+      fprintf(stderr, "^ failure case\n");
       passed = AT__FALSE;
     }
   }

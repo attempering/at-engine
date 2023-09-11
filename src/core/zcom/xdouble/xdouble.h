@@ -47,4 +47,12 @@ zcom_xdouble_t zcom_xdouble__div(zcom_xdouble_t x, zcom_xdouble_t y);
 
 zcom_xdouble_t zcom_xdouble__exp(double exponent);
 
+int zcom_xdouble__compare(zcom_xdouble_t x, zcom_xdouble_t y);
+
+int zcom_xdouble__compare_double(zcom_xdouble_t x, double y);
+
+zcom_xdouble_t zcom_xdouble__clamp(zcom_xdouble_t x, zcom_xdouble_t x_min, zcom_xdouble_t x_max);
+
+zcom_xdouble_t zcom_xdouble__clamp_double(zcom_xdouble_t x, double x_min, double x_max);
+
 #endif

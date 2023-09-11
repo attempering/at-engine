@@ -55,8 +55,11 @@ typedef struct at_distr_weights_t_ {
 
   at_distr_weights_components_t components[1];
 
-  /* compute an ordering parameter for sorting replicas */
+  /* the ordering parameter for sorting replicas */
   double   q_order;
+
+  double   f_min;         /* minimum value of the f factor */
+  double   f_max;         /* maximum value of the f factor */
 
   double   *ens_w;        /* array of ensemble weights at bin boundaries */
 

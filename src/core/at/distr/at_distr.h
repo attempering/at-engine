@@ -37,7 +37,15 @@ int at_distr__beta_to_index(const at_distr_t *distr, double beta, at_bool_t chec
 
 double at_distr__get_bin_center(const at_distr_t *distr, int ib);
 
-double at_distr__calc_inv_weight(const at_distr_t *distr, double beta,
-    double *neg_dlnwf_dbeta, double *f, double *neg_df_dbeta);
+double at_distr__calc_inv_weight_simple(
+    const at_distr_t *distr, double beta,
+    double *neg_dlnwf_dbeta,
+    double *f, double *neg_dlnf_dbeta);
+
+double at_distr__calc_inv_weight_bounded(
+    const at_distr_t *distr, double beta,
+    double *neg_dlnwf_dbeta,
+    double *f, double *neg_dlnf_dbeta);
+
 
 #endif

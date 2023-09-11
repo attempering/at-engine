@@ -46,14 +46,15 @@ int exact_beta_sampling = 0;
 
 // using the exact partition function
 // for the correction of the Langevin equation
-double custom_integrate_func(at_mb_t *mb, double beta_old, double beta_new)
+static double custom_integrate_func(at_mb_t *mb, double beta_old, double beta_new)
 {
+  (void) mb;
   return -0.5 * gaussian_sigma * gaussian_sigma * (beta_new * beta_new - beta_old * beta_old);
 }
 
 
 
-void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+static void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   double boltz = 1.0;
@@ -67,7 +68,7 @@ void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
 
 
 
-int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
+static int test_langevin_move(at_mb_t *mb, at_driver_langevin_t *langevin,
     int nsteps)
 {
   at_distr_domain_t *domain = mb->distr->domain;

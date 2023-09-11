@@ -1,6 +1,6 @@
 #include "zcom/zcom__src.h"
 
-int test_ignore_dashes(const char *fn)
+static int test_ignore_dashes(const char *fn)
 {
   zcom_cfg_t *cfg;
   int first_key = 0;
@@ -33,7 +33,7 @@ int test_ignore_dashes(const char *fn)
 }
 
 
-int test_allow_dashes(const char *fn)
+static int test_allow_dashes(const char *fn)
 {
   zcom_cfg_t *cfg;
   int first_key = 0;

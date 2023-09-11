@@ -40,9 +40,21 @@ void at_distr_weights_components__manifest(
     const at_distr_weights_components_t *c,
     at_utils_manifest_t *manifest);
 
-double at_distr_weights_components__calc_f_factor(
+double at_distr_weights_components__calc_f_factor_simple(
     const at_distr_weights_components_t *c,
-    double beta, double *p_neg_df_dbeta,
+    double beta, double *neg_dlnf_dbeta,
+    at_utils_log_t *log);
+
+/* compute the ensemble f factor
+ *
+ *  f: f(beta);
+ *  *neg_dlnf_dbeta: -d ln[f(beta)] / d(beta);
+ *
+ */
+zcom_xdouble_t at_distr_weights_components__calc_f_factor_unbounded(
+    const at_distr_weights_components_t *c,
+    double beta,
+    double *neg_dlnf_dbeta,
     at_utils_log_t *log);
 
 void at_distr_weights_components__basic_init(

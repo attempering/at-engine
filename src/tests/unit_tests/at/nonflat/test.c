@@ -21,7 +21,8 @@
 at_llong_t nsteps = 2000000;
 double sigma = 100.0;
 
-double *get_expected_distr(at_t *at)
+
+static double *get_expected_distr(at_t *at)
 {
   zcom_cfg_t *cfg = at->utils->conf->cfg;
   double expo, beta0, sigma;
@@ -39,7 +40,8 @@ double *get_expected_distr(at_t *at)
   w_tot = 0.0;
   for (i = 0; i < n; i++) {
     double beta = at_distr_domain__get_bin_center(domain, i);
-    double w = 1.0/at_distr_weights__calc_inv_weight(at->distr->weights, beta, NULL, NULL, NULL);
+    double w = 1.0/at_distr_weights__calc_inv_weight_bounded(
+        at->distr->weights, beta, NULL, NULL, NULL);
     distr[i] = w;
     w_tot += w;
   }
@@ -52,7 +54,7 @@ double *get_expected_distr(at_t *at)
 }
 
 
-double *get_hist_distr(at_t *at)
+static double *get_hist_distr(at_t *at)
 {
   at_distr_domain_t *domain = at->distr->domain;
   int i, n = domain->n;
@@ -75,7 +77,7 @@ double *get_hist_distr(at_t *at)
 }
 
 
-void test_distr(at_t *at)
+static void test_distr(at_t *at)
 {
   double *expected_distr = get_expected_distr(at);
   double *hist_distr = get_hist_distr(at);
@@ -116,7 +118,7 @@ void test_distr(at_t *at)
 
 
 
-int work(int argc, char **argv)
+static int work(int argc, char **argv)
 {
   at_llong_t step = 0;
   double epot = 0.0;
@@ -125,6 +127,9 @@ int work(int argc, char **argv)
   at_params_step_t step_params[1];
 
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
+
+  (void) argc;
+  (void) argv;
 
   at__manifest(at);
 

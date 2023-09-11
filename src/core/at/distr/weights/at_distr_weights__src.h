@@ -44,6 +44,14 @@ int at_distr_weights__conf_init(
 
   //at_utils_log__info(conf->log, "w->n %d\n", w->n); getchar();
 
+  at_utils_conf__get_double(conf,
+      "ensemble-f-min",
+      &w->f_min, 1e-6, "f_min");
+
+  at_utils_conf__get_double(conf,
+      "ensemble-f-max",
+      &w->f_max, 1e+6, "f_max");
+
   //printf("w %p\n", w); getchar();
   at_utils_conf__get_double(conf,
       "ensemble-factor,ensemble-exp,ensemble-exponent",
@@ -118,6 +126,10 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
   at_utils_manifest__push_mod(manifest, "at.distr.weights");
 
   at_utils_manifest__print_double(manifest, w->ens_exp, "ens_exp", "ensemble-factor");
+
+  at_utils_manifest__print_double(manifest, w->f_min, "f_min", "ensemble-f-min");
+
+  at_utils_manifest__print_double(manifest, w->f_max, "f_max", "ensemble-f-max");
 
   at_utils_manifest__print_int(manifest, w->mode, "mode", "ensemble-mode");
 
@@ -199,7 +211,7 @@ void at_distr_weights__init_ens_w(
   /* ens_w: array of ensemble weights at bin boundaries */
   at_utils__new_arr(w->ens_w, w->n + 1, double);
   for (i = 0; i <= w->n; i++) {
-    double invw = at_distr_weights__calc_inv_weight(
+    double invw = at_distr_weights__calc_inv_weight_bounded(
         w, domain->barr[i], NULL, NULL, NULL);
     w->ens_w[i] = 1.0/invw;
   }
@@ -211,35 +223,40 @@ void at_distr_weights__init_ens_w(
  * f: f(beta)
  * *p_neg_df_dbeta: -d f(beta) / d(beta)
  * 
- * (deprecated) in favor of __calc_f_factor_and_log_der()
+ * (deprecated) as the f value is not bounded
+ * and can be very small, future application should prefer
+ *
+ *  at_distr_weights__calc_f_factor_bounded()
+ *
  */
-static double at_distr_weights__calc_f_factor(
+static double at_distr_weights__calc_f_factor_simple(
     const at_distr_weights_t *w,
-    double beta, double *p_neg_df_dbeta)
+    double beta, double *neg_dlnf_dbeta)
 {
-  double f = 1.0, neg_df_dbeta;
+  double f = 1.0,
+         neg_dlnf_dbeta_local = 0.0;
 
   if (w->mode == AT_DISTR_WEIGHTS_MODE__FLAT)
   {
     f = 1.0;
-    neg_df_dbeta = 0.0;
+    neg_dlnf_dbeta_local = 0.0;
   }
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
   {
-    f = at_distr_weights_components__calc_f_factor(
-      w->components, beta, &neg_df_dbeta,
-      ((at_distr_weights_t *) w)->log);
+    f = at_distr_weights_components__calc_f_factor_simple(
+        w->components, beta, &neg_dlnf_dbeta_local,
+        ((at_distr_weights_t *) w)->log);
   }
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
   {
     double del_beta = beta - w->beta0;
     f = exp(-0.5 * (del_beta * del_beta) * w->inv_sigma2);
-    neg_df_dbeta = f * del_beta * w->inv_sigma2;
+    neg_dlnf_dbeta_local = del_beta * w->inv_sigma2;
   }
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL)
   {
     f = exp(-beta * w->c);
-    neg_df_dbeta = f * w->c;
+    neg_dlnf_dbeta_local = w->c;
   }
   else
   {
@@ -248,8 +265,8 @@ static double at_distr_weights__calc_f_factor(
         w->mode);
   }
 
-  if (p_neg_df_dbeta != NULL) {
-    *p_neg_df_dbeta = neg_df_dbeta;
+  if (neg_dlnf_dbeta != NULL) {
+    *neg_dlnf_dbeta = neg_dlnf_dbeta_local;
   }
 
   return f;
@@ -261,43 +278,56 @@ static double at_distr_weights__calc_f_factor(
  * f: f(beta)
  * *p_neg_dlnf_dbeta: -d log[f(beta)] / d(beta)
  */
-static double at_distr_weights__calc_f_factor_and_log_der(
+static double at_distr_weights__calc_f_factor_bounded(
     const at_distr_weights_t *w,
-    double beta, double *p_neg_dlnf_dbeta)
+    double beta,
+    double *neg_dlnf_dbeta)
 {
-  double f = 1.0, neg_dlnf_dbeta;
+  zcom_xdouble_t f_;
+  double f = 1.0;
+  double neg_dlnf_dbeta_local = 0.0;
 
   if (w->mode == AT_DISTR_WEIGHTS_MODE__FLAT)
   {
     f = 1.0;
-    neg_dlnf_dbeta = 0.0;
-  }
-  else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
-  {
-    f = at_distr_weights_components__calc_f_factor_and_log_der(
-      w->components, beta, &neg_dlnf_dbeta,
-      ((at_distr_weights_t *) w)->log);
-  }
-  else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
-  {
-    double del_beta = beta - w->beta0;
-    f = exp(-0.5 * (del_beta * del_beta) * w->inv_sigma2);
-    neg_dlnf_dbeta = del_beta * w->inv_sigma2;
-  }
-  else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL)
-  {
-    f = exp(-beta * w->c);
-    neg_dlnf_dbeta = w->c;
+    neg_dlnf_dbeta_local = 0.0;
   }
   else
   {
-    at_utils_log__fatal(((at_distr_weights_t *) w)->log,
-        "unknown mode %d\n",
-        w->mode);
+
+    if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
+    {
+      f_ = at_distr_weights_components__calc_f_factor_unbounded(
+          w->components, beta, &neg_dlnf_dbeta_local,
+          ((at_distr_weights_t *) w)->log);
+    }
+    else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
+    {
+      double del_beta = beta - w->beta0;
+      f_ = zcom_xdouble__exp(-0.5 * (del_beta * del_beta) * w->inv_sigma2);
+      neg_dlnf_dbeta_local = del_beta * w->inv_sigma2;
+    }
+    else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL)
+    {
+      f_ = zcom_xdouble__exp(-beta * w->c);
+      neg_dlnf_dbeta_local = w->c;
+    }
+    else
+    {
+      f_ = zcom_xdouble__from_double(1.0);
+
+      at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+          "unknown mode %d\n",
+          w->mode);
+    }
+
+    f_ = zcom_xdouble__clamp_double(f_, w->f_min, w->f_max);
+    f = zcom_xdouble__to_double(f_);
+
   }
 
-  if (p_neg_dlnf_dbeta != NULL) {
-    *p_neg_dlnf_dbeta = neg_dlnf_dbeta;
+  if (neg_dlnf_dbeta != NULL) {
+    *neg_dlnf_dbeta = neg_dlnf_dbeta_local;
   }
 
   return f;
@@ -339,43 +369,89 @@ static double at_distr_weights__calc_invw_factor(
 }
 
 
-double at_distr_weights__calc_inv_weight(
+double at_distr_weights__calc_inv_weight_simple(
     const at_distr_weights_t *w, double beta,
-    double *neg_dlnwf_dbeta, double *pf, double *neg_df_dbeta)
+    double *neg_dlnwf_dbeta,
+    double *f, double *neg_dlnf_dbeta)
 {
-  double f, invw, invwf, neg_df_dbeta_ = 0.0;
+  double f_local, invw, invwf, neg_dlnf_dbeta_local = 0.0;
 
-  // with Gaussian distribution, the weights can be very small
+  // with Gaussian distributions or components of
+  // Gaussian distributions, the weights can be very small
   // so invwf can be extremely large
-  const double invwf_max = 1e308;
+  const double invwf_max = 1e+6;
   const double invwf_min = 1e-6;
 
-  if (neg_df_dbeta == NULL) {
-    neg_df_dbeta = &neg_df_dbeta_;
+  if (neg_dlnf_dbeta == NULL) {
+    neg_dlnf_dbeta = &neg_dlnf_dbeta_local;
   }
 
-  f = at_distr_weights__calc_f_factor(w, beta, neg_df_dbeta);
+  f_local = at_distr_weights__calc_f_factor_simple(
+      w, beta, neg_dlnf_dbeta);
 
-  if (pf != NULL) {
-    *pf = f;
+  if (f != NULL) {
+    *f = f_local;
   }
 
   // beta^{-ens_exp}
   invw = at_distr_weights__calc_invw_factor(w, beta);
 
-  invwf = invw / f;
+  invwf = invw / f_local;
 
-  //fprintf(stderr, "beta %g, invw %g, f %g\n", beta, invw, f);
+  //fprintf(stderr, "calc_inv_weight_simple(): beta %g, invw %g, f %g, %g\n", beta, invw, f_local, *neg_dlnf_dbeta);
   //getchar();
 
   at_utils_log__exit_if (invwf > invwf_max || invwf < invwf_min,
       ((at_distr_weights_t *) w)->log,
       "bad invwf=%g, mode %d, exp %g (%d, %d), invw %g, f=%g, beta=%g/%g\n",
-      invwf, w->mode, w->ens_exp, w->ens_exp_int, w->ens_exp_is_int, invw, f, beta, w->beta_max);
+      invwf, w->mode,
+      w->ens_exp, w->ens_exp_int, w->ens_exp_is_int,
+      invw, f_local, beta, w->beta_max);
 
   if (neg_dlnwf_dbeta != NULL) {
     *neg_dlnwf_dbeta = (w->ens_exp / beta)
-                     + (*neg_df_dbeta / f);
+                     + *neg_dlnf_dbeta;
+  }
+
+  return invwf;
+}
+
+
+double at_distr_weights__calc_inv_weight_bounded(
+    const at_distr_weights_t *w,
+    double beta,
+    double *neg_dlnwf_dbeta,
+    double *f,
+    double *neg_dlnf_dbeta)
+{
+  double f_local;
+  double invwf;
+  double invw;
+  double neg_dlnf_dbeta_local = 0.0;
+
+  if (neg_dlnf_dbeta == NULL) {
+    neg_dlnf_dbeta = &neg_dlnf_dbeta_local;
+  }
+
+  f_local = at_distr_weights__calc_f_factor_bounded(
+      w, beta, neg_dlnf_dbeta);
+
+  if (f != NULL) {
+    *f = f_local;
+  }
+
+  // beta^{-ens_exp}
+  invw = at_distr_weights__calc_invw_factor(w, beta);
+
+  // 1/(wf) = (1/w) / f
+  invwf = invw / f_local;
+
+  //fprintf(stderr, "calc_inv_weight_bounded(): beta %g, invw %g, f %g, %g\n", beta, invw, f_local, *neg_dlnf_dbeta);
+  //getchar();
+
+  if (neg_dlnwf_dbeta != NULL) {
+    *neg_dlnwf_dbeta = (w->ens_exp / beta)
+                     + *neg_dlnf_dbeta;
   }
 
   return invwf;

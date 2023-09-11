@@ -22,7 +22,7 @@
 
 double boltz = 1.0;
 
-void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+static void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   at_distr__conf_init(distr, conf, boltz);
@@ -34,7 +34,7 @@ void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
 
 
 
-void test(at_driver_langevin_t *langevin, at_utils_conf_t *conf)
+static void test(at_driver_langevin_t *langevin, at_utils_conf_t *conf)
 {
   uint32_t seed = 12345;
 
@@ -47,7 +47,7 @@ void test(at_driver_langevin_t *langevin, at_utils_conf_t *conf)
 
 
 
-int main(int argc, char **argv)
+int main(void)
 {
   at_utils_conf_t conf[1];
   at_bool_t verbose = AT__TRUE;

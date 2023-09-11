@@ -69,7 +69,8 @@ int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
   at_utils__new_arr(shk->win_mul, shk->n, double);
   for (i = 0; i < shk->n; i++) {
     double beta_midpoint = at_distr_domain__get_bin_center(domain, i);
-    double invwf = at_distr_weights__calc_inv_weight(w, beta_midpoint, NULL, NULL, NULL);
+    double invwf = at_distr_weights__calc_inv_weight_bounded(
+        w, beta_midpoint, NULL, NULL, NULL);
     int window_width = mb->win->jt_bin[i] - mb->win->js_bin[i];
     shk->win_mul[i] = invwf * mb->win->max_win_bins / window_width;
     //printf("shk ib %d, mul %g\n", i, shk->win_mul[i]);

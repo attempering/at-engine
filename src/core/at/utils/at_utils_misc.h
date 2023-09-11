@@ -20,7 +20,7 @@
 #define AT_UTILS_MISC_H__
 
 #include "sys/at_utils_sys.h"
-#include "../../zcom/zcom.h"
+#include "at_utils__def.h"
 
 const char *at_utils__bool_to_str(at_bool_t val);
 

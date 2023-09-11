@@ -217,5 +217,100 @@ zcom_xdouble_t zcom_xdouble__exp(double exponent)
 }
 
 
+/* Comparing two numbers,
+ * assuming they have been normalized.
+ *
+ * Return
+ *  +1, if x > y,
+ *   0, if x == y,
+ *  -1, if x < y.
+ **/
+int zcom_xdouble__compare(zcom_xdouble_t x, zcom_xdouble_t y)
+{
+  // handle the case that the two numbers are of different signs
+  if (x.man > 0.0 && y.man <= 0.0) {
+    return 1;
+  } else if (x.man <= 0.0 && y.man > 0.0) {
+    return -1;
+  }
+
+  // below, we assume that the two numbers are of the same sign
+  if (x.man > 0.0 && y.man > 0.0) {
+
+    if (x.exp > y.exp) {
+
+      return 1;
+
+    } else if (x.exp < y.exp) {
+
+      return -1;
+
+    } else {
+
+      /* here x.exp == y.exp */
+      if (x.man > y.man) {
+        return 1;
+      } else if (x.man < y.man) {
+        return -1;
+      } else {
+        return 0;
+      }
+
+    }
+
+  } else if (x.man < 0.0 && y.man < 0.0) {
+
+    if (x.exp > y.exp) {
+
+      return -1;
+
+    } else if (x.exp < y.exp) {
+
+      return +1;
+
+    } else {
+
+      /* here x.exp == y.exp */
+      if (x.man > y.man) {
+        return -1;
+      } else if (x.man < y.man) {
+        return +1;
+      } else {
+        return 0;
+      }
+
+    }
+
+  }
+
+  return 0;
+}
+
+
+int zcom_xdouble__compare_double(zcom_xdouble_t x, double y)
+{
+  zcom_xdouble_t y_ = zcom_xdouble__from_double(y);
+  return zcom_xdouble__compare(x, y_);
+}
+
+
+zcom_xdouble_t zcom_xdouble__clamp(zcom_xdouble_t x, zcom_xdouble_t x_min, zcom_xdouble_t x_max)
+{
+  if (zcom_xdouble__compare(x, x_min) < 0) {
+    return x_min;
+  } else if (zcom_xdouble__compare(x, x_max) > 0) {
+    return x_max;
+  } else {
+    return x;
+  }
+}
+
+zcom_xdouble_t zcom_xdouble__clamp_double(zcom_xdouble_t x, double x_min, double x_max)
+{
+  return zcom_xdouble__clamp(x,
+      zcom_xdouble__from_double(x_min),
+      zcom_xdouble__from_double(x_max));
+}
+
 
 #endif

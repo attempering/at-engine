@@ -1,7 +1,7 @@
 #include "zcom/zcom__src.h"
 
 
-int test_mt19937_load(const char *fn)
+static int test_mt19937_load(const char *fn)
 {
   zcom_rng_mt19937_t mt[1];
   uint32_t seed = 1234;
@@ -14,7 +14,7 @@ int test_mt19937_load(const char *fn)
 }
 
 
-int test_splitmix64_load(const char *fn)
+static int test_splitmix64_load(const char *fn)
 {
   zcom_rng_splitmix64_t sm[1];
   uint64_t seed = (uint64_t) time(NULL);
@@ -27,7 +27,7 @@ int test_splitmix64_load(const char *fn)
 }
 
 
-int test_xoshiro256pp_load(const char *fn)
+static int test_xoshiro256pp_load(const char *fn)
 {
   zcom_rng_xoshiro256pp_t xsr[1];
   uint64_t seed = (uint64_t) time(NULL);

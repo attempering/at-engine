@@ -66,11 +66,19 @@ void at_distr_weights__init_ens_w(
  * are saved in *p_f and *p_neg_df_dbeta, respectively,
  * if the two pointers are not NULL.
  */
-double at_distr_weights__calc_inv_weight(
+double at_distr_weights__calc_inv_weight_simple(
     const at_distr_weights_t *w,
     double beta,
     double *neg_dlnwf_dbeta,
     double *f,
-    double *neg_df_dbeta);
+    double *neg_dlnf_dbeta);
+
+double at_distr_weights__calc_inv_weight_bounded(
+    const at_distr_weights_t *w,
+    double beta,
+    double *neg_dlnwf_dbeta,
+    double *f,
+    double *neg_dlnf_dbeta);
+
 
 #endif

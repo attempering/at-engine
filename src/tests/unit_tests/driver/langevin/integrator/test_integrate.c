@@ -35,7 +35,7 @@ long ntimes = 100000;
 
 
 
-void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+static void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   double boltz = 1.0;
@@ -49,7 +49,7 @@ void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
 
 
 
-double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
+static double *mb_mock_sm_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
   at_mb_sm_t *sm;
@@ -112,6 +112,8 @@ static int test_integrate(at_mb_t *mb, at_driver_langevin_t *langevin, double fi
 
   double integral = at_driver_langevin_integrator__integrate(intgr, beta1, beta2);
   double exact_integral = get_exact_integral(beta1, beta2);
+
+  (void) langevin;
 
   ib1 = intgr->ib_begin;
   ib2 = intgr->ib_end;

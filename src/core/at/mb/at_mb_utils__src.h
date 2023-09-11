@@ -80,7 +80,7 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 void at_mb__add(at_mb_t *mb, double e, double beta,
     int *pib, double *pinvwf, double *neg_dlnwf_dbeta)
 {
-  double invwf, f = 1.0, neg_df_dbeta = 0.0;
+  double invwf, f = 1.0, neg_dlnf_dbeta = 0.0;
 
   int ib = at_distr__beta_to_index(mb->distr, beta, AT__TRUE);
 
@@ -92,12 +92,15 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
   /* calculate the inverse ensemble weight
    *
    * f: f(beta);
-   * neg_df_dbeta: -df/dbeta;
+   * neg_dlnf_dbeta: -dlnf/dbeta;
    * invwf: 1/w(beta)/f(beta);
    * neg_dlnwf_dbeta: -dln(w(beta)f(beta))/dbeta;
    * ginvwf: adaptive weight = ampf * invwf;
    */
-  invwf = at_distr_weights__calc_inv_weight(mb->distr->weights, beta, neg_dlnwf_dbeta, &f, &neg_df_dbeta);
+  invwf = at_distr_weights__calc_inv_weight_bounded(
+      mb->distr->weights,
+      beta, neg_dlnwf_dbeta,
+      &f, &neg_dlnf_dbeta);
 
   if (pinvwf != NULL) {
     *pinvwf = invwf;

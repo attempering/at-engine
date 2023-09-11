@@ -36,7 +36,7 @@ long n_times = 100000;
 
 
 
-void do_sampling(at_t *at1, at_t *at2, long n_times, long t0)
+static void do_sampling(at_t *at1, at_t *at2, long n_times, long t0)
 {
   at_llong_t t;
   at_distr_domain_t *domain = at1->mb->distr->domain;
@@ -75,7 +75,7 @@ void do_sampling(at_t *at1, at_t *at2, long n_times, long t0)
 
 
 // this function does everything at__output() does
-void save_data(at_t *at, const char *data_dir)
+static void save_data(at_t *at, const char *data_dir)
 {
   if (data_dir != NULL) {
     zcom_ssm_t *ssm = at->utils->ssm;
@@ -109,13 +109,13 @@ void save_data(at_t *at, const char *data_dir)
 
 
 // this function does everything at__output() does
-void load_data(at_t *at)
+static void load_data(at_t *at)
 {
   at__load_data(at);
 }
 
 
-at_bool_t compare_files(const char *dir1, const char *dir2,
+static at_bool_t compare_files(const char *dir1, const char *dir2,
     const char *fn)
 {
   char cmd[1024];
@@ -131,7 +131,7 @@ at_bool_t compare_files(const char *dir1, const char *dir2,
 }
 
 
-at_bool_t compare_results(zcom_ssm_t *ssm,
+static at_bool_t compare_results(
     const char *dir1, const char *dir2)
 {
 
@@ -158,7 +158,7 @@ at_bool_t compare_results(zcom_ssm_t *ssm,
   return AT__TRUE;
 }
 
-int do_test(const char *fn_cfg)
+static int do_test(const char *fn_cfg)
 {
   at_t at1[1], at2[1];
   at_bool_t passed = AT__TRUE;
@@ -210,7 +210,7 @@ int do_test(const char *fn_cfg)
   save_data(at2, "atdata2");
 
   // 7. compare the final results from at1 and at2
-  passed = compare_results(at1->utils->ssm, "atdata1", "atdata2");
+  passed = compare_results("atdata1", "atdata2");
 
   if (passed) {
     printf("Passed.\n");

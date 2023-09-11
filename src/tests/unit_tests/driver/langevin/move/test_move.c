@@ -54,7 +54,7 @@ double gaussian_sigma = 100.0;
 int nsteps = 100000;
 
 
-void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
+static void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
   double boltz = 1.0;
@@ -78,7 +78,7 @@ void init_distr_mb_langevin_objects(at_utils_conf_t *conf,
 
 
 
-void mb_mock_exact_moments(at_mb_t *mb)
+static void mb_mock_exact_moments(at_mb_t *mb)
 {
   at_distr_domain_t *domain = mb->distr->domain;
   int i;
@@ -104,7 +104,7 @@ void mb_mock_exact_moments(at_mb_t *mb)
 
 
 
-int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langevin,
+static int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langevin,
     at_bool_t corrected, int nsteps)
 {
   at_distr_domain_t *domain = mb->distr->domain;
@@ -158,7 +158,7 @@ int test_langevin_move_no_cfg_sampling(at_mb_t *mb, at_driver_langevin_t *langev
     // calculate ib and invwf
     ib = at_distr__beta_to_index(mb->distr, beta, 1);
 
-    invwf = at_distr__calc_inv_weight(mb->distr,
+    invwf = at_distr__calc_inv_weight_bounded(mb->distr,
         beta, &neg_dlnwf_dbeta, NULL, NULL);
 
     // The pure beta distribution of the Gaussian model

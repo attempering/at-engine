@@ -234,7 +234,7 @@ static at_bool_t at_driver_langevin_move__accept(
   zcom_utils__exit_if((ib_new < 0 || ib_new >= domain->n),
       "bad ib_new %d\n", ib_new);
 
-  invwf_new = at_distr__calc_inv_weight(langevin->distr,
+  invwf_new = at_distr__calc_inv_weight_bounded(langevin->distr,
       proposal->beta_new, &neg_dlnwf_dbeta_new, NULL, NULL);
 
   // ln [ p(kT_new) / p(kT_old) ]

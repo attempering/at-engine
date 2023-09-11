@@ -72,7 +72,7 @@ static double at_distr_weights__calc_mean_beta(at_distr_weights_t *w)
 
   for (i = 0; i < w->n; i++) {
     double beta = w->beta_min + (i + 0.5) * dbeta;
-    double invwf = at_distr_weights__calc_inv_weight(
+    double invwf = at_distr_weights__calc_inv_weight_bounded(
         w, beta, NULL, NULL, NULL);
     double wf = 1.0/invwf;
     denom += wf;
