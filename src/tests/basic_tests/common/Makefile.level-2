@@ -16,7 +16,8 @@ deps = $(dep_srcs) \
        $(wildcard ../../../../core/*/*/*/*/*.h) \
        $(wildcard ../../../../core/*/*/*/*/*/*.h) \
        Makefile
-includes = -I../../../../core
+includes = -I../../../../core \
+           -I../../../../external
 
 bins: $(bins)
 
@@ -27,4 +28,4 @@ $(bins_dbg): %_d.exe : %.c $(deps)
 	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
 clean::
-	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ hist*.bin *manifest* HMB* MTSEED* mb*.av ZE* ze.dat *_hist*.dat TRACE* trace.dat gmon.out langevin-*.dat data/* atdata*
+	$(RM) -rf $(bins) $(bins_dbg) *-init.dat .*.swp *~ hist*.bin *manifest* HMB* MTSEED* mb*.dat ZE* ze.dat *_hist*.dat TRACE* trace.dat gmon.out rng*.dat langevin-*.dat data/* atdata*

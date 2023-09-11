@@ -1,5 +1,6 @@
-CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
-CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
+CC_OPTIONS = -Wmissing-declarations -Wno-unused-function -Wunused-parameter -Wno-stringop-truncation -Wno-unused-variable
+CC = gcc -O3 -g -Wall $(CC_OPTIONS)
+CC_DBG = gcc -O0 -g -pg -Wall $(CC_OPTIONS)
 LM = -lm
 
 srcs = $(wildcard *.c)
@@ -14,7 +15,8 @@ deps = $(dep_srcs) \
        $(wildcard ../../../../../core/at/*/*/*/*.h) \
        $(wildcard ../../../../../core/at/*/*/*/*/*.h) \
        Makefile
-includes = -I../../../../../core -I../../../../../external
+includes = -I../../../../../core \
+           -I../../../../../external
 
 bins: $(bins)
 
@@ -25,4 +27,4 @@ $(bins_dbg): %_d.exe : %.c $(deps)
 	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
 clean::
-	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ hist*.bin *manifest* HMB* MTSEED* mb*.av ZE* ze.dat *hist*.dat TRACE* trace.dat gmon.out rng.dat data/* atdata*
+	$(RM) -rf $(bins) $(bins_dbg) *-init.dat .*.swp *~ hist*.bin *manifest* HMB* MTSEED* mb*.dat ZE* ze.dat *_hist*.dat TRACE* trace.dat gmon.out rng*.dat langevin-*.dat data/* atdata*
