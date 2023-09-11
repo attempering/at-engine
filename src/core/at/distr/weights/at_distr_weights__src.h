@@ -208,19 +208,16 @@ void at_distr_weights__init_ens_w(
 
 
 /* compute the ensemble f factor
- * f: f(beta);
- * *p_neg_df_dbeta: -df(beta)/dbeta;
+ * f: f(beta)
+ * *p_neg_df_dbeta: -d f(beta) / d(beta)
+ * 
+ * (deprecated) in favor of __calc_f_factor_and_log_der()
  */
 static double at_distr_weights__calc_f_factor(
     const at_distr_weights_t *w,
     double beta, double *p_neg_df_dbeta)
 {
   double f = 1.0, neg_df_dbeta;
-
-  /* invwf: 1/w(beta)/f(beta);
-   * f: f(beta);
-   * neg_df_dbeta: -df(beta)/dbeta;
-   */
 
   if (w->mode == AT_DISTR_WEIGHTS_MODE__FLAT)
   {
@@ -257,6 +254,55 @@ static double at_distr_weights__calc_f_factor(
 
   return f;
 }
+
+
+
+/* compute the ensemble f factor and its logarithmic derivative
+ * f: f(beta)
+ * *p_neg_dlnf_dbeta: -d log[f(beta)] / d(beta)
+ */
+static double at_distr_weights__calc_f_factor_and_log_der(
+    const at_distr_weights_t *w,
+    double beta, double *p_neg_dlnf_dbeta)
+{
+  double f = 1.0, neg_dlnf_dbeta;
+
+  if (w->mode == AT_DISTR_WEIGHTS_MODE__FLAT)
+  {
+    f = 1.0;
+    neg_dlnf_dbeta = 0.0;
+  }
+  else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
+  {
+    f = at_distr_weights_components__calc_f_factor_and_log_der(
+      w->components, beta, &neg_dlnf_dbeta,
+      ((at_distr_weights_t *) w)->log);
+  }
+  else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
+  {
+    double del_beta = beta - w->beta0;
+    f = exp(-0.5 * (del_beta * del_beta) * w->inv_sigma2);
+    neg_dlnf_dbeta = del_beta * w->inv_sigma2;
+  }
+  else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL)
+  {
+    f = exp(-beta * w->c);
+    neg_dlnf_dbeta = w->c;
+  }
+  else
+  {
+    at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+        "unknown mode %d\n",
+        w->mode);
+  }
+
+  if (p_neg_dlnf_dbeta != NULL) {
+    *p_neg_dlnf_dbeta = neg_dlnf_dbeta;
+  }
+
+  return f;
+}
+
 
 
 static double at_distr_weights__calc_invw_factor(

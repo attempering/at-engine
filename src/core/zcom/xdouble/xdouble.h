@@ -16,15 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM__DEF_H___
-#define ZCOM__DEF_H___
+#ifndef ZCOM__XDOUBLE_H__
+#define ZCOM__XDOUBLE_H__
 
-#include "def/def.h"
-#include "ssm/ssm__def.h"
-#include "opt/opt__def.h"
-#include "cfg/cfg__def.h"
-#include "log/log__def.h"
-#include "rng/rng__def.h"
-#include "xdouble/xdouble__def.h"
+#include "xdouble__def.h"
+
+zcom_xdouble_t zcom_xdouble__get_zero(void);
+
+int zcom_xdouble__is_zero(zcom_xdouble_t x);
+
+zcom_xdouble_t zcom_xdouble__get_inf(void);
+
+int zcom_xdouble__is_inf(zcom_xdouble_t x);
+
+zcom_xdouble_t zcom_xdouble__from_double(double y);
+
+double zcom_xdouble__to_double(zcom_xdouble_t x);
+
+zcom_xdouble_t zcom_xdouble__add(zcom_xdouble_t x, zcom_xdouble_t y);
+
+zcom_xdouble_t zcom_xdouble__neg(zcom_xdouble_t x);
+
+zcom_xdouble_t zcom_xdouble__sub(zcom_xdouble_t x, zcom_xdouble_t y);
+
+zcom_xdouble_t zcom_xdouble__mul(zcom_xdouble_t x, zcom_xdouble_t y);
+
+zcom_xdouble_t zcom_xdouble__inv(zcom_xdouble_t x);
+
+zcom_xdouble_t zcom_xdouble__div(zcom_xdouble_t x, zcom_xdouble_t y);
+
+zcom_xdouble_t zcom_xdouble__exp(double exponent);
 
 #endif

@@ -124,6 +124,7 @@ static int at_distr_weights_component__parse_str(
 }
 
 
+
 static int at_distr_weights_component__conf_init(
     at_distr_weights_component_t *c,
     int ic,

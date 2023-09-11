@@ -28,11 +28,11 @@ at_bool_t at_distr_weights__diff(
     at_distr_weights_t *w1,
     at_distr_weights_t *w2);
 
-/* comparing the distributions of two replicas in terms of
-   the order parameter
+/* comparing the distributions of two replicas
+   in terms of the order parameter
    
-   Assuming the order parameters q_order have been
-   pre-computed for both replicas */
+   This routine assumes that the order parameter, q_order,
+   has been pre-computed for both replicas */
 int at_distr_weights__compare(
     at_distr_weights_t *w1,
     at_distr_weights_t *w2);

@@ -1,4 +1,4 @@
-sub_dirs = cfg rng
+sub_dirs = utils cfg rng xdouble
 
 bins::
 	for sub_dir in $(sub_dirs); do \

@@ -104,7 +104,7 @@ void at_distr_weights_components__finish(at_distr_weights_components_t *c)
 
 /* compute the ensemble f factor
  * f: f(beta);
- * *p_neg_df_dbeta: -df(beta)/dbeta;
+ * *p_neg_df_dbeta: -d f(beta) / d(beta);
  */
 double at_distr_weights_components__calc_f_factor(
     const at_distr_weights_components_t *c,

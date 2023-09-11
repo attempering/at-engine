@@ -29,5 +29,6 @@
 #include "cfg/cfg.h"
 #include "log/log.h"
 #include "rng/rng.h"
+#include "xdouble/xdouble.h"
 
 #endif

@@ -27,5 +27,6 @@
 #include "cfg/cfg__src.h"
 #include "log/log__src.h"
 #include "rng/rng__src.h"
+#include "xdouble/xdouble__src.h"
 
 #endif
