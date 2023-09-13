@@ -61,6 +61,10 @@ typedef struct at_distr_weights_t_ {
   double   f_min;         /* minimum value of the f factor */
   double   f_max;         /* maximum value of the f factor */
 
+  /* the factor invwf is used to update the accumulators */
+  double   invwf_min;     /* minimum value of the 1/(w*f) factor */
+  double   invwf_max;     /* maximum value of the 1/(w*f) factor */
+
   double   *ens_w;        /* array of ensemble weights at bin boundaries */
 
   at_utils_log_t log[1]; /* module-specific logger */

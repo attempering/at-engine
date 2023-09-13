@@ -53,6 +53,14 @@ int at_distr_weights__conf_init(
       "ensemble-f-max",
       &w->f_max, 1e+6, "f_max");
 
+  at_utils_conf__get_double(conf,
+      "ensemble-invwf-min",
+      &w->invwf_min, 0.0, "invwf_min");
+
+  at_utils_conf__get_double(conf,
+      "ensemble-invwf-max",
+      &w->invwf_max, 1e+3, "invwf_max");
+
   //printf("w %p\n", w); getchar();
   at_utils_conf__get_double(conf,
       "ensemble-factor,ensemble-exp,ensemble-exponent",
@@ -131,6 +139,10 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
   at_utils_manifest__print_double(manifest, w->f_min, "f_min", "ensemble-f-min");
 
   at_utils_manifest__print_double(manifest, w->f_max, "f_max", "ensemble-f-max");
+
+  at_utils_manifest__print_double(manifest, w->invwf_min, "invwf_min", "ensemble-invwf-min");
+
+  at_utils_manifest__print_double(manifest, w->invwf_max, "invwf_max", "ensemble-invwf-max");
 
   at_utils_manifest__print_int(manifest, w->mode, "mode", "ensemble-mode");
 

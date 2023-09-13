@@ -212,6 +212,24 @@ static double at_distr_weights__calc_invw_factor(
 }
 
 
+static double at_distr_weights__clamp_invwf(
+    const at_distr_weights_t *w, double invwf)
+{
+  if (invwf > w->invwf_max) {
+
+    invwf = w->invwf_max;
+
+  } else if (invwf < w->invwf_min) {
+
+    invwf = w->invwf_min;
+
+  }
+
+  return invwf;
+}
+
+
+
 double at_distr_weights__calc_inv_weight_simple(
     const at_distr_weights_t *w, double beta,
     double *neg_dlnwf_dbeta,
@@ -255,6 +273,7 @@ double at_distr_weights__calc_inv_weight_simple(
 
   invwf = invw / f_local;
 
+  invwf = at_distr_weights__clamp_invwf(w, invwf);
   //fprintf(stderr, "calc_inv_weight_simple(): beta %g, invw %g, f %g, %g\n", beta, invw, f_local, *neg_dlnf_dbeta);
   //getchar();
 
@@ -295,6 +314,8 @@ double at_distr_weights__calc_inv_weight_bounded(
 
   // 1/(wf) = (1/w) / f
   invwf = invw / f_local;
+
+  invwf = at_distr_weights__clamp_invwf(w, invwf);
 
   //fprintf(stderr, "calc_inv_weight_bounded(): beta %g, invw %g, f %g, %g\n", beta, invw, f_local, *neg_dlnf_dbeta);
   //getchar();

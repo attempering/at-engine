@@ -72,7 +72,9 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
 
   fprintf(stderr, "maximum error: %g\n\n", max_err);
 
-  if (max_err < 2e-6) {
+  double tol = fmax(2.0*weights->f_min, 2.0/weights->invwf_max);
+
+  if (max_err < tol) {
     printf("Passed.\n");
   } else {
     printf("Failed.\n");
