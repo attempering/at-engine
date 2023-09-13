@@ -21,7 +21,12 @@
 
 #include "at__def.h"
 
+/* zcom.h is included in at_utils.h
+ * However, zcom__src.h is deliberately
+ * not included in at__src.h
+ */
 #include "utils/at_utils.h"
+
 #include "distr/at_distr.h"
 #include "mb/at_mb.h"
 #include "eh/at_eh.h"

@@ -27,6 +27,9 @@
 #include "manifest/at_utils_manifest__def.h"
 #include "io/at_utils_io__def.h"
 #include "trace/at_utils_trace__def.h"
+
+/* includes zcom.h, so when the user includes at_utils.h
+   all functions in zcom.h are available */
 #include "../../zcom/zcom.h"
 
 typedef struct at_utils_t_
@@ -42,8 +45,8 @@ typedef struct at_utils_t_
 
   double thermostat_temp;
 
-  // name of the data directory,
-  // to be constructed from the program
+  /* name of the data directory,
+   * to be constructed in the runtime */
   char *data_dir;
 
   zcom_ssm_t *ssm; /* reference handle */

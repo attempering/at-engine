@@ -16,22 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -g _test.c -lm && valgrind --leak-check=full --show-leak-kinds=all ./a.out
+#include "at/utils/at_utils__src.h"
+#include "zcom/zcom__src.h"
 
-#include "at_utils__src.h"
-#include "../../zcom/zcom__src.h"
+
+
 
 int main(void)
 {
   zcom_ssm_t *ssm = zcom_ssm__open();
 
-  char *fn = at_utils__make_output_filename(ssm, "data1", "a.dat");
+  char *fn = at_utils__make_output_filename(ssm, "atdata", "a.dat");
 
   FILE *fp = fopen(fn, "w");
   if (fp == NULL) {
     fprintf(stderr, "failed to open file %s\n", fn);
   } else {
-    fprintf(fp, "hello\n");
+    fprintf(fp, "Test file content\n");
     fclose(fp);
   }
 

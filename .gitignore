@@ -11,3 +11,4 @@ atdata*
 *.pdf
 .sync-sim1.sh
 refs
+backup-code.sh

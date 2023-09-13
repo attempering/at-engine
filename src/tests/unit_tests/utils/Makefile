@@ -1,4 +1,4 @@
-sub_dirs = log
+sub_dirs = simple log
 
 bins::
 	for sub_dir in $(sub_dirs); do \

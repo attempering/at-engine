@@ -19,7 +19,18 @@
 #ifndef AT_UTILS_H__
 #define AT_UTILS_H__
 
+/* For modules other than those in this directory,
+ * the intended usage is to include this file, at_utils.h,
+ * rather than individual files under this directory.
+ *
+ * As at_utils_misc.h includes at_utils__def.h,
+ * which includes zcom.h, so when the user includes
+ * this file, all functions in zcom.h are available
+ */
+
+
 #include "sys/at_utils_sys.h"
+
 #include "at_utils_misc.h"
 
 #include "boolstack/at_utils_boolstack.h"

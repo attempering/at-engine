@@ -16,27 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc -g _test.c -lm && valgrind --leak-check=full --show-leak-kinds=all ./a.out
-
-
-#include "../../../distr/at_distr__src.h"
-#include "../../../utils/at_utils__src.h"
-#include "../../sm/at_mb_sm__src.h"
-#include "../../win/at_mb_win__src.h"
-#include "../../shk/at_mb_shk__src.h"
-#include "at_mb_accum_winaccum__src.h"
-#include "../../../../zcom/zcom__src.h"
+#include "at/utils/at_utils__src.h"
+#include "at/distr/at_distr__src.h"
+#include "at/mb/win/at_mb_win__src.h"
+#include "zcom/zcom__src.h"
 
 
 
-static void mock_mb__init(at_distr_t *distr, at_mb_t *mb, double beta_min, double beta_max, double beta_del)
+static void mock_mb__init(at_utils_conf_t *conf,
+    at_distr_t *distr, at_mb_t *mb, double beta_min, double beta_max, double beta_del)
 {
   int i, n;
   double boltz = 1.0;
 
-  at_distr__cfg_init(distr, NULL, boltz, 1);
+  at_distr__conf_init(distr, conf, boltz);
   at_distr_domain__init_simple(distr->domain, beta_min, beta_max, beta_del);
-  //printf("n %d\n", distr->domain->n);exit(1);
 
   mb->distr = distr;
 
@@ -54,20 +48,16 @@ static void mock_mb__finish(at_mb_t *mb)
 
 int main()
 {
+  at_utils_conf_t conf[1];
   at_distr_t distr[1];
-  at_mb_accum_winaccum_t winaccum[1];
-  at_mb_win_t win[1];
   at_mb_t mb[1];
+  at_mb_win_t win[1];
 
+  at_utils_conf__init_ez(conf, "at.cfg", "atdata", AT__FALSE);
 
-  mock_mb__init(distr, mb, 0.2, 0.4, 0.001);
-
-  at_mb_win__cfg_init(win, NULL, mb);
-  at_mb_accum_winaccum__cfg_init(winaccum, mb->distr->domain->n, win, NULL, AT__TRUE);
-
-  at_mb_accum_winaccum__finish(winaccum);
+  mock_mb__init(conf, distr, mb, 0.2, 0.4, 0.001);
+  at_mb_win__conf_init(win, conf, mb);
   at_mb_win__finish(win);
-
   mock_mb__finish(mb);
 
   return 0;

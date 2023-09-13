@@ -1,5 +1,11 @@
+sub_dirs = simple win accum
+
 bins::
-	$(MAKE) $@ -C simple
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
 
 clean::
-	$(MAKE) $@ -C simple
+	for sub_dir in $(sub_dirs); do \
+		$(MAKE) $@ -C $$sub_dir; \
+	done;
