@@ -78,15 +78,15 @@ int at_mb__write_ze_file(at_mb_t *mb, const char *fname)
 
 
 void at_mb__add(at_mb_t *mb, double e, double beta,
-    int *pib, double *pinvwf, double *neg_dlnwf_dbeta)
+    int *ib, double *invwf, double *neg_dlnwf_dbeta)
 {
-  double invwf, f = 1.0, neg_dlnf_dbeta = 0.0;
+  double invwf_local, f = 1.0, neg_dlnf_dbeta = 0.0;
 
-  int ib = at_distr__beta_to_index(mb->distr, beta, AT__TRUE);
+  int ib_local = at_distr__beta_to_index(mb->distr, beta, AT__TRUE);
 
-  *pib = ib;
+  *ib = ib_local;
 
-  mb->visits[ib] += 1.0;
+  mb->visits[ib_local] += 1.0;
   mb->total_visits += 1.0;
 
   /* calculate the inverse ensemble weight
@@ -95,18 +95,18 @@ void at_mb__add(at_mb_t *mb, double e, double beta,
    * neg_dlnf_dbeta: -dlnf/dbeta;
    * invwf: 1/w(beta)/f(beta);
    * neg_dlnwf_dbeta: -dln(w(beta)f(beta))/dbeta;
-   * ginvwf: adaptive weight = ampf * invwf;
    */
-  invwf = at_distr_weights__calc_inv_weight_bounded(
+  invwf_local = at_distr_weights__calc_inv_weight_bounded(
       mb->distr->weights,
       beta, neg_dlnwf_dbeta,
       &f, &neg_dlnf_dbeta);
 
-  if (pinvwf != NULL) {
-    *pinvwf = invwf;
+  if (invwf != NULL) {
+    *invwf = invwf_local;
   }
 
-  at_mb_accum__add(mb->accum, ib, invwf, e, mb->need_cv, mb->shk, mb->total_visits);
+  at_mb_accum__add(mb->accum, ib_local, invwf_local,
+      e, mb->need_cv, mb->shk, mb->total_visits);
 
 }
 

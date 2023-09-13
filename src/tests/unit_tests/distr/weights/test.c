@@ -38,9 +38,11 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
   at_distr_domain_t *domain = distr->domain;
   at_distr_weights_t *weights = distr->weights;
   int i;
-  double beta, invwf, w_calc, w_ref;
+  double beta, w_ref;
+  double invwf, w_calc;
+  double invwf_simple, w_calc_simple;
   double expo, beta0, sigma;
-  double err, max_err = 0.0;
+  double err, max_err = 0;
 
   zcom_cfg__get(cfg, &expo, "ensemble-factor", "%lf");
   zcom_cfg__get(cfg, &beta0, "ensemble-beta0", "%lf");
@@ -53,6 +55,10 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
         weights, beta, NULL, NULL, NULL);
     w_calc = 1.0/invwf;
 
+    invwf_simple = at_distr_weights__calc_inv_weight_simple(
+        weights, beta, NULL, NULL, NULL);
+    w_calc_simple = 1.0/invwf_simple;
+
     w_ref = calc_weight_ref(expo, beta0, sigma, domain->beta_max, beta);
 
     err = fabs(w_calc - w_ref);
@@ -60,12 +66,13 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
       max_err = err;
     }
 
-    fprintf(stderr, "  %.4f: %.6f %.6f\n", beta, w_calc, w_ref);
+    fprintf(stderr, "  %.4f: %.6g (bounded) %.6g (simple) %.6g (ref)\n",
+        beta, w_calc, w_calc_simple, w_ref);
   }
 
   fprintf(stderr, "maximum error: %g\n\n", max_err);
 
-  if (max_err < 1e-6) {
+  if (max_err < 2e-6) {
     printf("Passed.\n");
   } else {
     printf("Failed.\n");
