@@ -23,7 +23,7 @@
 #include "at_distr_weights.h"
 #include "../domain/at_distr_domain.h"
 
-#include "components/at_distr_weights_components__src.h"
+#include "composite/at_distr_weights_composite__src.h"
 #include "at_distr_weights_order__src.h"
 #include "../../utils/at_utils.h"
 
@@ -106,9 +106,9 @@ int at_distr_weights__conf_init(
         "ensemble-c",
         &w->c, 0.0, "ensemble_c");
 
-  } else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
+  } else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE) {
 
-    at_distr_weights_components__conf_init(w->components, domain, conf);
+    at_distr_weights_composite__conf_init(w->composite, domain, conf);
 
   } else if(w->mode != 0) {
 
@@ -155,9 +155,9 @@ void at_distr_weights__manifest(const at_distr_weights_t *w, at_utils_manifest_t
 
     at_utils_manifest__print_double(manifest, w->c, "c", "ensemble-c");
 
-  } else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
+  } else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE) {
 
-    at_distr_weights_components__manifest(w->components, manifest);
+    at_distr_weights_composite__manifest(w->composite, manifest);
 
   }
 
@@ -177,8 +177,8 @@ void at_distr_weights__finish(at_distr_weights_t *w)
     free(w->ens_w);
   }
 
-  if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
-    at_distr_weights_components__finish(w->components);
+  if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE) {
+    at_distr_weights_composite__finish(w->composite);
   }
 
   at_utils_log__finish(w->log);
@@ -189,8 +189,8 @@ void at_distr_weights__finish(at_distr_weights_t *w)
 int at_distr_weights__get_n_components(
     const at_distr_weights_t *w)
 {
-  if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS) {
-    return w->components->n_components;
+  if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE) {
+    return w->composite->n_components;
   } else {
     return 0;
   }

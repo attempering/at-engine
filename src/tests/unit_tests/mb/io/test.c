@@ -37,7 +37,7 @@ long ntimes = 100000;
 
 
 
-void init_mb_objects(at_utils_conf_t *conf,
+static void init_mb_objects(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb1, at_mb_t *mb2)
 {
   at_distr__conf_init(distr, conf, boltz);
@@ -49,7 +49,7 @@ void init_mb_objects(at_utils_conf_t *conf,
 
 
 
-void mb_mock_sampling(at_mb_t *mb, long ntimes)
+static void mb_mock_sampling(at_mb_t *mb, long ntimes)
 {
   long t;
   const uint32_t seed = 12345;

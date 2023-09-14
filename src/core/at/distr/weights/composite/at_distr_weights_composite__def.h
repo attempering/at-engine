@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DISTR_WEIGHTS_COMPONENTS__DEF_H__
-#define AT_DISTR_WEIGHTS_COMPONENTS__DEF_H__
+#ifndef AT_DISTR_WEIGHTS_COMPOSITE__DEF_H__
+#define AT_DISTR_WEIGHTS_COMPOSITE__DEF_H__
 
 #include "at_distr_weights_component__def.h"
 
 
 
-typedef struct at_distr_weights_components_t_ {
+typedef struct at_distr_weights_composite_t_ {
 
   double    beta_min;
   double    beta_max;
@@ -33,7 +33,7 @@ typedef struct at_distr_weights_components_t_ {
 
   at_distr_weights_component_t *components;
 
-} at_distr_weights_components_t;
+} at_distr_weights_composite_t;
 
 
 

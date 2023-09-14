@@ -35,7 +35,7 @@ long ntimes = 100000;
 
 
 
-void init_mb_object(at_utils_conf_t *conf, at_distr_t *distr, at_mb_t *mb)
+static void init_mb_object(at_utils_conf_t *conf, at_distr_t *distr, at_mb_t *mb)
 {
   at_distr__conf_init(distr, conf, boltz);
   at_mb__conf_init(mb, distr, conf, boltz);
@@ -43,7 +43,7 @@ void init_mb_object(at_utils_conf_t *conf, at_distr_t *distr, at_mb_t *mb)
 
 
 
-void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
+static void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 {
   int i;
   zcom_rng_mt19937_t mtrng[1];
@@ -79,7 +79,7 @@ void mb_mock_exact_moments(at_mb_t *mb, double fill_prob)
 
 
 
-void mb_mock_sampling(at_mb_t *mb, long ntimes)
+static void mb_mock_sampling(at_mb_t *mb, long ntimes)
 {
   long t;
   zcom_rng_mt19937_t *rng = zcom_rng_mt19937__open(time(NULL));

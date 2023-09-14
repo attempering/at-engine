@@ -329,11 +329,31 @@ void at_utils_log__printf(
 }
 
 
+void at_utils_log__printf_no_echo(
+    at_utils_log_t *log,
+    const char *fmt, ...)
+{
+  at_utils_log__push_echo_state(log, AT__FALSE);
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, NULL, fmt);
+  at_utils_log__pop_echo_state(log);
+}
+
+
 void at_utils_log__info(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
   AT_UTILS_LOG__TAGGED_PRINTF__(log, "Info", fmt);
+}
+
+
+void at_utils_log__info_no_echo(
+    at_utils_log_t *log,
+    const char *fmt, ...)
+{
+  at_utils_log__push_echo_state(log, AT__FALSE);
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Info", fmt);
+  at_utils_log__pop_echo_state(log);
 }
 
 
@@ -345,12 +365,33 @@ void at_utils_log__warning(
 }
 
 
+void at_utils_log__warning_no_echo(
+    at_utils_log_t *log,
+    const char *fmt, ...)
+{
+  at_utils_log__push_echo_state(log, AT__FALSE);
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Warning", fmt);
+  at_utils_log__pop_echo_state(log);
+}
+
+
 void at_utils_log__error(
     at_utils_log_t *log,
     const char *fmt, ...)
 {
   AT_UTILS_LOG__TAGGED_PRINTF__(log, "Error", fmt);
 }
+
+
+void at_utils_log__error_no_echo(
+    at_utils_log_t *log,
+    const char *fmt, ...)
+{
+  at_utils_log__push_echo_state(log, AT__FALSE);
+  AT_UTILS_LOG__TAGGED_PRINTF__(log, "Error", fmt);
+  at_utils_log__pop_echo_state(log);
+}
+
 
 
 void at_utils_log__fatal(

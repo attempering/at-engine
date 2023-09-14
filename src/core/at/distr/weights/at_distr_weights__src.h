@@ -20,7 +20,7 @@
 #define AT_DISTR_WEIGHTS__SRC_H__
 
 #include "at_distr_weights.h"
-#include "components/at_distr_weights_components__src.h"
+#include "composite/at_distr_weights_composite__src.h"
 #include "at_distr_weights_basic__src.h"
 #include "at_distr_weights_calc__src.h"
 #include "at_distr_weights_order__src.h"

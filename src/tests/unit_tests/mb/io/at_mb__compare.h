@@ -18,7 +18,7 @@
 
 #include "at-engine.h"
 
-at_bool_t at_mb__equal(const at_mb_t *mb1, const at_mb_t *mb2)
+static at_bool_t at_mb__equal(const at_mb_t *mb1, const at_mb_t *mb2)
 {
   if (fabs(mb1->total_visits - mb2->total_visits) > 1e-3) {
     fprintf(stderr, "mb->total_visits mismatch, %g vs %g\n",

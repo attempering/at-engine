@@ -20,7 +20,7 @@
 #define AT_DISTR_WEIGHTS_COMPONENT__SRC_H__
 
 
-#include "at_distr_weights_components.h"
+#include "at_distr_weights_composite.h"
 #include "../../domain/at_distr_domain.h"
 
 

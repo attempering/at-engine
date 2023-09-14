@@ -21,7 +21,7 @@
 
 
 #include "at_distr_weights__def.h"
-#include "components/at_distr_weights_components.h"
+#include "composite/at_distr_weights_composite.h"
 #include "../domain/at_distr_domain__def.h"
 #include "../../utils/at_utils.h"
 

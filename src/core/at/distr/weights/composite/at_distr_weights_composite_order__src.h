@@ -16,11 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DISTR_WEIGHTS_COMPONENTS_ORDER__SRC_H__
-#define AT_DISTR_WEIGHTS_COMPONENTS_ORDER__SRC_H__
+#ifndef AT_DISTR_WEIGHTS_COMPOSITE_ORDER__SRC_H__
+#define AT_DISTR_WEIGHTS_COMPOSITE_ORDER__SRC_H__
 
 
-#include "at_distr_weights_components_order.h"
+#include "at_distr_weights_composite_order.h"
 
 
 static at_bool_t at_distr_weights_component__diff(
@@ -47,9 +47,9 @@ static at_bool_t at_distr_weights_component__diff(
 }
 
 
-at_bool_t at_distr_weights_components__diff(
-    at_distr_weights_components_t *c1,
-    at_distr_weights_components_t *c2)
+at_bool_t at_distr_weights_composite__diff(
+    at_distr_weights_composite_t *c1,
+    at_distr_weights_composite_t *c2)
 {
   int ic;
 

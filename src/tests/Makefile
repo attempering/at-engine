@@ -1,4 +1,4 @@
-sub_dirs = basic_test unit_tests sample_progs
+sub_dirs = basic_tests unit_tests sample_progs
 
 bins::
 	for sub_dir in $(sub_dirs); do \

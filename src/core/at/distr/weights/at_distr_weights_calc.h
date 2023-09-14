@@ -21,7 +21,7 @@
 
 
 #include "at_distr_weights__def.h"
-#include "components/at_distr_weights_components.h"
+#include "composite/at_distr_weights_composite.h"
 #include "../domain/at_distr_domain__def.h"
 #include "../../utils/at_utils.h"
 #include "at_distr_weights_order.h"
@@ -36,7 +36,7 @@ void at_distr_weights__init_ens_w(
 
 /* return the inverse of overall temperature weight
  *
- * The weight is a product of two components, f and w factor
+ * The weight is a product of two factors, f and w factor
  * 
  * The f factor is 1 if mb->mode == 0,
  * or a Gaussian in the beta space if mb->mode == 1.

@@ -74,7 +74,15 @@ void at_utils_log__printf(
     at_utils_log_t *log,
     const char *fmt, ...);
 
+void at_utils_log__printf_no_echo(
+    at_utils_log_t *log,
+    const char *fmt, ...);
+
 void at_utils_log__info(
+    at_utils_log_t *log,
+    const char *fmt, ...);
+
+void at_utils_log__info_no_echo(
     at_utils_log_t *log,
     const char *fmt, ...);
 
@@ -82,7 +90,15 @@ void at_utils_log__warning(
     at_utils_log_t *log,
     const char *fmt, ...);
 
+void at_utils_log__warning_no_echo(
+    at_utils_log_t *log,
+    const char *fmt, ...);
+
 void at_utils_log__error(
+    at_utils_log_t *log,
+    const char *fmt, ...);
+
+void at_utils_log__error_no_echo(
     at_utils_log_t *log,
     const char *fmt, ...);
 

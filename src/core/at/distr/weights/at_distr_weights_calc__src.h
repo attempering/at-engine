@@ -23,7 +23,7 @@
 #include "at_distr_weights.h"
 #include "../domain/at_distr_domain.h"
 
-#include "components/at_distr_weights_components__src.h"
+#include "composite/at_distr_weights_composite__src.h"
 #include "at_distr_weights_order__src.h"
 
 
@@ -84,10 +84,10 @@ static double at_distr_weights__calc_f_factor_simple(
     f = 1.0;
     neg_dlnf_dbeta_local = 0.0;
   }
-  else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
+  else if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE)
   {
-    f = at_distr_weights_components__calc_f_factor_simple(
-        w->components, beta, &neg_dlnf_dbeta_local,
+    f = at_distr_weights_composite__calc_f_factor_simple(
+        w->composite, beta, &neg_dlnf_dbeta_local,
         ((at_distr_weights_t *) w)->log);
   }
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
@@ -138,10 +138,10 @@ static double at_distr_weights__calc_f_factor_bounded(
   else
   {
 
-    if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPONENTS)
+    if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE)
     {
-      f_ = at_distr_weights_components__calc_f_factor_unbounded(
-          w->components, beta, &neg_dlnf_dbeta_local,
+      f_ = at_distr_weights_composite__calc_f_factor_unbounded(
+          w->composite, beta, &neg_dlnf_dbeta_local,
           ((at_distr_weights_t *) w)->log);
     }
     else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)

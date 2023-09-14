@@ -40,7 +40,8 @@ at_bool_t at_distr_weights__diff(
   } else if (w1->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL) {
     return w1->c != w2->c;
   } else {
-    return at_distr_weights_components__diff(w1->components, w2->components);
+    return at_distr_weights_composite__diff(
+        w1->composite, w2->composite);
   }
 
   return AT__FALSE;

@@ -21,13 +21,13 @@
 
 #include "../../context/at_context__def.h"
 #include "../../utils/at_utils__def.h"
-#include "components/at_distr_weights_components__def.h"
+#include "composite/at_distr_weights_composite__def.h"
 
 enum {
   AT_DISTR_WEIGHTS_MODE__FLAT = 0,
   AT_DISTR_WEIGHTS_MODE__GAUSSIAN = 1,
   AT_DISTR_WEIGHTS_MODE__EXPONENTIAL = 2,
-  AT_DISTR_WEIGHTS_MODE__COMPONENTS = 3,
+  AT_DISTR_WEIGHTS_MODE__COMPOSITE = 3,
   AT_DISTR_WEIGHTS_MODE__COUNT,
 };
 
@@ -53,7 +53,7 @@ typedef struct at_distr_weights_t_ {
   /* for legacy mode 2 */
   double    c;            /* c in exponential distribution */
 
-  at_distr_weights_components_t components[1];
+  at_distr_weights_composite_t composite[1];
 
   /* the ordering parameter for sorting replicas */
   double   q_order;

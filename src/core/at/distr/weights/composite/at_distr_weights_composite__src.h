@@ -16,22 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DISTR_WEIGHTS_COMPONENTS__SRC_H__
-#define AT_DISTR_WEIGHTS_COMPONENTS__SRC_H__
+#ifndef AT_DISTR_WEIGHTS_COMPOSITE__SRC_H__
+#define AT_DISTR_WEIGHTS_COMPOSITE__SRC_H__
 
 
-#include "at_distr_weights_components.h"
+#include "at_distr_weights_composite.h"
 #include "../../domain/at_distr_domain.h"
 
 #include "at_distr_weights_component__src.h"
-#include "at_distr_weights_components_order__src.h"
+#include "at_distr_weights_composite_order__src.h"
 
 #include "../../../utils/at_utils.h"
 
 
 
-int at_distr_weights_components__conf_init(
-    at_distr_weights_components_t *c,
+int at_distr_weights_composite__conf_init(
+    at_distr_weights_composite_t *c,
     at_distr_domain_t *domain,
     at_utils_conf_t *conf)
 {
@@ -69,8 +69,8 @@ int at_distr_weights_components__conf_init(
 }
 
 
-void at_distr_weights_components__manifest(
-    const at_distr_weights_components_t *c,
+void at_distr_weights_composite__manifest(
+    const at_distr_weights_composite_t *c,
     at_utils_manifest_t *manifest)
 {
   int ic;
@@ -86,7 +86,7 @@ void at_distr_weights_components__manifest(
 
 
 
-void at_distr_weights_components__finish(at_distr_weights_components_t *c)
+void at_distr_weights_composite__finish(at_distr_weights_composite_t *c)
 {
   int ic;
 
@@ -103,8 +103,8 @@ void at_distr_weights_components__finish(at_distr_weights_components_t *c)
 
 
 
-double at_distr_weights_components__calc_f_factor_simple(
-    const at_distr_weights_components_t *c,
+double at_distr_weights_composite__calc_f_factor_simple(
+    const at_distr_weights_composite_t *c,
     double beta, double *neg_dlnf_dbeta,
     at_utils_log_t *log)
 {
@@ -146,8 +146,8 @@ double at_distr_weights_components__calc_f_factor_simple(
 
 
 
-zcom_xdouble_t at_distr_weights_components__calc_f_factor_unbounded(
-    const at_distr_weights_components_t *c,
+zcom_xdouble_t at_distr_weights_composite__calc_f_factor_unbounded(
+    const at_distr_weights_composite_t *c,
     double beta,
     double *neg_dlnf_dbeta,
     at_utils_log_t *log)
@@ -198,8 +198,8 @@ zcom_xdouble_t at_distr_weights_components__calc_f_factor_unbounded(
 
 
 
-void at_distr_weights_components__basic_init(
-    at_distr_weights_components_t *c,
+void at_distr_weights_composite__basic_init(
+    at_distr_weights_composite_t *c,
     at_distr_domain_t *domain,
     int n_components)
 {
