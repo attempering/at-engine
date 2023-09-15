@@ -44,7 +44,7 @@ void at_utils_trace__conf_init(at_utils_trace_t *trace,
   at_utils_conf__pop_mod(conf);
 
   // do not open trace file yet, at__open_log();
-  trace->log = NULL;
+  trace->logger = NULL;
 
   trace->ready = AT__TRUE;
 }
@@ -75,21 +75,21 @@ void at_utils_trace__manifest(at_utils_trace_t *trace,
 
 
 
-zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation)
+zcom_logger_t *at_utils_trace__open_file(at_utils_trace_t *trace, at_bool_t is_continuation)
 {
-  trace->log = zcom_log__open(trace->file,
-      (is_continuation ? ZCOM_LOG__APPEND : 0));
+  trace->logger = zcom_logger__open(trace->file,
+      (is_continuation ? ZCOM_LOGGER__APPEND : 0));
 
-  return trace->log;
+  return trace->logger;
 }
 
 
 
 void at_utils_trace__close_file(at_utils_trace_t *trace)
 {
-  if (trace->log) {
-    zcom_log__close(trace->log);
-    trace->log = NULL;
+  if (trace->logger) {
+    zcom_logger__close(trace->logger);
+    trace->logger = NULL;
   }
 }
 
@@ -129,16 +129,16 @@ void at_utils_trace__printf(
 {
   va_list args;
 
-  if (trace->log == NULL) {
-    trace->log = at_utils_trace__open_file(trace, AT__FALSE);
+  if (trace->logger == NULL) {
+    trace->logger = at_utils_trace__open_file(trace, AT__FALSE);
   }
 
   va_start(args, fmt);
-  zcom_log__vprintf(trace->log, fmt, args);
+  zcom_logger__vprintf(trace->logger, fmt, args);
   va_end(args);
 
   if (flush_afterward) {
-    zcom_log__flush(trace->log);
+    zcom_logger__flush(trace->logger);
   }
 }
 

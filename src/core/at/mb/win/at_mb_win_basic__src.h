@@ -30,8 +30,8 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
   at_distr_domain_t *domain = mb->distr->domain;
   int i, n = domain->n;
 
-  at_utils_log__exit_if (n <= 0,
-      conf->log,
+  at_utils_logger__exit_if (n <= 0,
+      conf->logger,
       "failed validation: n %d > 0\n", n);
 
   win->n = n;
@@ -42,8 +42,8 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
       &win->bwmod, 1,
       "bwmod");
 
-  at_utils_log__exit_if ( !(win->bwmod >= 0 && win->bwmod <= 2),
-      conf->log,
+  at_utils_logger__exit_if ( !(win->bwmod >= 0 && win->bwmod <= 2),
+      conf->logger,
       "win->bwmod = %d: failed validation: win->bwmod >= 0 && win->bwmod <= 2\n",
       win->bwmod);
 
@@ -54,8 +54,8 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
         &win->bwdel, 0.05,
         "bwdel");
 
-    at_utils_log__exit_if ( !(win->bwdel > domain->beta_del/domain->beta_min),
-        conf->log,
+    at_utils_logger__exit_if ( !(win->bwdel > domain->beta_del/domain->beta_min),
+        conf->logger,
         "win->bwdel: failed validation: win->bwdel %g > %g, (beta-del %g)/(beta-min %g)\n",
         win->bwdel, domain->beta_del/domain->beta_min, domain->beta_del, domain->beta_min);
   }
@@ -67,8 +67,8 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
         &win->bwdel, 0.02,
         "bwdel");
 
-    at_utils_log__exit_if ( !(win->bwdel > domain->beta_del),
-        conf->log,
+    at_utils_logger__exit_if ( !(win->bwdel > domain->beta_del),
+        conf->logger,
         "win->bwdel: failed validation: win->bwdel %g > beta-del %g\n",
         win->bwdel, domain->beta_del);
   }
@@ -81,8 +81,8 @@ int at_mb_win__conf_init(at_mb_win_t* win, at_utils_conf_t *conf, at_mb_t *mb)
         &win->bwdel, 0.1,
         "bwdel");
 
-    at_utils_log__exit_if ( !(win->bwdel > domain->beta_del/pow(domain->beta_min, 2.0)),
-        conf->log,
+    at_utils_logger__exit_if ( !(win->bwdel > domain->beta_del/pow(domain->beta_min, 2.0)),
+        conf->logger,
         "win->bwdel: failed validation: win->bwdel %g > (beta-del %g)/(beta-min %g)^2\n",
         win->bwdel, domain->beta_del, domain->beta_min);
   }

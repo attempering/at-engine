@@ -22,7 +22,7 @@
 
 
 #include "at_utils_basic.h"
-#include "log/at_utils_log.h"
+#include "logger/at_utils_logger.h"
 #include "conf/at_utils_conf.h"
 #include "lockfile/at_utils_lockfile.h"
 #include "manifest/at_utils_manifest.h"
@@ -80,16 +80,16 @@ void at_utils__cfg_init(
   at_utils__init_data_dir(utils, cfg, append_sim_id_to_data_dir, sim_id, verbose);
 
   /* initialize the log file */
-  at_utils_log__cfg_init(utils->log, cfg, utils->ssm, utils->data_dir, verbose);
-  at_utils_log__open_file(utils->log, is_continuation);
-  at_utils_log__push_mod(utils->log, "at");
+  at_utils_logger__cfg_init(utils->logger, cfg, utils->ssm, utils->data_dir, verbose);
+  at_utils_logger__open_file(utils->logger, is_continuation);
+  at_utils_logger__push_mod(utils->logger, "at");
 
-  at_utils_conf__init(utils->conf, cfg, ssm, utils->data_dir, utils->log, verbose);
+  at_utils_conf__init(utils->conf, cfg, ssm, utils->data_dir, utils->logger, verbose);
 
   at_utils__conf_init_self(utils);
 
   at_utils_lockfile__init(utils->lockfile, ignore_lockfile,
-      utils->log, utils->ssm, utils->data_dir, verbose);
+      utils->logger, utils->ssm, utils->data_dir, verbose);
 
   at_utils_manifest__conf_init(utils->manifest, utils->conf);
 
@@ -108,7 +108,7 @@ void at_utils__finish(at_utils_t *utils)
   at_utils_lockfile__finish(utils->lockfile);
 
   at_utils_conf__finish(utils->conf);
-  at_utils_log__finish(utils->log);
+  at_utils_logger__finish(utils->logger);
 
   utils->ready = AT__FALSE;
 
@@ -122,7 +122,7 @@ void at_utils__manifest(at_utils_t *utils)
 
   at_utils_trace__manifest(utils->trace, utils->manifest);
 
-  at_utils_log__manifest(utils->log, utils->manifest);
+  at_utils_logger__manifest(utils->logger, utils->manifest);
 
 
   at_utils_manifest__push_mod(utils->manifest, "at.utils");

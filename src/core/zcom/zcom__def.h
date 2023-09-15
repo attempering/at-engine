@@ -23,7 +23,7 @@
 #include "ssm/ssm__def.h"
 #include "opt/opt__def.h"
 #include "cfg/cfg__def.h"
-#include "log/log__def.h"
+#include "logger/logger__def.h"
 #include "rng/rng__def.h"
 #include "xdouble/xdouble__def.h"
 

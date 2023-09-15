@@ -47,9 +47,9 @@ void at_driver_langevin_move__print_acceptance_ratio_suggestions(
   if (langevin->total >= langevin->nst_suggest) {
 
     if (ar > ar_max) {
-      at_utils_log__info(langevin->log, "acceptance ratio %g, consider increasing langevin-dt\n", ar);
+      at_utils_logger__info(langevin->logger, "acceptance ratio %g, consider increasing langevin-dt\n", ar);
     } else if (ar < ar_min) {
-      at_utils_log__info(langevin->log, "acceptance ratio %g, consider decreasing langevin-dt\n", ar);
+      at_utils_logger__info(langevin->logger, "acceptance ratio %g, consider decreasing langevin-dt\n", ar);
     }
 
   }

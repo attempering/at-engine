@@ -39,7 +39,7 @@ int at_distr_weights_composite__conf_init(
   c->n = domain->n;
 
   if (conf->verbose) {
-    at_utils_log__info(conf->log, "multiple-component distribution mode\n");
+    at_utils_logger__info(conf->logger, "multiple-component distribution mode\n");
   }
 
   /* flat ensemble mode */
@@ -49,7 +49,7 @@ int at_distr_weights_composite__conf_init(
       "n_components");
 
   if (c->n_components <= 0) {
-    at_utils_log__error(conf->log, "invalid number of components %d\n",
+    at_utils_logger__error(conf->logger, "invalid number of components %d\n",
         c->n_components);
     c->n_components = 0;
     c->components = NULL;

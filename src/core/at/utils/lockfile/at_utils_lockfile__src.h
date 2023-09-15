@@ -61,19 +61,19 @@ static char *at_utils_lockfile__get_file_name(
 int at_utils_lockfile__init(
     at_utils_lockfile_t *lockfile,
     at_bool_t ignore_lockfile,
-    at_utils_log_t *log,
+    at_utils_logger_t *logger,
     zcom_ssm_t *ssm,
     const char *data_dir,
     at_bool_t verbose)
 {
   at_utils_lockfile__get_file_name(lockfile, ssm, data_dir);
 
-  at_utils_log__push_mod(log, "at.utils.lockfile");
+  at_utils_logger__push_mod(logger, "at.utils.lockfile");
 
   if (at_utils_sys__file_exists(lockfile->filename)) {
 
-    at_utils_log__exit_if (!ignore_lockfile,
-        log,
+    at_utils_logger__exit_if (!ignore_lockfile,
+        logger,
 
         // inform the user that the lock file exists
         // another simulation may be running
@@ -89,7 +89,7 @@ int at_utils_lockfile__init(
 
     if ((fp = fopen(lockfile->filename, "w")) == NULL) {
 
-      at_utils_log__warning(log, "failed to create the lockfile %s\n", lockfile->filename);
+      at_utils_logger__warning(logger, "failed to create the lockfile %s\n", lockfile->filename);
 
     } else {
 
@@ -100,14 +100,14 @@ int at_utils_lockfile__init(
       fclose(fp);
 
       if (verbose) {
-        at_utils_log__info(log, "successfully created the lockfile %s\n", lockfile->filename);
+        at_utils_logger__info(logger, "successfully created the lockfile %s\n", lockfile->filename);
       }
 
     }
 
   } 
 
-  at_utils_log__pop_mod(log);
+  at_utils_logger__pop_mod(logger);
 
   lockfile->ready = AT__TRUE;
 

@@ -67,7 +67,7 @@ static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
     }
 
     if (jmin >= eh->e_n) {
-      at_utils_log__error(eh->log, "eh->his: base index %d out of boundary [0, eh->e_n=%d)\n",
+      at_utils_logger__error(eh->logger, "eh->his: base index %d out of boundary [0, eh->e_n=%d)\n",
           jmin, eh->e_n);
       goto ERR;
     }
@@ -82,7 +82,7 @@ static int at_eh__read_binary_low_level(at_eh_t *eh, at_utils_io_t *io)
     }
 
     if (jmin + size > eh->e_n) {
-      at_utils_log__error(eh->log, "%s: invalid size %d, jmin=%d, [0, eh->e_n=%d)\n",
+      at_utils_logger__error(eh->logger, "%s: invalid size %d, jmin=%d, [0, eh->e_n=%d)\n",
           io->fn, size, jmin, eh->e_n);
       goto ERR;
     }

@@ -37,7 +37,7 @@ int at_eh__conf_init(at_eh_t *eh,
   eh->e_min_runtime = 0;
   eh->e_max_runtime = 0;
 
-  at_utils_log__init_delegate(eh->log, conf->log, "at.eh");
+  at_utils_logger__init_delegate(eh->logger, conf->logger, "at.eh");
 
   at_utils_conf__push_mod(conf, "at.eh");
 
@@ -48,7 +48,7 @@ int at_eh__conf_init(at_eh_t *eh,
       "mode");
 
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
-    at_utils_log__error(eh->log, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
+    at_utils_logger__error(eh->logger, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
     goto ERR;
   }
 
@@ -80,7 +80,7 @@ int at_eh__conf_init(at_eh_t *eh,
       "e_del");
 
   if (eh->e_del <= 0) {
-    at_utils_log__error(conf->log,
+    at_utils_logger__error(conf->logger,
         "eh->e_del: failed validation: eh->e_del > 0\n");
     goto ERR;
   }
@@ -164,7 +164,7 @@ void at_eh__clear(at_eh_t *eh)
 
 void at_eh__finish(at_eh_t *eh)
 {
-  at_utils_log__finish(eh->log);
+  at_utils_logger__finish(eh->logger);
   at_eh_recon__finish(eh->recon);
   if (eh->his != NULL) {
     free(eh->his);

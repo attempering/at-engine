@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2006-2023  AT-Engine Developers
+ * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,24 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM__LOG_H__
-#define ZCOM__LOG_H__
+#ifndef AT_UTILS_LOGGER__DEF_H__
+#define AT_UTILS_LOGGER__DEF_H__
 
+#include "../../context/at_context__def.h"
+#include "../boolstack/at_utils_boolstack__def.h"
+#include "../modstack/at_utils_modstack__def.h"
+#include "../../../zcom/zcom.h"
 
-#include "log__def.h"
-
-zcom_log_t *zcom_log__open(const char *fn, unsigned flags);
-
-int zcom_log__vprintf(zcom_log_t *log, const char *fmt, va_list args);
-
-int zcom_log__printf(zcom_log_t *log, const char *fmt, ...);
-
-void zcom_log__close(zcom_log_t *log);
-
-int zcom_log__flush(zcom_log_t *log);
-
-/* close & reopen log file to make sure that stuff is written to disk */
-int zcom_log__hard_flush(zcom_log_t *log);
-
+typedef struct at_utils_logger_t_
+{
+  int ready;
+  at_utils_modstack_t mods[1];
+  char *file;
+  FILE *fp;
+  at_bool_t is_delegate;
+  at_utils_boolstack_t echo[1]; // states of whether to print to stderr
+} at_utils_logger_t;
 
 #endif

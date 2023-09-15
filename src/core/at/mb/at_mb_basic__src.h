@@ -43,12 +43,12 @@ int at_mb__conf_init(
 {
   int i, n;
 
-  at_utils_log__init_delegate(mb->log, conf->log, "at.mb");
+  at_utils_logger__init_delegate(mb->logger, conf->logger, "at.mb");
 
   at_utils_conf__push_mod(conf, "at.mb");
 
   if (mb == NULL) {
-    at_utils_log__error(mb->log, "null pointer to at_mb_t\n");
+    at_utils_logger__error(mb->logger, "null pointer to at_mb_t\n");
     goto ERR;
   }
 
@@ -167,7 +167,7 @@ void at_mb__finish(at_mb_t *mb)
 
   at_mb_iie__finish(mb->iie);
 
-  at_utils_log__finish(mb->log);
+  at_utils_logger__finish(mb->logger);
 
   memset(mb, 0, sizeof(*mb));
 }

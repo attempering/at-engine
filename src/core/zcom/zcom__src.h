@@ -25,7 +25,7 @@
 #include "ssm/ssm__src.h"
 #include "opt/opt__src.h"
 #include "cfg/cfg__src.h"
-#include "log/log__src.h"
+#include "logger/logger__src.h"
 #include "rng/rng__src.h"
 #include "xdouble/xdouble__src.h"
 

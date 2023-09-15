@@ -67,7 +67,7 @@ typedef struct at_distr_weights_t_ {
 
   double   *ens_w;        /* array of ensemble weights at bin boundaries */
 
-  at_utils_log_t log[1]; /* module-specific logger */
+  at_utils_logger_t logger[1]; /* module-specific logger */
 
 } at_distr_weights_t;
 

@@ -22,26 +22,26 @@
 
 
 
-int main(int argc, char **argv)
+int main(void)
 {
-  at_utils_log_t log[1], log2[1];
+  at_utils_logger_t logger[1], logger2[1];
   zcom_ssm_t *ssm;
 
   ssm = zcom_ssm__open();
 
-  at_utils_log__cfg_init(log, NULL, ssm, "atdata", AT__TRUE);
+  at_utils_logger__cfg_init(logger, NULL, ssm, "atdata", AT__TRUE);
 
-  at_utils_log__push_mod(log, "module1");
-  at_utils_log__info(log, "ssm pointer %p\n", ssm);
-  at_utils_log__pop_mod(log);
+  at_utils_logger__push_mod(logger, "module1");
+  at_utils_logger__info(logger, "ssm pointer %p\n", ssm);
+  at_utils_logger__pop_mod(logger);
 
-  at_utils_log__info(log, "Good bye!\n");
+  at_utils_logger__info(logger, "Good bye!\n");
 
-  at_utils_log__init_delegate(log2, log, "delegate");
-  at_utils_log__info(log2, "I'm a delegate logger.\n");
-  at_utils_log__finish(log2);
+  at_utils_logger__init_delegate(logger2, logger, "delegate");
+  at_utils_logger__info(logger2, "I'm a delegate logger.\n");
+  at_utils_logger__finish(logger2);
 
-  at_utils_log__finish(log);
+  at_utils_logger__finish(logger);
 
   zcom_ssm__close(ssm);
 

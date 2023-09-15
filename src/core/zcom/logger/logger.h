@@ -16,26 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ZCOM__LOG__DEF_H__
-#define ZCOM__LOG__DEF_H__
+#ifndef ZCOM__LOGGER_H__
+#define ZCOM__LOGGER_H__
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#include "logger__def.h"
 
-#include "../def/def.h"
+zcom_logger_t *zcom_logger__open(const char *fn, unsigned flags);
 
-typedef struct zcom_log_t_ {
-  FILE *fp;
-  const char *fn;
-  unsigned flags;
-} zcom_log_t;
+int zcom_logger__vprintf(zcom_logger_t *logger, const char *fmt, va_list args);
 
-#define ZCOM_LOG__OUTPUT_SCREEN   0x01
-#define ZCOM_LOG__FLUSH_AFTERWARD 0x02
-#define ZCOM_LOG__NO_OUTPUT_FILE  0x10
-#define ZCOM_LOG__APPEND          0x80
+int zcom_logger__printf(zcom_logger_t *logger, const char *fmt, ...);
+
+void zcom_logger__close(zcom_logger_t *logger);
+
+int zcom_logger__flush(zcom_logger_t *logger);
+
+/* close & reopen logger file to make sure that stuff is written to disk */
+int zcom_logger__hard_flush(zcom_logger_t *logger);
+
 
 #endif

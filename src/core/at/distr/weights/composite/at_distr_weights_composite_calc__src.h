@@ -31,7 +31,7 @@ double at_distr_weights_composite__calc_f_factor_simple(
     const at_distr_weights_composite_t *c,
     double beta,
     double *neg_dlnf_dbeta,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   double f, neg_df_dbeta;
   int ic;
@@ -45,7 +45,7 @@ double at_distr_weights_composite__calc_f_factor_simple(
       double f_comp, neg_dlnf_dbeta_comp;
 
       f_comp = at_distr_weights_component__calc_f_factor_simple(
-          c->components + ic, beta, &neg_dlnf_dbeta_comp, log);
+          c->components + ic, beta, &neg_dlnf_dbeta_comp, logger);
       //printf("wc-simple: comp %d, %g %g\n", ic, f_comp, neg_dlnf_dbeta_comp);
 
       f += f_comp;
@@ -76,7 +76,7 @@ zcom_xdouble_t at_distr_weights_composite__calc_f_factor_unbounded(
     const at_distr_weights_composite_t *c,
     double beta,
     double *neg_dlnf_dbeta,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   zcom_xdouble_t f, neg_df_dbeta;
   int ic;
@@ -91,7 +91,7 @@ zcom_xdouble_t at_distr_weights_composite__calc_f_factor_unbounded(
       double neg_dlnf_dbeta_comp = 0.0;
 
       f_comp = at_distr_weights_component__calc_f_factor_unbounded(
-          c->components + ic, beta, &neg_dlnf_dbeta_comp, log);
+          c->components + ic, beta, &neg_dlnf_dbeta_comp, logger);
       //printf("wc-unbounded: comp %d, %g, %g\n", ic, zcom_xdouble__to_double(f_comp), neg_dlnf_dbeta_comp);
 
       f = zcom_xdouble__add(f, f_comp);
@@ -141,7 +141,7 @@ static double at_distr_weights_composite__ln_add(double x, double y) {
 double at_distr_weights_composite__calc_lnf(
     const at_distr_weights_composite_t *c,
     double beta,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   double lnf = at_distr_weights_composite__get_ln_zero();
 
@@ -152,7 +152,7 @@ double at_distr_weights_composite__calc_lnf(
     for (ic = 0; ic < c->n_components; ic++) {
 
       double lnf_comp = at_distr_weights_component__calc_lnf(
-          c->components + ic, beta, log);
+          c->components + ic, beta, logger);
 
       lnf = at_distr_weights_composite__ln_add(lnf, lnf_comp);
 

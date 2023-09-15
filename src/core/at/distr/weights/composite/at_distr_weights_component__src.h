@@ -27,11 +27,11 @@
 static int at_distr_weights_component__parse_gaussian_params(
     at_distr_weights_component_t *c,
     char *params,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   if (params == NULL) {
 
-    at_utils_log__error(log,
+    at_utils_logger__error(logger,
         "component %d (gaussian) has no parameters\n",
         c->id);
 
@@ -43,7 +43,7 @@ static int at_distr_weights_component__parse_gaussian_params(
 
   if (sscanf(params, "%lf,%lf", &c->beta0, &c->sigma) != 2) {
 
-    at_utils_log__error(log,
+    at_utils_logger__error(logger,
         "component %d (gaussian) does not have enough parameters\n",
         c->id);
 
@@ -60,7 +60,7 @@ static int at_distr_weights_component__parse_gaussian_params(
 static int at_distr_weights_component__parse_str(
     at_distr_weights_component_t *c,
     char *comp_str,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   char *p;
   char *params = NULL;
@@ -107,7 +107,7 @@ static int at_distr_weights_component__parse_str(
 
     c->type = AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN;
 
-    at_distr_weights_component__parse_gaussian_params(c, params, log);
+    at_distr_weights_component__parse_gaussian_params(c, params, logger);
 
   } else if (strncmp(comp_str, "flat", 4) == 0) {
 
@@ -115,7 +115,7 @@ static int at_distr_weights_component__parse_str(
 
   } else {
 
-    at_utils_log__fatal(log, "invalid component type %s\n",
+    at_utils_logger__fatal(logger, "invalid component type %s\n",
         comp_str);
 
   }
@@ -145,7 +145,7 @@ static int at_distr_weights_component__conf_init(
   c->id = ic;
   c->key = key;
 
-  at_distr_weights_component__parse_str(c, comp_str, conf->log);
+  at_distr_weights_component__parse_str(c, comp_str, conf->logger);
 
   return 0;
 }
@@ -184,7 +184,7 @@ static double at_distr_weights_component__calc_f_factor_simple(
     const at_distr_weights_component_t *c,
     double beta,
     double *neg_dlnf_dbeta,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   double f_comp = c->w_rel;
   double neg_dlnf_dbeta_local = 0.0;
@@ -201,7 +201,7 @@ static double at_distr_weights_component__calc_f_factor_simple(
 
   } else {
 
-    at_utils_log__fatal(log, "unknown component type %d for %s\n",
+    at_utils_logger__fatal(logger, "unknown component type %d for %s\n",
         c->id, c->key);
 
   }
@@ -219,7 +219,7 @@ static zcom_xdouble_t at_distr_weights_component__calc_f_factor_unbounded(
     const at_distr_weights_component_t *c,
     double beta,
     double *neg_dlnf_dbeta,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   zcom_xdouble_t f_comp = zcom_xdouble__from_double(c->w_rel);
   double neg_dlnf_dbeta_local = 0.0;
@@ -239,7 +239,7 @@ static zcom_xdouble_t at_distr_weights_component__calc_f_factor_unbounded(
 
   } else {
 
-    at_utils_log__fatal(log, "unknown component type %d for %s\n",
+    at_utils_logger__fatal(logger, "unknown component type %d for %s\n",
         c->id, c->key);
 
   }
@@ -256,7 +256,7 @@ static zcom_xdouble_t at_distr_weights_component__calc_f_factor_unbounded(
 static double at_distr_weights_component__calc_lnf(
     const at_distr_weights_component_t *c,
     double beta,
-    at_utils_log_t *logger)
+    at_utils_logger_t *logger)
 {
   double lnf = log(c->w_rel);
 
@@ -270,7 +270,7 @@ static double at_distr_weights_component__calc_lnf(
 
   } else {
 
-    at_utils_log__fatal(logger, "unknown component type %d for %s\n",
+    at_utils_logger__fatal(logger, "unknown component type %d for %s\n",
         c->id, c->key);
 
   }

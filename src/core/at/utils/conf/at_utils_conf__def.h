@@ -19,7 +19,7 @@
 #ifndef AT_UTILS_CONF__DEF_H__
 #define AT_UTILS_CONF__DEF_H__
 
-#include "../log/at_utils_log__def.h"
+#include "../logger/at_utils_logger__def.h"
 #include "../../context/at_context__def.h"
 #include "../../../zcom/zcom.h"
 
@@ -28,7 +28,7 @@ typedef struct at_utils_conf_t_
   int ready;
   zcom_cfg_t *cfg; /* reference handle */
 
-  at_utils_log_t *log; /* reference handle for the log file */
+  at_utils_logger_t *logger; /* reference handle for the log file */
   zcom_ssm_t *ssm; /* reference handle for the string allocator */
   const char *data_dir;
   at_bool_t verbose;

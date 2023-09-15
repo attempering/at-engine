@@ -26,7 +26,7 @@ typedef struct at_utils_trace_t_
   int ready;
   char *file;
   int nst_trace;
-  zcom_log_t *log;
+  zcom_logger_t *logger;
 } at_utils_trace_t;
 
 #endif

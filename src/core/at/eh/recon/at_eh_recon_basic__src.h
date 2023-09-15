@@ -52,7 +52,7 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
       "bwmod");
 
   if ( !(recon->bwmod >= 0 && recon->bwmod <= 2) ) {
-    at_utils_log__error(conf->log, "recon->bwmod: failed validation: recon->bwmod >= 0 && recon->bwmod <= 2\n");
+    at_utils_logger__error(conf->logger, "recon->bwmod: failed validation: recon->bwmod >= 0 && recon->bwmod <= 2\n");
     goto ERR;
   }
 
@@ -64,7 +64,7 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
         "bwdel");
 
     if ( !(recon->bwdel > domain->beta_del/domain->beta_min) ) {
-      at_utils_log__error(conf->log, "recon->bwdel: failed validation: recon->bwdel %g > (beta-del %g)/(beta-min %g)\n",
+      at_utils_logger__error(conf->logger, "recon->bwdel: failed validation: recon->bwdel %g > (beta-del %g)/(beta-min %g)\n",
           recon->bwdel, domain->beta_del, domain->beta_min);
       goto ERR;
     }
@@ -78,7 +78,7 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
         "bwdel");
 
     if ( !(recon->bwdel > distr->domain->beta_del) ) {
-      at_utils_log__error(conf->log, "recon->bwdel: failed validation: (recon->bwdel %g) > (beta-del %g)\n",
+      at_utils_logger__error(conf->logger, "recon->bwdel: failed validation: (recon->bwdel %g) > (beta-del %g)\n",
           recon->bwdel, domain->beta_del);
       goto ERR;
     }
@@ -92,7 +92,7 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
         "bwdel");
 
     if ( !(recon->bwdel > distr->domain->beta_del/pow(distr->domain->beta_min, 2.0)) ) {
-      at_utils_log__error(conf->log, "recon->bwdel: failed validation: (recon->bwdel %g) > (beta-del %g)/(beta-min %g)^2\n",
+      at_utils_logger__error(conf->logger, "recon->bwdel: failed validation: (recon->bwdel %g) > (beta-del %g)/(beta-min %g)^2\n",
           recon->bwdel, domain->beta_del, domain->beta_min);
       goto ERR;
     }

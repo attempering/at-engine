@@ -39,11 +39,11 @@ int at_distr_weights__conf_init(
   w->n = domain->n;
 
   /* initialize a module-specific logger */
-  at_utils_log__init_delegate(w->log, conf->log, "at.distr.weights");
+  at_utils_logger__init_delegate(w->logger, conf->logger, "at.distr.weights");
 
   at_utils_conf__push_mod(conf, "at.distr.weights");
 
-  //at_utils_log__info(conf->log, "w->n %d\n", w->n); getchar();
+  //at_utils_logger__info(conf->logger, "w->n %d\n", w->n); getchar();
 
   at_utils_conf__get_double(conf,
       "ensemble-f-min",
@@ -81,7 +81,7 @@ int at_distr_weights__conf_init(
 
   if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN) {
 
-    at_utils_log__info(conf->log, "single-Gaussian distribution mode\n");
+    at_utils_logger__info(conf->logger, "single-Gaussian distribution mode\n");
 
     at_utils_conf__get_double(conf,
         "ensemble-beta0",
@@ -92,7 +92,7 @@ int at_distr_weights__conf_init(
         &w->sigma, 0.0, "ensemble_sigma");
 
     if (w->sigma <= 0) {
-      at_utils_log__error(conf->log, "sigma %lf is not positive!\n", w->sigma);
+      at_utils_logger__error(conf->logger, "sigma %lf is not positive!\n", w->sigma);
       goto ERR;
     }
 
@@ -100,7 +100,7 @@ int at_distr_weights__conf_init(
 
   } else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL) {
 
-    at_utils_log__info(w->log, "single-exponential distribution mode\n");
+    at_utils_logger__info(w->logger, "single-exponential distribution mode\n");
 
     at_utils_conf__get_double(conf,
         "ensemble-c",
@@ -112,7 +112,7 @@ int at_distr_weights__conf_init(
 
   } else if(w->mode != 0) {
 
-    at_utils_log__error(w->log, "invalid ensemble mode\n");
+    at_utils_logger__error(w->logger, "invalid ensemble mode\n");
     goto ERR;
 
   }
@@ -181,7 +181,7 @@ void at_distr_weights__finish(at_distr_weights_t *w)
     at_distr_weights_composite__finish(w->composite);
   }
 
-  at_utils_log__finish(w->log);
+  at_utils_logger__finish(w->logger);
 }
 
 

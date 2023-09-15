@@ -29,14 +29,14 @@ void at_utils_conf__init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    at_utils_log_t *log,
+    at_utils_logger_t *logger,
     at_bool_t verbose)
 {
   conf->cfg = cfg;
   conf->ssm = ssm;
   conf->data_dir = data_dir;
 
-  conf->log = log;
+  conf->logger = logger;
 
   conf->verbose = verbose;
 
@@ -67,9 +67,9 @@ void at_utils_conf__init_ez(
     conf->cfg = NULL;
   }
 
-  at_utils__new(conf->log, at_utils_log_t);
+  at_utils__new(conf->logger, at_utils_logger_t);
 
-  at_utils_log__cfg_init(conf->log, conf->cfg, conf->ssm, data_dir, verbose);
+  at_utils_logger__cfg_init(conf->logger, conf->cfg, conf->ssm, data_dir, verbose);
 
   conf->verbose = verbose;
 
@@ -80,8 +80,8 @@ void at_utils_conf__init_ez(
 void at_utils_conf__finish_ez(
     at_utils_conf_t *conf)
 {
-  at_utils_log__finish(conf->log);
-  free(conf->log);
+  at_utils_logger__finish(conf->logger);
+  free(conf->logger);
 
   if (conf->cfg) {
     zcom_cfg__close(conf->cfg);
@@ -95,19 +95,19 @@ void at_utils_conf__finish_ez(
 
 void at_utils_conf__push_mod(at_utils_conf_t *conf, const char *mod)
 {
-  at_utils_log__push_mod(conf->log, mod);
+  at_utils_logger__push_mod(conf->logger, mod);
 }
 
 
 const char *at_utils_conf__pop_mod(at_utils_conf_t *conf)
 {
-  return at_utils_log__pop_mod(conf->log);
+  return at_utils_logger__pop_mod(conf->logger);
 }
 
 
 const char *at_utils_conf__get_mod(at_utils_conf_t *conf)
 {
-  return at_utils_log__get_mod(conf->log);
+  return at_utils_logger__get_mod(conf->logger);
 }
 
 
@@ -142,10 +142,10 @@ int at_utils_conf__get_int(
   tmp = val_def;
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%d") != 0) {
-    at_utils_log__push_echo_state(conf->log, conf->verbose);
-    at_utils_log__info(conf->log, "assuming default %s = %d, key: %s\n",
+    at_utils_logger__push_echo_state(conf->logger, conf->verbose);
+    at_utils_logger__info(conf->logger, "assuming default %s = %d, key: %s\n",
         name, val_def, key);
-    at_utils_log__pop_echo_state(conf->log);
+    at_utils_logger__pop_echo_state(conf->logger);
   }
 
   *var = tmp;
@@ -169,10 +169,10 @@ int at_utils_conf__get_double(
   tmp = val_def;
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%lf") != 0) {
-    at_utils_log__push_echo_state(conf->log, conf->verbose);
-    at_utils_log__info(conf->log, "assuming default %s = %g, key: %s\n",
+    at_utils_logger__push_echo_state(conf->logger, conf->verbose);
+    at_utils_logger__info(conf->logger, "assuming default %s = %g, key: %s\n",
         name, val_def, key);
-    at_utils_log__pop_echo_state(conf->log);
+    at_utils_logger__pop_echo_state(conf->logger);
   }
 
   *var = tmp;
@@ -195,10 +195,10 @@ int at_utils_conf__get_str(
   at_utils_conf__get_key_and_name(keys, &key, &name);
 
   if (zcom_cfg__get(conf->cfg, &tmp, keys, "%s") != 0) {
-    at_utils_log__push_echo_state(conf->log, conf->verbose);
-    at_utils_log__info(conf->log, "assuming default %s = \"%s\", key: %s\n",
+    at_utils_logger__push_echo_state(conf->logger, conf->verbose);
+    at_utils_logger__info(conf->logger, "assuming default %s = \"%s\", key: %s\n",
         name, val_def, key);
-    at_utils_log__pop_echo_state(conf->log);
+    at_utils_logger__pop_echo_state(conf->logger);
   }
 
   *var = tmp;
@@ -238,10 +238,10 @@ int at_utils_conf__get_bool(
   at_utils_conf__get_key_and_name(keys, &key, &name);
 
   if (zcom_cfg__get(conf->cfg, &str_val, keys, "%s") != 0) {
-    at_utils_log__push_echo_state(conf->log, conf->verbose);
-    at_utils_log__info(conf->log, "assuming default %s = %s, key: %s\n",
+    at_utils_logger__push_echo_state(conf->logger, conf->verbose);
+    at_utils_logger__info(conf->logger, "assuming default %s = %s, key: %s\n",
         name, str_val_def, key);
-    at_utils_log__pop_echo_state(conf->log);
+    at_utils_logger__pop_echo_state(conf->logger);
   }
 
   zcom_utils__str_to_lower(str_val);

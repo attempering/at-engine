@@ -21,7 +21,7 @@
 
 #include "boolstack/at_utils_boolstack__def.h"
 #include "modstack/at_utils_modstack__def.h"
-#include "log/at_utils_log__def.h"
+#include "logger/at_utils_logger__def.h"
 #include "conf/at_utils_conf__def.h"
 #include "lockfile/at_utils_lockfile__def.h"
 #include "manifest/at_utils_manifest__def.h"
@@ -36,7 +36,7 @@ typedef struct at_utils_t_
 {
   int ready;
 
-  at_utils_log_t log[1]; /* human-readable log file */
+  at_utils_logger_t logger[1]; /* human-readable log file */
   at_utils_conf_t conf[1]; /* advanced configuration file reader */
 
   at_utils_lockfile_t lockfile[1];

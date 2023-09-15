@@ -52,7 +52,7 @@ int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
       &shk->init, 0.01,
       "init");
   if (shk->init >= 0.9 || shk->init < 0.0) {
-    at_utils_log__error(conf->log, "shk->init: failed validation: shk->init < 0.9 && shk->init >= 0.0\n");
+    at_utils_logger__error(conf->logger, "shk->init: failed validation: shk->init < 0.9 && shk->init >= 0.0\n");
     goto ERR;
   }
 
@@ -61,7 +61,7 @@ int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
       &shk->max, 0.01,
       "max");
   if (shk->max >= 0.9 || shk->max < 0.0) {
-    at_utils_log__error(conf->log, "shk->max: failed validation: shk->max < 0.9 && shk->max >= 0.0\n");
+    at_utils_logger__error(conf->logger, "shk->max: failed validation: shk->max < 0.9 && shk->max >= 0.0\n");
     goto ERR;
   }
 
@@ -83,7 +83,7 @@ int at_mb_shk__conf_init(at_mb_shk_t *shk, at_mb_t *mb, at_utils_conf_t *conf)
       &shk->mode, 1,
       "mode");
   if ( !(shk->mode >= 0 && shk->mode <= 2) ) {
-    at_utils_log__error(conf->log, "shk->mode: failed validation: shk->mode >= 0 && shk->mode <= 2\n");
+    at_utils_logger__error(conf->logger, "shk->mode: failed validation: shk->mode >= 0 && shk->mode <= 2\n");
     goto ERR;
   }
 

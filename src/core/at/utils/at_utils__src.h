@@ -24,7 +24,7 @@
 
 #include "boolstack/at_utils_boolstack__src.h"
 #include "modstack/at_utils_modstack__src.h"
-#include "log/at_utils_log__src.h"
+#include "logger/at_utils_logger__src.h"
 #include "conf/at_utils_conf__src.h"
 #include "lockfile/at_utils_lockfile__src.h"
 #include "manifest/at_utils_manifest__src.h"

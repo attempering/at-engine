@@ -25,13 +25,13 @@
 
 /* check if domain->barr is arranged in an ascending order */
 static void at_distr_domain__check_barr(at_distr_domain_t *domain,
-    at_utils_log_t *log)
+    at_utils_logger_t *logger)
 {
   int i;
 
   for (i = 0; i <= domain->n; i++) {
     if (i > 0 && domain->barr[i] <= domain->barr[i-1]) {
-      at_utils_log__fatal(log,
+      at_utils_logger__fatal(logger,
           "beta array has incorrect ordering: barr[%d] = %g, barr[%d] = %g\n",
           i, domain->barr[i], i-1, domain->barr[i-1]);
     }
@@ -78,7 +78,7 @@ int at_distr_domain__conf_init(at_distr_domain_t *domain,
       "beta_min");
 
   if (domain->beta_min < 0.0) {
-    at_utils_log__error(conf->log,
+    at_utils_logger__error(conf->logger,
         "domain->beta_min: failed validation: distr->domain->beta_min %g > 1e-6\n",
         domain->beta_min);
     goto ERR;
@@ -92,7 +92,7 @@ int at_distr_domain__conf_init(at_distr_domain_t *domain,
   //printf("domain->beta_min %g, domain->beta_max %g\n", domain->beta_min, domain->beta_max); getchar();
 
   if (domain->beta_max < domain->beta_min) {
-    at_utils_log__error(conf->log,
+    at_utils_logger__error(conf->logger,
         "distr->domain->beta_max: failed validation: domain->beta_max %g > domain->beta_min %g\n",
         domain->beta_max, domain->beta_min);
     goto ERR;
@@ -105,7 +105,7 @@ int at_distr_domain__conf_init(at_distr_domain_t *domain,
       "beta_del");
 
   if (domain->beta_del < 1e-6) {
-    at_utils_log__error(conf->log,
+    at_utils_logger__error(conf->logger,
         "distr->domain->beta_del: failed validation: domain->beta_del > 1e-6\n");
     goto ERR;
   }
@@ -124,7 +124,7 @@ int at_distr_domain__conf_init(at_distr_domain_t *domain,
   }
 
   /* check beta array */
-  at_distr_domain__check_barr(domain, conf->log);
+  at_distr_domain__check_barr(domain, conf->logger);
 
   /* fix beta_max to a bin boundary */
   domain->beta_max = domain->beta_min + domain->beta_del * domain->n;

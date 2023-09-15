@@ -88,7 +88,7 @@ static double at_distr_weights__calc_f_factor_simple(
   {
     f = at_distr_weights_composite__calc_f_factor_simple(
         w->composite, beta, &neg_dlnf_dbeta_local,
-        ((at_distr_weights_t *) w)->log);
+        ((at_distr_weights_t *) w)->logger);
   }
   else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
   {
@@ -103,7 +103,7 @@ static double at_distr_weights__calc_f_factor_simple(
   }
   else
   {
-    at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+    at_utils_logger__fatal(((at_distr_weights_t *) w)->logger,
         "unknown mode %d\n",
         w->mode);
   }
@@ -142,7 +142,7 @@ static double at_distr_weights__calc_f_factor_bounded(
     {
       f_ = at_distr_weights_composite__calc_f_factor_unbounded(
           w->composite, beta, &neg_dlnf_dbeta_local,
-          ((at_distr_weights_t *) w)->log);
+          ((at_distr_weights_t *) w)->logger);
     }
     else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
     {
@@ -159,7 +159,7 @@ static double at_distr_weights__calc_f_factor_bounded(
     {
       f_ = zcom_xdouble__from_double(1.0);
 
-      at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+      at_utils_logger__fatal(((at_distr_weights_t *) w)->logger,
           "unknown mode %d\n",
           w->mode);
     }
@@ -197,7 +197,7 @@ static double at_distr_weights__calc_lnf(
     {
       lnf = at_distr_weights_composite__calc_lnf(
             w->composite, beta,
-            ((at_distr_weights_t *) w)->log);
+            ((at_distr_weights_t *) w)->logger);
     }
     else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
     {
@@ -211,7 +211,7 @@ static double at_distr_weights__calc_lnf(
     else
     {
 
-      at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+      at_utils_logger__fatal(((at_distr_weights_t *) w)->logger,
           "unknown mode %d\n",
           w->mode);
     }
@@ -230,7 +230,7 @@ static double at_distr_weights__calc_invw_factor(
   double invw;
 
   if (w->beta_max <= 0) {
-    at_utils_log__fatal((at_utils_log_t *) (w->log),
+    at_utils_logger__fatal((at_utils_logger_t *) (w->logger),
         "invalid beta_max %g\n", w->beta_max);
   }
 
@@ -292,7 +292,7 @@ double at_distr_weights__calc_inv_weight_simple(
 
   if (f_local > w->f_max) {
 
-    at_utils_log__warning (((at_distr_weights_t *) w)->log,
+    at_utils_logger__warning (((at_distr_weights_t *) w)->logger,
         "f overflows at %g, mode %d, beta=%g/%g, exp %g (%d, %d)\n",
         f_local, w->mode, beta, w->beta_max,
         w->ens_exp, w->ens_exp_int, w->ens_exp_is_int);
@@ -301,7 +301,7 @@ double at_distr_weights__calc_inv_weight_simple(
 
   } else if (f_local < w->f_min) {
 
-    at_utils_log__warning (((at_distr_weights_t *) w)->log,
+    at_utils_logger__warning (((at_distr_weights_t *) w)->logger,
         "f underflows at %g, mode %d, beta=%g/%g, exp %g (%d, %d)\n",
         f_local, w->mode, beta, w->beta_max,
         w->ens_exp, w->ens_exp_int, w->ens_exp_is_int);

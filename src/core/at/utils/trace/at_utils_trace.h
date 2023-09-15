@@ -27,7 +27,7 @@
 void at_utils_trace__conf_init(at_utils_trace_t *trace,
     at_utils_conf_t *conf);
 
-zcom_log_t *at_utils_trace__open_file(at_utils_trace_t *trace,
+zcom_logger_t *at_utils_trace__open_file(at_utils_trace_t *trace,
     at_bool_t is_continuation);
 
 void at_utils_trace__close_file(at_utils_trace_t *trace);

@@ -27,7 +27,7 @@
 #include "ssm/ssm.h"
 #include "opt/opt.h"
 #include "cfg/cfg.h"
-#include "log/log.h"
+#include "logger/logger.h"
 #include "rng/rng.h"
 #include "xdouble/xdouble.h"
 

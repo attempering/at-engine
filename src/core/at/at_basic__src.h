@@ -49,7 +49,7 @@ static void at__set_init_beta(at_t *at)
 
   at__update_force_scale(at);
 
-  at_utils_log__info(at->log,
+  at_utils_logger__info(at->logger,
       "initial beta %g, force_scale %g\n",
       at->beta, at->force_scale);
 }
@@ -103,7 +103,7 @@ static int at__cfg_init_low_level(at_t *at,
   at_params_sys__init(at->sys_params, sys_params);
 
   /* initialize the utils objects such as
-     utils->log,
+     utils->logger,
      utils->conf,
      utils->manifest
      and
@@ -116,9 +116,9 @@ static int at__cfg_init_low_level(at_t *at,
       ignore_lockfile, verbose);
 
   /* initialize a module specific logger */
-  at_utils_log__init_delegate(at->log, at->utils->log, "at");
+  at_utils_logger__init_delegate(at->logger, at->utils->logger, "at");
 
-  at_utils_log__info(at->log, "version %lld\n", (long long) AT__VERSION);
+  at_utils_logger__info(at->logger, "version %lld\n", (long long) AT__VERSION);
 
   if (at_distr__conf_init(at->distr, at->utils->conf, at->sys_params->boltz) != 0) {
     return -1;
@@ -163,7 +163,7 @@ int at__cfg_init(at_t *at,
   if (at->sys_params->is_continuation) {
     //fprintf(stderr, "is-cont: %d\n", at->sys_params->is_continuation);
     if (at__load_data(at) != 0) {
-      at_utils_log__error(at->log,
+      at_utils_logger__error(at->logger,
           "This simulation is started from checkpoint, while some files are missing. Will assume no previous simulation data is available.\n");
       return -1;
     }
@@ -213,7 +213,7 @@ int at__init(at_t *at,
 
   zcom_cfg__close(cfg);
 
-  at_utils_log__info(at->log,
+  at_utils_logger__info(at->logger,
       "successfully loaded configuration file %s\n",
       cfg_file);
 

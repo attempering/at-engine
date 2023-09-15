@@ -189,7 +189,7 @@ at_bool_t at_driver_langevin_move__moderate_stride(
   }
 
   if (moderated && proposal->ib_new_prop == 0) {
-    at_utils_log__info(langevin->log,
+    at_utils_logger__info(langevin->logger,
         "a trip from %g (%d) to %g (%d) moderated to %g (%d)\n",
         proposal->beta_old, ib_old,
         proposal->beta_new_prop, proposal->ib_new_prop,

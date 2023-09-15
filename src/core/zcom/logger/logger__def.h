@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2023  AT-Engine Developers
+ * Copyright (C) 2006-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,22 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_UTILS_LOG__DEF_H__
-#define AT_UTILS_LOG__DEF_H__
+#ifndef ZCOM__LOGGER__DEF_H__
+#define ZCOM__LOGGER__DEF_H__
 
-#include "../../context/at_context__def.h"
-#include "../boolstack/at_utils_boolstack__def.h"
-#include "../modstack/at_utils_modstack__def.h"
-#include "../../../zcom/zcom.h"
 
-typedef struct at_utils_log_t_
-{
-  int ready;
-  at_utils_modstack_t mods[1];
-  char *file;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+
+#include "../def/def.h"
+
+typedef struct zcom_log_t_ {
   FILE *fp;
-  at_bool_t is_delegate;
-  at_utils_boolstack_t echo[1]; // states of whether to print to stderr
-} at_utils_log_t;
+  const char *fn;
+  unsigned flags;
+} zcom_logger_t;
+
+#define ZCOM_LOGGER__OUTPUT_SCREEN   0x01
+#define ZCOM_LOGGER__FLUSH_AFTERWARD 0x02
+#define ZCOM_LOGGER__NO_OUTPUT_FILE  0x10
+#define ZCOM_LOGGER__APPEND          0x80
 
 #endif

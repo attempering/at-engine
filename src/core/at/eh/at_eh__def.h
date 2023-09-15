@@ -51,7 +51,7 @@ typedef struct at_eh_t_
 
   at_eh_recon_t recon[1];
 
-  at_utils_log_t log[1]; /* module-specific logger */
+  at_utils_logger_t logger[1]; /* module-specific logger */
 
 } at_eh_t;
 

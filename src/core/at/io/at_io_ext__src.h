@@ -60,8 +60,8 @@ static void at__write_trace(at_t *at,
 {
   at_utils_trace_t *trace = at->utils->trace;
 
-  at_utils_log__exit_if (!trace->ready,
-      at->log,
+  at_utils_logger__exit_if (!trace->ready,
+      at->logger,
       "trace is not initialized!\n");
 
   at_bool_t do_trace = at_utils_trace__decide_do_trace(trace, step_params);
@@ -134,30 +134,30 @@ int at__load_data(at_t *at)
 
   /* read at's own data */
   if (at__read_self(at) != 0) {
-    at_utils_log__error(at->log, "failed to load at's own data\n");
+    at_utils_logger__error(at->logger, "failed to load at's own data\n");
     return 1;
   }
 
   /* read previous at_mb_t data */
   if (at_mb__read(mb, mb->use_text_file) != 0) {
-    at_utils_log__error(at->log, "failed to load mb data\n");
+    at_utils_logger__error(at->logger, "failed to load mb data\n");
     return 1;
   }
 
   at_mb__write_ze_file(mb, mb->ze_init_file);
 
   if (at_driver__read(at->driver) != 0) {
-    at_utils_log__error(at->log, "failed to load driver data from %s\n", at->driver->langevin->file);
+    at_utils_logger__error(at->logger, "failed to load driver data from %s\n", at->driver->langevin->file);
     return 1;
   }
 
   /* read previous energy histogram data */
   if (at_eh__read(at->eh, at->eh->use_text_file) != 0) {
-    at_utils_log__error(at->log, "failed to load energy histogram\n");
+    at_utils_logger__error(at->logger, "failed to load energy histogram\n");
     return 2;
   }
 
-  at_utils_log__info(at->log, "successfully load previous data\n");
+  at_utils_logger__info(at->logger, "successfully load previous data\n");
 
   return 0;
 }

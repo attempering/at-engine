@@ -30,7 +30,7 @@ void at_utils_conf__init(
     zcom_cfg_t *cfg,
     zcom_ssm_t *ssm,
     const char *data_dir,
-    at_utils_log_t *log,
+    at_utils_logger_t *logger,
     at_bool_t verbose);
 
 void at_utils_conf__finish(at_utils_conf_t *conf);

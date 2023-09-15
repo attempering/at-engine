@@ -31,11 +31,11 @@ void at_eh__add(at_eh_t *eh, int ib, double e)
     int ie = (int)((e - eh->e_min)/eh->e_del);
 
     if (e > eh->e_max_runtime) {
-      at_utils_log__warning(eh->log, "energy overflow %g, (%g, %g)\n",
+      at_utils_logger__warning(eh->logger, "energy overflow %g, (%g, %g)\n",
           e, eh->e_min_runtime, eh->e_max_runtime);
       eh->e_max_runtime = e;
     } else if (e < eh->e_min_runtime) {
-      at_utils_log__warning(eh->log, "energy point underflow %g, (%g, %g)\n",
+      at_utils_logger__warning(eh->logger, "energy point underflow %g, (%g, %g)\n",
           e, eh->e_min_runtime, eh->e_max_runtime);
       eh->e_min_runtime = e;
     }

@@ -29,7 +29,7 @@
 double at_distr_weights_composite__calc_f_factor_simple(
     const at_distr_weights_composite_t *c,
     double beta, double *neg_dlnf_dbeta,
-    at_utils_log_t *log);
+    at_utils_logger_t *logger);
 
 /* compute the ensemble f factor
  *
@@ -41,14 +41,14 @@ zcom_xdouble_t at_distr_weights_composite__calc_f_factor_unbounded(
     const at_distr_weights_composite_t *c,
     double beta,
     double *neg_dlnf_dbeta,
-    at_utils_log_t *log);
+    at_utils_logger_t *logger);
 
 
 
 double at_distr_weights_composite__calc_lnf(
     const at_distr_weights_composite_t *c,
     double beta,
-    at_utils_log_t *log);
+    at_utils_logger_t *logger);
 
 
 #endif
