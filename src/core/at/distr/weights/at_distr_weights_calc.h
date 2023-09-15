@@ -63,5 +63,7 @@ double at_distr_weights__calc_inv_weight_bounded(
     double *f,
     double *neg_dlnf_dbeta);
 
+double at_distr_weights__calc_lnwf(
+    const at_distr_weights_t *w, double beta);
 
 #endif

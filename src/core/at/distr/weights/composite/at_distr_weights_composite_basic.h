@@ -16,16 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DISTR_WEIGHTS_COMPOSITE__SRC_H__
-#define AT_DISTR_WEIGHTS_COMPOSITE__SRC_H__
+#ifndef AT_DISTR_WEIGHTS_COMPOSITE_BASIC_H__
+#define AT_DISTR_WEIGHTS_COMPOSITE_BASIC_H__
 
 
-#include "at_distr_weights_composite.h"
+#include "at_distr_weights_composite__def.h"
+#include "../../domain/at_distr_domain__def.h"
+#include "../../../utils/at_utils.h"
 
-#include "at_distr_weights_component__src.h"
-#include "at_distr_weights_composite_basic__src.h"
-#include "at_distr_weights_composite_calc__src.h"
-#include "at_distr_weights_composite_order__src.h"
 
+int at_distr_weights_composite__conf_init(
+    at_distr_weights_composite_t *c,
+    at_distr_domain_t *domain,
+    at_utils_conf_t *conf);
+
+void at_distr_weights_composite__finish(
+    at_distr_weights_composite_t *c);
+
+void at_distr_weights_composite__manifest(
+    const at_distr_weights_composite_t *c,
+    at_utils_manifest_t *manifest);
+
+void at_distr_weights_composite__basic_init(
+    at_distr_weights_composite_t *c,
+    at_distr_domain_t *domain,
+    int n_components);
 
 #endif

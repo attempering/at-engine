@@ -182,34 +182,32 @@ static int at_distr_weights_component__manifest(
 
 static double at_distr_weights_component__calc_f_factor_simple(
     const at_distr_weights_component_t *c,
-    double beta, double *neg_dlnf_dbeta,
+    double beta,
+    double *neg_dlnf_dbeta,
     at_utils_log_t *log)
 {
-  double f_comp;
+  double f_comp = c->w_rel;
+  double neg_dlnf_dbeta_local = 0.0;
 
   if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT) {
-
-    f_comp = c->w_rel;
-
-    *neg_dlnf_dbeta = 0.0;
 
   } else if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN) {
 
     double del_beta = beta - c->beta0;
 
-    f_comp = c->w_rel * exp(-0.5 * del_beta * del_beta * c->inv_sigma_sqr);
+    f_comp *= exp(-0.5 * del_beta * del_beta * c->inv_sigma_sqr);
 
-    *neg_dlnf_dbeta = del_beta * c->inv_sigma_sqr;
+    neg_dlnf_dbeta_local = del_beta * c->inv_sigma_sqr;
 
   } else {
-
-    f_comp = 0.0;
-
-    *neg_dlnf_dbeta = 0.0;
 
     at_utils_log__fatal(log, "unknown component type %d for %s\n",
         c->id, c->key);
 
+  }
+
+  if (neg_dlnf_dbeta != NULL) {
+    *neg_dlnf_dbeta = neg_dlnf_dbeta_local;
   }
 
   return f_comp;
@@ -223,36 +221,61 @@ static zcom_xdouble_t at_distr_weights_component__calc_f_factor_unbounded(
     double *neg_dlnf_dbeta,
     at_utils_log_t *log)
 {
-  zcom_xdouble_t f_comp;
+  zcom_xdouble_t f_comp = zcom_xdouble__from_double(c->w_rel);
+  double neg_dlnf_dbeta_local = 0.0;
 
   if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT) {
-
-    f_comp = zcom_xdouble__from_double(c->w_rel);
-
-    *neg_dlnf_dbeta = 0.0;
 
   } else if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN) {
 
     double del_beta = beta - c->beta0;
 
-    f_comp = zcom_xdouble__mul(
-        zcom_xdouble__from_double(c->w_rel),
-        zcom_xdouble__exp(-0.5 * del_beta * del_beta * c->inv_sigma_sqr));
+    zcom_xdouble_t exp_factor = zcom_xdouble__exp(
+        -0.5 * del_beta * del_beta * c->inv_sigma_sqr);
 
-    *neg_dlnf_dbeta = del_beta * c->inv_sigma_sqr;
+    f_comp = zcom_xdouble__mul(f_comp, exp_factor);
+
+    neg_dlnf_dbeta_local = del_beta * c->inv_sigma_sqr;
 
   } else {
-
-    f_comp = zcom_xdouble__from_double(0.0);
-
-    *neg_dlnf_dbeta = 0.0;
 
     at_utils_log__fatal(log, "unknown component type %d for %s\n",
         c->id, c->key);
 
   }
 
+  if (neg_dlnf_dbeta != NULL) {
+    *neg_dlnf_dbeta = neg_dlnf_dbeta_local;
+  }
+
   return f_comp;
+}
+
+
+
+static double at_distr_weights_component__calc_lnf(
+    const at_distr_weights_component_t *c,
+    double beta,
+    at_utils_log_t *logger)
+{
+  double lnf = log(c->w_rel);
+
+  if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT) {
+
+  } else if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__GAUSSIAN) {
+
+    double del_beta = beta - c->beta0;
+
+    lnf += -0.5 * del_beta * del_beta * c->inv_sigma_sqr;
+
+  } else {
+
+    at_utils_log__fatal(logger, "unknown component type %d for %s\n",
+        c->id, c->key);
+
+  }
+
+  return lnf;
 }
 
 

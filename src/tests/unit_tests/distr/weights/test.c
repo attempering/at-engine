@@ -41,6 +41,7 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
   double beta, w_ref;
   double invwf, w_calc;
   double invwf_simple, w_calc_simple;
+  double lnwf, w_calc_ln;
   double expo, beta0, sigma;
   double err, max_err = 0;
 
@@ -59,6 +60,10 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
         weights, beta, NULL, NULL, NULL);
     w_calc_simple = 1.0/invwf_simple;
 
+    lnwf = at_distr_weights__calc_lnwf(
+        weights, beta);
+    w_calc_ln = exp(lnwf);
+
     w_ref = calc_weight_ref(expo, beta0, sigma, domain->beta_max, beta);
 
     err = fabs(w_calc - w_ref);
@@ -66,8 +71,8 @@ static void test_distr(zcom_cfg_t *cfg, at_distr_t *distr)
       max_err = err;
     }
 
-    fprintf(stderr, "  %.4f: %.6g (bounded) %.6g (simple) %.6g (ref)\n",
-        beta, w_calc, w_calc_simple, w_ref);
+    fprintf(stderr, "  %.4f: %.6g (bounded) %.6g (simple) %.6g (ln) %.6g (ref)\n",
+        beta, w_calc, w_calc_simple, w_calc_ln, w_ref);
   }
 
   fprintf(stderr, "maximum error: %g\n\n", max_err);

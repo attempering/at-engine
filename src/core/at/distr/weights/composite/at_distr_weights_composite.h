@@ -19,47 +19,8 @@
 #ifndef AT_DISTR_WEIGHTS_COMPOSITE_H__
 #define AT_DISTR_WEIGHTS_COMPOSITE_H__
 
-#include <stdio.h>
-
-#include "at_distr_weights_composite__def.h"
-#include "../../domain/at_distr_domain__def.h"
-#include "../../../utils/at_utils.h"
+#include "at_distr_weights_composite_basic.h"
+#include "at_distr_weights_composite_calc.h"
 #include "at_distr_weights_composite_order.h"
-
-typedef struct zcom_cfg_t_ zcom_cfg_t;
-
-int at_distr_weights_composite__conf_init(
-    at_distr_weights_composite_t *c,
-    at_distr_domain_t *domain,
-    at_utils_conf_t *conf);
-
-void at_distr_weights_composite__finish(
-    at_distr_weights_composite_t *c);
-
-void at_distr_weights_composite__manifest(
-    const at_distr_weights_composite_t *c,
-    at_utils_manifest_t *manifest);
-
-double at_distr_weights_composite__calc_f_factor_simple(
-    const at_distr_weights_composite_t *c,
-    double beta, double *neg_dlnf_dbeta,
-    at_utils_log_t *log);
-
-/* compute the ensemble f factor
- *
- *  f: f(beta);
- *  *neg_dlnf_dbeta: -d ln[f(beta)] / d(beta);
- *
- */
-zcom_xdouble_t at_distr_weights_composite__calc_f_factor_unbounded(
-    const at_distr_weights_composite_t *c,
-    double beta,
-    double *neg_dlnf_dbeta,
-    at_utils_log_t *log);
-
-void at_distr_weights_composite__basic_init(
-    at_distr_weights_composite_t *c,
-    at_distr_domain_t *domain,
-    int n_components);
 
 #endif

@@ -178,6 +178,51 @@ static double at_distr_weights__calc_f_factor_bounded(
 
 
 
+/* compute the logarithm of the ensemble f factor
+ * lnf: f(beta)
+ */
+static double at_distr_weights__calc_lnf(
+    const at_distr_weights_t *w,
+    double beta)
+{
+  double lnf = 0.0;
+
+  if (w->mode == AT_DISTR_WEIGHTS_MODE__FLAT)
+  {
+  }
+  else
+  {
+
+    if (w->mode == AT_DISTR_WEIGHTS_MODE__COMPOSITE)
+    {
+      lnf = at_distr_weights_composite__calc_lnf(
+            w->composite, beta,
+            ((at_distr_weights_t *) w)->log);
+    }
+    else if (w->mode == AT_DISTR_WEIGHTS_MODE__GAUSSIAN)
+    {
+      double del_beta = beta - w->beta0;
+      lnf = -0.5 * (del_beta * del_beta) * w->inv_sigma2;
+    }
+    else if (w->mode == AT_DISTR_WEIGHTS_MODE__EXPONENTIAL)
+    {
+      lnf = -beta * w->c;
+    }
+    else
+    {
+
+      at_utils_log__fatal(((at_distr_weights_t *) w)->log,
+          "unknown mode %d\n",
+          w->mode);
+    }
+
+  }
+
+  return lnf;
+}
+
+
+
 static double at_distr_weights__calc_invw_factor(
     const at_distr_weights_t *w, double beta)
 {
@@ -210,6 +255,7 @@ static double at_distr_weights__calc_invw_factor(
 
   return invw;
 }
+
 
 
 static double at_distr_weights__clamp_invwf(
@@ -327,6 +373,22 @@ double at_distr_weights__calc_inv_weight_bounded(
 
   return invwf;
 }
+
+
+static double at_distr_weights__calc_lnw(
+    const at_distr_weights_t *w, double beta)
+{
+  return -log(at_distr_weights__calc_invw_factor(w, beta));
+}
+
+
+double at_distr_weights__calc_lnwf(
+    const at_distr_weights_t *w, double beta)
+{
+  return at_distr_weights__calc_lnf(w, beta)
+       + at_distr_weights__calc_lnw(w, beta);
+}
+
 
 
 #endif
