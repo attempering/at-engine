@@ -33,7 +33,8 @@ void at_utils_conf__init(
     at_utils_logger_t *logger,
     at_bool_t verbose);
 
-void at_utils_conf__finish(at_utils_conf_t *conf);
+void at_utils_conf__finish(
+    at_utils_conf_t *conf);
 
 /* easy initialization for testing programs */
 void at_utils_conf__init_ez(

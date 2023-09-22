@@ -43,12 +43,11 @@ int at_eh__conf_init(at_eh_t *eh,
 
   /* eh_mode: 0: disable; 1: simple histogram */
   at_utils_conf__get_int(conf,
-      "ehist-mode",
-      &eh->mode, 0,
-      "mode");
+      "ehist-mode", &eh->mode, 0, "mode");
 
   if ( !(eh->mode == 0 || eh->mode == 1) ) {
-    at_utils_logger__error(eh->logger, "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
+    at_utils_logger__error(eh->logger,
+        "eh->mode: failed validation: eh->mode == 0 || eh->mode == 1\n");
     goto ERR;
   }
 

@@ -307,6 +307,7 @@ zcom_xdouble_t zcom_xdouble__clamp(zcom_xdouble_t x, zcom_xdouble_t x_min, zcom_
 
 zcom_xdouble_t zcom_xdouble__clamp_double(zcom_xdouble_t x, double x_min, double x_max)
 {
+  //fprintf(stderr, "x: %d,%g, xmin %g, xmax %g\n", x.exp, x.man, x_min, x_max);
   return zcom_xdouble__clamp(x,
       zcom_xdouble__from_double(x_min),
       zcom_xdouble__from_double(x_max));

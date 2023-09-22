@@ -1,4 +1,4 @@
-# Compiling test on log
+# Test on the logger module
 
 ```sh
 valgrind ./test.exe

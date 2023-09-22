@@ -71,6 +71,8 @@ static double at_distr_weights__calc_mean_beta(at_distr_weights_t *w)
   double numer = 0.0;
   double dbeta = (w->beta_max - w->beta_min) / w->n;
 
+  //fprintf(stderr, "weights mode %d\n", w->mode);
+
   for (i = 0; i < w->n; i++) {
     double beta = w->beta_min + (i + 0.5) * dbeta;
     double invwf = at_distr_weights__calc_inv_weight_bounded(
@@ -78,6 +80,8 @@ static double at_distr_weights__calc_mean_beta(at_distr_weights_t *w)
     double wf = 1.0/invwf;
     denom += wf;
     numer += wf * beta;
+    //fprintf(stderr, "i %d, beta %g, invwf %g, numer %g, denom %g, frac %g\n",
+    //    i, beta, invwf, numer, denom, numer/(denom+1e-308));
   }
 
   return (denom > 0.0) ? (numer / denom) : 0.0;
@@ -94,7 +98,14 @@ static double at_distr_weights__calc_mean_beta(at_distr_weights_t *w)
  */
 double at_distr_weights__calc_q_order(at_distr_weights_t *w)
 {
-  double beta_mean = at_distr_weights__calc_mean_beta(w);
+  double beta_mean;
+  
+  //fprintf(stderr, "calculating w->q_order, mode %d\n", w->mode);
+  
+  beta_mean = at_distr_weights__calc_mean_beta(w);
+
+  //fprintf(stderr, "calculating w->q_order, mode %d, beta_mean %g\n", w->mode, beta_mean);
+  //getchar();
 
   w->q_order = w->beta_max - beta_mean;
 

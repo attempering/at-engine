@@ -24,6 +24,7 @@
 /* implementation dependent headers */
 #include "../../../mb/at_mb.h"
 #include "../../../distr/at_distr.h"
+#include "../../../utils/at_utils.h"
 
 #include "at_driver_langevin_integrator.h"
 #include "../zerofiller/at_driver_langevin_zerofiller.h"
@@ -33,7 +34,7 @@ int at_driver_langevin_integrator__init(
     at_driver_langevin_integrator_t *intgr,
     at_distr_t *distr,
     at_mb_t *mb,
-    int use_zerofiller)
+    at_bool_t use_zerofiller)
 {
   at_distr_domain_t *domain = distr->domain;
 
@@ -58,7 +59,8 @@ int at_driver_langevin_integrator__init(
 
 
 
-void at_driver_langevin_integrator__finish(at_driver_langevin_integrator_t *intgr)
+void at_driver_langevin_integrator__finish(
+    at_driver_langevin_integrator_t *intgr)
 {
   //fprintf(stderr, "at_driver_langevin_integrator__finish() %d %p\n", intgr->use_zerofiller, intgr->vals);
   //getchar();
@@ -71,23 +73,29 @@ void at_driver_langevin_integrator__finish(at_driver_langevin_integrator_t *intg
 
 
 
-static int at_driver_langevin_integrator__beta_to_index(at_driver_langevin_integrator_t *intgr, double beta)
+static int at_driver_langevin_integrator__beta_to_index(
+    at_driver_langevin_integrator_t *intgr,
+    double beta)
 {
   return (int) ((beta - intgr->beta_min) / intgr->beta_del);
 }
 
 
 
-static void at_driver_langevin_integrator__init_indicies(at_driver_langevin_integrator_t *intgr)
+static void at_driver_langevin_integrator__init_indicies(
+    at_driver_langevin_integrator_t *intgr)
 {
-  intgr->ib_begin = at_driver_langevin_integrator__beta_to_index(intgr, intgr->beta_begin);
+  intgr->ib_begin = at_driver_langevin_integrator__beta_to_index(
+      intgr, intgr->beta_begin);
 
-  intgr->ib_end = at_driver_langevin_integrator__beta_to_index(intgr, intgr->beta_end);
+  intgr->ib_end = at_driver_langevin_integrator__beta_to_index(
+      intgr, intgr->beta_end);
 }
 
 
 
-static void at_driver_langevin_integrator__init_integral(at_driver_langevin_integrator_t *intgr,
+static void at_driver_langevin_integrator__init_integral(
+    at_driver_langevin_integrator_t *intgr,
     double beta_from, double beta_to)
 {
   if (beta_from < beta_to) {
@@ -253,10 +261,12 @@ static double at_driver_langevin_integrator__get_unsigned_integral(
 
 
 
-double at_driver_langevin_integrator__integrate(at_driver_langevin_integrator_t *intgr,
+double at_driver_langevin_integrator__integrate(
+    at_driver_langevin_integrator_t *intgr,
     double beta_from, double beta_to)
 {
-  at_driver_langevin_integrator__init_integral(intgr, beta_from, beta_to);
+  at_driver_langevin_integrator__init_integral(
+      intgr, beta_from, beta_to);
 
   return intgr->sgn * at_driver_langevin_integrator__get_unsigned_integral(
       intgr, intgr->zerofiller);

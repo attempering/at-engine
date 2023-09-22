@@ -1,4 +1,4 @@
-sub_dirs = simple logger
+sub_dirs = simple logger conf
 
 bins::
 	for sub_dir in $(sub_dirs); do \

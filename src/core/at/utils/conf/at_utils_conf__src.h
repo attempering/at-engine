@@ -44,11 +44,21 @@ void at_utils_conf__init(
 }
 
 
+
 void at_utils_conf__finish(at_utils_conf_t *conf)
 {
   memset(conf, '\0', sizeof(*conf));
   conf->ready = AT__FALSE;
+
+  /* In this function, we will not close the handle
+   * for `conf->cfg`, as it is a "borrowed" object
+   * as in at_utils_conf__init()
+   *
+   * By the same token, we will not free the logger
+   * object or close the ssm object.
+   */
 }
+
 
 
 void at_utils_conf__init_ez(
@@ -62,14 +72,16 @@ void at_utils_conf__init_ez(
   conf->data_dir = data_dir ? zcom_ssm__dup(conf->ssm, data_dir) : NULL;
 
   if (cfg_fn != NULL) {
-    conf->cfg = zcom_cfg__open(cfg_fn, conf->ssm, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
+    conf->cfg = zcom_cfg__open(
+        cfg_fn, conf->ssm, ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES);
   } else {
     conf->cfg = NULL;
   }
 
   at_utils__new(conf->logger, at_utils_logger_t);
 
-  at_utils_logger__cfg_init(conf->logger, conf->cfg, conf->ssm, data_dir, verbose);
+  at_utils_logger__cfg_init(
+      conf->logger, conf->cfg, conf->ssm, data_dir, verbose);
 
   conf->verbose = verbose;
 
@@ -127,6 +139,9 @@ static void at_utils_conf__get_key_and_name(const char *keys, const char **key, 
 }
 
 
+/* In implementation, this function is a wrapper of
+ * zcom_cfg__get(..., "%d");
+ */
 int at_utils_conf__get_int(
     at_utils_conf_t *conf,
     const char *keys,

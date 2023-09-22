@@ -16,32 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef AT_DRIVER_LANGEVIN_INTEGRATOR_H__
-#define AT_DRIVER_LANGEVIN_INTEGRATOR_H__
+#include "at/at__src.h"
+#include "zcom/zcom__src.h"
 
 
+static void test_conf(at_utils_conf_t *conf)
+{
+  double double_value = 0.0;
+  int int_value = 0;
 
-/* integrator of the estimated averager over a temperature range */
+  at_utils_conf__push_mod(conf, "test.module");
 
+  at_utils_conf__get_double(conf,
+      "double-1,dbl1",
+      &double_value, 3.14, "double-value-1");
 
+  at_utils_conf__get_int(conf,
+      "int1,integer-1",
+      &int_value, 314, "int-value-1");
 
-#include "../../../distr/at_distr__def.h"
-#include "../../../mb/at_mb__def.h"
+  at_utils_conf__pop_mod(conf);
 
-
-
-int at_driver_langevin_integrator__init(
-    at_driver_langevin_integrator_t *intgr,
-    at_distr_t *distr,
-    at_mb_t *mb,
-    at_bool_t use_zerofiller);
-
-void at_driver_langevin_integrator__finish(
-    at_driver_langevin_integrator_t *intgr);
-
-double at_driver_langevin_integrator__integrate(
-    at_driver_langevin_integrator_t *intgr,
-    double beta_from, double beta_to);
+  printf("double value: %g\n", double_value);
+  printf("int value: %d\n", int_value);
+}
 
 
-#endif
+int main(void)
+{
+  at_t at[1];
+  const char *fn_cfg = "at.cfg";
+
+  if (at__init(at, fn_cfg, NULL, AT__INIT_VERBOSE) != 0) {
+    return -1;
+  }
+
+  test_conf(at->utils->conf);
+
+  at__finish(at);
+
+  return 0;
+}

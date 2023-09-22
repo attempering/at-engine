@@ -85,8 +85,9 @@ static int at__conf_init_self(
 
 
 /* load settings from the configuration file
- * sys_params can be NULL, in which case, default system parameters
- * will be used */
+ * sys_params can be NULL, in which case,
+ * default system parameters will be used
+ **/
 static int at__cfg_init_low_level(at_t *at,
     zcom_ssm_t *ssm,
     zcom_cfg_t *cfg,
@@ -103,17 +104,35 @@ static int at__cfg_init_low_level(at_t *at,
   at_params_sys__init(at->sys_params, sys_params);
 
   /* initialize the utils objects such as
-     utils->logger,
-     utils->conf,
-     utils->manifest
+
+       utils->logger,
+       utils->conf,
+       utils->manifest
+
      and
-     utils->trace
+
+       utils->trace
+
+     After this call, we can then use
+     the xxx__conf_init() functions instead of
+     the old xxx__cfg_init() functions
+     for processing the configuration file
+     with the former being more convenient wrappers.
+
+     The configuration object at->utils->conf
+     can be reused after the function, because
+     the parsed content of the input configuration file
+     is not destroyed until the end of the program. 
+
+     This allows extensions of the program
+     to parse additional parameters in the configuration file.
    */
   at_utils__cfg_init(at->utils, ssm, cfg,
       at->sys_params->is_continuation,
       at->sys_params->add_suffix,
       at->sys_params->sim_id,
-      ignore_lockfile, verbose);
+      ignore_lockfile,
+      verbose);
 
   /* initialize a module specific logger */
   at_utils_logger__init_delegate(at->logger, at->utils->logger, "at");
@@ -179,10 +198,12 @@ int at__init(at_t *at,
     const at_params_sys_t *sys_params,
     at_flags_t flags)
 {
-  zcom_cfg_t *cfg;
-
+  /* We need to thoroughly clear the object
+   * which properly indicates a null object
+   * in the case of cfg_file == NULL */
   memset(at, 0, sizeof(*at));
   at->ssm = NULL;
+  at->cfg = NULL;
 
   if (cfg_file == NULL) {
     return -1;
@@ -196,7 +217,7 @@ int at__init(at_t *at,
   }
 
   /* open a low-level configuration file reader */
-  if ((cfg = zcom_cfg__open(cfg_file, at->ssm,
+  if ((at->cfg = zcom_cfg__open(cfg_file, at->ssm,
       ZCOM_CFG__IGNORE_CASE | ZCOM_CFG__ALLOW_DASHES)) == NULL) {
     fprintf(stderr, "Error@at: failed to open configuration file %s.\n", cfg_file);
     zcom_ssm__close(at->ssm);
@@ -204,14 +225,19 @@ int at__init(at_t *at,
   }
 
   /* call low level function */
-  if (at__cfg_init(at, at->ssm, cfg, sys_params, flags) != 0) {
+  if (at__cfg_init(at, at->ssm, at->cfg, sys_params, flags) != 0) {
     fprintf(stderr, "Error@at: error while reading configuration file %s\n",
         (cfg_file ? cfg_file : "NULL") );
     zcom_ssm__close(at->ssm);
     return -1;
   }
 
-  zcom_cfg__close(cfg);
+  /*
+   * We will not close at->cfg here, but delay it
+   * till at__finish()
+   *
+   * //zcom_cfg__close(at->cfg);
+   */
 
   at_utils_logger__info(at->logger,
       "successfully loaded configuration file %s\n",
@@ -232,7 +258,8 @@ at_t *at__open(const char *cfg_file,
   at_utils__new(at, at_t);
 
   /* call low level function */
-  zcom_utils__exit_if (at__init(at, cfg_file, sys_params, flags) != 0,
+  zcom_utils__exit_if (
+      at__init(at, cfg_file, sys_params, flags) != 0,
       "Error@at: error while reading configuration file %s\n", cfg_file);
 
   return at;
@@ -254,6 +281,12 @@ void at__finish(at_t *at)
 
   if (at->ssm != NULL) {
     zcom_ssm__close(at->ssm);
+    at->ssm = NULL;
+  }
+
+  if (at->cfg != NULL) {
+    zcom_cfg__close(at->cfg);
+    at->cfg = NULL;
   }
 
   memset(at, 0, sizeof(*at));
