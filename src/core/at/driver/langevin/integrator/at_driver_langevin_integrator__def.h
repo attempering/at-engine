@@ -45,6 +45,10 @@ typedef struct at_driver_langevin_integrator_t_ {
   /* reference to the zero-filler */
   at_driver_langevin_zerofiller_t zerofiller[1];
 
+  at_bool_t use_visits_checker;
+
+  double bin_min_visits;
+
   at_mb_t *mb; /* reference */
 
 } at_driver_langevin_integrator_t;

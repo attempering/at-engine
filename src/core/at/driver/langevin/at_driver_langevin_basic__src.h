@@ -93,7 +93,7 @@ int at_driver_langevin__conf_init(
   /* number of moves exempted from corrections */
   langevin->n_exemption = 0.0;
 
-  // initialize the integrator
+  /* initialize the integrator */
   {
     at_bool_t use_zerofiller = !langevin->no_skip;
 
@@ -101,7 +101,8 @@ int at_driver_langevin__conf_init(
         langevin->integrator,
         mb->distr,
         mb,
-        use_zerofiller);
+        use_zerofiller,
+        AT__FALSE, 0.0);
   }
 
   /* the custom integration function must be set manually */

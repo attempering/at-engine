@@ -9,6 +9,10 @@ _backup
 *.dat
 atdata*
 *.pdf
-.sync-sim1.sh
+.sync*.sh
+sync-*.sh
+.*.swp
 refs
 backup-code.sh
+NOTES.md
+

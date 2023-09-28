@@ -28,6 +28,8 @@ void at_utils_manifest__conf_init(
 
 FILE *at_utils_manifest__open_file(at_utils_manifest_t *manifest);
 
+FILE *at_utils_manifest__append_file(at_utils_manifest_t *manifest);
+
 void at_utils_manifest__close_file(at_utils_manifest_t *manifest);
 
 void at_utils_manifest__finish(at_utils_manifest_t *manifest);

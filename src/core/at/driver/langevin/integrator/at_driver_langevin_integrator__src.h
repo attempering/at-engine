@@ -30,11 +30,14 @@
 #include "../zerofiller/at_driver_langevin_zerofiller.h"
 
 
+
 int at_driver_langevin_integrator__init(
     at_driver_langevin_integrator_t *intgr,
     at_distr_t *distr,
     at_mb_t *mb,
-    at_bool_t use_zerofiller)
+    at_bool_t use_zerofiller,
+    at_bool_t use_visits_checker,
+    double bin_min_visits)
 {
   at_distr_domain_t *domain = distr->domain;
 
@@ -54,6 +57,15 @@ int at_driver_langevin_integrator__init(
     at_utils__new_arr(intgr->vals, intgr->n, double);
   }
 
+  intgr->use_visits_checker = use_visits_checker;
+  intgr->bin_min_visits = bin_min_visits;
+
+  if (intgr->use_visits_checker) {
+    if (intgr->vals == NULL) {
+      at_utils__new_arr(intgr->vals, intgr->n, double);
+    }
+  }
+
   return 0;
 }
 
@@ -66,7 +78,9 @@ void at_driver_langevin_integrator__finish(
   //getchar();
   if (intgr->use_zerofiller) {
     at_driver_langevin_zerofiller__finish(intgr->zerofiller);
-  } else {
+  }
+  
+  if (intgr->vals != NULL) {
     free(intgr->vals);
   }
 }
@@ -140,6 +154,7 @@ static void at_driver_langevin_integrator__init_integral(
     intgr->beta_end = intgr->beta_max - 1e-15 * intgr->beta_del;
   }
 
+  /* calculate ib_begin and ib_end */
   at_driver_langevin_integrator__init_indicies(intgr);
 
 }
@@ -261,6 +276,26 @@ static double at_driver_langevin_integrator__get_unsigned_integral(
 
 
 
+static at_bool_t at_driver_langevin_integrator__check_bin_min_visits(
+    at_driver_langevin_integrator_t *intgr)
+{
+  double *vals;
+  int ib;
+
+  vals = at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
+      intgr, intgr->ib_begin, intgr->ib_end);
+
+  for (ib = intgr->ib_begin; ib <= intgr->ib_end; ib++) {
+    if (vals[ib] < intgr->bin_min_visits) {
+      return AT__FALSE;
+    }
+  }
+
+  return AT__TRUE;
+}
+
+
+
 double at_driver_langevin_integrator__integrate(
     at_driver_langevin_integrator_t *intgr,
     double beta_from, double beta_to)
@@ -268,6 +303,26 @@ double at_driver_langevin_integrator__integrate(
   at_driver_langevin_integrator__init_integral(
       intgr, beta_from, beta_to);
 
+  return intgr->sgn * at_driver_langevin_integrator__get_unsigned_integral(
+      intgr, intgr->zerofiller);
+}
+
+
+
+double at_driver_langevin_integrator__integrate_with_visits_checker(
+    at_driver_langevin_integrator_t *intgr,
+    double beta_from, double beta_to,
+    at_bool_t *success)
+{
+  at_driver_langevin_integrator__init_integral(
+      intgr, beta_from, beta_to);
+
+  if (!at_driver_langevin_integrator__check_bin_min_visits(intgr)) {
+    *success = AT__FALSE;
+    return 0.0;
+  }
+
+  *success = AT__TRUE;
   return intgr->sgn * at_driver_langevin_integrator__get_unsigned_integral(
       intgr, intgr->zerofiller);
 }

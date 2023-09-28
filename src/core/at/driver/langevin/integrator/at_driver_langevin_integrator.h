@@ -34,7 +34,9 @@ int at_driver_langevin_integrator__init(
     at_driver_langevin_integrator_t *intgr,
     at_distr_t *distr,
     at_mb_t *mb,
-    at_bool_t use_zerofiller);
+    at_bool_t use_zerofiller,
+    at_bool_t use_visits_checker,
+    double bin_min_visits);
 
 void at_driver_langevin_integrator__finish(
     at_driver_langevin_integrator_t *intgr);
@@ -42,6 +44,11 @@ void at_driver_langevin_integrator__finish(
 double at_driver_langevin_integrator__integrate(
     at_driver_langevin_integrator_t *intgr,
     double beta_from, double beta_to);
+
+double at_driver_langevin_integrator__integrate_with_visits_checker(
+    at_driver_langevin_integrator_t *intgr,
+    double beta_from, double beta_to,
+    at_bool_t *success);
 
 
 #endif

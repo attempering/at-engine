@@ -1,15 +1,16 @@
-# Kernel code for AT-Engine
+# AT-Engine
 
 ## Overview
 
-The adaptive tempering algorithm is a single-copy simulated tempering
-algorithm that is based on a continuous temperature range.
-The algorithm adopts a few self-learning techniques
-to adaptive the parameters related to statistical weights
-(the partition function).
+This package implements an adaptive tempering algorithm,
+which is a single-copy simulated tempering method
+based on a continuous temperature range.
+The algorithm adopts a few adaptive techniques
+to progressively refine the parameters related to
+the partition function, which serves as the weights
+to the overall temperature distribution.
 
-The current code is written in ANSI C,
-its and is compatible with GROMACS 4.6.
+The current code is written in ANSI C.
 
 ## Getting started
 
@@ -34,7 +35,7 @@ is included under the [doc](doc) directory.
 
 ## New features
 
-In comparision with the 2010 paper [1], the current code brings about
+In comparison with the 2010 paper [1], the current code brings about
 a few key improvements on the overall accuracy and performance.
 
 * Metropolisation.  The Langevin equation used in the original
@@ -44,7 +45,7 @@ Metropolisation technique, which gives an acceptance probability
 for the destination temperature suggested by the Langevin equation.
 
 * Moderation on the temperature diffusion.  Initial stages of the
-simulation often pose stability problems because of lack of data to
+simulation often pose stability issues because of lack of data to
 guide an efficient diffusion in the temperature space.  A few
 parameters `langevin_no_skip`, `langevin_bin_min_visits`
 are now added to prevent unreasonably large temperature transitions
@@ -55,6 +56,11 @@ a window of bins. Sometimes the bin range contains missing data
 that needs to be filled in order for the identity to work proper.
 The zero-filling mechanism is now added.
 
+* Customizable temperature distribution. The temperature distribution
+can now be customized with a linear combination of Gaussian distributions
+or the flat distribution.
+
 ## References
 
-[1] C. Zhang, J. Ma, J. Chem. Phys. 132, 244101 (2010) [https://doi.org/10.1063/1.3435332](https://doi.org/10.1063/1.3435332)
+[1] C. Zhang, J. Ma, J. Chem. Phys. 132, 244101 (2010)
+[https://doi.org/10.1063/1.3435332](https://doi.org/10.1063/1.3435332)

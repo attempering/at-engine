@@ -104,7 +104,7 @@ static int test_integrate(at_mb_t *mb, at_driver_langevin_t *langevin, double fi
   at_driver_langevin_integrator_t intgr[1];
   at_driver_langevin_zerofiller_t *zf = intgr->zerofiller;
 
-  at_driver_langevin_integrator__init(intgr, mb->distr, mb, 1);
+  at_driver_langevin_integrator__init(intgr, mb->distr, mb, 1, AT__FALSE, 0.0);
 
   double beta1 = domain->beta_min * 0.7 + domain->beta_max * 0.3;
   double beta2 = domain->beta_min * 0.2 + domain->beta_max * 0.8;
