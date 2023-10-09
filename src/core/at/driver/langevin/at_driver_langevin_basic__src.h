@@ -74,6 +74,13 @@ int at_driver_langevin__conf_init(
       &langevin->bin_min_visits, 1.0,
       "bin_min_visits");
 
+#ifdef AT_DRIVER_LANGEVIN__U_BIAS
+  at_utils_conf__get_double(conf,
+      "langevin-u-bias",
+      &langevin->u_bias__, 0.0,
+      "u_bias");
+#endif
+
 #ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
   at_utils_conf__get_double(conf,
       "langevin-corr-bin-min-visits",
@@ -159,6 +166,10 @@ void at_driver_langevin__manifest(const at_driver_langevin_t *langevin, at_utils
   at_utils_manifest__print_bool(manifest, langevin->no_skip, "no_skip", "langevin-no-skip");
 
   at_utils_manifest__print_double(manifest, langevin->bin_min_visits, "bin_min_visits", "langevin-bin-min-visits");
+
+#ifdef AT_DRIVER_LANGEVIN__U_BIAS
+  at_utils_manifest__print_double(manifest, langevin->u_bias__, "u_bias__", "langevin-u-bias");
+#endif
 
 #ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
   at_utils_manifest__print_double(manifest, langevin->corr_bin_min_visits, "corr_bin_min_visits", "langevin-corr-bin-min-visits");

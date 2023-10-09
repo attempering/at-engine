@@ -79,6 +79,11 @@ static double at_driver_langevin_move__calc_lnp_ratio(
     energy_beta_integral = at_driver_langevin_integrator__integrate(langevin->integrator, beta_old, beta_new);
   }
 
+#ifdef AT_DRIVER_LANGEVIN__U_BIAS
+  // apply the bias for diagnosis
+  energy_beta_integral += (beta_new - beta_old) * langevin->u_bias__;
+#endif
+
   lnp_ratio = ln_invwf_ratio
             + ln_beta_kt_jacob
             + delta_beta_energy

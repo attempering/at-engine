@@ -67,6 +67,10 @@ typedef struct at_driver_langevin_t_
   at_bool_t no_skip;        /* whether to avoid crossing over unvisited bins */
   double  bin_min_visits; /* minimum number of visits before moving out of a bin */
 
+#ifdef AT_DRIVER_LANGEVIN__U_BIAS
+  double u_bias__; /* potential energy bias for diagnosis */
+#endif
+
 #ifdef AT_DRIVER_LANGEVIN__CORR_BIN_MIN_VISITS
   double  corr_bin_min_visits; 
                           /* minimum number of visits (for every bin pass through) 

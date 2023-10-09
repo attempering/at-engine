@@ -130,6 +130,10 @@ double at_driver_langevin_move__calc_dkt_deterministic(
       current_energy,
       cheap_av_energy);
 
+#ifdef AT_DRIVER_LANGEVIN__U_BIAS
+  *bin_av_energy += langevin->u_bias__;
+#endif
+
   delta = (current_energy - *bin_av_energy + neg_dlnwf_dbeta);
 
   if (at_driver_langevin_move__debug__ >= 2) {

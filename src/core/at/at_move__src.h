@@ -53,7 +53,8 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 {
   double invwf = 1.0;
   double temp_before, temp_after;
-  double av_energy = 0.0, neg_dlnwf_dbeta;
+  double av_energy = 0.0;
+  double neg_dlnwf_dbeta;
   int ib, repeat;
 
   temp_before = at__beta_to_temp(at, at->beta);
@@ -70,7 +71,8 @@ int at__move(at_t *at, const at_params_step_t *step_params)
     at_eh__add(at->eh, ib, at->energy);
 
     /* 3. use the Langevin equation to update the temperature */
-    at->beta = at_driver_langevin__move(at->driver->langevin, at->mb, at->energy, at->beta,
+    at->beta = at_driver_langevin__move(
+        at->driver->langevin, at->mb, at->energy, at->beta,
         ib, invwf, neg_dlnwf_dbeta, &av_energy);
   }
 
