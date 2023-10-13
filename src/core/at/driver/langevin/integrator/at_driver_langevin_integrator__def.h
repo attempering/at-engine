@@ -38,6 +38,7 @@ typedef struct at_driver_langevin_integrator_t_ {
   double    dbeta_left;
   double    dbeta_right;
 
+  double    *counts; /* visit counts without zerofiller */
   double    *vals; /* values without zerofiller */
 
   int use_zerofiller;

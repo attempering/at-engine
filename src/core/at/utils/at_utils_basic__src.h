@@ -124,7 +124,6 @@ void at_utils__manifest(at_utils_t *utils)
 
   at_utils_logger__manifest(utils->logger, utils->manifest);
 
-
   at_utils_manifest__push_mod(utils->manifest, "at.utils");
 
   at_utils_manifest__print_double(utils->manifest, utils->thermostat_temp, "thermostat_temp", "thermostat-temp");

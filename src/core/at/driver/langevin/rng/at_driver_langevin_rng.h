@@ -36,7 +36,8 @@ void at_driver_langevin_rng__conf_init(
 
 void at_driver_langevin_rng__finish(at_driver_langevin_rng_t *rng);
 
-void at_driver_langevin_rng__manifest(at_driver_langevin_rng_t *rng,
+void at_driver_langevin_rng__manifest(
+    const at_driver_langevin_rng_t *rng,
     at_utils_manifest_t *manifest);
 
 #endif

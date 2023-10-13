@@ -60,7 +60,8 @@ void at_utils_trace__finish(at_utils_trace_t *trace)
 
 
 
-void at_utils_trace__manifest(at_utils_trace_t *trace,
+void at_utils_trace__manifest(
+    const at_utils_trace_t *trace,
     at_utils_manifest_t *manifest)
 {
   at_utils_manifest__push_mod(manifest, "at.utils.trace");

@@ -52,8 +52,10 @@ int at_driver_langevin_integrator__init(
 
   if (intgr->use_zerofiller) {
     at_driver_langevin_zerofiller__init(intgr->zerofiller, domain->n);
+    intgr->counts = NULL;
     intgr->vals = NULL;
   } else {
+    at_utils__new_arr(intgr->counts, intgr->n, double);
     at_utils__new_arr(intgr->vals, intgr->n, double);
   }
 
@@ -61,9 +63,15 @@ int at_driver_langevin_integrator__init(
   intgr->bin_min_visits = bin_min_visits;
 
   if (intgr->use_visits_checker) {
+
+    if (intgr->counts == NULL) {
+      at_utils__new_arr(intgr->counts, intgr->n, double);
+    }
+
     if (intgr->vals == NULL) {
       at_utils__new_arr(intgr->vals, intgr->n, double);
     }
+
   }
 
   return 0;
@@ -80,10 +88,17 @@ void at_driver_langevin_integrator__finish(
   if (intgr->use_zerofiller) {
     at_driver_langevin_zerofiller__finish(intgr->zerofiller);
   }
-  
+
+  if (intgr->counts != NULL) {
+    free(intgr->counts);
+    intgr->counts = NULL;
+  }
+
   if (intgr->vals != NULL) {
     free(intgr->vals);
+    intgr->vals = NULL;
   }
+
 }
 
 
@@ -176,6 +191,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = at_mb_accum_winaccum_item__get_sums(accum->winaccum->items + ib, ib);
       val = at_mb_sm__get_mean(sm, AT_MB_ACCUM__MIN_SIZE);
+      intgr->counts[ib] = sm->s;
       intgr->vals[ib] = val;
       //if (val == 0.0) {
       //  fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
@@ -189,6 +205,7 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
     for (ib = ib_begin; ib <= ib_end; ib++) {
       sm = accum->sums + ib;
       val = at_mb_sm__get_mean(sm, AT_MB_ACCUM__MIN_SIZE);
+      intgr->counts[ib] = sm->s;
       intgr->vals[ib] = val;
       //if (val == 0.0) {
       //  fprintf(stderr, "Warning@at: zero-value encountered: ib %d, [%d, %d] val %g\n", ib, ib_begin, ib_end, val);
@@ -197,12 +214,16 @@ static double *at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
 
   }
 
-  // simple zero filling, assuming stride moderation
-  // so only the first or the last bin may yield the zero value
+  /* Simple zero filling strategy,
+     Assuming that we have stride moderation in place,
+     only the first or the last bin may contain a zero value
+   */
   if (ib_begin < ib_end) {
     if (intgr->vals[ib_begin] == 0.0) {
+      /* fill the left-most bin */
       intgr->vals[ib_begin] = intgr->vals[ib_begin+1];
     } else if (intgr->vals[ib_end] == 0.0) {
+      /* fill the right-most bin */
       intgr->vals[ib_end] = intgr->vals[ib_end-1];
     }
   }
@@ -280,14 +301,18 @@ static double at_driver_langevin_integrator__get_unsigned_integral(
 static at_bool_t at_driver_langevin_integrator__check_bin_min_visits(
     at_driver_langevin_integrator_t *intgr)
 {
-  double *vals;
   int ib;
 
-  vals = at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
+  at_driver_langevin_integrator__fill_range_with_proper_sums_plain(
       intgr, intgr->ib_begin, intgr->ib_end);
 
   for (ib = intgr->ib_begin; ib <= intgr->ib_end; ib++) {
-    if (vals[ib] < intgr->bin_min_visits) {
+    if (intgr->counts[ib] < intgr->bin_min_visits) {
+#ifdef AT__DEBUG__
+      fprintf(stderr, "at_driver_langevin_integrator__check_bin_min_visits(): "
+          "ib %d [%d, %d], counts %g < %g: vacancy found!\n",
+          ib, intgr->ib_begin, intgr->ib_end, intgr->counts[ib], intgr->bin_min_visits);
+#endif
       return AT__FALSE;
     }
   }

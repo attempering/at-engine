@@ -111,7 +111,9 @@ void at_utils_logger__finish(at_utils_logger_t *logger)
 
 
 
-void at_utils_logger__manifest(at_utils_logger_t *logger, at_utils_manifest_t *manifest)
+void at_utils_logger__manifest(
+    const at_utils_logger_t *logger,
+    at_utils_manifest_t *manifest)
 {
   if (logger == NULL || logger->ready != AT__TRUE) {
     return;
@@ -147,7 +149,7 @@ void at_utils_logger__close_file(at_utils_logger_t *logger)
     return;
   }
 
-  if (logger->fp) {
+  if (logger->fp != NULL) {
     fclose(logger->fp);
     logger->fp = NULL;
   }
@@ -160,9 +162,13 @@ void at_utils_logger__flush(at_utils_logger_t *logger, at_bool_t hard)
     return;
   }
 
-  if (logger->fp) {
+  if (logger->fp != NULL) {
     if (hard) {
-      // close and reopen the file
+      /* close and reopen the file */
+      /* In MPI mode, calling the hard flush 
+         is still problematic for reasons unknown.
+         Perhaps, logger object is erroneously
+         synced to other nodes */
       fclose(logger->fp);
       logger->fp = fopen(logger->file, "a");
     } else {
@@ -337,6 +343,39 @@ void at_utils_logger__printf_no_echo(
   AT_UTILS_LOGGER__TAGGED_PRINTF__(logger, NULL, fmt);
   at_utils_logger__pop_echo_state(logger);
 }
+
+
+void at_utils_logger__debug(
+    at_utils_logger_t *logger,
+    const char *fmt, ...)
+{
+#ifdef AT__DEBUG__
+  AT_UTILS_LOGGER__TAGGED_PRINTF__(logger, "Debug", fmt);
+
+  at_utils_logger__flush(logger, AT__FALSE);
+#else
+  (void) logger;
+  (void) fmt;
+#endif
+}
+
+
+void at_utils_logger__debug_no_echo(
+    at_utils_logger_t *logger,
+    const char *fmt, ...)
+{
+#ifdef AT__DEBUG__
+  at_utils_logger__push_echo_state(logger, AT__FALSE);
+  AT_UTILS_LOGGER__TAGGED_PRINTF__(logger, "Debug", fmt);
+  at_utils_logger__pop_echo_state(logger);
+
+  at_utils_logger__flush(logger, AT__FALSE);
+#else
+  (void) logger;
+  (void) fmt;
+#endif
+}
+
 
 
 void at_utils_logger__info(

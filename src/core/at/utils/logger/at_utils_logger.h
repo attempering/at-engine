@@ -45,7 +45,9 @@ void at_utils_logger__finish(at_utils_logger_t *logger);
 
 void at_utils_logger__flush(at_utils_logger_t *logger, at_bool_t hard);
 
-void at_utils_logger__manifest(at_utils_logger_t *logger, at_utils_manifest_t *manifest);
+void at_utils_logger__manifest(
+    const at_utils_logger_t *logger,
+    at_utils_manifest_t *manifest);
 
 
 
@@ -75,6 +77,14 @@ void at_utils_logger__printf(
     const char *fmt, ...);
 
 void at_utils_logger__printf_no_echo(
+    at_utils_logger_t *logger,
+    const char *fmt, ...);
+
+void at_utils_logger__debug(
+    at_utils_logger_t *logger,
+    const char *fmt, ...);
+
+void at_utils_logger__debug_no_echo(
     at_utils_logger_t *logger,
     const char *fmt, ...);
 

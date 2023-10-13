@@ -53,11 +53,13 @@ void at_distr_weights__init_ens_w(
 
   /* ens_w: array of ensemble weights at bin boundaries */
   at_utils__new_arr(w->ens_w, w->n + 1, double);
+
   for (i = 0; i <= w->n; i++) {
     double invw = at_distr_weights__calc_inv_weight_bounded(
         w, domain->barr[i], NULL, NULL, NULL);
     w->ens_w[i] = 1.0/invw;
   }
+
 }
 
 

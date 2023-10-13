@@ -46,6 +46,6 @@ int at_mb_sm__read_text(at_mb_sm_t *sm, FILE *fp);
 
 int at_mb_sm__write_text(at_mb_sm_t *sm, FILE *fp);
 
-void at_mb_sm__manifest(at_mb_sm_t *sm, FILE *fp, int arrmax);
+void at_mb_sm__manifest(const at_mb_sm_t *sm, FILE *fp, int arrmax);
 
 #endif
