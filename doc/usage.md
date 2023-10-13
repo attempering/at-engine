@@ -16,6 +16,7 @@ int main()
   at_t* at = at__open("at.cfg", NULL, 0);
 
   for (step = 1; step <= nsteps; step++) {
+    energy = mc_step(your_system, at->beta);
     at__step(at, energy, step, NULL);
   }
 
@@ -43,5 +44,5 @@ int main()
 Compile this file as
 
 ```sh
-gcc -Ipath/to/core myprog.c at-engine__src.c -lm
+gcc -Ipath/to/at-engine-core-dir myprog.c at-engine__src.c -lm
 ```

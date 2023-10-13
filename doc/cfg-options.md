@@ -1,36 +1,5 @@
 # Configuration files for at-engine programs
 
-## Disclaimer
-
-The document is produced in the hope to be useful
-for guiding the use of the at-engine code.
-However, there is no explicit or implied warranty of
-merchantability or fitness for any particular purpose.
-
-The document is currently under construction and
-subject to future changes.
-
-The information contained in this document may not be accurate
-or up to date.
-
-Several issues for both the adaptive tempering code and the GROMACS code
-it is based on have been discovered, and some have been documented.
-It is the obligation of the end user of the program to research
-and  apply these fixes before running a valid MD simulation.
-This document, however, generally contains little information
-on these issues.
-
-Besides, there are other subtler ambiguities and pitfalls.
-While we have tried to point out some the possible pitfalls,
-it may be impossible to list all of them.
-
-Due to limited time in preparing this document as well as
-limited knowledge on the program, errors are inevitable.
-For these, we must apologize and encourage the reader to explore
-the source code for the true meaning of various options.
-
-2023.4.26
-
 ## I. Overview
 
 ### The configuration file
@@ -39,19 +8,26 @@ The configuration file, usually named `at.cfg`,
 is a file that contains all configurable options
 for running a simulation.
 
-This configuration file share a similar format as the GROMACS
-`.mdp` file.
+This configuration file share a similar format
+as the GROMACS `.mdp` file.
 However, the two are independent.
+Although early development of the at-engine code
+goes in tandem with that of the GROMACS adaption,
+the at-engine is now an independent codebase
+using only ANSI C features.
 
 The configuration file is not compiled before simulation.
 They are read and parsed at the beginning of the simulation by the program.
+The programmer is responsible to supple the path to
+the configuration file in the initialization step
+of the at-engine object.
 
 For continuation runs, it is important to ensure that the parameters
 contained in the configuration file are unchanged.
 
-### Basic format
+### Basic format of options
 
-The format of each option is
+The format of an option is
 
 ```cfg
 key = value
@@ -59,8 +35,8 @@ key = value
 
 You can freely add spaces before and after the equal sign "`=`".
 
-The keys are case insensitive.
-The dashes "`-`" and underscores "`_`"
+The keys are case insensitive,
+and the dashes "`-`" and underscores "`_`"
 are regarded as the same in the keys.
 For example, `beta-min` and `Beta_Min`
 mean the same thing.
@@ -152,35 +128,35 @@ A finer bin size is recommended for very large systems.
 In the program, the overall temperature distribution density
 is given by the product of two factors, `f` and `w`
 
-`rho(beta) d beta = f(beta) w(beta) d beta`
+$$\rho(\beta) \, d \beta = f(\beta) w(\beta) d\beta.$$
 
-#### II.C.1. `w(beta)`
+#### II.C.1. $w(\beta)$
 
-The `w(beta)` factor is given by this equation:
+The $w(\beta)$ factor is given by this equation:
 
-`w(beta) = 1/beta^{ensemble-factor}`
+$$w(\beta) = 1/\beta^e,$$
 
-* `ensemble-factor`: ensemble exponent for beta.
-  d(beta) / beta^{ensemble-factor}
+* `ensemble-exponent`: ensemble exponent $e$ for $\beta$
+    in the above formula.
 
   Default: 1.0.
 
-#### II.C.2. `f(beta)`
+#### II.C.2. $f(\beta)$
 
-The `f(beta)` factor is a new feature from the PCST paper.
+The $f(\beta)$ factor is a new feature from the 2014 PCST paper.
 
-The `f(beta)` factor has three possibilities.
+The $f(\beta)$ factor has three possibilities.
 
-* Type 0. Flat distribution: `f(beta) = 1`
+* Type 0. Flat distribution: $f(\beta) = 1$
           This is the case that falls back to the classic
           adaptive tempering algorithm.
 
 * Type 1. single Gaussian distribution:
-          `f(beta) = exp[-(beta - beta0)^2/(2 sigma^2)]`
+          $f(\beta) = \exp[-(\beta - \beta_0)^2/(2 \sigma^2)]$
           This is the new distribution suggested by the PCST paper.
 
-* Type 2. Exponential distribution:
-          `f(beta) = exp(-c beta)`.
+* Type 2. Exponential distribution (legacy):
+          $f(\beta) = \exp(-c \beta)$.
           This case is not documented, and only for used for testing.
 
 * Type 3. Composite distribution.
@@ -222,7 +198,7 @@ Options:
 
   $$f(\beta) = \sum_{i=1}^n w_i f_i(\beta).$$
 
-  * `ensemble-n-components` for $n$: number of components
+  * `ensemble-n-components` for the number of components
 
   * `ensemble-component-1`, `ensemble-component-2`, ...
 
@@ -246,7 +222,7 @@ Options:
       means that the first component is a flat distribution
       with the relative weight being $1.2$, i.e.,
 
-      $w_1 f_1(\beta) = 1.2$.
+      $w_1 f_1(\beta) = 1.2 \times 1$.
 
     * If `type` is "`gaussian`", the parameters contains
       two numbers for the center $\beta_0$ and $\sigma$
@@ -258,7 +234,7 @@ Options:
 
       means that the second component $f_2$ is a Gaussian distribution,
       with the relative weight $w_2 = 0.7$.
-      The center $\beta_0$ and width $sigma$
+      The center $\beta_0$ and width $\sigma$
       for the component is given by $0.75$ and $0.05$, respectively.
       That is,
 
@@ -275,14 +251,14 @@ where
 * $H_0$ is the original Hamiltonian function.
 * $H_1$ is the bias potential.
 
-* $\kappa = 1 - (T - T_{ref})*(1 - \kappa_0)/(T_{max} - T_{ref})$
-  if $T > T_{ref}$
+* $\kappa = 1 - (T - T_{\mathrm{ref}}) * (1 - \kappa_0)/(T_{\max} - T_{\mathrm{ref}})$
+  if $T > T_{\mathrm{ref}}$
   or
-  $\kappa = 1$ if $T < T_{ref}$
+  $\kappa = 1$ if $T < T_{\mathrm{ref}}$
 
-* $\epsilon = \epsilon_0 (T - T_{ref}) / (T_{max} - T_{ref})$
-  if $T > T_{ref}$
-  or $epsilon=0$ if $T < T_{ref}$
+* $\epsilon = \epsilon_0 (T - T_{\mathrm{ref}}) / (T_{\max} - T_{\mathrm{ref}})$
+  if $T > T_{\mathrm{ref}}$
+  or $\epsilon=0$ if $T < T_{\mathrm{ref}}$
 
 With the default values $\kappa_0 = 1, \epsilon_0 = 0$,
 we have $\kappa = 1, \epsilon = 0$ no matter the temperature.
@@ -334,17 +310,18 @@ The actual tempering details are given by the Langevin equation settings.
 
 The Langevin equation is the engine that drives the temperature transitions.
 
-`d T = [ E - Et - (dlnwf/dbeta) ] dt + T sqrt(2*dt) dW`
+$$d T = [ U - \tilde U - d\ln (wf)/d \beta ] \, dt + T \sqrt{2} \, d W,$$
 
-* `Tdt`: time step for integrating the Langevin equation, `dt` in the above equation.
+* `langevin-dt`: time step for integrating the Langevin equation, $dt$ in the above equation.
 
   Default: 1e-5.
 
-* `dTmax`: threshold to clamp the maximum temperature change in a single application of the Langevin equation.
+* `langevin-dT-max`: threshold to clamp the maximum temperature change $T$
+    in a single application of the Langevin equation.
 
   Default: 25.0
 
-* `move_repeats`: number of repeats in every tempering step.
+* `move-repeats`: number of repeats in every tempering step.
 
   The Langevin equation for tempering will be repeated
     this number of times in a tempering step.
@@ -526,38 +503,38 @@ scheme.
 
   Default: 1.
 
-* `shrink_mbin_adjust`: whether to apply the window adjustment for the shrinking factor
+* `shrink-win-adjusted` (old `shrink_mbin_adjust`): whether to apply the window adjustment for the shrinking factor
 
   * 0: disabled.
   * 1: enabled.
 
   Default: 1.
 
-* `shrink_init`:
+* `shrink-init`:
 
   Default: 0.01.
 
-* `shrink_max`:
+* `shrink-max`:
 
   Default: 0.01.
 
-* `shrink_mode`:
+* `shrink-mode`:
 
   Default: 1.
 
-* `shrinkmin`:
+* `shrink-min`:
 
   Default: 0.0.
 
-* `shrinkstop`:
+* `shrink-stop`:
 
   Default: -1.
 
-* `shrinkamp`:
+* `shrink-amp`:
 
   Default: 0.1.
 
-* `shrinkexp`:
+* `shrink-exp`:
 
   Default: 1.0.
 
@@ -595,7 +572,7 @@ scheme.
 
 * `mb-nst-save` (old: `nstav`): frequency of writing averager files in number of simulation steps.
 
-  The files written include `ze_file`, `rng_file`, `mbav_file`.
+  The files written include `ze-file`, `rng-file`, `mb-binary-file`.
 
   Default: 10000.
 
@@ -615,7 +592,7 @@ scheme.
 
 The thermodynamic quantity file contains information about the average energy, number of visits, weighted sum, etc. of every bin
 
-* `ze_file`: name of the file
+* `ze-file`: name of the file
 
   Default: "ze.dat" (legacy: "ZE")
 
@@ -625,14 +602,14 @@ The thermodynamic quantity file contains information about the average energy, n
 
 The trace file outputs the current potential energy and temperature every few steps.
 
-* `trace_file`: name of the trace file.
+* `trace-file`: name of the trace file.
 
   Default: "trace.dat" (legacy: "TRACE").
 
   Remarks: by default, this file is always appended instead of rewritten.
   So if you restart a fresh simulation, make sure to delete the TRACE file.
-  
-* `nsttrace`: frequency of write the log file.
+
+* `nst-trace`: interval of write the trace file.
     A common value can be something like `1000`.
 
   * -1: disable the log file
@@ -653,7 +630,7 @@ and its state contains about 640 integers.
 When resuming a previous simulation the random number state file
 will be reloaded.
 
-* `rng_file`: name of the random number state file.
+* `rng-file`: name of the random number state file.
 
   Default: "langevin-rng.dat" (legacy: "MTSEED").
 
@@ -685,7 +662,7 @@ The following set of options apply to behaviors to this functionality.
 
   Default: "hist.bin".
 
-* `nsthist` frequency of writing energy histogram data to file
+* `nst-hist` frequency of writing energy histogram data to file
 
   Default: 100000.
 
@@ -714,21 +691,21 @@ The following set of options apply to behaviors to this functionality.
 
 #### IV.A.4. Energy histogram options
 
-* `ehist-addahalf` whether to add half of delta E to represent every energy bin.
+* `ehist-add-half-ebin` whether to add half of delta E to represent every energy bin.
 
   * 0: disabled
   * 1: enabled
 
   Default: 1.
 
-* `ehist-keepedge` whether to truncated bins of zero number of visits on both sides of the energy histogram before writing them to file.
+* `ehist-keep-margins` whether to truncated bins of zero number of visits on both sides of the energy histogram before writing them to file.
 
   * 0: disabled
   * 1: enabled
 
   Default: 0.
 
-* `ehist-nozeroes` whether to write histogram entries
+* `ehist-no-zeros` whether to write histogram entries
   when the number of visits to the bin is zero.
 
   * 0: disabled
@@ -754,26 +731,26 @@ The following set of options apply to behaviors to this functionality.
 
 Beta windowing methods
 
-* `ehist-mbin_mode`
+* `ehist-mbin-mode`
 
   * 0: beta mode
   * 1: lnT mode
   * 2: kT mode
 
   Conditions: 0, 1, or 2.
-  
+
   Default: 1.
 
-* `ehist-delta_xxx`
+* `ehist-del-xxx`
 
-  * `ehist-delta_beta`
+  * `ehist-del-beta`
 
     Default: `0.02`.
 
-  * `ehist-delta_lnT`
+  * `ehist-del-lnT`
 
     Default: `0.05`.
 
-  * `ehist-delta_kT`
+  * `ehist-del-kT`
 
     Default: `0.10`.
