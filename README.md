@@ -20,6 +20,7 @@ A typical simulation goes like this:
 at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
 
 for (step = 1; step <= nsteps; step++) {
+  energy = md_or_mc_step(your_system, at->beta);
   at__step(at, energy, step, NULL);
 }
 
@@ -40,9 +41,10 @@ a few key improvements on the overall accuracy and performance.
 
 * Metropolisation.  The Langevin equation used in the original
 algorithm is approximate, and may be inaccurate for an overly
-large step size. This limitation can be removed with the
-Metropolisation technique, which gives an acceptance probability
-for the destination temperature suggested by the Langevin equation.
+large step size.
+In the new code, we deploy a Metropolisation technique, which employs
+an acceptance step to overcome the approximation,
+and hence allows a much larger time step.
 
 * Moderation on the temperature diffusion.  Initial stages of the
 simulation often pose stability issues because of lack of data to
@@ -51,14 +53,18 @@ parameters `langevin_no_skip`, `langevin_bin_min_visits`
 are now added to prevent unreasonably large temperature transitions
 in early stages.
 
-* Zero-filler. The integral identity draws estimates from
+* Zero-filling mechanism. The integral identity draws estimates from
 a window of bins. Sometimes the bin range contains missing data
 that needs to be filled in order for the identity to work proper.
-The zero-filling mechanism is now added.
+The zero-filling mechanism is now added to fill the missing values
+in the range of concern.
+This mechanism is also employed in the Metropolisation step for
+the Langevin equation in the above to compute the integral of
+the average potential energy over a beta range.
 
 * Customizable temperature distribution. The temperature distribution
 can now be customized with a linear combination of Gaussian distributions
-or the flat distribution.
+or the flat distribution with variable weights.
 
 ## References
 
