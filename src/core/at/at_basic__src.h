@@ -113,16 +113,15 @@ static int at__cfg_init_low_level(at_t *at,
 
        utils->trace
 
-     After this call, we can then use
-     the xxx__conf_init() functions instead of
-     the old xxx__cfg_init() functions
-     for processing the configuration file
-     with the former being more convenient wrappers.
+     After this call, we can then use the
+     more convenient xxx__conf_init() functions instead of
+     the old-style xxx__cfg_init() functions
+     to process the configuration file.
 
      The configuration object at->utils->conf
      can be reused after the function, because
      the parsed content of the input configuration file
-     is not destroyed until the end of the program. 
+     persists till the end of the lifetime of the program.
 
      This allows extensions of the program
      to parse additional parameters in the configuration file.
