@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 2010-2023  AT-Engine Developers
  *
  * This library is free software; you can redistribute it and/or
@@ -16,49 +16,67 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define GAUSSIAN__USE_MDSYS_ALIASES__
-#include "veritools/models/gaussian-energy/gaussian.h"
+#include "veritools/models/lj/lj.h"
+#include "veritools/models/lj/ljeos.h"
 
 #include "at-engine__src.h"
 
+
 double boltz = 1.0;
-uint32_t langevin_seed = 1234;
 
-double sigma = 100.0;     /* standard deviation of energy distributions */
-double epot_dt = 1e-2;   /* equilibration rate, larger value means the system is able to equilibrate faster */
-//double epot_dt = 1e-4; // use this to emulate a slow system
-at_llong_t nsteps = 5000000;
+int n = 108;
+at_llong_t nequil = 5000;
+at_llong_t nsteps = 100000;
+double rho = 0.7;
+double rc_def = 2.5;
+double md_dt = 0.002;
+double thermostat_dt = 0.02;
 
-void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
+
+
+static void equilibrate(lj_t *lj, double temp)
+{
+  at_llong_t step;
+
+  /* equilibration */
+  for (step = 1; step <= nequil; step++) {
+    lj__vv(lj, md_dt);
+    lj__vel_rescale(lj, temp, thermostat_dt);
+    if (step % 1000 == 0) {
+      printf(at_llong_pfmt ", U %g, P %g\n",
+          step, lj->epot,
+          lj__calc_pres(lj, temp));
+    }
+  }
+}
+
+
+
+static void run_at_md(at_t* at, lj_t* lj, at_llong_t nsteps)
 {
   at_llong_t step = 0;
   at_params_step_t step_params[1];
+  double temp_init = at->utils->thermostat_temp;
   double acc;
 
-  zcom_rng_mt19937__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
+  at__set_beta(at, at__temp_to_beta(at, temp_init));
 
-  mdsys__set_energy_at_beta(mdsys, at->beta);
+  for (step = 1; step <= nsteps; step++) {
 
-  for (step = 1; step <= nsteps; step++)
-  {
+    lj__vvx(lj, md_dt, at->force_scale);
+    lj__vel_rescale(lj, at->utils->thermostat_temp, thermostat_dt);
 
-    mdsys__step(mdsys, at->beta);
-
-    if (at__do_tempering_on_step(at, step, AT__TRUE))
-    {
-      at->energy = mdsys->epot;
+    if (at__do_tempering_on_step(at, step, AT__TRUE)) {
+      at->energy = lj->epot;
 
       step_params->step = step;
       step_params->is_first_step = (step == 1);
       step_params->is_last_step = (step == nsteps);
       step_params->do_trace = AT__FALSE;
       step_params->flush_output = AT__FALSE;
+      //step_params->beta_scaling_enabled = AT__FALSE;
 
-      //printf("step %ld, energy %g\n", (long) step, at->energy);
       at__move(at, step_params);
-
-      // at_mb__write(at->mb, at->langevin);
-      // exit(1);
     }
   }
 
@@ -70,10 +88,11 @@ void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
 }
 
-int main(int argc, char **argv)
+
+int main(int argc, char** argv)
 {
   const char *fn_cfg = "at.cfg";
-  mdsys_t *mdsys;
+  lj_t *lj;
 
   if (argc > 1)
   {
@@ -85,13 +104,16 @@ int main(int argc, char **argv)
 
   at__manifest(at);
 
-  mdsys = mdsys__new(sigma, epot_dt, at->distr->domain->beta_min, at->distr->domain->beta_max, boltz);
+  lj = lj__open(n, rho, rc_def);
 
-  run_at_md(at, mdsys, nsteps);
+  equilibrate(lj, at->utils->thermostat_temp);
 
-  mdsys__delete(mdsys);
+  run_at_md(at, lj, nsteps);
+
+  lj__close(lj);
 
   at__close(at);
 
   return 0;
 }
+

@@ -52,12 +52,14 @@ at_bool_t at__do_tempering_on_step(at_t *at, at_llong_t step, at_bool_t value_on
 int at__move(at_t *at, const at_params_step_t *step_params)
 {
   double invwf = 1.0;
+  double beta_before, beta_after;
   double temp_before, temp_after;
   double av_energy = 0.0;
   double neg_dlnwf_dbeta;
   int ib, repeat;
 
-  temp_before = at__beta_to_temp(at, at->beta);
+  beta_before = at->beta;
+  temp_before = at__beta_to_temp(at, beta_before);
 
   ib = at_distr__beta_to_index(at->distr, at->beta, AT__TRUE);
 
@@ -76,12 +78,23 @@ int at__move(at_t *at, const at_params_step_t *step_params)
         ib, invwf, neg_dlnwf_dbeta, &av_energy);
   }
 
-  temp_after = at__beta_to_temp(at, at->beta);
+  beta_after = at->beta;
+  temp_after = at__beta_to_temp(at, beta_after);
 
-  // update at->force_scale according to the new at->beta
+  /* update at->force_scale according to the new at->beta */
   at__update_force_scale(at);
 
-  // refresh Et
+#ifdef AT__BETA_SCALING_FUNC__
+  if (step_params->beta_scaling_enabled == AT__TRUE) {
+    (*step_params->beta_scaling_func)(
+        beta_before,
+        beta_after,
+        at->force_scale,
+        step_params->beta_scaling_obj);
+  }
+#endif
+
+  /* refresh Et */
   if (at__do_output_on_step(step_params, at->mb->nst_refresh, AT__TRUE)) {
     at_mb__refresh_et(at->mb);
   }
@@ -122,7 +135,7 @@ int at__step(at_t *at, double energy, at_llong_t step, at_params_step_t *step_pa
 
 
 
-double at__get_move_acceptance_ratio(
+double at__get_move_acc_ratio(
     const at_t *at)
 {
   return at_driver_langevin_move__get_acceptance_ratio(at->driver->langevin);
