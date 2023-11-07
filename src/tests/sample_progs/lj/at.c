@@ -26,7 +26,7 @@ double boltz = 1.0;
 
 int n = 108;
 at_llong_t nequil = 5000;
-at_llong_t nsteps = 100000;
+at_llong_t nsteps = 200000;
 double rho = 0.7;
 double rc_def = 2.5;
 double md_dt = 0.002;
@@ -89,6 +89,33 @@ static void run_at_md(at_t* at, lj_t* lj, at_llong_t nsteps)
 }
 
 
+static int write_ref(at_t* at)
+{
+  const char* fn_ref = "ljeos.dat";
+  FILE* fp;
+  int i;
+
+  if ((fp = fopen(fn_ref, "w")) == NULL) {
+    fprintf(stderr, "failed to open %s\n", fn_ref);
+    return -1;
+  }
+
+  for (i = 0; i < at->distr->domain->n; i++) {
+    double beta = at->distr->domain->beta_min + (i + 0.5) * at->distr->domain->beta_del;
+    double temp = at__beta_to_temp(at, beta);
+    double pres;
+
+    double epot = ljeos3d__get(rho, temp, &pres, NULL, NULL);
+
+    fprintf(fp, "%g %g %g\n", beta, epot * n, pres);
+  }
+
+  fclose(fp);
+
+  return 0;
+}
+
+
 int main(int argc, char** argv)
 {
   const char *fn_cfg = "at.cfg";
@@ -109,6 +136,8 @@ int main(int argc, char** argv)
   equilibrate(lj, at->utils->thermostat_temp);
 
   run_at_md(at, lj, nsteps);
+
+  write_ref(at);
 
   lj__close(lj);
 

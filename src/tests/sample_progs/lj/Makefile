@@ -1,5 +1,4 @@
-
-CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
+CC = gcc -O3 -g -Wall -Wunused-function -Wstringop-truncation
 
 CC_CLANG = clang-12 -O3 -g -Wall -Wno-unused-function -Wnewline-eof
 
@@ -34,5 +33,5 @@ $(bins_dbg): %_d.exe : %.c $(deps)
 	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
 clean::
-	$(RM) -rf $(bins) $(bins_clang) $(bins_dbg) .*.swp *~ hist*.bin at.manifest* err.dat HMB* MTSEED* mb*.av ZE* *_hist.dat TRACE* gmon.out data/* atdata*
+	$(RM) -rf $(bins) $(bins_clang) $(bins_dbg) .*.swp *~ hist*.bin at.manifest* err.dat HMB* MTSEED* mb*.av ZE* *_hist.dat TRACE* gmon.out data/* atdata* ljeos.dat
 

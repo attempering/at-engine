@@ -1,4 +1,4 @@
-sub_dirs = e_fixed gaussian
+sub_dirs = e_fixed gaussian lj
 
 bins::
 	for sub_dir in $(sub_dirs); do \

@@ -1,4 +1,4 @@
-# AT-Engine
+# AT-Engine: a continuous-temperature simulated tempering engine
 
 ## Overview
 
@@ -20,7 +20,8 @@ A typical simulation goes like this:
 at_t* at = at__open("at.cfg", NULL, AT__INIT_VERBOSE);
 
 for (step = 1; step <= nsteps; step++) {
-  energy = md_or_mc_step(your_system, at->beta);
+  energy = mc_step(your_system, at->beta);
+  // energy = md_step(your_system, at->beta, at->force_scale);
   at__step(at, energy, step, NULL);
 }
 
