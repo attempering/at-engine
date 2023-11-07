@@ -35,7 +35,7 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
   recon->e_min = eh->e_min;
   recon->e_max = eh->e_max;
   recon->e_del = eh->e_del;
-  recon->e_n = eh->n;
+  recon->e_n = eh->e_n;
 
   at_utils_conf__push_mod(conf, "at.eh.recon");
 
@@ -115,12 +115,12 @@ int at_eh_recon__conf_init(at_eh_recon_t *recon, at_eh_t *eh,
 
   /* indices for grid estimators */
   {
-    at_utils__new_arr(recon->is, recon->e_n + 1, int);
+    at_utils__new_arr(recon->is, recon->n + 1, int);
     for (i = 0; i < recon->n + 1; i++) {
       recon->is[i] = 0;
     }
 
-    at_utils__new_arr(recon->it, recon->e_n + 1, int);
+    at_utils__new_arr(recon->it, recon->n + 1, int);
     for (i = 0; i < recon->n + 1; i++) {
       recon->it[i] = 0;
     }

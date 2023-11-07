@@ -33,7 +33,7 @@ int at_eh_recon__reconstruct(at_eh_recon_t *recon, at_eh_t *eh, const char *fn)
   at_mb_iie_t *iie = mb->iie;
   at_distr_t *distr = mb->distr;
   int n = distr->domain->n;
-  
+
   if ((fp = fopen((fn != NULL) ? fn : recon->file, "w")) == NULL) {
     at_utils_logger__error(eh->logger, "failed to write reconstructed histogram [%s].\n",
         recon->file);
@@ -113,6 +113,7 @@ int at_eh_recon__reconstruct(at_eh_recon_t *recon, at_eh_t *eh, const char *fn)
   }
 
   fclose(fp);
+
   return 0;
 }
 
