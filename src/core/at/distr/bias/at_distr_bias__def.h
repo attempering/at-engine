@@ -32,10 +32,8 @@ typedef struct at_distr_bias_t_
 {
   at_bool_t enabled;
   double    ref_temp;
-#ifdef AT__PCST_COMPAT
-  double    *kappa, *epsilon;
-  double    kappa0, epsilon0;
-#endif
+  double    max_temp;
+  double    w_max; /* amplitude at the maximum temperature */
 } at_distr_bias_t;
 
 #endif

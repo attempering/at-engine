@@ -36,6 +36,8 @@ void run_at_md(at_t* at, at_llong_t nsteps)
   at_llong_t step = 0;
   at_params_step_t step_params[1];
 
+  at_params_step__init(step_params);
+
   zcom_rng_mt19937__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
   for (step = 1; step <= nsteps; step++) {
@@ -44,7 +46,7 @@ void run_at_md(at_t* at, at_llong_t nsteps)
     {
       step_params->step = step;
       step_params->is_first_step = (step == 1);
-      step_params->is_last_step = (step == nsteps);
+      step_params->is_final_step = (step == nsteps);
       step_params->flush_output = AT__FALSE;
 
       at->energy = epot;

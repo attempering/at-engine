@@ -181,6 +181,12 @@ void zcom_rng_mt19937__init(zcom_rng_mt19937_t *mt, uint32_t seed)
 }
 
 
+void zcom_rng_mt19937__finish(zcom_rng_mt19937_t *mt)
+{
+  (void) mt;
+}
+
+
 
 zcom_rng_mt19937_t *zcom_rng_mt19937__open(uint32_t seed)
 {
@@ -198,6 +204,7 @@ zcom_rng_mt19937_t *zcom_rng_mt19937__open(uint32_t seed)
 
 void zcom_rng_mt19937__close(zcom_rng_mt19937_t *mt)
 {
+  zcom_rng_mt19937__finish(mt);
   free(mt);
 }
 

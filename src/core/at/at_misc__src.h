@@ -67,4 +67,16 @@ void at__set_beta(at_t *at, double beta)
 }
 
 
+double at__get_bias_w_comb(const at_t *at)
+{
+  return at_distr__get_bias_w_comb(at->distr, at->beta);
+}
+
+
+double at__get_bias_w_deriv(const at_t *at)
+{
+  return at_distr__get_bias_w_deriv(at->distr, at->beta);
+}
+
+
 #endif

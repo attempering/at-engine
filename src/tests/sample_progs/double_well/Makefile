@@ -1,4 +1,4 @@
-CC = gcc -O3 -g -Wall -Wno-unused-function -Wno-stringop-truncation
+CC = gcc -O3 -g -Wall -Wunused-function -Wstringop-truncation
 CC_DBG = gcc -O0 -g -pg -Wall -Wno-unused-function -Wno-unused-variable -Wno-stringop-truncation
 LM = -lm
 
@@ -26,5 +26,5 @@ $(bins_dbg): %_d.exe : %.c $(deps)
 	$(CC_DBG) $(includes) $< $(dep_srcs) -o $@ $(LM)
 
 clean::
-	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ hist*.bin at.manifest* HMB* MTSEED* mb*.av ZE* *_hist.dat TRACE* gmon.out data/* atdata*
+	$(RM) -rf $(bins) $(bins_dbg) .*.swp *~ *hist*.dat gmon.out data/* atdata*
 

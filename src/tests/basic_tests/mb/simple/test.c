@@ -30,11 +30,10 @@ int main(void)
   at_distr_t distr[1];
   at_mb_t mb[1];
   at_bool_t verbose = AT__FALSE;
-  double boltz = 1.0;
 
   at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
-  at_distr__conf_init(distr, conf, boltz);
-  at_mb__conf_init(mb, distr, conf, boltz);
+  at_distr__conf_init_ez_(distr, conf);
+  at_mb__conf_init_ez_(mb, distr, conf);
 
   at_mb__finish(mb);
   at_distr__finish(distr);

@@ -39,9 +39,24 @@ static void at__set_init_beta(at_t *at)
   /* make the initial temperature = thermostat_temp */
   double beta = at__temp_to_beta(at, at->utils->thermostat_temp);
   at_distr_domain_t *domain = at->distr->domain;
+  double tol = 1e-5;
+
+  /* in many a case, the thermostat temperature
+     is the lowest temperature corresponding to beta_max
+     which creates an out-of-range error because the
+     beta index is exactly domain->n.
+     So we set beta to be slightly below domain->beta_max
+     to begin with */
+  if (fabs(beta - domain->beta_max) < tol * domain->beta_del) {
+    beta = domain->beta_max - 2 * tol * domain->beta_del;
+  }
+
+  if (fabs(beta - domain->beta_min) < tol * domain->beta_del) {
+    beta = domain->beta_min + 2 * tol * domain->beta_del;
+  }
 
   if (beta >= domain->beta_min
-   && beta <= domain->beta_max) {
+   && beta < domain->beta_max) {
     at->beta = beta;
   } else {
     at->beta = 0.5 * (domain->beta_min + domain->beta_max);
@@ -113,9 +128,10 @@ static int at__cfg_init_low_level(at_t *at,
 
        utils->trace
 
-     After this call, we can then use the
-     more convenient xxx__conf_init() functions instead of
-     the old-style xxx__cfg_init() functions
+     After this call, the utils->conf is initialized,
+     and then we can then use the more convenient
+     at_xxx__conf_init() functions instead of
+     the old-style at_xxx__cfg_init() functions
      to process the configuration file.
 
      The configuration object at->utils->conf
@@ -138,7 +154,11 @@ static int at__cfg_init_low_level(at_t *at,
 
   at_utils_logger__info(at->logger, "version %lld\n", (long long) AT__VERSION);
 
-  if (at_distr__conf_init(at->distr, at->utils->conf, at->sys_params->boltz) != 0) {
+  if (at_distr__conf_init(
+      at->distr,
+      at->utils->conf,
+      at->sys_params->boltz,
+      at->utils->thermostat_temp) != 0) {
     return -1;
   }
 

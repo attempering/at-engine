@@ -34,14 +34,16 @@ void at__update_force_scale(at_t *at)
 
 
 
-at_bool_t at__do_tempering_on_step(at_t *at, at_llong_t step, at_bool_t value_on_neg_nst_temp)
+at_bool_t at__do_tempering_on_step(
+    at_t *at, at_llong_t step,
+    at_bool_t def_value_on_neg_nst_temp)
 {
   int nst_tempering = at->driver->nst_tempering;
 
   if (nst_tempering > 0 && (step % nst_tempering == 0)) {
     return AT__TRUE;
   } else if (nst_tempering <= 0) {
-    return value_on_neg_nst_temp;
+    return def_value_on_neg_nst_temp;
   }
 
   return AT__FALSE;
@@ -85,7 +87,14 @@ int at__move(at_t *at, const at_params_step_t *step_params)
   at__update_force_scale(at);
 
 #ifdef AT__BETA_SCALING_FUNC__
-  if (step_params->beta_scaling_enabled == AT__TRUE) {
+  /* We have put the beta-scaling functions in a special macro
+     because if step_params is not initialized,
+     beta_scaling_func and beta_scaling_obj may
+     contain garbage data, which are unfortunately not NULL
+     and activate the following block of code,
+     leading to fatal runtime errors */
+  if (step_params->beta_scaling_func != NULL
+   && step_params->beta_scaling_obj != NULL) {
     (*step_params->beta_scaling_func)(
         beta_before,
         beta_after,
@@ -111,20 +120,12 @@ int at__move(at_t *at, const at_params_step_t *step_params)
 int at__step(at_t *at, double energy, at_llong_t step, at_params_step_t *step_params)
 {
   // default parameters
-  at_params_step_t stock_step_params[1] = {
-    {
-      0,
-      AT__FALSE, // is_first_step
-      AT__FALSE, // is_last_step
-      AT__FALSE, // do_trace
-      AT__FALSE  // flush_output
-    }
-  };
+  at_params_step_t stock_step_params[1];
 
   if (step_params == NULL) {
     step_params = stock_step_params;
+    at_params_step__init(stock_step_params);
   }
-
 
   step_params->step = step;
 

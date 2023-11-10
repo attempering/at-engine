@@ -47,7 +47,7 @@ at_bool_t at__do_output_on_step(
     at_bool_t do_on_first_step)
 {
   return (do_on_first_step || !step_params->is_first_step)
-     && (step_params->is_last_step
+     && (step_params->is_final_step
         || (nst > 0 && step_params->step % nst == 0));
 }
 

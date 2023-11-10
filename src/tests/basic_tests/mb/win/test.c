@@ -27,10 +27,10 @@ static void mock_mb__init(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, double beta_min, double beta_max, double beta_del)
 {
   int i, n;
-  double boltz = 1.0;
 
-  at_distr__conf_init(distr, conf, boltz);
-  at_distr_domain__init_simple(distr->domain, beta_min, beta_max, beta_del);
+  at_distr__conf_init_ez_(distr, conf);
+  at_distr_domain__init_simple(
+      distr->domain, beta_min, beta_max, beta_del);
 
   mb->distr = distr;
 

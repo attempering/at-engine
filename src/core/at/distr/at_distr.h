@@ -27,7 +27,17 @@
 
 #include "../utils/at_utils.h"
 
-int at_distr__conf_init(at_distr_t *distr, at_utils_conf_t *conf, double boltz);
+int at_distr__conf_init(
+    at_distr_t *distr,
+    at_utils_conf_t *conf,
+    double boltz,
+    double ref_temp);
+
+/* convenience initializer for testing programs
+   assuming boltz = 1.0, ref_temp = 1.0 */
+int at_distr__conf_init_ez_(
+    at_distr_t *distr,
+    at_utils_conf_t *conf);
 
 void at_distr__finish(at_distr_t *distr);
 
@@ -46,6 +56,22 @@ double at_distr__calc_inv_weight_bounded(
     const at_distr_t *distr, double beta,
     double *neg_dlnwf_dbeta,
     double *f, double *neg_dlnf_dbeta);
+
+/* get the bias weight for combination, as in
+
+    U = U0 + w_comb * V
+
+  Note: this function accepts beta, instead of T.
+*/
+double at_distr__get_bias_w_comb(const at_distr_t *distr, double beta);
+
+/* get the bias weight for beta differentiation
+
+    d(beta U)/d(beta) = U0 + w_deriv * V
+
+  Note: this function accepts beta, instead of T.
+*/
+double at_distr__get_bias_w_deriv(const at_distr_t *distr, double beta);
 
 
 #endif

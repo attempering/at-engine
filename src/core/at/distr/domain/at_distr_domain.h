@@ -34,7 +34,8 @@ void at_distr_domain__finish(at_distr_domain_t *domain);
 
 void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifest_t *manifest);
 
-int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta, at_bool_t check);
+int at_distr_domain__beta_to_index(
+    const at_distr_domain_t *domain, double beta, at_bool_t check);
 
 double at_distr_domain__get_bin_center(const at_distr_domain_t *domain, int ib);
 

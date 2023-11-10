@@ -59,6 +59,8 @@ static void run_at_md(at_t* at, lj_t* lj, at_llong_t nsteps)
   double temp_init = at->utils->thermostat_temp;
   double acc;
 
+  at_params_step__init(step_params);
+
   at__set_beta(at, at__temp_to_beta(at, temp_init));
 
   for (step = 1; step <= nsteps; step++) {
@@ -71,10 +73,9 @@ static void run_at_md(at_t* at, lj_t* lj, at_llong_t nsteps)
 
       step_params->step = step;
       step_params->is_first_step = (step == 1);
-      step_params->is_last_step = (step == nsteps);
+      step_params->is_final_step = (step == nsteps);
       step_params->do_trace = AT__FALSE;
       step_params->flush_output = AT__FALSE;
-      //step_params->beta_scaling_enabled = AT__FALSE;
 
       at__move(at, step_params);
     }

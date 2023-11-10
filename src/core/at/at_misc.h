@@ -35,5 +35,19 @@ double at__get_beta(const at_t *at);
 void at__set_beta(at_t *at, double beta);
 
 
+/* get the bias weight for combination, as in
+
+    U = U0 + w_comb * V
+
+*/
+double at__get_bias_w_comb(const at_t *at);
+
+/* get the bias weight for beta differentiation
+
+    d(beta U)/d(beta) = U0 + w_deriv * V
+*/
+double at__get_bias_w_deriv(const at_t *at);
+
+
 #endif
 

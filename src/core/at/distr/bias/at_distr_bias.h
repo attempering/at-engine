@@ -22,11 +22,27 @@
 #include "at_distr_bias__def.h"
 #include "../../utils/at_utils.h"
 
-int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf);
+int at_distr_bias__conf_init(
+    at_distr_bias_t *bias,
+    at_utils_conf_t *conf,
+    double ref_temp,
+    double max_temp);
 
 void at_distr_bias__finish(at_distr_bias_t *bias);
 
 void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *manifest);
+
+/* get the bias weight for combination, as in
+
+    U = U0 + w_comb * V
+*/
+double at_distr_bias__get_w_comb_of_temp(const at_distr_bias_t *bias, double temp);
+
+/* get the bias weight for beta differentiation
+
+    d(beta U)/d(beta) = U0 + w_deriv * V
+*/
+double at_distr_bias__get_w_deriv_of_temp(const at_distr_bias_t *bias, double temp);
 
 
 #endif

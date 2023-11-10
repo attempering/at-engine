@@ -28,8 +28,14 @@
 
 
 
-int at_distr__conf_init(at_distr_t *distr, at_utils_conf_t *conf, double boltz)
+int at_distr__conf_init(
+    at_distr_t *distr,
+    at_utils_conf_t *conf,
+    double boltz,
+    double ref_temp)
 {
+  double max_temp;
+
   distr->boltz = boltz;
 
   if (at_distr_domain__conf_init(distr->domain, conf) != 0) {
@@ -40,11 +46,25 @@ int at_distr__conf_init(at_distr_t *distr, at_utils_conf_t *conf, double boltz)
     return -1;
   }
 
-  if (at_distr_bias__conf_init(distr->bias, conf) != 0) {
+  max_temp = 1.0 / (boltz * distr->domain->beta_min);
+
+  if (at_distr_bias__conf_init(distr->bias, conf, ref_temp, max_temp) != 0) {
     return -1;
   }
 
   return 0;
+}
+
+
+
+int at_distr__conf_init_ez_(
+    at_distr_t *distr,
+    at_utils_conf_t *conf)
+{
+  double boltz = 1.0;
+  double ref_temp = 1.0;
+
+  return at_distr__conf_init(distr, conf, boltz, ref_temp);
 }
 
 
@@ -100,6 +120,19 @@ double at_distr__calc_inv_weight_bounded(
       distr->weights, beta,
       neg_dlnwf_dbeta,
       f, neg_dlnf_dbeta);
+}
+
+
+double at_distr__get_bias_w_comb(const at_distr_t *distr, double beta)
+{
+  return at_distr_bias__get_w_comb_of_temp(distr->bias, 1.0/(distr->boltz*beta));
+}
+
+
+double at_distr__get_bias_w_deriv(const at_distr_t *distr, double beta)
+{
+  (void) beta;
+  return at_distr_bias__get_w_deriv_of_temp(distr->bias, 1.0/(distr->boltz*beta));
 }
 
 

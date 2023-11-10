@@ -24,9 +24,6 @@
 
 
 
-double boltz = 1.0;
-
-
 /* parameters of the Gaussian energy model */
 double gaussian_sigma = 100.0;
 
@@ -37,8 +34,8 @@ long ntimes = 100000;
 
 static void init_mb_object(at_utils_conf_t *conf, at_distr_t *distr, at_mb_t *mb)
 {
-  at_distr__conf_init(distr, conf, boltz);
-  at_mb__conf_init(mb, distr, conf, boltz);
+  at_distr__conf_init_ez_(distr, conf);
+  at_mb__conf_init_ez_(mb, distr, conf);
 }
 
 

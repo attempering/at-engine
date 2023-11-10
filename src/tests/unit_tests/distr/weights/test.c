@@ -94,7 +94,6 @@ int main(int argc, char **argv)
   at_utils_conf_t conf[1];
   at_utils_manifest_t manifest[1];
   at_distr_t distr[1];
-  double boltz = 1.0;
   at_bool_t verbose = AT__TRUE;
 
   if (argc > 1) {
@@ -106,7 +105,7 @@ int main(int argc, char **argv)
   at_utils_manifest__conf_init(manifest, conf);
   at_utils_manifest__open_file(manifest);
 
-  at_distr__conf_init(distr, conf, boltz);
+  at_distr__conf_init_ez_(distr, conf);
   at_distr__manifest(distr, manifest);
 
   test_distr(conf->cfg, distr);

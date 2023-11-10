@@ -21,35 +21,39 @@
 
 #include "at_distr_bias.h"
 
-int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf)
+int at_distr_bias__conf_init(
+    at_distr_bias_t *bias,
+    at_utils_conf_t *conf,
+    double ref_temp,
+    double max_temp)
 {
   at_utils_conf__push_mod(conf, "at.distr.bias");
 
   /* enabled : 0: disable; 1:enable */
   at_utils_conf__get_bool(conf,
-      "boost-mode",
+      "bias-enabled,boost-mode",
       &bias->enabled, AT__FALSE,
       "enabled");
 
   if (bias->enabled) {
 
     at_utils_conf__get_double(conf,
-        "boost-Tref",
-        &bias->ref_temp, 300.0,
+        "bias-ref-temp,bias-Tref,boost-Tref",
+        &bias->ref_temp,
+        ref_temp,
         "ref_temp");
 
-#ifdef AT__PCST_COMPAT
     at_utils_conf__get_double(conf,
-        "kappa0",
-        &bias->kappa0, 1.0,
-        "kappa0");
+        "bias-max-temp,bias-Tmax",
+        &bias->max_temp,
+        max_temp,
+        "max_temp");
 
     at_utils_conf__get_double(conf,
-        "epsilon0",
-        &bias->epsilon0, 0.0,
-        "epsilon0");
-
-#endif
+        "bias-w-max",
+        &bias->w_max,
+        1.0,
+        "w_max");
 
   }
 
@@ -58,6 +62,7 @@ int at_distr_bias__conf_init(at_distr_bias_t *bias, at_utils_conf_t *conf)
   return 0;
 
 }
+
 
 
 void at_distr_bias__finish(at_distr_bias_t *bias)
@@ -71,18 +76,30 @@ void at_distr_bias__manifest(const at_distr_bias_t *bias, at_utils_manifest_t *m
 {
   at_utils_manifest__push_mod(manifest, "at.distr.bias");
 
-  at_utils_manifest__print_bool(manifest, bias->enabled, "enabled", "boost-mode");
+  at_utils_manifest__print_bool(manifest, bias->enabled, "enabled", "bias-enabled");
 
   if (bias->enabled) {
-    at_utils_manifest__print_bool(manifest, bias->ref_temp, "ref_temp", "boost-Tref");
-#ifdef AT__PCST_COMPAT
-    at_utils_manifest__print_bool(manifest, bias->kappa0, "kappa0", "kappa0");
-    at_utils_manifest__print_bool(manifest, bias->epsilon0, "epsilon0", "epsilon0");
-#endif
+    at_utils_manifest__print_bool(manifest, bias->ref_temp, "ref_temp", "bias-ref-temp");
+    at_utils_manifest__print_bool(manifest, bias->max_temp, "max_temp", "bias-max-temp");
+    at_utils_manifest__print_bool(manifest, bias->w_max, "w_max", "bias-w-max");
   }
 
   at_utils_manifest__pop_mod(manifest);
 }
+
+
+double at_distr_bias__get_w_comb_of_temp(const at_distr_bias_t *bias, double temp)
+{
+  return bias->w_max * (temp - bias->ref_temp) / (bias->max_temp - bias->ref_temp);
+}
+
+
+double at_distr_bias__get_w_deriv_of_temp(const at_distr_bias_t *bias, double temp)
+{
+  (void) temp;
+  return -bias->ref_temp * bias->w_max / (bias->max_temp - bias->ref_temp);
+}
+
 
 
 #endif

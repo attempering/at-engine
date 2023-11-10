@@ -128,10 +128,13 @@ static int work(int argc, char **argv)
 
   at_t* at = at__open(fn_cfg, NULL, AT__INIT_VERBOSE);
 
-  (void) argc;
-  (void) argv;
+  if (argc > 1) {
+    fn_cfg = argv[1];
+  }
 
   at__manifest(at);
+
+  at_params_step__init(step_params);
 
   zcom_rng_mt19937__init_from_seed(mtrng, 12345);
 
@@ -144,7 +147,7 @@ static int work(int argc, char **argv)
 
     step_params->step = step;
     step_params->is_first_step = (step == 1);
-    step_params->is_last_step = (step == nsteps);
+    step_params->is_final_step = (step == nsteps);
     step_params->do_trace = AT__FALSE;
     step_params->flush_output = AT__FALSE;
 

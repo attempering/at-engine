@@ -38,12 +38,10 @@ long ntimes = 100000;
 static void init_distr_mb_and_langevin(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb, at_driver_langevin_t *langevin)
 {
-  double boltz = 1.0;
-
-  at_distr__conf_init(distr, conf, boltz);
+  at_distr__conf_init_ez_(distr, conf);
 
   // beta_min and beta_max are to be read from the configuration file
-  at_mb__conf_init(mb, distr, conf, boltz);
+  at_mb__conf_init_ez_(mb, distr, conf);
 
   at_driver_langevin__conf_init(langevin, mb->distr, mb, conf, 0);
 }

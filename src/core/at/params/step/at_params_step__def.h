@@ -32,12 +32,11 @@ typedef void at_beta_scaling_func_t(
 typedef struct at_params_step_t_ {
   at_llong_t step;
   at_bool_t is_first_step;
-  at_bool_t is_last_step;
+  at_bool_t is_final_step;
   at_bool_t do_trace;
   at_bool_t flush_output;
 
 #ifdef AT__BETA_SCALING_FUNC__
-  at_bool_t beta_scaling_enabled;
   at_beta_scaling_func_t* beta_scaling_func;
   void* beta_scaling_obj;
 #endif

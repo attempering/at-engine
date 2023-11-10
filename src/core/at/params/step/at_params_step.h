@@ -21,4 +21,6 @@
 
 #include "at_params_step__def.h"
 
+void at_params_step__init(at_params_step_t* params);
+
 #endif

@@ -30,9 +30,10 @@ void at_params_sys__init(
 {
   if (sys_params_user == NULL) {
     sys_params_dest->boltz = 1.0;
+    sys_params_dest->md_time_step = 0.002;
+    sys_params_dest->is_continuation = AT__FALSE;
     sys_params_dest->sim_id = 0;
     sys_params_dest->add_suffix = AT__FALSE;
-    sys_params_dest->md_time_step = 0.002;
   } else {
     *sys_params_dest = *sys_params_user;
   }

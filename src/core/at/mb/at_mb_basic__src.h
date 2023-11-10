@@ -153,6 +153,17 @@ ERR:
 
 
 
+int at_mb__conf_init_ez_(
+    at_mb_t *mb,
+    at_distr_t *distr,
+    at_utils_conf_t *conf)
+{
+  double boltz = 1.0;
+  return at_mb__conf_init(mb, distr, conf, boltz);
+}
+
+
+
 void at_mb__finish(at_mb_t *mb)
 {
   if (mb->visits != NULL) {

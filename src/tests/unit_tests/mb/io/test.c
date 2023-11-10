@@ -26,9 +26,6 @@
 #include "at_mb__compare.h"
 
 
-double boltz = 1.0;
-
-
 /* parameters of the Gaussian energy model */
 double gaussian_sigma = 100.0;
 
@@ -40,11 +37,11 @@ long ntimes = 100000;
 static void init_mb_objects(at_utils_conf_t *conf,
     at_distr_t *distr, at_mb_t *mb1, at_mb_t *mb2)
 {
-  at_distr__conf_init(distr, conf, boltz);
+  at_distr__conf_init_ez_(distr, conf);
 
-  at_mb__conf_init(mb1, distr, conf, boltz);
+  at_mb__conf_init_ez_(mb1, distr, conf);
 
-  at_mb__conf_init(mb2, distr, conf, boltz);
+  at_mb__conf_init_ez_(mb2, distr, conf);
 }
 
 

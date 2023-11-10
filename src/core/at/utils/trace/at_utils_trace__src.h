@@ -108,7 +108,7 @@ at_bool_t at_utils_trace__decide_do_trace(at_utils_trace_t *trace,
 
     do_trace = (step_params->step % nst_trace == 0)
            || step_params->is_first_step
-           || step_params->is_last_step;
+           || step_params->is_final_step;
 
   } else if (nst_trace < 0) {
     // logging is disabled if at->nst_trace < 0

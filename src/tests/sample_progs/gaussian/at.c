@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define GAUSSIAN__USE_MDSYS_ALIASES__
-#include "veritools/models/gaussian-energy/gaussian.h"
+#define GAUSSIAN_ENERGY__USE_MDSYS_ALIASES__
+#include "veritools/models/gaussian_energy/gaussian_energy.h"
 
 #include "at-engine__src.h"
 
@@ -35,6 +35,8 @@ void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
   at_params_step_t step_params[1];
   double acc;
 
+  at_params_step__init(step_params);
+
   zcom_rng_mt19937__init_from_seed(at->driver->langevin->rng->mtrng, langevin_seed);
 
   mdsys__set_energy_at_beta(mdsys, at->beta);
@@ -50,7 +52,7 @@ void run_at_md(at_t *at, mdsys_t *mdsys, at_llong_t nsteps)
 
       step_params->step = step;
       step_params->is_first_step = (step == 1);
-      step_params->is_last_step = (step == nsteps);
+      step_params->is_final_step = (step == nsteps);
       step_params->do_trace = AT__FALSE;
       step_params->flush_output = AT__FALSE;
 

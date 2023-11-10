@@ -33,6 +33,13 @@ int at_mb__conf_init(
     at_utils_conf_t *conf,
     double boltz);
 
+/* convenience initializer for testing programs
+   assuming boltz = 1.0 */
+int at_mb__conf_init_ez_(
+    at_mb_t *mb,
+    at_distr_t *distr,
+    at_utils_conf_t *conf);
+
 void at_mb__finish(at_mb_t *mb);
 
 void at_mb__clear(at_mb_t *mb);

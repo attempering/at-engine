@@ -31,14 +31,15 @@ int main(void)
   at_mb_t mb[1];
   at_driver_t driver[1];
   at_bool_t verbose = AT__FALSE;
-  double boltz = 1.0;
+  uint32_t rng_seed = 1234;
 
   at_utils_conf__init_ez(conf, "at.cfg", "atdata", verbose);
-  at_distr__conf_init(distr, conf, boltz);
-  at_mb__conf_init(mb, distr, conf, 1.0);
-  at_driver__conf_init(driver, distr, mb, conf, 0);
+  at_distr__conf_init_ez_(distr, conf);
+  at_mb__conf_init_ez_(mb, distr, conf);
+  at_driver__conf_init(driver, distr, mb, conf, rng_seed);
 
-  at_driver_langevin_rng__reset(driver->langevin->rng, 1234,
+  at_driver_langevin_rng__reset(
+      driver->langevin->rng, rng_seed,
       NULL, NULL, NULL);
 
   at_driver__finish(driver);

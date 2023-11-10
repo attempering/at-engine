@@ -168,7 +168,8 @@ void at_distr_domain__manifest(const at_distr_domain_t *domain, at_utils_manifes
 
 
 
-int at_distr_domain__beta_to_index(const at_distr_domain_t *domain, double beta, at_bool_t check)
+int at_distr_domain__beta_to_index(
+    const at_distr_domain_t *domain, double beta, at_bool_t check)
 {
   int j;
 
