@@ -1,4 +1,4 @@
-sub_dirs = weights
+sub_dirs = weights bias
 
 bins::
 	for sub_dir in $(sub_dirs); do \
