@@ -1,5 +1,7 @@
 # Harmonic oscillator
 
+For testing the distribution bias.
+
 $$V(x) = \frac{1}{2} \, x^2 + \frac{T - T_\mathrm{min}}{T_\mathrm{max} - T_\mathrm{min}} c \, x.$$
 
 With $c = 0$, $V(x) = \frac{1}{2} x^2$, $U = \frac{1}{2\beta}$.

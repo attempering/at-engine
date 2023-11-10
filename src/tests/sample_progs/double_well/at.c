@@ -15,7 +15,7 @@ static void run(at_t *at)
   long t;
   double_well_t dw[1];
   double_well_params_t dw_params0[1], dw_params[1];
-  double bias_c = 0.0;
+  double bias_c = 0.3;
   double beta_ref_temp = at__temp_to_beta(at, at->distr->bias->ref_temp);
   double beta_max_temp = at__temp_to_beta(at, at->distr->bias->max_temp);
   double beta_tol = at->distr->domain->beta_del * 2;
@@ -23,12 +23,13 @@ static void run(at_t *at)
 
   at_params_step__init(step_params);
 
-  double_well__init(dw, NULL);
-  double_well_params__init_default(dw_params0);
-  double_well_params__init_default(dw_params);
+  //double_well_params__init_default(dw_params0);
+  double_well_params__init(dw_params0, 1.0, 1.0, 0.0);
+  double_well_params__copy(dw_params, dw_params0);
+  double_well__init(dw, dw_params0);
 
-  histogram__init(hist_ref_temp, -5, 5, 0.01);
-  histogram__init(hist_max_temp, -5, 5, 0.01);
+  histogram__init(hist_ref_temp, -5, 5, 0.05);
+  histogram__init(hist_max_temp, -5, 5, 0.05);
 
   for (t = 1; t <= nsteps; t++) {
     double beta = at__get_beta(at);
@@ -47,8 +48,9 @@ static void run(at_t *at)
     }
 
     // form the biased potential
+    // as the coefficient of the linear term
     dw_params->c = w_comb * bias_c;
-    double_well__metro_params(dw, dw_params, beta, sigma);
+    double_well__metro_params(dw, dw_params, &dw->x, beta, sigma);
 
     // compute the effective energy under the bias
     epot0 = double_well_params__energy(dw_params0, dw->x);

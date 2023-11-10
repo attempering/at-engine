@@ -1,3 +1,3 @@
 # Double-well system
 
-Testing the bias potential
+Testing the bias potential.
