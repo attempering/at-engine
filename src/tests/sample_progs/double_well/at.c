@@ -25,6 +25,17 @@ static void run(at_t *at)
 
   //double_well_params__init_default(dw_params0);
   double_well_params__init(dw_params0, 1.0, 1.0, 0.0);
+
+  // use the following initialization to recover
+  // the harmonic potential case
+  //double_well_params__init(dw_params0, 0.0, -1.0, 0.0);
+  // To plot and compare the resulting distributions
+  // with the analytical results, use the following
+  // GNUplot command:
+  //
+  //  plot [-2:2] "xhist_Tref.dat" u 1:3 w l, "xhist_Tmax.dat" u 1:3 w l, exp(-x**2/0.2)/(0.2*pi)**0.5, exp(-(x+1)**2/0.4)/(0.4*pi)**0.5
+  //
+
   double_well_params__copy(dw_params, dw_params0);
   double_well__init(dw, dw_params0);
 
@@ -50,7 +61,8 @@ static void run(at_t *at)
     // form the biased potential
     // as the coefficient of the linear term
     dw_params->c = w_comb * bias_c;
-    double_well__metro_params(dw, dw_params, &dw->x, beta, sigma);
+    double_well_params__metro(
+        dw_params, dw->rng, &dw->x, beta, sigma, NULL);
 
     // compute the effective energy under the bias
     epot0 = double_well_params__energy(dw_params0, dw->x);
@@ -79,7 +91,7 @@ int main(void)
 {
   at_t at[1];
 
-  at__init(at, "at.cfg", NULL, AT__INIT_VERBOSE);
+  at__init(at, "at.cfg", NULL, 0);
 
   run(at);
 
