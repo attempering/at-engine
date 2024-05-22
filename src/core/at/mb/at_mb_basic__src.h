@@ -96,7 +96,7 @@ int at_mb__conf_init(
   /* nst_save_av: interval of writing mbav and ze files */
   at_utils_conf__get_int(conf,
       "nstav,nst-av,mb-nst-save",
-      &mb->nst_save_av, 10000,
+      &mb->nst_save_av, 100000,
       "nst_save_av");
 
   at_utils_conf__get_bool(conf,

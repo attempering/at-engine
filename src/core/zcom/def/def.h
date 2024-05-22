@@ -105,10 +105,11 @@
 #endif
 
 
-
-#ifndef ZCOM__HAVE_REAL
-  #define ZCOM__HAVE_REAL 1
-  #define real double
+#ifndef ZCOM__NO_REAL
+  #ifndef ZCOM__HAVE_REAL
+    #define ZCOM__HAVE_REAL 1
+    #define real double
+  #endif
 #endif
 
 #ifndef M_PI

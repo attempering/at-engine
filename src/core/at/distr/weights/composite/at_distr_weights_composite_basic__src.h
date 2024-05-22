@@ -72,13 +72,16 @@ void at_distr_weights_composite__manifest(
 {
   int ic;
 
+  at_utils_manifest__push_mod(manifest, "at.distr.weights.composite");
+
   at_utils_manifest__print_int(manifest, c->n_components,
-      "distr->weights->components->n_components", "ensemble-n-components");
+      "n_components", "ensemble-n-components");
 
   for (ic = 0; ic < c->n_components; ic++) {
     at_distr_weights_component__manifest(c->components + ic, manifest);
   }
 
+  at_utils_manifest__pop_mod(manifest);
 }
 
 

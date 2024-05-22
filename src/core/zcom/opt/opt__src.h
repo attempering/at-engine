@@ -33,9 +33,11 @@ int zcom_opt__getval(zcom_opt_t *o, zcom_ssm_t *m)
     zcom_ssm__copy(m, (char **)o->ptr, o->val);
   } else { /* call sscanf */
 
+    #ifndef ZCOM__NO_REAL
     if (strcmp(fmt, "%r") == 0) { /* real */
       fmt = (sizeof(real) == sizeof(float)) ? "%f" : "%lf";
     }
+    #endif
 
     if (1 != sscanf(o->val, fmt, o->ptr)) {
       fprintf(stderr, "Error@zcom: unable to convert a value for [%s] as fmt [%s], raw string: [%s]\n",
@@ -112,7 +114,9 @@ void zcom_opt__print_ptr(zcom_opt_t *o)
 #endif
   ELIF_PF_("%f", "%g", float);
   ELIF_PF_("%lf", "%g", double);
+  #ifndef ZCOM__NO_REAL
   ELIF_PF_("%r", "%g", real);
+  #endif
   else printf("unknown %s-->%%d: %d\n", fmt, *(int *)o->ptr);
 #undef ELIF_PF_
 }

@@ -102,6 +102,7 @@ static int at_distr_weights_component__parse_str(
 
   zcom_utils__strip(comp_str);
 
+  /* accepts gaussian/normal */
   if (strncmp(comp_str, "gauss", 5) == 0
    || strncmp(comp_str, "norm", 4) == 0) {
 
@@ -165,7 +166,9 @@ static int at_distr_weights_component__manifest(
 {
   FILE *fp = manifest->fp;
 
-  fprintf(fp, "%s: ", c->key);
+  const char *module = at_utils_manifest__get_mod(manifest); 
+
+  fprintf(fp, "%s.%s: ", module, c->key);
 
   if (c->type == AT_DISTR_WEIGHTS_COMPONENT_TYPE__FLAT) {
     fprintf(fp, "flat, weight %lf", c->w_rel);
